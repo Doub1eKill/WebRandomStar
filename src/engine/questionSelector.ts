@@ -181,9 +181,15 @@ export function selectQuestionFlow(
   const categoryPool = allQuestions.filter(q => q.enabled && q.category === selectedCategory);
   let availablePool = categoryPool.filter(q => !usedIds.includes(q.id));
 
-  // If all category questions were used, cycle and reuse category pool
+  // If all questions in this category are exhausted, fallback to unused questions from the global pool (Section 25)
   if (availablePool.length === 0) {
-    availablePool = categoryPool.length > 0 ? categoryPool : allQuestions.filter(q => q.enabled);
+    const globalUnused = allQuestions.filter(q => q.enabled && !usedIds.includes(q.id));
+    if (globalUnused.length > 0) {
+      availablePool = globalUnused;
+    } else {
+      // If the entire question bank across all categories is exhausted, cycle back
+      availablePool = categoryPool.length > 0 ? categoryPool : allQuestions.filter(q => q.enabled);
+    }
   }
 
   // 3. Pick candidate questions (up to 5-7 questions)
