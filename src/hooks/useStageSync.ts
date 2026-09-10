@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { SessionState, AppState } from '../types/session.ts';
+import { SessionState } from '../types/session.ts';
 import { DEFAULT_QUESTIONS } from '../data/defaultQuestions.ts';
 import { selectQuestionFlow } from '../engine/questionSelector.ts';
 import { STAGE_DURATION, getNextState } from '../engine/stateMachine.ts';

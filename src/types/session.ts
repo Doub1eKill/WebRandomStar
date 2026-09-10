@@ -1,4 +1,4 @@
-import { Question, QuestionCategory, Contestant } from './question.ts';
+import { Question, QuestionCategory } from './question.ts';
 
 export type AppState =
   | 'idle'           // เวทีพร้อม รอเริ่มรอบ
