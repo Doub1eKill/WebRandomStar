@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useStageSync } from './hooks/useStageSync.ts';
-import { DEFAULT_CONTESTANTS } from './data/defaultContestants.ts';
-import { Contestant, QuestionCategory } from './types/question.ts';
+import { loadQuestions, saveQuestions, loadContestants, saveContestants } from './utils/storage.ts';
+import { Question, Contestant, QuestionCategory } from './types/question.ts';
 import { StageCanvas } from './components/Stage/StageCanvas.tsx';
 import { StageOverlay } from './components/Stage/StageOverlay.tsx';
 import { ControlDrawer } from './components/Control/ControlDrawer.tsx';
 import { RemoteController } from './components/Control/RemoteController.tsx';
 import { KeyboardController } from './components/Control/KeyboardController.tsx';
+import { QuestionManagerModal } from './components/Control/QuestionManagerModal.tsx';
+import { ContestantManagerModal } from './components/Control/ContestantManagerModal.tsx';
 
 export const App: React.FC = () => {
   // Check if opened as secondary remote controller window
@@ -25,8 +27,22 @@ export const App: React.FC = () => {
     toggleMute
   } = useStageSync(isControllerMode ? 'controller' : 'stage');
 
-  const [contestants] = useState<Contestant[]>(DEFAULT_CONTESTANTS);
+  const [questions, setQuestions] = useState<Question[]>(() => loadQuestions());
+  const [contestants, setContestants] = useState<Contestant[]>(() => loadContestants());
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isQuestionModalOpen, setIsQuestionModalOpen] = useState(false);
+  const [isContestantModalOpen, setIsContestantModalOpen] = useState(false);
+
+  const handleSaveQuestions = (updated: Question[]) => {
+    setQuestions(updated);
+    saveQuestions(updated);
+  };
+
+  const handleSaveContestants = (updated: Contestant[]) => {
+    setContestants(updated);
+    saveContestants(updated);
+  };
 
   // If in Remote Controller window, render dedicated operator view
   if (isControllerMode) {
@@ -92,8 +108,8 @@ export const App: React.FC = () => {
         onSelectRound={setRound}
         onSetVolume={setVolume}
         onToggleMute={toggleMute}
-        onOpenQuestionManager={() => alert('คลังคำถามจะเปิดในโมดอล (Task 10)')}
-        onOpenContestantManager={() => alert('จัดการผู้เข้าแข่งขันจะเปิดในโมดอล (Task 10)')}
+        onOpenQuestionManager={() => setIsQuestionModalOpen(true)}
+        onOpenContestantManager={() => setIsContestantModalOpen(true)}
       />
 
       {/* 4. Global Keyboard Navigation */}
@@ -102,6 +118,22 @@ export const App: React.FC = () => {
         onProceed={handleProceed}
         onToggleDrawer={() => setIsDrawerOpen(prev => !prev)}
         onToggleMute={toggleMute}
+      />
+
+      {/* 5. Question Manager Modal */}
+      <QuestionManagerModal
+        isOpen={isQuestionModalOpen}
+        onClose={() => setIsQuestionModalOpen(false)}
+        questions={questions}
+        onSaveQuestions={handleSaveQuestions}
+      />
+
+      {/* 6. Contestant Manager Modal */}
+      <ContestantManagerModal
+        isOpen={isContestantModalOpen}
+        onClose={() => setIsContestantModalOpen(false)}
+        contestants={contestants}
+        onSaveContestants={handleSaveContestants}
       />
     </div>
   );

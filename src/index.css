@@ -20,7 +20,7 @@
   --meteor-tail: #38bdf8;
   
   /* Glassmorphism & UI */
-  --glass-bg: rgba(15, 23, 42, 0.82);
+  --glass-bg: rgba(15, 23, 42, 0.84);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.6), 0 0 24px 0 rgba(56, 189, 248, 0.1);
   --glass-highlight: rgba(255, 255, 255, 0.2);
@@ -133,6 +133,12 @@ button {
   cursor: not-allowed;
 }
 
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 0.88rem;
+  border-radius: 10px;
+}
+
 .btn-danger-soft {
   color: #f87171;
   border-color: rgba(239, 68, 68, 0.3);
@@ -143,22 +149,25 @@ button {
   border-color: rgba(239, 68, 68, 0.5);
 }
 
-.custom-select {
+.custom-select, .custom-input, .custom-textarea {
   width: 100%;
   background: rgba(15, 23, 42, 0.9);
   color: #ffffff;
   border: 1px solid var(--glass-border);
-  padding: 12px 16px;
+  padding: 10px 14px;
   border-radius: 12px;
   font-family: inherit;
   font-size: 0.95rem;
   outline: none;
-  cursor: pointer;
 }
 
-.custom-select:focus {
+.custom-select:focus, .custom-input:focus, .custom-textarea:focus {
   border-color: #38bdf8;
   box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+}
+
+.custom-textarea {
+  resize: vertical;
 }
 
 /* Stage Overlay Layout */
@@ -758,6 +767,310 @@ button {
 }
 
 .drawer-meta-info code {
+  color: var(--text-secondary);
+}
+
+/* Modals (Question & Contestant Managers) */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-container {
+  width: 100%;
+  max-width: 960px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.modal-container.modal-sm {
+  max-width: 580px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 12px;
+}
+
+.modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-icon {
+  font-size: 1.8rem;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.modal-sub {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.btn-close-modal {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.modal-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.input-search {
+  flex: 1;
+  background: rgba(15, 23, 42, 0.9);
+  color: #ffffff;
+  border: 1px solid var(--glass-border);
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
+
+.select-filter {
+  width: 220px;
+}
+
+.add-question-form {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.add-question-form h3 {
+  font-size: 1rem;
+  color: #38bdf8;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.form-row > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-row label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.questions-table-wrap {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.questions-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.questions-table th {
+  position: sticky;
+  top: 0;
+  background: #0d1527;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  z-index: 2;
+}
+
+.questions-table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  vertical-align: top;
+}
+
+.row-disabled {
+  opacity: 0.5;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.btn-toggle-switch {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+}
+
+.btn-toggle-switch.active {
+  background: #10b981;
+  color: #000000;
+}
+
+.cat-table-badge {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.round-table-badge {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+
+.table-q-text {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #ffffff;
+}
+
+.table-tags {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.table-id-tag {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: #64748b;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.table-tag {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.btn-table-delete {
+  background: transparent;
+  color: #ef4444;
+  font-size: 1rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.btn-table-delete:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 12px;
+}
+
+.footer-left {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-file-label {
+  cursor: pointer;
+}
+
+.contestants-list-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.contestant-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 12px;
+}
+
+.item-num {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #38bdf8;
+  width: 36px;
+}
+
+.item-title-tag {
+  font-size: 0.75rem;
+  background: rgba(253, 224, 71, 0.15);
+  color: #fde047;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.item-details {
+  flex: 1;
+}
+
+.item-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.item-faculty {
+  font-size: 0.8rem;
   color: var(--text-secondary);
 }
 
