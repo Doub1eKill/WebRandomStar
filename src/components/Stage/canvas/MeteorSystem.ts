@@ -11,8 +11,17 @@ interface StardustSpark {
   size: number;
 }
 
+interface Shockwave {
+  x: number;
+  y: number;
+  radius: number;
+  maxRadius: number;
+  alpha: number;
+}
+
 export class MeteorSystem {
   public active: boolean = false;
+  public shockIntensity: number = 0;
   private trajectory: MeteorTrajectory | null = null;
   private currentX: number = 0;
   private currentY: number = 0;
@@ -20,6 +29,7 @@ export class MeteorSystem {
   public onImpactCallback?: () => void;
   private trail: { x: number; y: number; alpha: number }[] = [];
   private sparks: StardustSpark[] = [];
+  private shockwaves: Shockwave[] = [];
 
   public startMeteor(traj: MeteorTrajectory, onImpact?: () => void): void {
     this.trajectory = traj;
@@ -38,10 +48,19 @@ export class MeteorSystem {
     this.trajectory = null;
     this.trail = [];
     this.sparks = [];
+    this.shockwaves = [];
+    this.shockIntensity = 0;
   }
 
   public update(): void {
     if (!this.active || !this.trajectory) return;
+
+    // Decay screen micro-shake
+    if (this.shockIntensity > 0.05) {
+      this.shockIntensity *= 0.86;
+    } else {
+      this.shockIntensity = 0;
+    }
 
     // Update stardust sparks after impact
     for (let i = this.sparks.length - 1; i >= 0; i--) {
@@ -53,6 +72,16 @@ export class MeteorSystem {
       spark.vy *= 0.96;
       if (spark.life >= spark.maxLife) {
         this.sparks.splice(i, 1);
+      }
+    }
+
+    // Update shockwaves
+    for (let i = this.shockwaves.length - 1; i >= 0; i--) {
+      const sw = this.shockwaves[i];
+      sw.radius += 8;
+      sw.alpha = Math.max(0, 1 - sw.radius / sw.maxRadius);
+      if (sw.radius >= sw.maxRadius) {
+        this.shockwaves.splice(i, 1);
       }
     }
 
@@ -83,8 +112,17 @@ export class MeteorSystem {
   }
 
   private createExplosion(x: number, y: number): void {
-    const sparkCount = 45;
+    const sparkCount = 50;
     const colors = ['#ffffff', '#fde047', '#38bdf8', '#fbbf24'];
+
+    this.shockIntensity = 8;
+    this.shockwaves.push({
+      x,
+      y,
+      radius: 4,
+      maxRadius: 240,
+      alpha: 1.0
+    });
 
     for (let i = 0; i < sparkCount; i++) {
       const angle = Math.random() * Math.PI * 2;
@@ -157,6 +195,29 @@ export class MeteorSystem {
       ctx.beginPath();
       ctx.arc(spark.x, spark.y, spark.size, 0, Math.PI * 2);
       ctx.fill();
+    }
+
+    // 4. Draw expanding shockwave rings
+    for (const sw of this.shockwaves) {
+      ctx.save();
+      // Outer bright cyan shockwave ring
+      ctx.strokeStyle = `rgba(56, 189, 248, ${sw.alpha * 0.95})`;
+      ctx.lineWidth = Math.max(1, 5 * sw.alpha);
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = 14;
+      ctx.beginPath();
+      ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Inner golden harmonic ring
+      ctx.strokeStyle = `rgba(253, 224, 71, ${sw.alpha * 0.75})`;
+      ctx.lineWidth = Math.max(1, 2.5 * sw.alpha);
+      ctx.shadowColor = '#fde047';
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.arc(sw.x, sw.y, sw.radius * 0.65, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
     }
 
     ctx.restore();

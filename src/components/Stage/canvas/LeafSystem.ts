@@ -7,6 +7,7 @@ export class LeafSystem {
   private height: number = 0;
   public active: boolean = false;
   public heroLanded: boolean = false;
+  public opacity: number = 0.0;
 
   private colors = [
     '#d97706', // amber
@@ -61,7 +62,7 @@ export class LeafSystem {
   }
 
   public update(): void {
-    if (!this.active) return;
+    if (!this.active && this.opacity <= 0.01) return;
 
     // Update ambient leaves
     for (const leaf of this.ambientLeaves) {
@@ -101,7 +102,7 @@ export class LeafSystem {
     ctx.translate(leaf.x, leaf.y);
     ctx.rotate(leaf.rotation);
     ctx.fillStyle = leaf.color;
-    ctx.globalAlpha = leaf.opacity;
+    ctx.globalAlpha = leaf.opacity * this.opacity;
 
     // Leaf silhouette
     ctx.beginPath();
@@ -122,7 +123,7 @@ export class LeafSystem {
   }
 
   public draw(ctx: CanvasRenderingContext2D): void {
-    if (!this.active) return;
+    if (this.opacity <= 0.01) return;
 
     for (const leaf of this.ambientLeaves) {
       this.drawLeafShape(ctx, leaf);
@@ -135,7 +136,7 @@ export class LeafSystem {
         this.heroLeaf.x, this.heroLeaf.y, 4,
         this.heroLeaf.x, this.heroLeaf.y, this.heroLeaf.size * 1.8
       );
-      glow.addColorStop(0, 'rgba(245, 158, 11, 0.45)');
+      glow.addColorStop(0, `rgba(245, 158, 11, ${0.45 * this.opacity})`);
       glow.addColorStop(1, 'rgba(245, 158, 11, 0)');
       ctx.fillStyle = glow;
       ctx.beginPath();

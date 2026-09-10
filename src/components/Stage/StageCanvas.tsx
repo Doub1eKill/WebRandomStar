@@ -26,6 +26,17 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onMeteorImpac
   const constellationRef = useRef<ConstellationSystem>(new ConstellationSystem());
   const meteorRef = useRef<MeteorSystem>(new MeteorSystem());
 
+  // Smooth cross-fade target values
+  const targetsRef = useRef({
+    rainIntensity: 0.04,
+    dropOpacity: 0.0,
+    mistDensity: 0.08,
+    leafOpacity: 0.0,
+    skyClarity: 0.15,
+    moonOpacity: 0.1,
+    constellationOpacity: 0.0
+  });
+
   // Pass candidate nodes to constellation system
   useEffect(() => {
     if (session.candidateNodes) {
@@ -36,78 +47,91 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onMeteorImpac
   // Handle stage state transitions & synchronized procedural audio
   useEffect(() => {
     const currentState = session.currentState;
-    const rain = rainRef.current;
-    const drop = dropRef.current;
-    const mist = mistRef.current;
     const leaf = leafRef.current;
-    const sky = skyRef.current;
-    const constellation = constellationRef.current;
     const meteor = meteorRef.current;
 
     switch (currentState) {
       case 'idle':
-        rain.intensity = 0.04;
-        drop.opacity = 0;
-        mist.density = 0.08;
+        targetsRef.current = {
+          rainIntensity: 0.04,
+          dropOpacity: 0.0,
+          mistDensity: 0.08,
+          leafOpacity: 0.0,
+          skyClarity: 0.15,
+          moonOpacity: 0.1,
+          constellationOpacity: 0.0
+        };
         leaf.active = false;
-        sky.skyClarity = 0.15;
-        sky.moonOpacity = 0.1;
-        constellation.opacity = 0;
         meteor.reset();
         break;
 
       case 'rain':
-        rain.intensity = 1.0;
-        drop.opacity = 0.2;
-        mist.density = 0.2;
+        targetsRef.current = {
+          rainIntensity: 1.0,
+          dropOpacity: 0.2,
+          mistDensity: 0.2,
+          leafOpacity: 0.0,
+          skyClarity: 0.0,
+          moonOpacity: 0.0,
+          constellationOpacity: 0.0
+        };
         leaf.active = false;
-        sky.skyClarity = 0.0;
-        sky.moonOpacity = 0.0;
-        constellation.opacity = 0;
         audioEngine.playRainAmbience(1.5);
         break;
 
       case 'water-drop':
-        rain.intensity = 0.4;
-        drop.opacity = 0.85;
-        mist.density = 0.35;
+        targetsRef.current = {
+          rainIntensity: 0.35,
+          dropOpacity: 0.85,
+          mistDensity: 0.35,
+          leafOpacity: 0.0,
+          skyClarity: 0.05,
+          moonOpacity: 0.0,
+          constellationOpacity: 0.0
+        };
         leaf.active = false;
-        sky.skyClarity = 0.05;
-        sky.moonOpacity = 0.0;
-        constellation.opacity = 0;
         audioEngine.playWaterDrop();
         break;
 
       case 'mist':
-        rain.intensity = 0.0;
-        drop.opacity = 0.25;
-        mist.density = 0.95;
+        targetsRef.current = {
+          rainIntensity: 0.0,
+          dropOpacity: 0.25,
+          mistDensity: 0.95,
+          leafOpacity: 0.0,
+          skyClarity: 0.1,
+          moonOpacity: 0.0,
+          constellationOpacity: 0.0
+        };
         leaf.active = false;
-        sky.skyClarity = 0.1;
-        sky.moonOpacity = 0.0;
-        constellation.opacity = 0;
         audioEngine.fadeRainOut(2.0);
         break;
 
       case 'wind':
-        rain.intensity = 0.0;
-        drop.opacity = 0.08;
-        mist.density = 0.45;
+        targetsRef.current = {
+          rainIntensity: 0.0,
+          dropOpacity: 0.06,
+          mistDensity: 0.45,
+          leafOpacity: 0.85,
+          skyClarity: 0.2,
+          moonOpacity: 0.0,
+          constellationOpacity: 0.0
+        };
         leaf.active = true;
-        sky.skyClarity = 0.2;
-        sky.moonOpacity = 0.0;
-        constellation.opacity = 0;
         audioEngine.playWindGust();
         break;
 
       case 'leaf':
-        rain.intensity = 0.0;
-        drop.opacity = 0.0;
-        mist.density = 0.25;
+        targetsRef.current = {
+          rainIntensity: 0.0,
+          dropOpacity: 0.0,
+          mistDensity: 0.2,
+          leafOpacity: 1.0,
+          skyClarity: 0.35,
+          moonOpacity: 0.15,
+          constellationOpacity: 0.0
+        };
         leaf.active = true;
-        sky.skyClarity = 0.35;
-        sky.moonOpacity = 0.15;
-        constellation.opacity = 0;
         audioEngine.playLeafRustle();
 
         // Spawn hero leaf towards target question position
@@ -117,34 +141,43 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onMeteorImpac
         break;
 
       case 'sky-opening':
-        rain.intensity = 0.0;
-        drop.opacity = 0.0;
-        mist.density = 0.08;
+        targetsRef.current = {
+          rainIntensity: 0.0,
+          dropOpacity: 0.0,
+          mistDensity: 0.08,
+          leafOpacity: 0.2,
+          skyClarity: 0.85,
+          moonOpacity: 0.9,
+          constellationOpacity: 0.25
+        };
         leaf.active = false;
-        sky.skyClarity = 0.85;
-        sky.moonOpacity = 0.9;
-        constellation.opacity = 0.2;
         break;
 
       case 'constellation':
-        rain.intensity = 0.0;
-        drop.opacity = 0.0;
-        mist.density = 0.02;
+        targetsRef.current = {
+          rainIntensity: 0.0,
+          dropOpacity: 0.0,
+          mistDensity: 0.02,
+          leafOpacity: 0.0,
+          skyClarity: 1.0,
+          moonOpacity: 0.95,
+          constellationOpacity: 1.0
+        };
         leaf.active = false;
-        sky.skyClarity = 1.0;
-        sky.moonOpacity = 0.95;
-        constellation.opacity = 1.0;
         audioEngine.playStarChime();
         break;
 
       case 'meteor':
-        rain.intensity = 0.0;
-        drop.opacity = 0.0;
-        mist.density = 0.0;
+        targetsRef.current = {
+          rainIntensity: 0.0,
+          dropOpacity: 0.0,
+          mistDensity: 0.0,
+          leafOpacity: 0.0,
+          skyClarity: 1.0,
+          moonOpacity: 0.95,
+          constellationOpacity: 1.0
+        };
         leaf.active = false;
-        sky.skyClarity = 1.0;
-        sky.moonOpacity = 0.95;
-        constellation.opacity = 1.0;
         audioEngine.playMeteorWhoosh();
 
         if (session.meteorTrajectory && !meteor.active) {
@@ -156,13 +189,16 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onMeteorImpac
 
       case 'question':
       case 'answered':
-        rain.intensity = 0.0;
-        drop.opacity = 0.0;
-        mist.density = 0.04;
+        targetsRef.current = {
+          rainIntensity: 0.0,
+          dropOpacity: 0.0,
+          mistDensity: 0.03,
+          leafOpacity: 0.0,
+          skyClarity: 1.0,
+          moonOpacity: 0.85,
+          constellationOpacity: 0.35 // subtle background stars
+        };
         leaf.active = false;
-        sky.skyClarity = 1.0;
-        sky.moonOpacity = 0.85;
-        constellation.opacity = 0.3; // subtle background stars
         break;
     }
   }, [session.currentState, session.meteorTrajectory, onMeteorImpact]);
@@ -199,9 +235,33 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onMeteorImpac
     handleResize();
     window.addEventListener('resize', handleResize);
 
+    const lerp = (cur: number, target: number, f: number = 0.06): number => {
+      const diff = target - cur;
+      if (Math.abs(diff) < 0.001) return target;
+      return cur + diff * f;
+    };
+
     const render = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
+
+      const rain = rainRef.current;
+      const drop = dropRef.current;
+      const mist = mistRef.current;
+      const leaf = leafRef.current;
+      const sky = skyRef.current;
+      const constellation = constellationRef.current;
+      const meteor = meteorRef.current;
+      const targets = targetsRef.current;
+
+      // Smoothly interpolate all opacities & densities towards target values
+      rain.intensity = lerp(rain.intensity, targets.rainIntensity);
+      drop.opacity = lerp(drop.opacity, targets.dropOpacity);
+      mist.density = lerp(mist.density, targets.mistDensity);
+      leaf.opacity = lerp(leaf.opacity, targets.leafOpacity);
+      sky.skyClarity = lerp(sky.skyClarity, targets.skyClarity);
+      sky.moonOpacity = lerp(sky.moonOpacity, targets.moonOpacity);
+      constellation.opacity = lerp(constellation.opacity, targets.constellationOpacity);
 
       // Base background
       ctx.fillStyle = '#060a14';
@@ -215,33 +275,45 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onMeteorImpac
       ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, width, height);
 
+      // Apply screen micro-shake when meteor impacts
+      ctx.save();
+      if (meteor.shockIntensity > 0) {
+        const shake = meteor.shockIntensity;
+        const offsetX = (Math.random() - 0.5) * shake;
+        const offsetY = (Math.random() - 0.5) * shake;
+        ctx.translate(offsetX, offsetY);
+      }
+
       // 1. Sky & Celestial Stars/Moon
-      skyRef.current.update();
-      skyRef.current.draw(ctx);
+      sky.update();
+      sky.draw(ctx);
 
       // 2. Constellation Lines and Candidate Star Nodes
-      constellationRef.current.update();
-      constellationRef.current.draw(ctx);
+      constellation.update();
+      constellation.draw(ctx);
 
-      // 3. Meteor Streak & Stardust Sparks
-      meteorRef.current.update();
-      meteorRef.current.draw(ctx);
+      // 3. Meteor Streak, Shockwave Rings & Stardust Sparks
+      meteor.update();
+      meteor.draw(ctx);
 
       // 4. Mist & Fog layer
-      mistRef.current.update();
-      mistRef.current.draw(ctx);
+      mist.update();
+      mist.draw(ctx);
 
       // 5. Rain Drops
-      rainRef.current.update();
-      rainRef.current.draw(ctx);
+      rain.update();
+      rain.draw(ctx);
 
       // 6. Condensation Water Drops
-      dropRef.current.update();
-      dropRef.current.draw(ctx);
+      drop.update();
+      drop.draw(ctx);
 
       // 7. Autumn Leaves (Ambient and Hero Selection)
-      leafRef.current.update();
-      leafRef.current.draw(ctx);
+      leaf.update();
+      leaf.draw(ctx);
+
+      // Restore transform from screen shake
+      ctx.restore();
 
       animId = requestAnimationFrame(render);
     };

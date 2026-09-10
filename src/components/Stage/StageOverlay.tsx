@@ -4,6 +4,9 @@ import { Contestant } from '../../types/question.ts';
 import { StageHeader } from './StageHeader.tsx';
 import { ContestantBadge } from './ContestantBadge.tsx';
 import { QuestionCard } from './QuestionCard.tsx';
+import { SeasonJourneyBreadcrumb } from './SeasonJourneyBreadcrumb.tsx';
+import { CategoryAnnouncementBanner } from './CategoryAnnouncementBanner.tsx';
+import { CinematicNarrator } from './CinematicNarrator.tsx';
 
 interface StageOverlayProps {
   session: SessionState;
@@ -28,12 +31,21 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
       {/* Header Bar */}
       <StageHeader round={session.selectedRound} currentState={session.currentState} />
 
+      {/* Season Journey Progress Breadcrumb */}
+      <SeasonJourneyBreadcrumb currentState={session.currentState} />
+
       {/* Main Content Area */}
       <div className="stage-main-content">
         {/* Contestant Badge */}
         <div className="stage-contestant-anchor">
           <ContestantBadge contestant={contestant} />
         </div>
+
+        {/* Category Announcement Banner */}
+        <CategoryAnnouncementBanner
+          category={session.selectedCategory}
+          currentState={session.currentState}
+        />
 
         {/* Start Button when idle */}
         {isIdle && (
@@ -59,6 +71,9 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
           />
         )}
       </div>
+
+      {/* Cinematic Story Narrator */}
+      <CinematicNarrator currentState={session.currentState} />
 
       {/* Footer / Discreet Operator Hint */}
       <footer className="stage-footer">
