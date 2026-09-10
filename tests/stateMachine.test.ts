@@ -49,10 +49,15 @@ describe('Stage State Machine', () => {
     expect(isValidTransition('meteor', 'idle')).toBe(true);
   });
 
-  it('should define durations for all active animated stages', () => {
-    expect(STAGE_DURATION['rain']).toBeGreaterThan(0);
-    expect(STAGE_DURATION['mist']).toBeGreaterThan(0);
-    expect(STAGE_DURATION['constellation']).toBeGreaterThan(0);
-    expect(STAGE_DURATION['meteor']).toBeGreaterThan(0);
+  it('should define durations for all active animated stages with total ~12.5s pacing', () => {
+    expect(STAGE_DURATION['rain']).toBe(1500);
+    expect(STAGE_DURATION['meteor']).toBe(1600);
+
+    const activeStages: AppState[] = [
+      'rain', 'water-drop', 'mist', 'wind', 'leaf', 'sky-opening', 'constellation', 'meteor'
+    ];
+    const totalDuration = activeStages.reduce((acc, st) => acc + STAGE_DURATION[st], 0);
+    expect(totalDuration).toBeGreaterThanOrEqual(11000);
+    expect(totalDuration).toBeLessThanOrEqual(14000);
   });
 });

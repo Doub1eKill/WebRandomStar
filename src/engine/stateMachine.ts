@@ -19,14 +19,14 @@ export const STAGE_SEQUENCE: AppState[] = [
  */
 export const STAGE_DURATION: Record<AppState, number> = {
   'idle': 0,
-  'rain': 3200,
-  'water-drop': 2400,
-  'mist': 2800,
-  'wind': 2600,
-  'leaf': 3200,
-  'sky-opening': 2600,
-  'constellation': 3400,
-  'meteor': 2200,
+  'rain': 1500,
+  'water-drop': 1400,
+  'mist': 1500,
+  'wind': 1400,
+  'leaf': 1800,
+  'sky-opening': 1500,
+  'constellation': 1800,
+  'meteor': 1600,
   'question': 0,   // Waits for presenter/operator
   'answered': 0    // Waits for next contestant
 };
