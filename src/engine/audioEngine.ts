@@ -450,6 +450,92 @@ class ProceduralAudioEngine {
     noise.start(now);
     noise.stop(now + 0.6);
   }
+
+  /**
+   * 1.2s Cinematic Suspense Riser: Deep sub-pulse & ascending crystalline resonance
+   */
+  public playSuspenseRiser(): void {
+    if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
+    const now = this.ctx.currentTime;
+
+    // 1. Deep Sub-bass heartbeat pulse
+    const subOsc = this.ctx.createOscillator();
+    const subGain = this.ctx.createGain();
+    subOsc.type = 'sine';
+    subOsc.frequency.setValueAtTime(45, now);
+    subOsc.frequency.exponentialRampToValueAtTime(90, now + 1.2);
+
+    subGain.gain.setValueAtTime(0.01, now);
+    subGain.gain.linearRampToValueAtTime(0.35, now + 0.9);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 1.25);
+
+    subOsc.connect(subGain);
+    subGain.connect(this.masterGain);
+    subOsc.start(now);
+    subOsc.stop(now + 1.25);
+
+    // 2. Rising crystalline resonance
+    const chimeOsc = this.ctx.createOscillator();
+    const chimeFilter = this.ctx.createBiquadFilter();
+    const chimeGain = this.ctx.createGain();
+
+    chimeOsc.type = 'triangle';
+    chimeOsc.frequency.setValueAtTime(280, now);
+    chimeOsc.frequency.exponentialRampToValueAtTime(880, now + 1.2);
+
+    chimeFilter.type = 'bandpass';
+    chimeFilter.frequency.setValueAtTime(350, now);
+    chimeFilter.frequency.exponentialRampToValueAtTime(1400, now + 1.2);
+    chimeFilter.Q.value = 5.0;
+
+    chimeGain.gain.setValueAtTime(0.02, now);
+    chimeGain.gain.linearRampToValueAtTime(0.28, now + 1.1);
+    chimeGain.gain.exponentialRampToValueAtTime(0.001, now + 1.25);
+
+    chimeOsc.connect(chimeFilter);
+    chimeFilter.connect(chimeGain);
+    chimeGain.connect(this.masterGain);
+    chimeOsc.start(now);
+    chimeOsc.stop(now + 1.25);
+  }
+
+  /**
+   * Powerful Supernova Impact: Sub-bass boom + crystal harmonic splash
+   */
+  public playSupernovaImpact(): void {
+    if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
+    const now = this.ctx.currentTime;
+
+    // 1. Sub-bass impact drop
+    const boomOsc = this.ctx.createOscillator();
+    const boomGain = this.ctx.createGain();
+    boomOsc.type = 'sine';
+    boomOsc.frequency.setValueAtTime(95, now);
+    boomOsc.frequency.exponentialRampToValueAtTime(28, now + 0.8);
+
+    boomGain.gain.setValueAtTime(0.7, now);
+    boomGain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+
+    boomOsc.connect(boomGain);
+    boomGain.connect(this.masterGain);
+    boomOsc.start(now);
+    boomOsc.stop(now + 0.9);
+
+    // 2. Crystal chime dispersion
+    const chimeOsc = this.ctx.createOscillator();
+    const chimeGain = this.ctx.createGain();
+    chimeOsc.type = 'sine';
+    chimeOsc.frequency.setValueAtTime(1200, now);
+    chimeOsc.frequency.exponentialRampToValueAtTime(1800, now + 0.3);
+
+    chimeGain.gain.setValueAtTime(0.4, now);
+    chimeGain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+
+    chimeOsc.connect(chimeGain);
+    chimeGain.connect(this.masterGain);
+    chimeOsc.start(now);
+    chimeOsc.stop(now + 1.2);
+  }
 }
 
 export const audioEngine = new ProceduralAudioEngine();

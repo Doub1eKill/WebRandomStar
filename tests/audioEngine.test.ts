@@ -40,8 +40,15 @@ describe('Procedural Web Audio Engine', () => {
     }).not.toThrow();
   });
 
-  it('should have playHeartbeatRiser and playSupernovaBoom methods defined', () => {
+  it('should have playHeartbeatRiser, playSupernovaBoom, playSuspenseRiser, and playSupernovaImpact methods defined', () => {
     expect(typeof (audioEngine as any).playHeartbeatRiser).toBe('function');
     expect(typeof (audioEngine as any).playSupernovaBoom).toBe('function');
+    expect(typeof (audioEngine as any).playSuspenseRiser).toBe('function');
+    expect(typeof (audioEngine as any).playSupernovaImpact).toBe('function');
+  });
+
+  it('should trigger playSuspenseRiser and playSupernovaImpact without throwing', () => {
+    expect(() => audioEngine.playSuspenseRiser()).not.toThrow();
+    expect(() => audioEngine.playSupernovaImpact()).not.toThrow();
   });
 });
