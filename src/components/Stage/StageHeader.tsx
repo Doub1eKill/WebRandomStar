@@ -31,9 +31,10 @@ export const StageHeader: React.FC<StageHeaderProps> = ({ round, currentState })
       <div className="header-left">
         <div className="brand-badge">
           <span className="brand-dot" />
-          <span className="brand-season">รอยต่อฤดู</span>
+          <span className="brand-season">✦ CHARM OF TRANSITION</span>
         </div>
-        <h1 className="event-title">Season Transition Question</h1>
+        <h1 className="event-title">CHARM OF TRANSITION</h1>
+        <p className="event-subtitle">มนต์เสน่ห์แห่งรอยต่อฤดู — ปลายฝนต้นหนาว</p>
       </div>
 
       <div className="header-right">
