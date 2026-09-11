@@ -10,10 +10,21 @@ interface LeafTrailParticle {
   color: string;
 }
 
+interface LeafRipple {
+  x: number;
+  y: number;
+  radius: number;
+  maxRadius: number;
+  alpha: number;
+  speed: number;
+}
+
 export class LeafSystem {
   private ambientLeaves: LeafParticle[] = [];
   public heroLeaf: LeafParticle | null = null;
   private heroTrail: LeafTrailParticle[] = [];
+  private ripples: LeafRipple[] = [];
+  public onHeroLeafLanded?: () => void;
   private width: number = 0;
   private height: number = 0;
   public active: boolean = false;
@@ -54,6 +65,14 @@ export class LeafSystem {
     this.height = height;
   }
 
+  public reset(): void {
+    this.heroLeaf = null;
+    this.heroLanded = false;
+    this.heroTrail = [];
+    this.ripples = [];
+    this.active = false;
+  }
+
   public spawnHeroLeaf(targetX: number, targetY: number): void {
     this.heroLeaf = {
       x: -40,
@@ -71,6 +90,23 @@ export class LeafSystem {
     };
     this.heroLanded = false;
     this.heroTrail = [];
+    this.ripples = [];
+  }
+
+  private spawnRipples(x: number, y: number): void {
+    const delays = [0, 16, 32];
+    delays.forEach((delay, idx) => {
+      setTimeout(() => {
+        this.ripples.push({
+          x,
+          y,
+          radius: 8 + idx * 6,
+          maxRadius: 220 + idx * 40,
+          alpha: 1.0,
+          speed: 3.6 - idx * 0.35
+        });
+      }, delay * 16);
+    });
   }
 
   public update(): void {
@@ -114,7 +150,11 @@ export class LeafSystem {
       if (dist < 8) {
         this.heroLeaf.x = targetX;
         this.heroLeaf.y = targetY;
-        this.heroLanded = true;
+        if (!this.heroLanded) {
+          this.heroLanded = true;
+          this.spawnRipples(targetX, targetY);
+          this.onHeroLeafLanded?.();
+        }
       } else {
         this.heroLeaf.x += (dx / dist) * Math.min(dist * 0.05 + 1.2, 5.0);
         this.heroLeaf.y += (dy / dist) * Math.min(dist * 0.05 + 1.2, 5.0) + Math.sin(this.heroLeaf.x * 0.05) * 1.5;
@@ -130,6 +170,16 @@ export class LeafSystem {
       p.alpha -= 0.024;
       if (p.alpha <= 0) {
         this.heroTrail.splice(i, 1);
+      }
+    }
+
+    // Update water ripples
+    for (let i = this.ripples.length - 1; i >= 0; i--) {
+      const r = this.ripples[i];
+      r.radius += r.speed;
+      r.alpha = Math.max(0, 1 - r.radius / r.maxRadius);
+      if (r.radius >= r.maxRadius || r.alpha <= 0.01) {
+        this.ripples.splice(i, 1);
       }
     }
   }
@@ -184,7 +234,32 @@ export class LeafSystem {
       this.drawLeafShape(ctx, leaf);
     }
 
-    // 3. Draw hero selection leaf
+    // 3. Draw golden water ripples upon leaf landing
+    if (this.ripples.length > 0) {
+      ctx.save();
+      for (const r of this.ripples) {
+        const a = r.alpha * this.opacity;
+        if (a <= 0.01) continue;
+
+        ctx.strokeStyle = `rgba(253, 224, 71, ${a * 0.88})`;
+        ctx.lineWidth = Math.max(1, 3.2 * a);
+        ctx.shadowColor = '#f59e0b';
+        ctx.shadowBlur = 12;
+
+        ctx.beginPath();
+        ctx.ellipse(r.x, r.y, r.radius, r.radius * 0.52, 0, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.strokeStyle = `rgba(255, 255, 255, ${a * 0.55})`;
+        ctx.lineWidth = Math.max(0.8, 1.4 * a);
+        ctx.beginPath();
+        ctx.ellipse(r.x, r.y, r.radius * 0.72, r.radius * 0.38, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // 4. Draw hero selection leaf
     if (this.heroLeaf) {
       // Golden beacon glow around hero leaf
       ctx.save();
