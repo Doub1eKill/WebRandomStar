@@ -37,6 +37,7 @@ export class LeafSystem {
   private ripples: LeafRipple[] = [];
   private sparkles: LeafSparkle[] = [];
   public onHeroLeafLanded?: () => void;
+  public onHeroLeafArrived?: () => void;
   private width: number = 0;
   private height: number = 0;
   public active: boolean = false;
@@ -125,16 +126,16 @@ export class LeafSystem {
     });
   }
 
-  private spawnSparkles(x: number, y: number): void {
-    for (let i = 0; i < 16; i++) {
-      const angle = (Math.PI * 2 / 16) * i + (Math.random() - 0.5) * 0.3;
-      const speed = 2.0 + Math.random() * 4.0;
+  public spawnSparkles(x: number, y: number, count: number = 24): void {
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.3;
+      const speed = 2.5 + Math.random() * 5.0;
       this.sparkles.push({
         x,
         y,
         vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed * 0.7,
-        size: 5 + Math.random() * 9,
+        vy: Math.sin(angle) * speed * 0.75,
+        size: 5 + Math.random() * 10,
         alpha: 1.0,
         rot: Math.random() * Math.PI,
         rotSpeed: (Math.random() - 0.5) * 0.08
@@ -186,8 +187,12 @@ export class LeafSystem {
         if (!this.heroLanded) {
           this.heroLanded = true;
           this.spawnRipples(targetX, targetY);
-          this.spawnSparkles(targetX, targetY);
-          this.onHeroLeafLanded?.();
+          this.spawnSparkles(targetX, targetY, 16);
+          if (this.onHeroLeafArrived) {
+            this.onHeroLeafArrived();
+          } else {
+            this.onHeroLeafLanded?.();
+          }
         }
       } else {
         this.heroLeaf.x += (dx / dist) * Math.min(dist * 0.05 + 1.2, 5.0);

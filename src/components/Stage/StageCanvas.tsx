@@ -13,10 +13,24 @@ interface StageCanvasProps {
   onMeteorImpact?: () => void;
 }
 
-export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onLeafLanded, onMeteorImpact }) => {
+interface ShockwaveRing {
+  x: number;
+  y: number;
+  radius: number;
+  maxRadius: number;
+  alpha: number;
+  speed: number;
+  color: string;
+}
+
+export const StageCanvas: React.FC<StageCanvasProps> = ({
+  session,
+  onLeafLanded,
+  onMeteorImpact
+}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // Natural transition particle systems
+  // Canvas particle & atmospheric systems
   const rainRef = useRef<RainSystem>(new RainSystem());
   const dropRef = useRef<WaterDropSystem>(new WaterDropSystem());
   const mistRef = useRef<MistSystem>(new MistSystem());
@@ -24,6 +38,12 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onLeafLanded,
   const skyRef = useRef<SkySystem>(new SkySystem());
   const goldenBloomFlashRef = useRef<number>(0);
   const verticalBeamFlashRef = useRef<number>(0);
+
+  // Cinematic Suspense & Supernova Engine refs
+  const suspenseTimerRef = useRef<number>(0);
+  const isSuspenseActiveRef = useRef<boolean>(false);
+  const dimVignetteRef = useRef<number>(0);
+  const shockwaveRingsRef = useRef<ShockwaveRing[]>([]);
 
   // Smooth cross-fade target values
   const targetsRef = useRef({
@@ -53,6 +73,10 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onLeafLanded,
         leaf.reset();
         goldenBloomFlashRef.current = 0;
         verticalBeamFlashRef.current = 0;
+        suspenseTimerRef.current = 0;
+        isSuspenseActiveRef.current = false;
+        dimVignetteRef.current = 0;
+        shockwaveRingsRef.current = [];
         break;
 
       case 'rain':
@@ -119,13 +143,23 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onLeafLanded,
         leaf.active = true;
         audioEngine.playLeafRustle();
 
-        // Callback when the diamond hero leaf lands in center
+        // Callback when the diamond hero leaf reaches the center pedestal
+        leaf.onHeroLeafArrived = () => {
+          isSuspenseActiveRef.current = true;
+          suspenseTimerRef.current = 1.2; // 1.2s suspense beat
+          dimVignetteRef.current = 0.72; // Hall spotlight dimming
+          audioEngine.playSuspenseRiser(); // Deep heartbeat pulse & crystalline riser
+        };
+
+        // Fallback or explicit landing callback
         leaf.onHeroLeafLanded = () => {
-          audioEngine.playWaterDrop();
-          goldenBloomFlashRef.current = 0.6; // royal amethyst/diamond bloom
-          verticalBeamFlashRef.current = 1.0; // upward vertical violet spotlight beam!
-          if (onLeafLanded) onLeafLanded();
-          else if (onMeteorImpact) onMeteorImpact();
+          if (!isSuspenseActiveRef.current && suspenseTimerRef.current <= 0) {
+            audioEngine.playSupernovaImpact();
+            goldenBloomFlashRef.current = 0.9;
+            verticalBeamFlashRef.current = 1.0;
+            if (onLeafLanded) onLeafLanded();
+            else if (onMeteorImpact) onMeteorImpact();
+          }
         };
 
         // Target center position where QuestionCard will bloom
@@ -241,7 +275,122 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onLeafLanded,
       leaf.update();
       leaf.draw(ctx);
 
-      // 6. Royal Amethyst & Diamond Bloom Illumination upon Leaf Landing
+      // --- 6. Cinematic Suspense Buildup (1.2s beat before QuestionCard reveals) ---
+      if (isSuspenseActiveRef.current) {
+        suspenseTimerRef.current -= 0.016;
+
+        // Stage Dimming Vignette to focus attention on center
+        if (dimVignetteRef.current > 0.01) {
+          ctx.save();
+          const vig = ctx.createRadialGradient(
+            width * 0.5, height * 0.46, 50,
+            width * 0.5, height * 0.46, width * 0.8
+          );
+          vig.addColorStop(0, 'rgba(0, 0, 0, 0)');
+          vig.addColorStop(0.5, `rgba(4, 3, 16, ${dimVignetteRef.current * 0.55})`);
+          vig.addColorStop(1, `rgba(2, 2, 10, ${dimVignetteRef.current})`);
+          ctx.fillStyle = vig;
+          ctx.fillRect(0, 0, width, height);
+          ctx.restore();
+        }
+
+        // Contracting Diamond Laser Rings
+        if (suspenseTimerRef.current > 0) {
+          ctx.save();
+          const progress = Math.min(1, Math.max(0, 1 - (suspenseTimerRef.current / 1.2)));
+          const centerX = width * 0.5;
+          const centerY = height * 0.46;
+
+          [0, 0.28, 0.56].forEach((offset) => {
+            const p = (progress + offset) % 1;
+            const ringRadius = Math.max(1, (1 - p) * 220);
+            const ringAlpha = Math.sin(p * Math.PI) * 0.85;
+
+            ctx.strokeStyle = `rgba(224, 200, 255, ${ringAlpha})`;
+            ctx.lineWidth = 1.8 + (1 - p) * 1.5;
+            ctx.shadowColor = '#c084fc';
+            ctx.shadowBlur = 12;
+
+            ctx.beginPath();
+            ctx.ellipse(centerX, centerY, ringRadius, ringRadius * 0.48, 0, 0, Math.PI * 2);
+            ctx.stroke();
+          });
+
+          // Pulsing core beacon at center pedestal
+          const corePulse = Math.sin(Date.now() * 0.015) * 0.25 + 0.8;
+          const coreGrad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 38 * corePulse);
+          coreGrad.addColorStop(0, `rgba(255, 255, 255, ${0.95 * corePulse})`);
+          coreGrad.addColorStop(0.4, `rgba(192, 132, 252, ${0.65 * corePulse})`);
+          coreGrad.addColorStop(1, 'rgba(168, 85, 247, 0)');
+          ctx.fillStyle = coreGrad;
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, 38 * corePulse, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.restore();
+        }
+
+        // Supernova Climax trigger upon countdown completion
+        if (suspenseTimerRef.current <= 0) {
+          isSuspenseActiveRef.current = false;
+          dimVignetteRef.current = 0.35; // Fades out smoothly
+
+          // 1. Supernova impact audio
+          audioEngine.playSupernovaImpact();
+
+          // 2. High-intensity bloom & vertical lens flare
+          goldenBloomFlashRef.current = 1.0;
+          verticalBeamFlashRef.current = 1.0;
+
+          // 3. Screen-wide Shockwave Rings
+          const centerX = width * 0.5;
+          const centerY = height * 0.46;
+          const maxDist = Math.max(width, height) * 0.88;
+          shockwaveRingsRef.current = [
+            { x: centerX, y: centerY, radius: 10, maxRadius: maxDist, alpha: 1.0, speed: 28, color: '#ffffff' },
+            { x: centerX, y: centerY, radius: 6, maxRadius: maxDist * 0.82, alpha: 0.9, speed: 20, color: '#c084fc' },
+            { x: centerX, y: centerY, radius: 2, maxRadius: maxDist * 0.65, alpha: 0.8, speed: 14, color: '#a855f7' }
+          ];
+
+          // 4. Sparkles scatter burst
+          leaf.spawnSparkles(centerX, centerY, 28);
+
+          // 5. Trigger transition to 'question' state
+          if (onLeafLanded) onLeafLanded();
+          else if (onMeteorImpact) onMeteorImpact();
+        }
+      } else if (dimVignetteRef.current > 0.01) {
+        dimVignetteRef.current *= 0.92;
+      }
+
+      // Render Expanding Shockwave Rings across screen
+      if (shockwaveRingsRef.current.length > 0) {
+        ctx.save();
+        for (let i = shockwaveRingsRef.current.length - 1; i >= 0; i--) {
+          const sw = shockwaveRingsRef.current[i];
+          sw.radius += sw.speed;
+          sw.alpha = Math.max(0, 1 - sw.radius / sw.maxRadius);
+
+          if (sw.alpha <= 0.01 || sw.radius >= sw.maxRadius) {
+            shockwaveRingsRef.current.splice(i, 1);
+            continue;
+          }
+
+          ctx.strokeStyle = sw.color === '#ffffff'
+            ? `rgba(255, 255, 255, ${sw.alpha * 0.95})`
+            : `rgba(192, 132, 252, ${sw.alpha * 0.85})`;
+          ctx.lineWidth = Math.max(1, 4.5 * sw.alpha);
+          ctx.shadowColor = sw.color;
+          ctx.shadowBlur = 18;
+
+          ctx.beginPath();
+          ctx.ellipse(sw.x, sw.y, sw.radius, sw.radius * 0.48, 0, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // 7. Royal Amethyst & Diamond Bloom Illumination upon Supernova
       if (goldenBloomFlashRef.current > 0.01) {
         ctx.save();
         const flashGlow = ctx.createRadialGradient(
