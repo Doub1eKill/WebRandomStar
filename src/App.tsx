@@ -82,7 +82,7 @@ export const App: React.FC = () => {
   return (
     <div className="stage-app-viewport" style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
       {/* 1. Canvas 2D Physics & Celestial Environment */}
-      <StageCanvas session={session} onMeteorImpact={skipToQuestion} />
+      <StageCanvas session={session} onLeafLanded={skipToQuestion} onMeteorImpact={skipToQuestion} />
 
       {/* 2. React UI Stage Overlay */}
       <StageOverlay
