@@ -33,8 +33,10 @@ export const StageHeader: React.FC<StageHeaderProps> = ({ round, currentState })
           <span className="brand-dot" />
           <span className="brand-season">✦ CHARM OF TRANSITION</span>
         </div>
-        <h1 className="event-title">CHARM OF TRANSITION</h1>
-        <p className="event-subtitle">มนต์เสน่ห์แห่งรอยต่อฤดู — ปลายฝนต้นหนาว</p>
+        <div className="header-titles">
+          <h1 className="event-title">CHARM OF TRANSITION</h1>
+          <p className="event-subtitle">มนต์เสน่ห์แห่งรอยต่อฤดู — ปลายฝนต้นหนาว</p>
+        </div>
       </div>
 
       <div className="header-right">

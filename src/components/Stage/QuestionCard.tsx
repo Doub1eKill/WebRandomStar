@@ -8,13 +8,13 @@ interface QuestionCardProps {
 }
 
 const CATEGORY_DETAILS: Record<QuestionCategory, { name: string; icon: string; subtitle: string; color: string }> = {
-  rain: { name: 'ความรู้สึกและตัวตน', icon: '🌧️', subtitle: 'Feelings & Identity', color: '#38bdf8' },
-  mist: { name: 'มุมมองและทัศนคติ', icon: '🌫️', subtitle: 'Perspective & Attitude', color: '#94a3b8' },
-  wind: { name: 'การเปลี่ยนแปลง', icon: '🍃', subtitle: 'Change & Challenge', color: '#86efac' },
-  leaf: { name: 'ประสบการณ์และชีวิต', icon: '🍂', subtitle: 'Experience & Memory', color: '#fbbf24' },
-  moon: { name: 'ความฝันและเป้าหมาย', icon: '🌙', subtitle: 'Dreams & Ambition', color: '#e2e8f0' },
-  star: { name: 'สังคมและภาวะผู้นำ', icon: '⭐', subtitle: 'Society & Leadership', color: '#fde047' },
-  final: { name: 'คำถามรอบตัดสิน', icon: '☄️', subtitle: 'Final Decisive Question', color: '#f43f5e' }
+  rain: { name: 'สายฝนแห่งการปรับตัว', icon: '🌧️', subtitle: 'Adaptability & Growth', color: '#38bdf8' },
+  mist: { name: 'สายหมอกแห่งวิสัยทัศน์', icon: '🌫️', subtitle: 'Vision & Perspective', color: '#94a3b8' },
+  wind: { name: 'ลมหนาวแห่งแรงบันดาลใจ', icon: '🍃', subtitle: 'Leadership & Impact', color: '#86efac' },
+  leaf: { name: 'ใบไม้ทองแห่งพันธกิจ', icon: '🍂', subtitle: 'Purpose & Legacy', color: '#fbbf24' },
+  moon: { name: 'แสงจันทร์สะท้อนคุณค่า', icon: '🌙', subtitle: 'Authenticity & Empathy', color: '#e2e8f0' },
+  star: { name: 'คุณค่าและความเป็นผู้นำ', icon: '⭐', subtitle: 'Character & Leadership', color: '#fde047' },
+  final: { name: 'คำถามรอบตัดสิน', icon: '👑', subtitle: 'Final Decisive Question', color: '#f43f5e' }
 };
 
 export const QuestionCard: React.FC<QuestionCardProps> = ({ question, isAnswered, onNext }) => {
