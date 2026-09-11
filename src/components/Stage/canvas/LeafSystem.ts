@@ -19,11 +19,23 @@ interface LeafRipple {
   speed: number;
 }
 
+interface LeafSparkle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  alpha: number;
+  rot: number;
+  rotSpeed: number;
+}
+
 export class LeafSystem {
   private ambientLeaves: LeafParticle[] = [];
   public heroLeaf: LeafParticle | null = null;
   private heroTrail: LeafTrailParticle[] = [];
   private ripples: LeafRipple[] = [];
+  private sparkles: LeafSparkle[] = [];
   public onHeroLeafLanded?: () => void;
   private width: number = 0;
   private height: number = 0;
@@ -31,15 +43,17 @@ export class LeafSystem {
   public heroLanded: boolean = false;
   public opacity: number = 0.0;
 
+  // Royal Pageant & Transition Palette: Amethyst, Frosted Diamond, Royal Gold
   private colors = [
-    '#d97706', // amber
-    '#b45309', // deep amber
-    '#ca8a04', // golden autumn
-    '#ea580c', // orange red
-    '#92400e'  // warm rust
+    '#c084fc', // amethyst violet
+    '#a855f7', // royal purple
+    '#e0e7ff', // frosted diamond
+    '#ede9fe', // lavender crystal
+    '#fbbf24', // pageant gold
+    '#818cf8'  // twilight periwinkle
   ];
 
-  constructor(ambientCount: number = 16) {
+  constructor(ambientCount: number = 18) {
     for (let i = 0; i < ambientCount; i++) {
       this.ambientLeaves.push(this.createRandomLeaf());
     }
@@ -56,7 +70,7 @@ export class LeafSystem {
       vy: 0.8 + Math.random() * 1.5,
       color: this.colors[Math.floor(Math.random() * this.colors.length)],
       shapeType: Math.random() < 0.5 ? 'oval' : 'willow',
-      opacity: 0.6 + Math.random() * 0.3
+      opacity: 0.65 + Math.random() * 0.3
     };
   }
 
@@ -70,6 +84,7 @@ export class LeafSystem {
     this.heroLanded = false;
     this.heroTrail = [];
     this.ripples = [];
+    this.sparkles = [];
     this.active = false;
   }
 
@@ -77,12 +92,12 @@ export class LeafSystem {
     this.heroLeaf = {
       x: -40,
       y: this.height * 0.35 + (Math.random() - 0.5) * 100,
-      size: 32,
+      size: 34,
       rotation: 0,
-      rotSpeed: 0.04,
-      vx: 4.5,
+      rotSpeed: 0.035,
+      vx: 4.8,
       vy: 1.8,
-      color: '#f59e0b',
+      color: '#ffffff',
       shapeType: 'maple',
       opacity: 1,
       targetX,
@@ -91,28 +106,46 @@ export class LeafSystem {
     this.heroLanded = false;
     this.heroTrail = [];
     this.ripples = [];
+    this.sparkles = [];
   }
 
   private spawnRipples(x: number, y: number): void {
-    const delays = [0, 16, 32];
+    const delays = [0, 14, 28, 42];
     delays.forEach((delay, idx) => {
       setTimeout(() => {
         this.ripples.push({
           x,
           y,
           radius: 8 + idx * 6,
-          maxRadius: 220 + idx * 40,
+          maxRadius: 240 + idx * 45,
           alpha: 1.0,
-          speed: 3.6 - idx * 0.35
+          speed: 3.8 - idx * 0.35
         });
       }, delay * 16);
     });
   }
 
+  private spawnSparkles(x: number, y: number): void {
+    for (let i = 0; i < 16; i++) {
+      const angle = (Math.PI * 2 / 16) * i + (Math.random() - 0.5) * 0.3;
+      const speed = 2.0 + Math.random() * 4.0;
+      this.sparkles.push({
+        x,
+        y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed * 0.7,
+        size: 5 + Math.random() * 9,
+        alpha: 1.0,
+        rot: Math.random() * Math.PI,
+        rotSpeed: (Math.random() - 0.5) * 0.08
+      });
+    }
+  }
+
   public update(): void {
     if (!this.active && this.opacity <= 0.01) return;
 
-    // Update ambient leaves
+    // Update ambient transition leaves
     for (const leaf of this.ambientLeaves) {
       leaf.x += leaf.vx;
       leaf.y += leaf.vy + Math.sin(leaf.x * 0.02) * 0.8;
@@ -124,7 +157,7 @@ export class LeafSystem {
       }
     }
 
-    // Update hero selection leaf & emit golden stardust
+    // Update Crystalline Diamond hero leaf & emit stardust
     if (this.heroLeaf && !this.heroLanded) {
       const targetX = this.heroLeaf.targetX ?? this.width * 0.5;
       const targetY = this.heroLeaf.targetY ?? this.height * 0.5;
@@ -133,16 +166,16 @@ export class LeafSystem {
       const dy = targetY - this.heroLeaf.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
 
-      // Emit trailing golden stardust particles
-      const trailColors = ['#f59e0b', '#fbbf24', '#fde047', '#ffffff'];
-      for (let i = 0; i < 2; i++) {
+      // Emit trailing diamond & violet stardust particles
+      const trailColors = ['#ffffff', '#f3e8ff', '#e0e7ff', '#d8b4fe', '#c084fc'];
+      for (let i = 0; i < 3; i++) {
         this.heroTrail.push({
-          x: this.heroLeaf.x + (Math.random() - 0.5) * 12,
-          y: this.heroLeaf.y + (Math.random() - 0.5) * 12,
-          vx: (Math.random() - 0.5) * 0.8 - 0.8,
-          vy: (Math.random() - 0.5) * 0.8,
-          radius: 1.5 + Math.random() * 2.8,
-          alpha: 0.85 + Math.random() * 0.15,
+          x: this.heroLeaf.x + (Math.random() - 0.5) * 14,
+          y: this.heroLeaf.y + (Math.random() - 0.5) * 14,
+          vx: (Math.random() - 0.5) * 0.9 - 0.9,
+          vy: (Math.random() - 0.5) * 0.9,
+          radius: 1.5 + Math.random() * 3.2,
+          alpha: 0.9 + Math.random() * 0.1,
           color: trailColors[Math.floor(Math.random() * trailColors.length)]
         });
       }
@@ -153,6 +186,7 @@ export class LeafSystem {
         if (!this.heroLanded) {
           this.heroLanded = true;
           this.spawnRipples(targetX, targetY);
+          this.spawnSparkles(targetX, targetY);
           this.onHeroLeafLanded?.();
         }
       } else {
@@ -182,29 +216,83 @@ export class LeafSystem {
         this.ripples.splice(i, 1);
       }
     }
+
+    // Update diamond starburst sparkles
+    for (let i = this.sparkles.length - 1; i >= 0; i--) {
+      const s = this.sparkles[i];
+      s.x += s.vx;
+      s.y += s.vy;
+      s.rot += s.rotSpeed;
+      s.alpha -= 0.022;
+      s.size *= 0.985;
+      if (s.alpha <= 0.01) {
+        this.sparkles.splice(i, 1);
+      }
+    }
   }
 
   private drawLeafShape(ctx: CanvasRenderingContext2D, leaf: LeafParticle): void {
     ctx.save();
     ctx.translate(leaf.x, leaf.y);
     ctx.rotate(leaf.rotation);
-    ctx.fillStyle = leaf.color;
     ctx.globalAlpha = leaf.opacity * this.opacity;
+
+    const isHero = leaf === this.heroLeaf;
+
+    if (isHero) {
+      // Faceted Crystalline Diamond Hero Leaf
+      const grad = ctx.createLinearGradient(0, -leaf.size, 0, leaf.size);
+      grad.addColorStop(0, '#ffffff');
+      grad.addColorStop(0.35, '#f3e8ff');
+      grad.addColorStop(0.7, '#e0e7ff');
+      grad.addColorStop(1, '#c084fc');
+      ctx.fillStyle = grad;
+
+      ctx.shadowColor = '#c084fc';
+      ctx.shadowBlur = 20;
+    } else {
+      ctx.fillStyle = leaf.color;
+    }
 
     // Leaf silhouette
     ctx.beginPath();
     ctx.moveTo(0, -leaf.size);
-    ctx.bezierCurveTo(leaf.size * 0.6, -leaf.size * 0.4, leaf.size * 0.6, leaf.size * 0.4, 0, leaf.size);
-    ctx.bezierCurveTo(-leaf.size * 0.6, leaf.size * 0.4, -leaf.size * 0.6, -leaf.size * 0.4, 0, -leaf.size);
+    ctx.bezierCurveTo(leaf.size * 0.65, -leaf.size * 0.4, leaf.size * 0.65, leaf.size * 0.4, 0, leaf.size);
+    ctx.bezierCurveTo(-leaf.size * 0.65, leaf.size * 0.4, -leaf.size * 0.65, -leaf.size * 0.4, 0, -leaf.size);
     ctx.fill();
 
-    // Central leaf vein
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(0, -leaf.size * 0.9);
-    ctx.lineTo(0, leaf.size * 0.9);
-    ctx.stroke();
+    if (isHero) {
+      // Crystalline Facet Highlights & Veins
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.92)';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      // Center vein
+      ctx.moveTo(0, -leaf.size * 0.92);
+      ctx.lineTo(0, leaf.size * 0.92);
+      // Diamond facets
+      ctx.moveTo(0, -leaf.size * 0.3);
+      ctx.lineTo(leaf.size * 0.45, 0);
+      ctx.moveTo(0, -leaf.size * 0.3);
+      ctx.lineTo(-leaf.size * 0.45, 0);
+      ctx.moveTo(0, leaf.size * 0.3);
+      ctx.lineTo(leaf.size * 0.45, 0);
+      ctx.moveTo(0, leaf.size * 0.3);
+      ctx.lineTo(-leaf.size * 0.45, 0);
+      ctx.stroke();
+
+      // Diamond perimeter glint
+      ctx.strokeStyle = 'rgba(235, 220, 255, 0.75)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    } else {
+      // Central leaf vein for ambient leaf
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(0, -leaf.size * 0.9);
+      ctx.lineTo(0, leaf.size * 0.9);
+      ctx.stroke();
+    }
 
     ctx.restore();
   }
@@ -220,8 +308,8 @@ export class LeafSystem {
         if (a <= 0.01) continue;
         ctx.fillStyle = p.color;
         ctx.globalAlpha = a;
-        ctx.shadowColor = '#fbbf24';
-        ctx.shadowBlur = 8;
+        ctx.shadowColor = '#c084fc';
+        ctx.shadowBlur = 10;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fill();
@@ -234,24 +322,27 @@ export class LeafSystem {
       this.drawLeafShape(ctx, leaf);
     }
 
-    // 3. Draw golden water ripples upon leaf landing
+    // 3. Draw concentric violet-diamond water ripples upon leaf landing
     if (this.ripples.length > 0) {
       ctx.save();
       for (const r of this.ripples) {
         const a = r.alpha * this.opacity;
         if (a <= 0.01) continue;
 
-        ctx.strokeStyle = `rgba(253, 224, 71, ${a * 0.88})`;
+        // Outer Amethyst ripple
+        ctx.strokeStyle = `rgba(192, 132, 252, ${a * 0.88})`;
         ctx.lineWidth = Math.max(1, 3.2 * a);
-        ctx.shadowColor = '#f59e0b';
-        ctx.shadowBlur = 12;
-
+        ctx.shadowColor = '#a855f7';
+        ctx.shadowBlur = 14;
         ctx.beginPath();
         ctx.ellipse(r.x, r.y, r.radius, r.radius * 0.52, 0, 0, Math.PI * 2);
         ctx.stroke();
 
-        ctx.strokeStyle = `rgba(255, 255, 255, ${a * 0.55})`;
-        ctx.lineWidth = Math.max(0.8, 1.4 * a);
+        // Inner Diamond-white ripple
+        ctx.strokeStyle = `rgba(255, 255, 255, ${a * 0.92})`;
+        ctx.lineWidth = Math.max(0.8, 1.6 * a);
+        ctx.shadowColor = '#ffffff';
+        ctx.shadowBlur = 8;
         ctx.beginPath();
         ctx.ellipse(r.x, r.y, r.radius * 0.72, r.radius * 0.38, 0, 0, Math.PI * 2);
         ctx.stroke();
@@ -259,19 +350,52 @@ export class LeafSystem {
       ctx.restore();
     }
 
-    // 4. Draw hero selection leaf
+    // 4. Draw Diamond Starburst Sparkles expanding upon landing
+    if (this.sparkles.length > 0) {
+      ctx.save();
+      for (const s of this.sparkles) {
+        const a = s.alpha * this.opacity;
+        if (a <= 0.01) continue;
+
+        ctx.save();
+        ctx.translate(s.x, s.y);
+        ctx.rotate(s.rot);
+        ctx.globalAlpha = a;
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = '#c084fc';
+        ctx.shadowBlur = 12;
+
+        const sz = s.size;
+        const inner = sz * 0.24;
+        // 4-pointed diamond starburst
+        ctx.beginPath();
+        ctx.moveTo(0, -sz);
+        ctx.quadraticCurveTo(0, -inner, inner, 0);
+        ctx.quadraticCurveTo(0, inner, 0, sz);
+        ctx.quadraticCurveTo(0, inner, -inner, 0);
+        ctx.quadraticCurveTo(0, -inner, 0, -sz);
+        ctx.fill();
+
+        ctx.restore();
+      }
+      ctx.restore();
+    }
+
+    // 5. Draw hero selection leaf
     if (this.heroLeaf) {
-      // Golden beacon glow around hero leaf
+      // Amethyst Diamond aura glow around hero leaf
       ctx.save();
       const glow = ctx.createRadialGradient(
         this.heroLeaf.x, this.heroLeaf.y, 4,
-        this.heroLeaf.x, this.heroLeaf.y, this.heroLeaf.size * 1.8
+        this.heroLeaf.x, this.heroLeaf.y, this.heroLeaf.size * 2.2
       );
-      glow.addColorStop(0, `rgba(245, 158, 11, ${0.45 * this.opacity})`);
-      glow.addColorStop(1, 'rgba(245, 158, 11, 0)');
+      glow.addColorStop(0, `rgba(255, 255, 255, ${0.7 * this.opacity})`);
+      glow.addColorStop(0.35, `rgba(192, 132, 252, ${0.45 * this.opacity})`);
+      glow.addColorStop(0.7, `rgba(168, 85, 247, ${0.2 * this.opacity})`);
+      glow.addColorStop(1, 'rgba(168, 85, 247, 0)');
       ctx.fillStyle = glow;
       ctx.beginPath();
-      ctx.arc(this.heroLeaf.x, this.heroLeaf.y, this.heroLeaf.size * 1.8, 0, Math.PI * 2);
+      ctx.arc(this.heroLeaf.x, this.heroLeaf.y, this.heroLeaf.size * 2.2, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
 

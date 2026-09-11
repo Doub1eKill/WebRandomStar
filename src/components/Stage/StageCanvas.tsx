@@ -23,6 +23,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onLeafLanded,
   const leafRef = useRef<LeafSystem>(new LeafSystem());
   const skyRef = useRef<SkySystem>(new SkySystem());
   const goldenBloomFlashRef = useRef<number>(0);
+  const verticalBeamFlashRef = useRef<number>(0);
 
   // Smooth cross-fade target values
   const targetsRef = useRef({
@@ -51,6 +52,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onLeafLanded,
         };
         leaf.reset();
         goldenBloomFlashRef.current = 0;
+        verticalBeamFlashRef.current = 0;
         break;
 
       case 'rain':
@@ -117,10 +119,11 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onLeafLanded,
         leaf.active = true;
         audioEngine.playLeafRustle();
 
-        // Callback when the golden hero leaf lands in center
+        // Callback when the diamond hero leaf lands in center
         leaf.onHeroLeafLanded = () => {
           audioEngine.playWaterDrop();
-          goldenBloomFlashRef.current = 0.45; // subtle golden glow bloom
+          goldenBloomFlashRef.current = 0.6; // royal amethyst/diamond bloom
+          verticalBeamFlashRef.current = 1.0; // upward vertical violet spotlight beam!
           if (onLeafLanded) onLeafLanded();
           else if (onMeteorImpact) onMeteorImpact();
         };
@@ -238,21 +241,74 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onLeafLanded,
       leaf.update();
       leaf.draw(ctx);
 
-      // 6. Golden Bloom Subtle Illumination upon Leaf Landing
+      // 6. Royal Amethyst & Diamond Bloom Illumination upon Leaf Landing
       if (goldenBloomFlashRef.current > 0.01) {
         ctx.save();
         const flashGlow = ctx.createRadialGradient(
-          width * 0.5, height * 0.46, 30,
-          width * 0.5, height * 0.46, width * 0.6
+          width * 0.5, height * 0.46, 20,
+          width * 0.5, height * 0.46, width * 0.65
         );
-        flashGlow.addColorStop(0, `rgba(253, 224, 71, ${goldenBloomFlashRef.current * 0.4})`);
-        flashGlow.addColorStop(0.5, `rgba(245, 158, 11, ${goldenBloomFlashRef.current * 0.15})`);
-        flashGlow.addColorStop(1, 'rgba(253, 224, 71, 0)');
+        flashGlow.addColorStop(0, `rgba(255, 255, 255, ${goldenBloomFlashRef.current * 0.5})`);
+        flashGlow.addColorStop(0.35, `rgba(192, 132, 252, ${goldenBloomFlashRef.current * 0.35})`);
+        flashGlow.addColorStop(0.7, `rgba(147, 51, 234, ${goldenBloomFlashRef.current * 0.15})`);
+        flashGlow.addColorStop(1, 'rgba(168, 85, 247, 0)');
         ctx.fillStyle = flashGlow;
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
 
         goldenBloomFlashRef.current *= 0.88;
+      }
+
+      // 7. Spectacular Vertical Violet Lens Flare Beam (Official Ambassador Poster Light Column)
+      if (verticalBeamFlashRef.current > 0.01) {
+        ctx.save();
+        const beamAlpha = verticalBeamFlashRef.current;
+        const beamX = width * 0.5;
+
+        // Wide soft violet spotlight illumination
+        const wideGrad = ctx.createLinearGradient(beamX - 160, 0, beamX + 160, 0);
+        wideGrad.addColorStop(0, 'rgba(147, 51, 234, 0)');
+        wideGrad.addColorStop(0.5, `rgba(168, 85, 247, ${beamAlpha * 0.32})`);
+        wideGrad.addColorStop(1, 'rgba(147, 51, 234, 0)');
+        ctx.fillStyle = wideGrad;
+        ctx.fillRect(beamX - 160, 0, 320, height);
+
+        // Core vertical violet beam
+        const beamGrad = ctx.createLinearGradient(beamX - 50, 0, beamX + 50, 0);
+        beamGrad.addColorStop(0, 'rgba(168, 85, 247, 0)');
+        beamGrad.addColorStop(0.2, `rgba(192, 132, 252, ${beamAlpha * 0.45})`);
+        beamGrad.addColorStop(0.5, `rgba(235, 220, 255, ${beamAlpha * 0.92})`);
+        beamGrad.addColorStop(0.8, `rgba(192, 132, 252, ${beamAlpha * 0.45})`);
+        beamGrad.addColorStop(1, 'rgba(168, 85, 247, 0)');
+        ctx.fillStyle = beamGrad;
+        ctx.fillRect(beamX - 50, 0, 100, height);
+
+        // Central diamond-white laser core
+        ctx.fillStyle = `rgba(255, 255, 255, ${beamAlpha * 0.96})`;
+        ctx.fillRect(beamX - 5, 0, 10, height);
+
+        // Diamond starburst flare at pedestal center
+        const starRadius = 80 * beamAlpha;
+        const flareGrad = ctx.createRadialGradient(beamX, height * 0.46, 4, beamX, height * 0.46, starRadius);
+        flareGrad.addColorStop(0, `rgba(255, 255, 255, ${beamAlpha})`);
+        flareGrad.addColorStop(0.3, `rgba(224, 200, 255, ${beamAlpha * 0.85})`);
+        flareGrad.addColorStop(0.65, `rgba(168, 85, 247, ${beamAlpha * 0.4})`);
+        flareGrad.addColorStop(1, 'rgba(168, 85, 247, 0)');
+        ctx.fillStyle = flareGrad;
+        ctx.beginPath();
+        ctx.arc(beamX, height * 0.46, starRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Horizontal lens flare streak across the starburst (anamorphic lens flare)
+        const streakGrad = ctx.createLinearGradient(beamX - 260 * beamAlpha, 0, beamX + 260 * beamAlpha, 0);
+        streakGrad.addColorStop(0, 'rgba(192, 132, 252, 0)');
+        streakGrad.addColorStop(0.5, `rgba(255, 255, 255, ${beamAlpha * 0.9})`);
+        streakGrad.addColorStop(1, 'rgba(192, 132, 252, 0)');
+        ctx.fillStyle = streakGrad;
+        ctx.fillRect(beamX - 260 * beamAlpha, height * 0.46 - 2.5, 520 * beamAlpha, 5);
+
+        ctx.restore();
+        verticalBeamFlashRef.current *= 0.91; // Smooth decay
       }
 
       animId = requestAnimationFrame(render);
