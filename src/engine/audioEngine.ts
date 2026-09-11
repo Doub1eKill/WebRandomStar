@@ -331,6 +331,125 @@ class ProceduralAudioEngine {
       osc.stop(now + i * 0.04 + 3.0);
     });
   }
+
+  /**
+   * Heartbeat acceleration build-up with rising tension drone
+   */
+  public playHeartbeatRiser(durationSec: number = 2.5): void {
+    if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
+
+    const now = this.ctx.currentTime;
+    const beatTimes: number[] = [];
+    let t = 0;
+    let interval = 0.65; // start with 650ms between double-thumps
+
+    while (t < durationSec) {
+      beatTimes.push(t);
+      beatTimes.push(t + 0.14); // second thump of double-heartbeat
+      t += interval;
+      interval = Math.max(0.22, interval * 0.78); // accelerate
+    }
+
+    // Play each heartbeat pulse
+    beatTimes.forEach((offset) => {
+      if (!this.ctx || !this.masterGain) return;
+      const beatTime = now + offset;
+
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(58, beatTime);
+      osc.frequency.exponentialRampToValueAtTime(38, beatTime + 0.09);
+
+      gain.gain.setValueAtTime(0.45, beatTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, beatTime + 0.12);
+
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+
+      osc.start(beatTime);
+      osc.stop(beatTime + 0.15);
+    });
+
+    // Escalating high-resonance tension drone
+    const drone = this.ctx.createOscillator();
+    const droneGain = this.ctx.createGain();
+    const droneFilter = this.ctx.createBiquadFilter();
+
+    drone.type = 'sawtooth';
+    drone.frequency.setValueAtTime(110, now);
+    drone.frequency.exponentialRampToValueAtTime(220, now + durationSec);
+
+    droneFilter.type = 'lowpass';
+    droneFilter.frequency.setValueAtTime(300, now);
+    droneFilter.frequency.exponentialRampToValueAtTime(1400, now + durationSec);
+    droneFilter.Q.setValueAtTime(6, now);
+
+    droneGain.gain.setValueAtTime(0, now);
+    droneGain.gain.linearRampToValueAtTime(0.12, now + durationSec * 0.4);
+    droneGain.gain.exponentialRampToValueAtTime(0.001, now + durationSec + 0.1);
+
+    drone.connect(droneFilter);
+    droneFilter.connect(droneGain);
+    droneGain.connect(this.masterGain);
+
+    drone.start(now);
+    drone.stop(now + durationSec + 0.2);
+  }
+
+  /**
+   * Powerful Supernova impact boom (sub-drop + crystalline shimmer burst)
+   */
+  public playSupernovaBoom(): void {
+    if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
+
+    const now = this.ctx.currentTime;
+
+    // 1. Massive deep sub-drop impact
+    const subOsc = this.ctx.createOscillator();
+    const subGain = this.ctx.createGain();
+
+    subOsc.type = 'sine';
+    subOsc.frequency.setValueAtTime(140, now);
+    subOsc.frequency.exponentialRampToValueAtTime(32, now + 0.6);
+
+    subGain.gain.setValueAtTime(0.7, now);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+
+    subOsc.connect(subGain);
+    subGain.connect(this.masterGain);
+
+    subOsc.start(now);
+    subOsc.stop(now + 1.3);
+
+    // 2. High-frequency crystalline shimmer sparkle
+    const bufferSize = Math.floor(this.ctx.sampleRate * 0.6);
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+
+    const noise = this.ctx.createBufferSource();
+    noise.buffer = buffer;
+
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(3200, now);
+    filter.Q.setValueAtTime(5, now);
+
+    const noiseGain = this.ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.4, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+
+    noise.connect(filter);
+    filter.connect(noiseGain);
+    noiseGain.connect(this.masterGain);
+
+    noise.start(now);
+    noise.stop(now + 0.6);
+  }
 }
 
 export const audioEngine = new ProceduralAudioEngine();

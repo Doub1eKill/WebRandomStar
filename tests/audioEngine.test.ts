@@ -35,6 +35,13 @@ describe('Procedural Web Audio Engine', () => {
       audioEngine.playMeteorWhoosh();
       audioEngine.playQuestionReveal();
       audioEngine.fadeRainOut(0.5);
+      audioEngine.playHeartbeatRiser(2.5);
+      audioEngine.playSupernovaBoom();
     }).not.toThrow();
+  });
+
+  it('should have playHeartbeatRiser and playSupernovaBoom methods defined', () => {
+    expect(typeof (audioEngine as any).playHeartbeatRiser).toBe('function');
+    expect(typeof (audioEngine as any).playSupernovaBoom).toBe('function');
   });
 });
