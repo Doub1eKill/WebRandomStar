@@ -25,6 +25,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onMeteorImpac
   const skyRef = useRef<SkySystem>(new SkySystem());
   const constellationRef = useRef<ConstellationSystem>(new ConstellationSystem());
   const meteorRef = useRef<MeteorSystem>(new MeteorSystem());
+  const supernovaFlashRef = useRef<number>(0);
 
   // Smooth cross-fade target values
   const targetsRef = useRef({
@@ -48,6 +49,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onMeteorImpac
   useEffect(() => {
     const currentState = session.currentState;
     const leaf = leafRef.current;
+    const constellation = constellationRef.current;
     const meteor = meteorRef.current;
 
     switch (currentState) {
@@ -63,6 +65,8 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onMeteorImpac
         };
         leaf.active = false;
         meteor.reset();
+        constellation.reset();
+        supernovaFlashRef.current = 0;
         break;
 
       case 'rain':
@@ -165,6 +169,15 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onMeteorImpac
         };
         leaf.active = false;
         audioEngine.playStarChime();
+        audioEngine.playHeartbeatRiser(2.5);
+
+        if (session.meteorTrajectory) {
+          constellation.setTargetNode(session.meteorTrajectory.targetX, session.meteorTrajectory.targetY);
+          const lockTimer = setTimeout(() => {
+            constellation.lockOn();
+          }, 1800);
+          return () => clearTimeout(lockTimer);
+        }
         break;
 
       case 'meteor':
@@ -178,10 +191,13 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onMeteorImpac
           constellationOpacity: 1.0
         };
         leaf.active = false;
+        constellation.lockOn();
         audioEngine.playMeteorWhoosh();
 
         if (session.meteorTrajectory && !meteor.active) {
           meteor.startMeteor(session.meteorTrajectory, () => {
+            supernovaFlashRef.current = 1.0;
+            audioEngine.playSupernovaBoom();
             onMeteorImpact?.();
           });
         }
@@ -311,6 +327,25 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onMeteorImpac
       // 7. Autumn Leaves (Ambient and Hero Selection)
       leaf.update();
       leaf.draw(ctx);
+
+      // 8. Supernova Full-Screen Flash
+      if (supernovaFlashRef.current > 0.01) {
+        ctx.save();
+        ctx.fillStyle = `rgba(255, 255, 255, ${supernovaFlashRef.current * 0.8})`;
+        ctx.fillRect(0, 0, width, height);
+
+        const flashGlow = ctx.createRadialGradient(
+          width * 0.5, height * 0.5, 40,
+          width * 0.5, height * 0.5, width * 0.7
+        );
+        flashGlow.addColorStop(0, `rgba(253, 224, 71, ${supernovaFlashRef.current * 0.45})`);
+        flashGlow.addColorStop(1, 'rgba(253, 224, 71, 0)');
+        ctx.fillStyle = flashGlow;
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+
+        supernovaFlashRef.current *= 0.86;
+      }
 
       // Restore transform from screen shake
       ctx.restore();
