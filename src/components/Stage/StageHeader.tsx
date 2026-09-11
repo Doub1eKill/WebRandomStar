@@ -29,13 +29,18 @@ export const StageHeader: React.FC<StageHeaderProps> = ({ round, currentState })
   return (
     <header className="stage-header">
       <div className="header-left">
-        <div className="brand-badge">
-          <span className="brand-dot" />
-          <span className="brand-season">✦ CHARM OF TRANSITION</span>
+        <div className="brand-badge royal-badge">
+          <span className="brand-crown">👑</span>
+          <span className="brand-season">AMBASSADOR 2026</span>
         </div>
         <div className="header-titles">
-          <h1 className="event-title">CHARM OF TRANSITION</h1>
-          <p className="event-subtitle">มนต์เสน่ห์แห่งรอยต่อฤดู — ปลายฝนต้นหนาว</p>
+          <div className="event-pre-title">✦ SCI TECH TINE ✦</div>
+          <h1 className="event-title royal-serif">CHARM OF TRANSITION</h1>
+          <div className="event-post-title">
+            <span className="post-ambassador">✦ AMBASSADOR 2026 ✦</span>
+            <span className="post-divider">•</span>
+            <span className="event-subtitle">มนต์เสน่ห์แห่งรอยต่อฤดู — ปลายฝนต้นหนาว</span>
+          </div>
         </div>
       </div>
 
