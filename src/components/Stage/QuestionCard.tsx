@@ -42,6 +42,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, isAnswered
             <span className="cat-name" style={{ color: cat.color }}>{cat.name}</span>
             <span className="cat-sub">{cat.subtitle}</span>
           </div>
+          <div className="card-tiara-badge">
+            <span className="tiara-icon">👑</span>
+            <span className="tiara-title">AMBASSADOR 2026</span>
+          </div>
           <div className="question-id-chip">
             <span>{question.id}</span>
           </div>
