@@ -8,7 +8,7 @@ import {
 import { AppState } from '../src/types/session.ts';
 
 describe('Stage State Machine', () => {
-  it('should have exact 11 natural states in sequence', () => {
+  it('should have exact 8 natural states in sequence', () => {
     const expectedSequence: AppState[] = [
       'idle',
       'rain',
@@ -16,9 +16,6 @@ describe('Stage State Machine', () => {
       'mist',
       'wind',
       'leaf',
-      'sky-opening',
-      'constellation',
-      'meteor',
       'question',
       'answered'
     ];
@@ -31,10 +28,7 @@ describe('Stage State Machine', () => {
     expect(getNextState('water-drop')).toBe('mist');
     expect(getNextState('mist')).toBe('wind');
     expect(getNextState('wind')).toBe('leaf');
-    expect(getNextState('leaf')).toBe('sky-opening');
-    expect(getNextState('sky-opening')).toBe('constellation');
-    expect(getNextState('constellation')).toBe('meteor');
-    expect(getNextState('meteor')).toBe('question');
+    expect(getNextState('leaf')).toBe('question');
     expect(getNextState('question')).toBe('answered');
     expect(getNextState('answered')).toBe('idle');
   });
@@ -44,20 +38,20 @@ describe('Stage State Machine', () => {
     expect(isValidTransition('rain', 'water-drop')).toBe(true);
     // Direct jump from idle to question is illegal in normal flow
     expect(isValidTransition('idle', 'question')).toBe(false);
+    // Leaf to question is legal
+    expect(isValidTransition('leaf', 'question')).toBe(true);
     // Reset to idle is always valid
     expect(isValidTransition('leaf', 'idle')).toBe(true);
-    expect(isValidTransition('meteor', 'idle')).toBe(true);
   });
 
-  it('should define durations for all active animated stages with total ~12.5s pacing', () => {
-    expect(STAGE_DURATION['rain']).toBe(1500);
-    expect(STAGE_DURATION['meteor']).toBe(1600);
+  it('should define durations for all active animated stages with total 7.5s pacing', () => {
+    expect(STAGE_DURATION['rain']).toBe(1200);
+    expect(STAGE_DURATION['leaf']).toBe(2000);
 
     const activeStages: AppState[] = [
-      'rain', 'water-drop', 'mist', 'wind', 'leaf', 'sky-opening', 'constellation', 'meteor'
+      'rain', 'water-drop', 'mist', 'wind', 'leaf'
     ];
     const totalDuration = activeStages.reduce((acc, st) => acc + STAGE_DURATION[st], 0);
-    expect(totalDuration).toBeGreaterThanOrEqual(11000);
-    expect(totalDuration).toBeLessThanOrEqual(14000);
+    expect(totalDuration).toBe(7500);
   });
 });

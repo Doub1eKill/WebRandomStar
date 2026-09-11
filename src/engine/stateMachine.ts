@@ -7,26 +7,20 @@ export const STAGE_SEQUENCE: AppState[] = [
   'mist',
   'wind',
   'leaf',
-  'sky-opening',
-  'constellation',
-  'meteor',
   'question',
   'answered'
 ];
 
 /**
- * Stage durations in milliseconds for automated sequencing
+ * Stage durations in milliseconds for automated sequencing (7.5s total)
  */
 export const STAGE_DURATION: Record<AppState, number> = {
   'idle': 0,
-  'rain': 1500,
-  'water-drop': 1400,
+  'rain': 1200,
+  'water-drop': 1300,
   'mist': 1500,
-  'wind': 1400,
-  'leaf': 1800,
-  'sky-opening': 1500,
-  'constellation': 1800,
-  'meteor': 1600,
+  'wind': 1500,
+  'leaf': 2000,
   'question': 0,   // Waits for presenter/operator
   'answered': 0    // Waits for next contestant
 };
