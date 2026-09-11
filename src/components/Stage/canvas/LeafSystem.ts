@@ -90,6 +90,7 @@ export class LeafSystem {
   }
 
   public spawnHeroLeaf(targetX: number, targetY: number): void {
+    this.active = true;
     this.heroLeaf = {
       x: -40,
       y: this.height * 0.35 + (Math.random() - 0.5) * 100,
@@ -108,6 +109,12 @@ export class LeafSystem {
     this.heroTrail = [];
     this.ripples = [];
     this.sparkles = [];
+  }
+
+  public dissolveHeroLeaf(): void {
+    if (this.heroLeaf) {
+      this.heroLeaf.opacity = 0;
+    }
   }
 
   private spawnRipples(x: number, y: number): void {
@@ -144,7 +151,7 @@ export class LeafSystem {
   }
 
   public update(): void {
-    if (!this.active && this.opacity <= 0.01) return;
+    if (!this.active && this.opacity <= 0.01 && this.sparkles.length === 0 && this.ripples.length === 0 && this.heroTrail.length === 0) return;
 
     // Update ambient transition leaves
     for (const leaf of this.ambientLeaves) {
@@ -195,8 +202,9 @@ export class LeafSystem {
           }
         }
       } else {
-        this.heroLeaf.x += (dx / dist) * Math.min(dist * 0.05 + 1.2, 5.0);
-        this.heroLeaf.y += (dy / dist) * Math.min(dist * 0.05 + 1.2, 5.0) + Math.sin(this.heroLeaf.x * 0.05) * 1.5;
+        const speed = Math.min(dist * 0.06 + 2.5, 9.5);
+        this.heroLeaf.x += (dx / dist) * speed;
+        this.heroLeaf.y += (dy / dist) * speed + Math.sin(this.heroLeaf.x * 0.05) * 1.5;
         this.heroLeaf.rotation += this.heroLeaf.rotSpeed;
       }
     }
@@ -303,13 +311,13 @@ export class LeafSystem {
   }
 
   public draw(ctx: CanvasRenderingContext2D): void {
-    if (this.opacity <= 0.01) return;
+    if (this.opacity <= 0.01 && this.ripples.length === 0 && this.sparkles.length === 0 && this.heroTrail.length === 0) return;
 
     // 1. Draw glowing stardust trail from hero leaf
     if (this.heroTrail.length > 0) {
       ctx.save();
       for (const p of this.heroTrail) {
-        const a = p.alpha * this.opacity;
+        const a = p.alpha;
         if (a <= 0.01) continue;
         ctx.fillStyle = p.color;
         ctx.globalAlpha = a;
@@ -323,15 +331,17 @@ export class LeafSystem {
     }
 
     // 2. Draw ambient leaves
-    for (const leaf of this.ambientLeaves) {
-      this.drawLeafShape(ctx, leaf);
+    if (this.opacity > 0.01) {
+      for (const leaf of this.ambientLeaves) {
+        this.drawLeafShape(ctx, leaf);
+      }
     }
 
     // 3. Draw concentric violet-diamond water ripples upon leaf landing
     if (this.ripples.length > 0) {
       ctx.save();
       for (const r of this.ripples) {
-        const a = r.alpha * this.opacity;
+        const a = r.alpha;
         if (a <= 0.01) continue;
 
         // Outer Amethyst ripple
@@ -359,7 +369,7 @@ export class LeafSystem {
     if (this.sparkles.length > 0) {
       ctx.save();
       for (const s of this.sparkles) {
-        const a = s.alpha * this.opacity;
+        const a = s.alpha;
         if (a <= 0.01) continue;
 
         ctx.save();
@@ -387,7 +397,7 @@ export class LeafSystem {
     }
 
     // 5. Draw hero selection leaf
-    if (this.heroLeaf) {
+    if (this.heroLeaf && this.heroLeaf.opacity > 0.01) {
       // Amethyst Diamond aura glow around hero leaf
       ctx.save();
       const glow = ctx.createRadialGradient(

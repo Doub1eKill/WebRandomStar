@@ -75,7 +75,10 @@ export function useStageSync(role: 'stage' | 'controller') {
       return;
     }
 
-    const duration = STAGE_DURATION[session.currentState];
+    // For 'leaf' state, the transition to 'question' is driven by the onLeafLanded event
+    // after the leaf glide, 1.2s suspense beat, and supernova explosion finish playing.
+    // We use a 12s safety timeout fallback so it never hangs if canvas is unmounted.
+    const duration = session.currentState === 'leaf' ? 12000 : STAGE_DURATION[session.currentState];
     if (!duration || duration <= 0) return;
 
     const timer = setTimeout(() => {

@@ -154,11 +154,14 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
         // Fallback or explicit landing callback
         leaf.onHeroLeafLanded = () => {
           if (!isSuspenseActiveRef.current && suspenseTimerRef.current <= 0) {
+            leaf.dissolveHeroLeaf();
             audioEngine.playSupernovaImpact();
             goldenBloomFlashRef.current = 0.9;
             verticalBeamFlashRef.current = 1.0;
-            if (onLeafLanded) onLeafLanded();
-            else if (onMeteorImpact) onMeteorImpact();
+            setTimeout(() => {
+              if (onLeafLanded) onLeafLanded();
+              else if (onMeteorImpact) onMeteorImpact();
+            }, 400);
           }
         };
 
@@ -180,7 +183,9 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
           skyClarity: 1.0,
           moonOpacity: 0.85
         };
-        leaf.active = false;
+        setTimeout(() => {
+          leaf.active = false;
+        }, 1500);
         break;
     }
   }, [session.currentState, session.meteorTrajectory, onLeafLanded, onMeteorImpact]);
@@ -335,14 +340,17 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
           isSuspenseActiveRef.current = false;
           dimVignetteRef.current = 0.35; // Fades out smoothly
 
-          // 1. Supernova impact audio
+          // 1. Dissolve hero leaf into supernova core
+          leaf.dissolveHeroLeaf();
+
+          // 2. Supernova impact audio
           audioEngine.playSupernovaImpact();
 
-          // 2. High-intensity bloom & vertical lens flare
+          // 3. High-intensity bloom & vertical lens flare
           goldenBloomFlashRef.current = 1.0;
           verticalBeamFlashRef.current = 1.0;
 
-          // 3. Screen-wide Shockwave Rings
+          // 4. Screen-wide Shockwave Rings
           const centerX = width * 0.5;
           const centerY = height * 0.46;
           const maxDist = Math.max(width, height) * 0.88;
@@ -352,12 +360,14 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
             { x: centerX, y: centerY, radius: 2, maxRadius: maxDist * 0.65, alpha: 0.8, speed: 14, color: '#a855f7' }
           ];
 
-          // 4. Sparkles scatter burst
+          // 5. Sparkles scatter burst
           leaf.spawnSparkles(centerX, centerY, 28);
 
-          // 5. Trigger transition to 'question' state
-          if (onLeafLanded) onLeafLanded();
-          else if (onMeteorImpact) onMeteorImpact();
+          // 6. Reveal QuestionCard precisely 400ms into the supernova flash & expanding shockwave
+          setTimeout(() => {
+            if (onLeafLanded) onLeafLanded();
+            else if (onMeteorImpact) onMeteorImpact();
+          }, 400);
         }
       } else if (dimVignetteRef.current > 0.01) {
         dimVignetteRef.current *= 0.92;
