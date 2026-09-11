@@ -52,8 +52,10 @@ export class RainSystem {
       const alpha = drop.opacity * this.intensity;
       if (alpha <= 0.01) continue;
 
-      ctx.strokeStyle = `rgba(186, 215, 255, ${alpha})`;
+      ctx.strokeStyle = `rgba(224, 231, 255, ${alpha * 0.8})`;
       ctx.lineWidth = drop.width;
+      ctx.shadowColor = '#c084fc';
+      ctx.shadowBlur = 4;
 
       const endX = drop.x + Math.sin(drop.angle) * drop.length;
       const endY = drop.y + Math.cos(drop.angle) * drop.length;

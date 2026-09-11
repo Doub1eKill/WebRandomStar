@@ -52,9 +52,10 @@ export class MistSystem {
         puff.x, puff.y, 10,
         puff.x, puff.y, puff.radius
       );
-      grad.addColorStop(0, `rgba(180, 205, 230, ${alpha * 0.8})`);
-      grad.addColorStop(0.5, `rgba(140, 170, 200, ${alpha * 0.4})`);
-      grad.addColorStop(1, 'rgba(100, 130, 160, 0)');
+      grad.addColorStop(0, `rgba(192, 132, 252, ${alpha * 0.45})`);
+      grad.addColorStop(0.4, `rgba(147, 51, 234, ${alpha * 0.22})`);
+      grad.addColorStop(0.8, `rgba(88, 28, 135, ${alpha * 0.1})`);
+      grad.addColorStop(1, 'rgba(7, 8, 24, 0)');
 
       ctx.fillStyle = grad;
       ctx.beginPath();

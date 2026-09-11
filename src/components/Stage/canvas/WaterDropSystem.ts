@@ -58,20 +58,22 @@ export class WaterDropSystem {
       for (let i = 0; i < drop.trail.length; i++) {
         const pt = drop.trail[i];
         const trailAlpha = (1 - i / drop.trail.length) * 0.25 * this.opacity;
-        ctx.fillStyle = `rgba(200, 225, 255, ${trailAlpha})`;
+        ctx.fillStyle = `rgba(224, 210, 255, ${trailAlpha})`;
         ctx.beginPath();
         ctx.arc(pt.x, pt.y, drop.radius * (1 - i / drop.trail.length * 0.5), 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // Draw main glossy drop
-      ctx.fillStyle = `rgba(220, 240, 255, ${alpha * 0.85})`;
+      // Draw main glossy drop with diamond violet refraction
+      ctx.fillStyle = `rgba(235, 230, 255, ${alpha * 0.9})`;
+      ctx.shadowColor = 'rgba(168, 85, 247, 0.45)';
+      ctx.shadowBlur = 6;
       ctx.beginPath();
       ctx.arc(drop.x, drop.y, drop.radius, 0, Math.PI * 2);
       ctx.fill();
 
-      // Drop highlight
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.95})`;
+      // Drop diamond specular highlight
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.98})`;
       ctx.beginPath();
       ctx.arc(drop.x - drop.radius * 0.35, drop.y - drop.radius * 0.35, drop.radius * 0.35, 0, Math.PI * 2);
       ctx.fill();

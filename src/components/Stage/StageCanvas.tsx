@@ -206,14 +206,15 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session, onLeafLanded,
       sky.moonOpacity = lerp(sky.moonOpacity, targets.moonOpacity);
 
       // Base background
-      ctx.fillStyle = '#060a14';
+      ctx.fillStyle = '#070818';
       ctx.fillRect(0, 0, width, height);
 
       // Deep sky atmosphere gradient
       const skyGrad = ctx.createLinearGradient(0, 0, 0, height);
-      skyGrad.addColorStop(0, '#0b1329');
-      skyGrad.addColorStop(0.5, '#0f1d3a');
-      skyGrad.addColorStop(1, '#060a14');
+      skyGrad.addColorStop(0, '#070818');
+      skyGrad.addColorStop(0.42, '#100e2b');
+      skyGrad.addColorStop(0.78, '#181242');
+      skyGrad.addColorStop(1, '#080814');
       ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, width, height);
 
