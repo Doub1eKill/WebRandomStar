@@ -1,35 +1,39 @@
 :root {
   --font-thai: 'Prompt', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-display: 'Outfit', 'Prompt', sans-serif;
+  --font-serif: 'Cinzel', Georgia, serif;
 
-  /* Color Palette: End of Rain into Early Winter */
-  --sky-base: #060a14;
-  --sky-deep: #0b1329;
-  --sky-mist: #152238;
-  --rain-tint: #38bdf8;
-  --mist-gradient-1: rgba(148, 163, 184, 0.15);
-  --mist-gradient-2: rgba(30, 41, 59, 0.4);
-  --wind-tint: #93c5fd;
-  --leaf-amber: #d97706;
-  --leaf-gold: #f59e0b;
-  --moon-silver: #e2e8f0;
-  --moon-glow: rgba(226, 232, 240, 0.35);
-  --star-gold: #fef08a;
+  /* Color Palette: Royal Diamond Pageant & Late Rain to Early Winter */
+  --sky-base: #070818;
+  --sky-deep: #100e2b;
+  --sky-stage: #191444;
+  --rain-tint: #c7d2fe;
+  --mist-gradient-1: rgba(168, 85, 247, 0.15);
+  --mist-gradient-2: rgba(26, 20, 68, 0.45);
+  --wind-tint: #d8b4fe;
+  --leaf-amber: #c084fc;
+  --leaf-gold: #ffffff;
+  --moon-silver: #f1f5f9;
+  --moon-glow: rgba(192, 132, 252, 0.4);
+  --star-gold: #e9d5ff;
   --star-core: #ffffff;
   --meteor-head: #ffffff;
-  --meteor-tail: #38bdf8;
+  --meteor-tail: #a855f7;
   
   /* Glassmorphism & UI */
-  --glass-bg: rgba(15, 23, 42, 0.84);
-  --glass-border: rgba(255, 255, 255, 0.12);
-  --glass-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.6), 0 0 24px 0 rgba(56, 189, 248, 0.1);
-  --glass-highlight: rgba(255, 255, 255, 0.2);
+  --glass-bg: rgba(14, 12, 38, 0.82);
+  --glass-border: rgba(192, 132, 252, 0.28);
+  --glass-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.85), 0 0 28px 0 rgba(168, 85, 247, 0.18);
+  --glass-highlight: rgba(255, 255, 255, 0.25);
 
   /* Typography & Colors */
   --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --accent-glow: #38bdf8;
+  --text-secondary: #c7d2fe;
+  --text-muted: #818cf8;
+  --accent-primary: #a855f7;
+  --accent-secondary: #c084fc;
+  --accent-glow: #d8b4fe;
+  --accent-diamond: #ffffff;
 
   /* Transitions */
   --transition-normal: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -68,8 +72,8 @@ html, body, #root {
 }
 
 .glass-panel-interactive:hover {
-  border-color: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 30px 2px rgba(56, 189, 248, 0.2);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.85), 0 0 35px 2px rgba(168, 85, 247, 0.3);
 }
 
 /* Buttons & Inputs */
@@ -81,14 +85,14 @@ button {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
   color: #ffffff;
-  padding: 12px 28px;
+  padding: 12px 30px;
   font-size: 1.1rem;
   font-weight: 600;
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 20px -4px rgba(2, 132, 199, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 24px -4px rgba(147, 51, 234, 0.6), 0 0 18px rgba(192, 132, 252, 0.35);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -98,8 +102,8 @@ button {
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px -4px rgba(2, 132, 199, 0.7), 0 0 20px rgba(56, 189, 248, 0.4);
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  box-shadow: 0 14px 32px -4px rgba(147, 51, 234, 0.75), 0 0 26px rgba(233, 213, 255, 0.5);
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
 }
 
 .btn-primary:disabled {
@@ -208,27 +212,23 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(15, 23, 42, 0.75);
-  border: 1px solid rgba(245, 158, 11, 0.45);
+  background: rgba(18, 14, 46, 0.82);
+  border: 1px solid rgba(192, 132, 252, 0.45);
   padding: 6px 14px;
   border-radius: 9999px;
-  box-shadow: 0 0 18px rgba(245, 158, 11, 0.2), inset 0 0 10px rgba(245, 158, 11, 0.08);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.25), inset 0 0 10px rgba(168, 85, 247, 0.15);
   backdrop-filter: blur(12px);
 }
 
-.brand-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #f59e0b;
-  box-shadow: 0 0 10px #f59e0b, 0 0 18px rgba(245, 158, 11, 0.6);
-  animation: pulse-soft 2s infinite;
+.brand-crown {
+  font-size: 1.15rem;
+  filter: drop-shadow(0 0 8px #c084fc);
 }
 
 .brand-season {
   font-size: 0.82rem;
   font-weight: 700;
-  color: #fbbf24;
+  color: #e9d5ff;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -236,24 +236,54 @@ button {
 .header-titles {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
-.event-title {
+.event-pre-title {
   font-family: var(--font-display);
-  font-size: 1.55rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: #c084fc;
+  text-shadow: 0 0 12px rgba(168, 85, 247, 0.65);
+  text-transform: uppercase;
+}
+
+.event-title.royal-serif {
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
   font-weight: 800;
-  letter-spacing: 0.04em;
-  background: linear-gradient(135deg, #ffffff 40%, #fde047 80%, #f59e0b 100%);
+  letter-spacing: 0.08em;
+  background: linear-gradient(180deg, #ffffff 0%, #e0e7ff 45%, #c7d2fe 75%, #a5b4fc 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 24px rgba(245, 158, 11, 0.25);
-  line-height: 1.15;
+  filter: drop-shadow(0 0 26px rgba(168, 85, 247, 0.45));
+  line-height: 1.12;
+  margin: 1px 0;
+}
+
+.event-post-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.84rem;
+}
+
+.post-ambassador {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #d8b4fe;
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.55);
+}
+
+.post-divider {
+  color: rgba(192, 132, 252, 0.45);
 }
 
 .event-subtitle {
   margin: 0;
-  font-size: 0.88rem;
+  font-size: 0.84rem;
   font-weight: 400;
   color: #94a3b8;
   letter-spacing: 0.03em;
