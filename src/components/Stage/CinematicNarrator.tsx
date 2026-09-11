@@ -23,8 +23,8 @@ const NARRATIVE_LINES: Partial<Record<AppState, { text: string; sub: string }>> 
     sub: 'The first winter breeze stirs, whispering of change.'
   },
   'leaf': {
-    text: 'ใบไม้ร่อนลงสู่ทิศทาง... ปรากฏหมวดหมู่คำถามแห่งค่ำคืน!',
-    sub: 'The golden leaf descends to choose the question category.'
+    text: 'ใบไม้สีทองร่อนลงสู่ทิศทาง... สายลมกำลังพัดพาดวงดาวคำถามให้ปรากฏ!',
+    sub: 'The golden leaf glides toward its destiny as celestial stars emerge.'
   },
   'sky-opening': {
     text: 'ม่านเมฆเปิดออก เผยฟากฟ้าราตรีอันลึกซึ้งและดวงจันทร์นวลตา',

@@ -5,7 +5,6 @@ import { StageHeader } from './StageHeader.tsx';
 import { ContestantBadge } from './ContestantBadge.tsx';
 import { QuestionCard } from './QuestionCard.tsx';
 import { SeasonJourneyBreadcrumb } from './SeasonJourneyBreadcrumb.tsx';
-import { CategoryAnnouncementBanner } from './CategoryAnnouncementBanner.tsx';
 import { CinematicNarrator } from './CinematicNarrator.tsx';
 
 interface StageOverlayProps {
@@ -40,12 +39,6 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
         <div className="stage-contestant-anchor">
           <ContestantBadge contestant={contestant} />
         </div>
-
-        {/* Category Announcement Banner */}
-        <CategoryAnnouncementBanner
-          category={session.selectedCategory}
-          currentState={session.currentState}
-        />
 
         {/* Start Button when idle */}
         {isIdle && (
