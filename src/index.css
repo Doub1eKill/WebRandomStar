@@ -542,6 +542,36 @@ button {
   -webkit-backdrop-filter: blur(28px);
 }
 
+.card-diamond-corner {
+  position: absolute;
+  font-size: 0.78rem;
+  color: #d8b4fe;
+  opacity: 0.7;
+  text-shadow: 0 0 10px #a855f7;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.card-diamond-corner.top-left {
+  top: 12px;
+  left: 14px;
+}
+
+.card-diamond-corner.top-right {
+  top: 12px;
+  right: 14px;
+}
+
+.card-diamond-corner.bottom-left {
+  bottom: 12px;
+  left: 14px;
+}
+
+.card-diamond-corner.bottom-right {
+  bottom: 12px;
+  right: 14px;
+}
+
 .card-glow-bar {
   position: absolute;
   top: 0;
@@ -695,9 +725,23 @@ button {
 }
 
 .btn-next-ready {
+  position: relative;
+  overflow: hidden;
   background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
-  border-color: rgba(216, 180, 254, 0.6);
+  border-color: rgba(216, 180, 254, 0.65);
   box-shadow: 0 6px 24px rgba(168, 85, 247, 0.55), 0 0 40px rgba(192, 132, 252, 0.35);
+}
+
+.btn-next-ready::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+  animation: specular-sweep 3.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
 }
 
 .btn-next-ready:hover {

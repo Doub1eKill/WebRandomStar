@@ -30,6 +30,12 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, isAnswered
   return (
     <div className="question-card-container animate-float">
       <div className="question-card glass-panel" style={{ borderColor: `${cat.color}40` }}>
+        {/* Diamond Corner Accents */}
+        <div className="card-diamond-corner top-left">✦</div>
+        <div className="card-diamond-corner top-right">✦</div>
+        <div className="card-diamond-corner bottom-left">✦</div>
+        <div className="card-diamond-corner bottom-right">✦</div>
+
         {/* Glowing Top Line */}
         <div className="card-glow-bar" style={{ background: `linear-gradient(90deg, transparent, ${cat.color}, transparent)` }} />
 
