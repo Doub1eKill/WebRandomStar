@@ -7,24 +7,24 @@ interface CinematicNarratorProps {
 
 const NARRATIVE_LINES: Partial<Record<AppState, { text: string; sub: string }>> = {
   'rain': {
-    text: 'สายฝนปลายฤดูค่อย ๆ ซาลง... สัญญาณแห่งการเปลี่ยนผ่านเริ่มต้นขึ้น',
-    sub: 'The late rains gently fade as the season begins to turn...'
+    text: 'สายฝนปลายฤดูโปรยปรายแผ่วเบา... สู่มนต์เสน่ห์แห่งการเปลี่ยนผ่าน',
+    sub: 'Late rains softly whisper, ushering in the Charm of Transition.'
   },
   'water-drop': {
-    text: 'หยดน้ำบนไอเย็นรวมตัว กำหนดทิศทางแห่งโชคชะตา',
-    sub: 'Condensation trickles down, tracing the path of fate.'
+    text: 'หยดน้ำค้างเกาะไอเย็น สะท้อนประกายคุณค่าและเจตนารมณ์แห่งค่ำคืน',
+    sub: 'Crystalline dewdrops gather, capturing the essence of purpose and light.'
   },
   'mist': {
-    text: 'สายหมอกลอยต่ำ อากาศหนาวเย็นเริ่มโอบล้อมทั่วอาณาบริเวณ',
-    sub: 'Cool mist settles low, enveloping the evening in calm.'
+    text: 'สายหมอกลอยต่ำ อากาศหนาวเริ่มโอบล้อม ดั่งช่วงเวลาต้องมนตร์',
+    sub: 'Cool mist settles low as the enchanted winter air embraces the hall.'
   },
   'wind': {
-    text: 'ลมหนาวแรกพัดผ่าน นำพาความเปลี่ยนแปลงและบททดสอบ',
-    sub: 'The first winter breeze stirs, whispering of change.'
+    text: 'สายลมหนาวแรกพัดผ่าน นำพาบททดสอบและเกียรติยศสู่ผู้กล้า',
+    sub: 'The first winter breeze stirs with anticipation of honor and glory.'
   },
   'leaf': {
-    text: 'ใบไม้สีทองร่อนลงสู่ผืนน้ำ... เผยคำถามแห่งโชคชะตาประจำค่ำคืน!',
-    sub: 'The golden leaf glides onto still waters, unveiling the question of destiny.'
+    text: 'ใบไม้สีทองร่อนลงสู่ผืนน้ำ... เผยคำถามแห่งมนต์เสน่ห์ CHARM OF TRANSITION!',
+    sub: 'The golden leaf touches still waters, unveiling the question of destiny.'
   }
 };
 
