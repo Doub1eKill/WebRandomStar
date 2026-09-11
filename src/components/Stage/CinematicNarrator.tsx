@@ -23,20 +23,8 @@ const NARRATIVE_LINES: Partial<Record<AppState, { text: string; sub: string }>> 
     sub: 'The first winter breeze stirs, whispering of change.'
   },
   'leaf': {
-    text: 'ใบไม้สีทองร่อนลงสู่ทิศทาง... สายลมกำลังพัดพาดวงดาวคำถามให้ปรากฏ!',
-    sub: 'The golden leaf glides toward its destiny as celestial stars emerge.'
-  },
-  'sky-opening': {
-    text: 'ม่านเมฆเปิดออก เผยฟากฟ้าราตรีอันลึกซึ้งและดวงจันทร์นวลตา',
-    sub: 'Clouds part to reveal a clear celestial night and gentle moon.'
-  },
-  'constellation': {
-    text: 'ดวงดาวส่องประกาย เชื่อมร้อยเป็นกลุ่มดาวคำถาม Candidate',
-    sub: 'Stars align into radiant constellations of candidate questions.'
-  },
-  'meteor': {
-    text: 'ดาวตกสว่างวาบพุ่งทะยาน ชี้ขาดคำถามประจำค่ำคืนนี้!',
-    sub: 'A blazing meteor strikes to select the definitive question!'
+    text: 'ใบไม้สีทองร่อนลงสู่ผืนน้ำ... เผยคำถามแห่งโชคชะตาประจำค่ำคืน!',
+    sub: 'The golden leaf glides onto still waters, unveiling the question of destiny.'
   }
 };
 

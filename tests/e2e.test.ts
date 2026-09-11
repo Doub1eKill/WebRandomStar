@@ -4,7 +4,7 @@ import { selectQuestionFlow } from '../src/engine/questionSelector.ts';
 import { STAGE_SEQUENCE, getNextState } from '../src/engine/stateMachine.ts';
 
 describe('End-to-End Season Transition Journey Simulation', () => {
-  it('should successfully simulate the full 11-stage natural transition journey', () => {
+  it('should successfully simulate the full 8-state natural transition journey', () => {
     let currentState = STAGE_SEQUENCE[0]; // idle
     const statesVisited: string[] = [currentState];
 

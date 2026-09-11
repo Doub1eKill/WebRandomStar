@@ -204,8 +204,16 @@ export function selectQuestionFlow(
   const targetNode = randomChoice(candidateNodes, prng);
   const selectedQuestion = targetNode.question;
 
-  // 6. Calculate Meteor Trajectory striking target node
+  // Center target position for natural leaf landing and question bloom
+  const centerX = viewport.width * 0.5;
+  const centerY = viewport.height * 0.46;
+  targetNode.x = centerX;
+  targetNode.y = centerY;
+
+  // 6. Calculate Trajectory striking target center
   const meteorTrajectory = calculateMeteorTrajectory(targetNode, viewport.width, viewport.height, prng);
+  meteorTrajectory.targetX = centerX;
+  meteorTrajectory.targetY = centerY;
 
   return {
     selectedCategory,
@@ -213,6 +221,6 @@ export function selectQuestionFlow(
     candidateNodes,
     targetNode,
     meteorTrajectory,
-    leafCoordinate: { x: leafX, y: leafY }
+    leafCoordinate: { x: centerX, y: centerY }
   };
 }

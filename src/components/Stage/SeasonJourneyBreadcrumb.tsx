@@ -16,10 +16,7 @@ const MILESTONES: StepItem[] = [
   { state: 'water-drop', icon: '💧', name: 'หยดน้ำ' },
   { state: 'mist', icon: '🌫️', name: 'สายหมอก' },
   { state: 'wind', icon: '🍃', name: 'ลมหนาว' },
-  { state: 'leaf', icon: '🍂', name: 'ใบไม้' },
-  { state: 'sky-opening', icon: '☁️', name: 'ฟ้าเปิด' },
-  { state: 'constellation', icon: '⭐', name: 'กลุ่มดาว' },
-  { state: 'meteor', icon: '☄️', name: 'ดาวตก' }
+  { state: 'leaf', icon: '🍂', name: 'ใบไม้ทอง' }
 ];
 
 export const SeasonJourneyBreadcrumb: React.FC<SeasonJourneyBreadcrumbProps> = ({ currentState }) => {

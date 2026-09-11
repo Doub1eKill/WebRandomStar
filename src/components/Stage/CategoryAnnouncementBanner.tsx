@@ -64,8 +64,8 @@ export const CategoryAnnouncementBanner: React.FC<CategoryAnnouncementBannerProp
   category,
   currentState
 }) => {
-  // Show banner during leaf, sky-opening, and constellation
-  const isVisible = (currentState === 'leaf' || currentState === 'sky-opening' || currentState === 'constellation') && !!category;
+  // Show banner during leaf state
+  const isVisible = currentState === 'leaf' && !!category;
 
   useEffect(() => {
     if (isVisible && currentState === 'leaf') {

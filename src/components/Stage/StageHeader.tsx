@@ -13,9 +13,6 @@ const STAGE_LABELS: Record<AppState, string> = {
   'mist': '🌫️ สายหมอกลอยต่ำ',
   'wind': '🍃 ลมหนาวแรกพัดผ่าน',
   'leaf': '🍂 ใบไม้เลือกทิศทาง',
-  'sky-opening': '☁️ ม่านเมฆเปิดออก',
-  'constellation': '⭐ กลุ่มดาวแห่งคำถาม',
-  'meteor': '☄️ ดาวตกชี้ชะตา',
   'question': '✨ คำถามประจำค่ำคืน',
   'answered': '✓ ตอบคำถามเรียบร้อย'
 };
