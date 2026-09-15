@@ -160,21 +160,19 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
           <span
             className="stage-timer-digits"
             style={{
-              fontFamily: "'Outfit', 'Cinzel', monospace, system-ui",
+              fontFamily: "'Outfit', monospace, system-ui",
               fontSize: isFinished ? 'clamp(3rem, 6.5vw, 5.5rem)' : 'clamp(4.5rem, 9.5vw, 8.5rem)',
               fontWeight: 800,
-              letterSpacing: '0.08em',
+              letterSpacing: '0.06em',
               fontVariantNumeric: 'tabular-nums',
               fontFeatureSettings: '"tnum"',
               display: 'inline-block',
               minWidth: isFinished ? 'auto' : '2.6ch',
               textAlign: 'center',
-              background: phaseStyles.textGrad,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              color: isFinished ? '#fca5a5' : '#ffffff',
               textShadow: isFinished
-                ? '0 0 25px rgba(244, 63, 94, 0.45)'
-                : '0 2px 14px rgba(0, 0, 0, 0.8), 0 0 20px rgba(56, 189, 248, 0.25)',
+                ? '0 0 24px rgba(244, 63, 94, 0.45)'
+                : '0 0 25px rgba(56, 189, 248, 0.35)',
               lineHeight: 1.05
             }}
           >
@@ -237,9 +235,10 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
             fontFamily: "'Outfit', monospace, system-ui",
             fontSize: '1.6rem',
             fontWeight: 800,
-            background: phaseStyles.textGrad,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
+            color: isFinished ? '#fca5a5' : '#ffffff',
+            textShadow: isFinished
+              ? '0 0 16px rgba(244, 63, 94, 0.45)'
+              : '0 0 14px rgba(56, 189, 248, 0.35)',
             letterSpacing: '0.04em',
             fontVariantNumeric: 'tabular-nums',
             fontFeatureSettings: '"tnum"',
@@ -336,7 +335,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
         <span
           className="stage-timer-digits"
           style={{
-            fontFamily: "'Outfit', 'Cinzel', monospace, system-ui",
+            fontFamily: "'Outfit', monospace, system-ui",
             fontSize: isFinished ? '2.4rem' : 'clamp(2.75rem, 5.5vw, 4.5rem)',
             fontWeight: 800,
             letterSpacing: '0.06em',
@@ -345,12 +344,10 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
             display: 'inline-block',
             minWidth: isFinished ? 'auto' : '2.6ch',
             textAlign: 'center',
-            background: phaseStyles.textGrad,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
+            color: isFinished ? '#fca5a5' : '#ffffff',
             textShadow: isFinished
               ? '0 0 20px rgba(244, 63, 94, 0.45)'
-              : '0 2px 14px rgba(0, 0, 0, 0.8), 0 0 16px rgba(56, 189, 248, 0.25)',
+              : '0 0 20px rgba(56, 189, 248, 0.35)',
             lineHeight: 1
           }}
         >

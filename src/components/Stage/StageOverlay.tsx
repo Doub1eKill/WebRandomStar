@@ -63,7 +63,7 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
         {/* Stage Timer Corner Anchor (when corner/compact mode is selected) */}
         {isTimerActive && !isCenterTimer && (
           <div
-            className="stage-timer-anchor animate-float"
+            className="stage-timer-anchor"
             style={{
               position: 'absolute',
               top: '5.25rem',

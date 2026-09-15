@@ -1734,87 +1734,11 @@ button {
   z-index: 30;
 }
 
-/* 1. Pulse Animations per Phase */
-@keyframes timer-pulse-warning {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7), 0 0 25px rgba(245, 158, 11, 0.35);
-  }
-  50% {
-    transform: scale(1.035);
-    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.8), 0 0 40px rgba(245, 158, 11, 0.55);
-  }
-}
-
-@keyframes timer-pulse-critical {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 14px 42px rgba(0, 0, 0, 0.8), 0 0 35px rgba(239, 68, 68, 0.45);
-  }
-  50% {
-    transform: scale(1.07);
-    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.9), 0 0 55px rgba(239, 68, 68, 0.75);
-  }
-}
-
-@keyframes timer-burst-last3s {
-  0% {
-    transform: scale(1.15);
-    box-shadow: 0 0 70px rgba(255, 34, 34, 0.9), 0 0 30px rgba(255, 255, 255, 0.6);
-  }
-  40% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 45px rgba(255, 34, 34, 0.6);
-  }
-}
-
-@keyframes digit-burst {
-  0% {
-    transform: scale(1.22);
-    filter: brightness(1.4);
-  }
-  50% {
-    transform: scale(1.06);
-  }
-  100% {
-    transform: scale(1);
-    filter: brightness(1);
-  }
-}
-
-@keyframes subtle-tremor {
-  0%, 100% { transform: translate(0, 0); }
-  20% { transform: translate(-1.5px, 1px); }
-  40% { transform: translate(1.5px, -1px); }
-  60% { transform: translate(-1px, -1px); }
-  80% { transform: translate(1px, 1px); }
-}
-
-.timer-warning-pulse {
-  animation: timer-pulse-warning 1s infinite cubic-bezier(0.4, 0, 0.6, 1);
-}
-
-.timer-critical-pulse {
-  animation: timer-pulse-critical 1s infinite cubic-bezier(0.4, 0, 0.6, 1), subtle-tremor 0.25s infinite;
-}
-
-.timer-last-3s-burst {
-  animation: timer-burst-last3s 1s cubic-bezier(0.16, 1, 0.3, 1), subtle-tremor 0.15s infinite;
-}
-
-.digit-burst-anim {
-  animation: digit-burst 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
 /* Digits styling */
 .stage-timer-digits {
   display: inline-block;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.05em;
-  will-change: transform, filter;
 }
 
 @media (max-width: 768px) {
@@ -1831,24 +1755,11 @@ button {
   }
 }
 
-@keyframes center-timer-reveal {
-  0% {
-    opacity: 0;
-    transform: translateY(-16px) scale(0.92);
-    filter: blur(8px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
-}
-
 /* Grand Central Timer Hero & Combined Center View */
 .stage-timer-center-hero {
-  animation: center-timer-reveal 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   margin-left: auto;
   margin-right: auto;
+  animation: none !important;
 }
 
 .question-card-compact-mode {
