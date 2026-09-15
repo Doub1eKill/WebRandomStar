@@ -36,21 +36,13 @@ export class TransitionLightingSystem {
       this.lightBeamProgress += dt * 1.5;
       this.vignetteIntensity += (0 - this.vignetteIntensity) * 0.1;
     } else if (state === 'question' || state === 'answered') {
-      // Resting ambient highlight with timer-reactive dynamic vignette
+      // Resting steady ambient highlight
       const baseBloom = 0.22 + Math.sin(this.timeAccumulator * 1.2) * 0.04;
       this.bloomIntensity += (baseBloom - this.bloomIntensity) * 0.08;
-
-      let targetVignette = 0;
-      if (timerPhase === 'warning') {
-        targetVignette = 0.14 + Math.sin(this.timeAccumulator * 1.2) * 0.03;
-      } else if (timerPhase === 'critical' || timerPhase === 'last-3s') {
-        targetVignette = 0.26 + Math.sin(this.timeAccumulator * 1.5) * 0.04;
-      }
-
-      this.vignetteIntensity += (targetVignette - this.vignetteIntensity) * 0.06;
+      this.vignetteIntensity += (0 - this.vignetteIntensity) * 0.1;
     } else {
       this.bloomIntensity += (0 - this.bloomIntensity) * 0.1;
-      this.vignetteIntensity += (0 - this.vignetteIntensity) * 0.08;
+      this.vignetteIntensity += (0 - this.vignetteIntensity) * 0.1;
       this.lightBeamProgress = 0;
     }
   }
