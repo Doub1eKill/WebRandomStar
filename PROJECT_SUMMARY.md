@@ -384,3 +384,20 @@ export const STORAGE_KEYS = {
    - **2x2 Word Spin Mode Grid:** การ์ดเลือกรูปแบบการหมุนคำสำคัญ 4 สไตล์ (Royal Vertical, 3D Perspective, Circular Orbital, Royal Ribbon) พร้อมกรอบเรืองแสงนีออน (`#818cf8`) เมื่อ Active
    - **2x2 Atmospheric FX Toggles Grid:** การ์ดสวิตช์เปิด/ปิดเลเยอร์บรรยากาศ 4 ด้าน (เงาประกายมงกุฎ Crown, แสงสะท้อนผิวน้ำ Reflection, ม่านแสงออโรร่า Aurora, ฝุ่นคริสตัลโบเก้ Crystals) พร้อมคำอธิบายและเอฟเฟกต์ Hover ยกตัว
    - **Smooth Percentage Range Sliders:** แถบเลื่อนปรับความหนาแน่นอนุภาคและความสว่างแสงออโรร่า พร้อม Badge Pill แสดงเปอร์เซ็นต์ค่าแบบ Realtime และ Thumb เรืองแสงนีออน
+
+---
+
+## 15. การปรับโทนสีและธีมตามภาพโปสเตอร์หลัก (✦ SCi TECH TINE ✦ CHARM OF TRANSITION AMBASSADOR 2026)
+
+ระบบทั้งหมดได้รับการปรับปรุงโทนสีและอัตลักษณ์ทางสายตาให้สอดคล้องกับภาพโปสเตอร์ทางการอย่างสมบูรณ์:
+1. **Cosmic Midnight & Velvet Nebula Palette:**
+   - พื้นหลังห้วงอวกาศ Deep Cosmic Void (`#060919`) ผสมม่านเนบิวลาสีม่วงเข้ม (`#4c1d95`, `#6d28d9`, `#7c3aed`) และไอซ์บลูประกายเพชร (`#38bdf8`, `#a5f3fc`)
+   - ปุ่มกด ✦ SPIN WORD ✦ และปุ่มแอ็กชันหลักใช้ Gradient สีม่วงเนบิวลาประกายฟ้าคอสมิก
+2. **Atmospheric Canvas 2D Tuning:**
+   - **Aurora Waves:** ริ้วคลื่นแสงเนบิวลาสีม่วง-ฟ้าไอซ์ไซอันเคลื่อนไหวพลิ้วไหวนุ่มนวล 60fps
+   - **Starlight Diamond Particles:** ฝุ่นคริสตัลระยิบระยับแบบ 4-point star flare ประกายเพชรสีขาวและฟ้าสว่าง
+   - **Crown Tiara Silhouette:** โครงร่างมงกุฎเพชรคริสตัลโปร่งแสงกึ่งกลางเวทีพร้อมอัญมณีประกายแสง
+   - **Violet Water Reflection:** ผิวน้ำสะท้อนแสงไฟและคลื่นระลอกน้ำโทนสีม่วง-ฟ้าไอซ์ไซอัน
+3. **Official Contest Slogans & Quotes:**
+   - หัวเวที: *"✦ SCi TECH TINE ✦ CHARM OF TRANSITION AMBASSADOR 2026"* พร้อมคำโปรย *"เสน่ห์แห่งการเปลี่ยนผ่าน สู่ดาวนำทางแห่งอนาคต"*
+   - การ์ดล็อกคำสำคัญ: คำโปรย *"ในฤดูกาลเปลี่ยนผ่าน มักมีกลุ่มดาวเปล่งประกายเสมอ"* ลอยเด่นอย่างสง่างาม
