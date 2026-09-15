@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import { useStageSync } from './hooks/useStageSync.ts';
-import { loadQuestions, saveQuestions, loadContestants, saveContestants } from './utils/storage.ts';
+import {
+  loadQuestions,
+  saveQuestions,
+  loadContestants,
+  saveContestants,
+  loadWords
+} from './utils/storage.ts';
 import { Question, Contestant, QuestionCategory } from './types/question.ts';
-import { StageCanvas } from './components/Stage/StageCanvas.tsx';
+import { KeywordItem } from './types/word.ts';
+import { StageBackground } from './components/Stage/StageBackground.tsx';
 import { StageOverlay } from './components/Stage/StageOverlay.tsx';
 import { ControlDrawer } from './components/Control/ControlDrawer.tsx';
 import { RemoteController } from './components/Control/RemoteController.tsx';
@@ -24,11 +31,18 @@ export const App: React.FC = () => {
     setContestant,
     setRound,
     setVolume,
-    toggleMute
+    toggleMute,
+    startTimer,
+    pauseTimer,
+    resumeTimer,
+    adjustTimer,
+    setTimerSoundSettings,
+    setStageDisplaySettings
   } = useStageSync(isControllerMode ? 'controller' : 'stage');
 
   const [questions, setQuestions] = useState<Question[]>(() => loadQuestions());
   const [contestants, setContestants] = useState<Contestant[]>(() => loadContestants());
+  const [words] = useState<KeywordItem[]>(() => loadWords());
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isQuestionModalOpen, setIsQuestionModalOpen] = useState(false);
@@ -51,8 +65,8 @@ export const App: React.FC = () => {
 
   const activeContestant = contestants.find(c => c.id === session.selectedContestantId);
 
-  const handleStart = (forceCategory?: QuestionCategory) => {
-    startJourney({ width: window.innerWidth, height: window.innerHeight }, forceCategory);
+  const handleStart = (forceCategory?: QuestionCategory, forceWord?: KeywordItem) => {
+    startJourney({ width: window.innerWidth, height: window.innerHeight }, forceCategory, forceWord);
   };
 
   const handleStartOrPause = () => {
@@ -79,10 +93,20 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleToggleTimer = () => {
+    if (session.timerState.status === 'running') {
+      pauseTimer();
+    } else if (session.timerState.status === 'paused') {
+      resumeTimer();
+    } else {
+      startTimer();
+    }
+  };
+
   return (
     <div className="stage-app-viewport" style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
-      {/* 1. Canvas 2D Physics & Celestial Environment */}
-      <StageCanvas session={session} onLeafLanded={skipToQuestion} onMeteorImpact={skipToQuestion} />
+      {/* 1. Dynamic Stage Background (Cosmic Canvas or AeroShards) */}
+      <StageBackground session={session} />
 
       {/* 2. React UI Stage Overlay */}
       <StageOverlay
@@ -99,6 +123,7 @@ export const App: React.FC = () => {
         onClose={() => setIsDrawerOpen(false)}
         session={session}
         contestants={contestants}
+        words={words}
         onStart={handleStart}
         onPause={pauseJourney}
         onSkip={skipToQuestion}
@@ -110,6 +135,9 @@ export const App: React.FC = () => {
         onToggleMute={toggleMute}
         onOpenQuestionManager={() => setIsQuestionModalOpen(true)}
         onOpenContestantManager={() => setIsContestantModalOpen(true)}
+        onSetTimerSoundSettings={setTimerSoundSettings}
+        onSetStageDisplaySettings={setStageDisplaySettings}
+        onAdjustTimer={adjustTimer}
       />
 
       {/* 4. Global Keyboard Navigation */}
@@ -118,6 +146,7 @@ export const App: React.FC = () => {
         onProceed={handleProceed}
         onToggleDrawer={() => setIsDrawerOpen(prev => !prev)}
         onToggleMute={toggleMute}
+        onToggleTimer={handleToggleTimer}
       />
 
       {/* 5. Question Manager Modal */}
