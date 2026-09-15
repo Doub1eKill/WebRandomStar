@@ -351,18 +351,24 @@ export const STORAGE_KEYS = {
 
 ---
 
-## 13. การปรับปรุงระบบจับเวลาเวทีประกวดระดับพรีเมียม (Luxury Stage Chronometer)
+## 13. การปรับปรุงระบบจับเวลาเวทีประกวดระดับพรีเมียม (Ultra-Clean Royal Pageant Timer)
 
 ได้รับการปรับแต่งเอฟเฟกต์ความลื่นไหลระดับ 60fps และระบบเสียงบรรยากาศเวทีประกวด:
-1. **Buttery Smooth 60fps UI (ไร้การกระตุก):**
+1. **Ultra-Clean & Non-Flashing Theme (นิ่งสนิท ไร้การกะพริบ):**
+   - รวมโทนสีการ์ดนับเวลาเป็นหนึ่งเดียวคงที่ตลอดการนับเวลา (`Deep Navy Glassmorphism` + `Royal Cyan Border`)
+   - ป้ายสถานะแสดง `⏱️ กำลังนับเวลา` อย่างคงที่ ไม่สลับข้อความเตือนถี่ๆ ให้ลายตา
+   - ตัวเลขนับเวลาคมชัดสูง (`#FFFFFF` คมกริบ) ไร้เงาเบลอหนาที่บดบังตัวเลข
+   - แถบเวลา (Progress Bar) ใช้สี Royal Cyan $\rightarrow$ Blue สว่างนิ่ง เลื่อนลดลงอย่างนุ่มนวล
+   - เปลี่ยนเป็นสถานะ `สิ้นสุดเวลา` เฉพาะเมื่อนับถอยหลังถึง 0 วินาทีเท่านั้น
+2. **Stable Stage Canvas Lighting (แสงเวทีสว่างนิ่งคงที่):**
+   - ปิดเอฟเฟกต์ขอบจอสีแดงกะพริบ (Vignette Flash) ทั้งหมดระหว่างการนับเวลา ทำให้ฉากหลังเวทีมีความนิ่งและสะอาดตา
+3. **Buttery Smooth 60fps UI (ไร้การกระตุก):**
    - ยกเลิกการรีเมานต์ DOM ด้วย `key` attribute ทำให้ตัวเลขเปลี่ยนค่าได้อย่างราบรื่น
    - ใช้ `font-variant-numeric: tabular-nums` และ `font-feature-settings: "tnum"` ตัวเลขกว้างคงที่ ไม่โยกซ้ายขวา
    - ซิงก์แถบเวลา Progress Bar ด้วย `transition: width 0.1s linear` ต่อเนื่องไม่สะดุด
-2. **Luxury Stage Breathing Glow (แสงขอบจอนุ่มนวล):**
-   - เปลี่ยนจาก Strobe กระพริบถี่ เป็น Soft Breathing Glow (จังหวะหายใจช้า 0.5Hz โทนสีทอง $\rightarrow$ ทับทิม)
-   - ขยายรัศมี Feathering ไม่บดบังพื้นที่กลางจอเวที
-3. **Acoustic Procedural Sound Palette (เสียงสังเคราะห์ชั้นสูง):**
+4. **Acoustic Procedural Sound Palette (เสียงสังเคราะห์ชั้นสูง):**
    - เสียงติ๊กเดินเวลาแบบ **Soft Crystal Chronometer** คลื่น Sine นุ่มสบายหู
    - เสียงระฆังเตือน 3 วินาทีสุดท้าย **Melodic Countdown Bells** (G5 $\rightarrow$ A5 $\rightarrow$ C6)
    - เสียงระฆังปิดเวลา **Royal Gong Triad** (C4 + G4 + C5) กังวานสง่างาม
+
 

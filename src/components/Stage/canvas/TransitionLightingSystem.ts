@@ -21,7 +21,7 @@ export class TransitionLightingSystem {
     this.vignetteIntensity = 0;
   }
 
-  public update(dt: number, state: AppState, stageProgress: number = 0, timerPhase: TimerPhase = 'normal') {
+  public update(dt: number, state: AppState, stageProgress: number = 0, _timerPhase: TimerPhase = 'normal') {
     this.timeAccumulator += dt;
 
     if (state === 'sky-clear') {
@@ -47,7 +47,7 @@ export class TransitionLightingSystem {
     }
   }
 
-  public draw(ctx: CanvasRenderingContext2D, state: AppState, timerPhase: TimerPhase = 'normal') {
+  public draw(ctx: CanvasRenderingContext2D, state: AppState, _timerPhase: TimerPhase = 'normal') {
     ctx.save();
 
     // 1. Central Ambient Glow / Dawn Bloom
@@ -66,30 +66,7 @@ export class TransitionLightingSystem {
       ctx.fillRect(0, 0, this.width, this.height);
     }
 
-    // 2. Dynamic Luxury Edge Breathing Glow during Countdown
-    if (this.vignetteIntensity > 0.01 && (state === 'question' || state === 'answered')) {
-      const cx = this.width / 2;
-      const cy = this.height / 2;
-      const maxDist = Math.sqrt(cx * cx + cy * cy);
-
-      const vignetteGrad = ctx.createRadialGradient(cx, cy, maxDist * 0.6, cx, cy, maxDist);
-      vignetteGrad.addColorStop(0, 'rgba(0, 0, 0, 0)');
-
-      if (timerPhase === 'last-3s' || timerPhase === 'critical') {
-        vignetteGrad.addColorStop(0.8, `rgba(160, 20, 30, ${this.vignetteIntensity * 0.2})`);
-        vignetteGrad.addColorStop(1, `rgba(100, 10, 20, ${this.vignetteIntensity * 0.4})`);
-      } else if (timerPhase === 'warning') {
-        vignetteGrad.addColorStop(0.8, `rgba(150, 90, 20, ${this.vignetteIntensity * 0.15})`);
-        vignetteGrad.addColorStop(1, `rgba(90, 50, 10, ${this.vignetteIntensity * 0.3})`);
-      } else {
-        vignetteGrad.addColorStop(1, `rgba(0, 0, 0, ${this.vignetteIntensity * 0.3})`);
-      }
-
-      ctx.fillStyle = vignetteGrad;
-      ctx.fillRect(0, 0, this.width, this.height);
-    }
-
-    // 3. Light Sweep during Question Reveal
+    // 2. Light Sweep during Question Reveal
     if (state === 'question-reveal' || state === 'sky-clear') {
       ctx.globalCompositeOperation = 'screen';
       const beamX = (this.lightBeamProgress * this.width * 1.5) - (this.width * 0.25);
