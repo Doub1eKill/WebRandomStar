@@ -36,10 +36,10 @@ export class TransitionLightingSystem {
       this.lightBeamProgress += dt * 1.5;
       this.vignetteIntensity += (0 - this.vignetteIntensity) * 0.1;
     } else if (state === 'question' || state === 'answered') {
-      // Resting steady ambient highlight
-      const baseBloom = 0.22 + Math.sin(this.timeAccumulator * 1.2) * 0.04;
-      this.bloomIntensity += (baseBloom - this.bloomIntensity) * 0.08;
-      this.vignetteIntensity += (0 - this.vignetteIntensity) * 0.1;
+      // Completely steady background with zero fluctuating bloom or vignette
+      this.bloomIntensity += (0 - this.bloomIntensity) * 0.15;
+      this.vignetteIntensity += (0 - this.vignetteIntensity) * 0.15;
+      this.lightBeamProgress = 0;
     } else {
       this.bloomIntensity += (0 - this.bloomIntensity) * 0.1;
       this.vignetteIntensity += (0 - this.vignetteIntensity) * 0.1;

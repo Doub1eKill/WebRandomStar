@@ -288,15 +288,15 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
       sky.skyClarity = lerp(sky.skyClarity, targets.skyClarity);
       sky.moonOpacity = lerp(sky.moonOpacity, targets.moonOpacity);
 
-      // 1. Luxury Night Sky Background Base (#071126 to #0D2854)
-      ctx.fillStyle = '#071126';
+      // 1. Cosmic Void & Nebula Night Sky Background Base (#060919 to #0b102b)
+      ctx.fillStyle = '#060919';
       ctx.fillRect(0, 0, width, height);
 
       const skyGrad = ctx.createLinearGradient(0, 0, 0, height);
-      skyGrad.addColorStop(0, '#071126');
-      skyGrad.addColorStop(0.35, '#0D2854');
-      skyGrad.addColorStop(0.7, '#1b1448');
-      skyGrad.addColorStop(1, '#070b1a');
+      skyGrad.addColorStop(0, '#060919');
+      skyGrad.addColorStop(0.35, '#0b102b');
+      skyGrad.addColorStop(0.7, '#120d31');
+      skyGrad.addColorStop(1, '#060919');
       ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, width, height);
 
