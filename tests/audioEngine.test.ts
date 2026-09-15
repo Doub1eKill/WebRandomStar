@@ -1,10 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { audioEngine } from '../src/engine/audioEngine.ts';
 
-describe('Procedural Web Audio Engine', () => {
+describe('Procedural Web Audio Engine (V3 - Royal Word Spin)', () => {
   beforeEach(() => {
     audioEngine.setMuted(false);
     audioEngine.setVolume(0.8);
+    audioEngine.setSpinSoundEnabled(true);
   });
 
   it('should handle volume setting with boundary clamping [0, 1]', () => {
@@ -28,27 +29,66 @@ describe('Procedural Web Audio Engine', () => {
 
   it('should not throw error when triggering sound methods without AudioContext initialized', () => {
     expect(() => {
+      audioEngine.playSpinStart();
+      audioEngine.playSpinTick(0.8);
+      audioEngine.playWordLock();
+      audioEngine.playQuestionReveal();
+      audioEngine.playTimerWarning();
+      audioEngine.playTimerFinish();
       audioEngine.playWaterDrop();
       audioEngine.playWindGust();
       audioEngine.playLeafRustle();
-      audioEngine.playStarChime();
-      audioEngine.playMeteorWhoosh();
-      audioEngine.playQuestionReveal();
+      audioEngine.playSkyTransition();
       audioEngine.fadeRainOut(0.5);
-      audioEngine.playHeartbeatRiser(2.5);
-      audioEngine.playSupernovaBoom();
     }).not.toThrow();
   });
 
-  it('should have playHeartbeatRiser, playSupernovaBoom, playSuspenseRiser, and playSupernovaImpact methods defined', () => {
-    expect(typeof (audioEngine as any).playHeartbeatRiser).toBe('function');
-    expect(typeof (audioEngine as any).playSupernovaBoom).toBe('function');
-    expect(typeof (audioEngine as any).playSuspenseRiser).toBe('function');
-    expect(typeof (audioEngine as any).playSupernovaImpact).toBe('function');
+  it('should have playSpinStart, playSpinTick, playWordLock and playQuestionReveal defined', () => {
+    expect(typeof audioEngine.playSpinStart).toBe('function');
+    expect(typeof audioEngine.playSpinTick).toBe('function');
+    expect(typeof audioEngine.playWordLock).toBe('function');
+    expect(typeof audioEngine.playQuestionReveal).toBe('function');
+    expect(typeof audioEngine.playTimerWarning).toBe('function');
+    expect(typeof audioEngine.playTimerFinish).toBe('function');
+    expect(typeof audioEngine.playTickSound).toBe('function');
   });
 
-  it('should trigger playSuspenseRiser and playSupernovaImpact without throwing', () => {
-    expect(() => audioEngine.playSuspenseRiser()).not.toThrow();
-    expect(() => audioEngine.playSupernovaImpact()).not.toThrow();
+  it('should handle spin, tick, warning and finish sound enable/disable and tick volume', () => {
+    audioEngine.setSpinSoundEnabled(false);
+    expect(audioEngine.isSpinSoundEnabled()).toBe(false);
+    audioEngine.setSpinSoundEnabled(true);
+    expect(audioEngine.isSpinSoundEnabled()).toBe(true);
+
+    audioEngine.setTickSoundEnabled(false);
+    expect(audioEngine.isTickSoundEnabled()).toBe(false);
+    audioEngine.setTickSoundEnabled(true);
+    expect(audioEngine.isTickSoundEnabled()).toBe(true);
+
+    audioEngine.setWarningSoundEnabled(false);
+    expect(audioEngine.isWarningSoundEnabled()).toBe(false);
+    audioEngine.setWarningSoundEnabled(true);
+    expect(audioEngine.isWarningSoundEnabled()).toBe(true);
+
+    audioEngine.setFinishSoundEnabled(false);
+    expect(audioEngine.isFinishSoundEnabled()).toBe(false);
+    audioEngine.setFinishSoundEnabled(true);
+    expect(audioEngine.isFinishSoundEnabled()).toBe(true);
+
+    audioEngine.setTickVolume(0.75);
+    expect(audioEngine.getTickVolume()).toBe(0.75);
+    audioEngine.setTickVolume(1.5);
+    expect(audioEngine.getTickVolume()).toBe(1.0);
+    audioEngine.setTickVolume(-0.2);
+    expect(audioEngine.getTickVolume()).toBe(0.0);
+  });
+
+  it('should trigger playTickSound safely for all threshold ranges', () => {
+    expect(() => {
+      audioEngine.playTickSound(45); // Normal
+      audioEngine.playTickSound(10); // Critical
+      audioEngine.playTickSound(3);  // Last 3s
+      audioEngine.playTickSound(1);  // Last 1s
+      audioEngine.playTickSound(0);  // Finished
+    }).not.toThrow();
   });
 });

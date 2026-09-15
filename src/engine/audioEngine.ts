@@ -1,6 +1,6 @@
 /**
- * Procedural Web Audio API sound generator for "Season Transition" ambiance
- * Generates natural audio synthesis (Rain, Drops, Wind, Leaves, Stars, Meteor, Reveal)
+ * Procedural Web Audio API sound generator for "Royal Word Spin & Luxury Pageant Stage"
+ * Generates procedural audio synthesis (Spin Whoosh, Spin Ticks, Word Lock Chime, Question Reveal, Ambient & Timer Chimes)
  * without relying on external MP3 files. Works 100% offline.
  */
 class ProceduralAudioEngine {
@@ -10,6 +10,11 @@ class ProceduralAudioEngine {
   private rainGain: GainNode | null = null;
   private volume: number = 0.8;
   private muted: boolean = false;
+  private tickSoundEnabled: boolean = true;
+  private warningSoundEnabled: boolean = true;
+  private finishSoundEnabled: boolean = true;
+  private spinSoundEnabled: boolean = true;
+  private tickVolume: number = 0.6;
 
   public init(): void {
     if (this.ctx) return;
@@ -58,12 +63,180 @@ class ProceduralAudioEngine {
     return this.muted;
   }
 
+  public setTickSoundEnabled(enabled: boolean): void {
+    this.tickSoundEnabled = enabled;
+  }
+
+  public isTickSoundEnabled(): boolean {
+    return this.tickSoundEnabled;
+  }
+
+  public setWarningSoundEnabled(enabled: boolean): void {
+    this.warningSoundEnabled = enabled;
+  }
+
+  public isWarningSoundEnabled(): boolean {
+    return this.warningSoundEnabled;
+  }
+
+  public setFinishSoundEnabled(enabled: boolean): void {
+    this.finishSoundEnabled = enabled;
+  }
+
+  public isFinishSoundEnabled(): boolean {
+    return this.finishSoundEnabled;
+  }
+
+  public setSpinSoundEnabled(enabled: boolean): void {
+    this.spinSoundEnabled = enabled;
+  }
+
+  public isSpinSoundEnabled(): boolean {
+    return this.spinSoundEnabled;
+  }
+
+  public setTickVolume(vol: number): void {
+    this.tickVolume = Math.max(0, Math.min(1, vol));
+  }
+
+  public getTickVolume(): number {
+    return this.tickVolume;
+  }
+
+  /**
+   * Royal Spin Start: Whoosh + Rising harmonic build-up
+   */
+  public playSpinStart(): void {
+    if (this.muted || !this.spinSoundEnabled) return;
+    if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
+
+    const now = this.ctx.currentTime;
+
+    // Rising sine tone
+    const osc = this.ctx.createOscillator();
+    const oscGain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(220, now);
+    osc.frequency.exponentialRampToValueAtTime(880, now + 0.6);
+
+    oscGain.gain.setValueAtTime(0, now);
+    oscGain.gain.linearRampToValueAtTime(0.2, now + 0.3);
+    oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+
+    osc.connect(oscGain);
+    oscGain.connect(this.masterGain);
+    osc.start(now);
+    osc.stop(now + 0.75);
+
+    // Ethereal whoosh noise
+    try {
+      const bufferSize = this.ctx.sampleRate * 0.7;
+      const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.2;
+      }
+      const noise = this.ctx.createBufferSource();
+      noise.buffer = buffer;
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(400, now);
+      filter.frequency.linearRampToValueAtTime(1200, now + 0.6);
+
+      const noiseGain = this.ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.15, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
+
+      noise.connect(filter);
+      filter.connect(noiseGain);
+      noiseGain.connect(this.masterGain);
+
+      noise.start(now);
+      noise.stop(now + 0.7);
+    } catch {
+      // ignore
+    }
+  }
+
+  /**
+   * Word Spin Tick: Crisp crystal tick, modulated by speed ratio (0 = slow/deep, 1 = fast/bright)
+   */
+  public playSpinTick(speedRatio: number = 1): void {
+    if (this.muted || !this.spinSoundEnabled) return;
+    if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    const baseFreq = 480 + speedRatio * 440; // 480Hz to 920Hz
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(baseFreq, now);
+    osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.6, now + 0.035);
+
+    const tickGain = Math.min(1, this.tickVolume * (0.15 + speedRatio * 0.15));
+    gain.gain.setValueAtTime(tickGain, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+
+    osc.start(now);
+    osc.stop(now + 0.045);
+  }
+
+  /**
+   * Word Lock Chime: Climax sound with sparkling polyphonic major triad + soft bass pulse
+   */
+  public playWordLock(): void {
+    if (this.muted || !this.spinSoundEnabled) return;
+    if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
+
+    const now = this.ctx.currentTime;
+    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+
+    // Shimmering chimes
+    notes.forEach((freq, idx) => {
+      if (!this.ctx || !this.masterGain) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.03);
+
+      gain.gain.setValueAtTime(0, now + idx * 0.03);
+      gain.gain.linearRampToValueAtTime(0.22, now + idx * 0.03 + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.03 + 1.6);
+
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+
+      osc.start(now + idx * 0.03);
+      osc.stop(now + idx * 0.03 + 1.8);
+    });
+
+    // Soft bass impact
+    const bass = this.ctx.createOscillator();
+    const bassGain = this.ctx.createGain();
+    bass.type = 'sine';
+    bass.frequency.setValueAtTime(130, now);
+    bass.frequency.exponentialRampToValueAtTime(65, now + 0.4);
+
+    bassGain.gain.setValueAtTime(0.25, now);
+    bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+    bass.connect(bassGain);
+    bassGain.connect(this.masterGain);
+    bass.start(now);
+    bass.stop(now + 0.55);
+  }
+
   /**
    * Continuous pink noise rain generator with low-pass filtering
    */
   public playRainAmbience(fadeDuration: number = 1.5): void {
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
-    if (this.rainNode) return; // already playing
+    if (this.rainNode) return;
 
     const bufferSize = this.ctx.sampleRate * 2;
     const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
@@ -223,84 +396,32 @@ class ProceduralAudioEngine {
   }
 
   /**
-   * Star & Constellation celestial chime
+   * Sky Transition ambient harmonic pad
    */
-  public playStarChime(): void {
+  public playSkyTransition(): void {
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
 
-    const frequencies = [1046.5, 1318.51, 1567.98, 2093.0]; // C6, E6, G6, C7
+    const chord = [392.0, 493.88, 587.33, 783.99]; // G4, B4, D5, G5
     const now = this.ctx.currentTime;
 
-    frequencies.forEach((freq, idx) => {
+    chord.forEach((freq, idx) => {
       if (!this.ctx || !this.masterGain) return;
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
 
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now + idx * 0.09);
+      osc.frequency.setValueAtTime(freq, now + idx * 0.05);
 
-      gain.gain.setValueAtTime(0, now + idx * 0.09);
-      gain.gain.linearRampToValueAtTime(0.15, now + idx * 0.09 + 0.03);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 1.2);
+      gain.gain.setValueAtTime(0, now + idx * 0.05);
+      gain.gain.linearRampToValueAtTime(0.12, now + idx * 0.05 + 0.2);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 1.8);
 
       osc.connect(gain);
       gain.connect(this.masterGain);
 
-      osc.start(now + idx * 0.09);
-      osc.stop(now + idx * 0.09 + 1.3);
+      osc.start(now + idx * 0.05);
+      osc.stop(now + idx * 0.05 + 2.0);
     });
-  }
-
-  /**
-   * Meteor whoosh and impact strike sound
-   */
-  public playMeteorWhoosh(): void {
-    if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
-
-    const now = this.ctx.currentTime;
-
-    // Sub-bass sweep
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(180, now);
-    osc.frequency.exponentialRampToValueAtTime(60, now + 0.8);
-
-    gain.gain.setValueAtTime(0.45, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
-
-    osc.connect(gain);
-    gain.connect(this.masterGain);
-    osc.start(now);
-    osc.stop(now + 1.0);
-
-    // High frequency streak noise
-    const bufferSize = this.ctx.sampleRate * 0.9;
-    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = Math.random() * 2 - 1;
-    }
-
-    const noise = this.ctx.createBufferSource();
-    noise.buffer = buffer;
-
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(2400, now);
-    filter.frequency.exponentialRampToValueAtTime(700, now + 0.8);
-    filter.Q.setValueAtTime(4, now);
-
-    const noiseGain = this.ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.3, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
-
-    noise.connect(filter);
-    filter.connect(noiseGain);
-    noiseGain.connect(this.masterGain);
-
-    noise.start(now);
-    noise.stop(now + 0.9);
   }
 
   /**
@@ -322,219 +443,163 @@ class ProceduralAudioEngine {
 
       gain.gain.setValueAtTime(0, now + i * 0.04);
       gain.gain.linearRampToValueAtTime(0.18, now + i * 0.04 + 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.04 + 2.8);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.04 + 2.5);
 
       osc.connect(gain);
       gain.connect(this.masterGain);
 
       osc.start(now + i * 0.04);
-      osc.stop(now + i * 0.04 + 3.0);
+      osc.stop(now + i * 0.04 + 2.8);
     });
   }
 
   /**
-   * Heartbeat acceleration build-up with rising tension drone
+   * Timer Warning Cue (plays subtle gentle dual chime at ≤30s)
    */
-  public playHeartbeatRiser(durationSec: number = 2.5): void {
+  public playTimerWarning(): void {
+    if (!this.warningSoundEnabled || this.muted) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
 
     const now = this.ctx.currentTime;
-    const beatTimes: number[] = [];
-    let t = 0;
-    let interval = 0.65; // start with 650ms between double-thumps
+    const freqs = [880, 1174.66]; // A5, D6
 
-    while (t < durationSec) {
-      beatTimes.push(t);
-      beatTimes.push(t + 0.14); // second thump of double-heartbeat
-      t += interval;
-      interval = Math.max(0.22, interval * 0.78); // accelerate
-    }
-
-    // Play each heartbeat pulse
-    beatTimes.forEach((offset) => {
+    freqs.forEach((f, i) => {
       if (!this.ctx || !this.masterGain) return;
-      const beatTime = now + offset;
-
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
 
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(58, beatTime);
-      osc.frequency.exponentialRampToValueAtTime(38, beatTime + 0.09);
+      osc.frequency.setValueAtTime(f, now + i * 0.1);
 
-      gain.gain.setValueAtTime(0.45, beatTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, beatTime + 0.12);
+      gain.gain.setValueAtTime(0.12, now + i * 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.35);
 
       osc.connect(gain);
       gain.connect(this.masterGain);
 
-      osc.start(beatTime);
-      osc.stop(beatTime + 0.15);
+      osc.start(now + i * 0.1);
+      osc.stop(now + i * 0.1 + 0.4);
     });
-
-    // Escalating high-resonance tension drone
-    const drone = this.ctx.createOscillator();
-    const droneGain = this.ctx.createGain();
-    const droneFilter = this.ctx.createBiquadFilter();
-
-    drone.type = 'sawtooth';
-    drone.frequency.setValueAtTime(110, now);
-    drone.frequency.exponentialRampToValueAtTime(220, now + durationSec);
-
-    droneFilter.type = 'lowpass';
-    droneFilter.frequency.setValueAtTime(300, now);
-    droneFilter.frequency.exponentialRampToValueAtTime(1400, now + durationSec);
-    droneFilter.Q.setValueAtTime(6, now);
-
-    droneGain.gain.setValueAtTime(0, now);
-    droneGain.gain.linearRampToValueAtTime(0.12, now + durationSec * 0.4);
-    droneGain.gain.exponentialRampToValueAtTime(0.001, now + durationSec + 0.1);
-
-    drone.connect(droneFilter);
-    droneFilter.connect(droneGain);
-    droneGain.connect(this.masterGain);
-
-    drone.start(now);
-    drone.stop(now + durationSec + 0.2);
   }
 
   /**
-   * Powerful Supernova impact boom (sub-drop + crystalline shimmer burst)
+   * Timer Finish Sound (Plays decisive royal harmonic gong)
    */
-  public playSupernovaBoom(): void {
+  public playTimerFinish(): void {
+    if (!this.finishSoundEnabled || this.muted) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
 
     const now = this.ctx.currentTime;
+    const chord = [261.63, 392.00, 523.25]; // C4, G4, C5 royal triad
 
-    // 1. Massive deep sub-drop impact
-    const subOsc = this.ctx.createOscillator();
-    const subGain = this.ctx.createGain();
+    chord.forEach((freq, idx) => {
+      if (!this.ctx || !this.masterGain) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
 
-    subOsc.type = 'sine';
-    subOsc.frequency.setValueAtTime(140, now);
-    subOsc.frequency.exponentialRampToValueAtTime(32, now + 0.6);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.02);
 
-    subGain.gain.setValueAtTime(0.7, now);
-    subGain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+      gain.gain.setValueAtTime(0.28, now + idx * 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.02 + 1.6);
 
-    subOsc.connect(subGain);
-    subGain.connect(this.masterGain);
+      osc.connect(gain);
+      gain.connect(this.masterGain);
 
-    subOsc.start(now);
-    subOsc.stop(now + 1.3);
+      osc.start(now + idx * 0.02);
+      osc.stop(now + idx * 0.02 + 1.7);
+    });
+  }
 
-    // 2. High-frequency crystalline shimmer sparkle
-    const bufferSize = Math.floor(this.ctx.sampleRate * 0.6);
-    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = Math.random() * 2 - 1;
+  /**
+   * Procedural tick sound for timer countdown (Luxury Crystal Chronometer).
+   */
+  public playTickSound(remainingSeconds: number): void {
+    if (this.muted) return;
+
+    if (remainingSeconds <= 0) {
+      if (this.finishSoundEnabled) {
+        this.playTimerFinish();
+      }
+      return;
     }
 
-    const noise = this.ctx.createBufferSource();
-    noise.buffer = buffer;
-
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(3200, now);
-    filter.Q.setValueAtTime(5, now);
-
-    const noiseGain = this.ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.4, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
-
-    noise.connect(filter);
-    filter.connect(noiseGain);
-    noiseGain.connect(this.masterGain);
-
-    noise.start(now);
-    noise.stop(now + 0.6);
-  }
-
-  /**
-   * 1.2s Cinematic Suspense Riser: Deep sub-pulse & ascending crystalline resonance
-   */
-  public playSuspenseRiser(): void {
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
+
     const now = this.ctx.currentTime;
+    const baseVol = this.tickVolume;
 
-    // 1. Deep Sub-bass heartbeat pulse
-    const subOsc = this.ctx.createOscillator();
-    const subGain = this.ctx.createGain();
-    subOsc.type = 'sine';
-    subOsc.frequency.setValueAtTime(45, now);
-    subOsc.frequency.exponentialRampToValueAtTime(90, now + 1.2);
+    if (remainingSeconds <= 3) {
+      // Last 3s: Melodic Royal Countdown Bells (3s = G5, 2s = A5, 1s = C6)
+      if (this.warningSoundEnabled) {
+        const bellFreqs: Record<number, number> = {
+          3: 783.99, // G5
+          2: 880.00, // A5
+          1: 1046.50 // C6
+        };
+        const freq = bellFreqs[remainingSeconds] || 1046.50;
 
-    subGain.gain.setValueAtTime(0.01, now);
-    subGain.gain.linearRampToValueAtTime(0.35, now + 0.9);
-    subGain.gain.exponentialRampToValueAtTime(0.001, now + 1.25);
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
 
-    subOsc.connect(subGain);
-    subGain.connect(this.masterGain);
-    subOsc.start(now);
-    subOsc.stop(now + 1.25);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
 
-    // 2. Rising crystalline resonance
-    const chimeOsc = this.ctx.createOscillator();
-    const chimeFilter = this.ctx.createBiquadFilter();
-    const chimeGain = this.ctx.createGain();
+        const peakGain = Math.min(1, baseVol * 0.28);
+        gain.gain.setValueAtTime(peakGain, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
 
-    chimeOsc.type = 'triangle';
-    chimeOsc.frequency.setValueAtTime(280, now);
-    chimeOsc.frequency.exponentialRampToValueAtTime(880, now + 1.2);
+        osc.connect(gain);
+        gain.connect(this.masterGain);
 
-    chimeFilter.type = 'bandpass';
-    chimeFilter.frequency.setValueAtTime(350, now);
-    chimeFilter.frequency.exponentialRampToValueAtTime(1400, now + 1.2);
-    chimeFilter.Q.value = 5.0;
+        osc.start(now);
+        osc.stop(now + 0.25);
+        return;
+      }
+      if (!this.tickSoundEnabled) return;
+    } else if (remainingSeconds <= 10) {
+      // Critical (10s to 4s): Warm crystal tick (sine wave, non-intrusive)
+      if (this.warningSoundEnabled) {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
 
-    chimeGain.gain.setValueAtTime(0.02, now);
-    chimeGain.gain.linearRampToValueAtTime(0.28, now + 1.1);
-    chimeGain.gain.exponentialRampToValueAtTime(0.001, now + 1.25);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(720, now);
+        osc.frequency.exponentialRampToValueAtTime(480, now + 0.045);
 
-    chimeOsc.connect(chimeFilter);
-    chimeFilter.connect(chimeGain);
-    chimeGain.connect(this.masterGain);
-    chimeOsc.start(now);
-    chimeOsc.stop(now + 1.25);
-  }
+        const tickGain = Math.min(1, baseVol * 0.16);
+        gain.gain.setValueAtTime(tickGain, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
 
-  /**
-   * Powerful Supernova Impact: Sub-bass boom + crystal harmonic splash
-   */
-  public playSupernovaImpact(): void {
-    if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
-    const now = this.ctx.currentTime;
+        osc.connect(gain);
+        gain.connect(this.masterGain);
 
-    // 1. Sub-bass impact drop
-    const boomOsc = this.ctx.createOscillator();
-    const boomGain = this.ctx.createGain();
-    boomOsc.type = 'sine';
-    boomOsc.frequency.setValueAtTime(95, now);
-    boomOsc.frequency.exponentialRampToValueAtTime(28, now + 0.8);
+        osc.start(now);
+        osc.stop(now + 0.055);
+        return;
+      }
+      if (!this.tickSoundEnabled) return;
+    } else {
+      if (!this.tickSoundEnabled) return;
+    }
 
-    boomGain.gain.setValueAtTime(0.7, now);
-    boomGain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+    // Normal soft crystal chronometer tick
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
 
-    boomOsc.connect(boomGain);
-    boomGain.connect(this.masterGain);
-    boomOsc.start(now);
-    boomOsc.stop(now + 0.9);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(640, now);
+    osc.frequency.exponentialRampToValueAtTime(320, now + 0.035);
 
-    // 2. Crystal chime dispersion
-    const chimeOsc = this.ctx.createOscillator();
-    const chimeGain = this.ctx.createGain();
-    chimeOsc.type = 'sine';
-    chimeOsc.frequency.setValueAtTime(1200, now);
-    chimeOsc.frequency.exponentialRampToValueAtTime(1800, now + 0.3);
+    const tickGain = Math.min(1, baseVol * 0.12);
+    gain.gain.setValueAtTime(tickGain, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
 
-    chimeGain.gain.setValueAtTime(0.4, now);
-    chimeGain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+    osc.connect(gain);
+    gain.connect(this.masterGain);
 
-    chimeOsc.connect(chimeGain);
-    chimeGain.connect(this.masterGain);
-    chimeOsc.start(now);
-    chimeOsc.stop(now + 1.2);
+    osc.start(now);
+    osc.stop(now + 0.045);
   }
 }
 
