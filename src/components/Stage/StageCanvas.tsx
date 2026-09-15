@@ -53,6 +53,11 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
     moonOpacity: 0.6
   });
 
+  const sessionRef = useRef<SessionState>(session);
+  useEffect(() => {
+    sessionRef.current = session;
+  }, [session]);
+
   // Handle stage state transitions & synchronized procedural audio
   useEffect(() => {
     const currentState = session.currentState;
@@ -193,7 +198,14 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
     }
   }, [session.currentState]);
 
-  // Setup Canvas render loop
+  // Update crystal density only when appearance settings actually change
+  useEffect(() => {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    crystalRef.current.init(width, height, session.appearanceSettings?.particleDensity || 1.0);
+  }, [session.appearanceSettings?.particleDensity]);
+
+  // Setup Continuous Canvas render loop (runs once on mount, 60fps stable)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -215,7 +227,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
       ctx.resetTransform();
       ctx.scale(dpr, dpr);
 
-      crystalRef.current.init(width, height, session.appearanceSettings?.particleDensity || 1.0);
+      crystalRef.current.init(width, height, sessionRef.current.appearanceSettings?.particleDensity || 1.0);
       rainRef.current.resize(width, height);
       dropRef.current.resize(width, height);
       mistRef.current.resize(width, height);
@@ -245,6 +257,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
       const dtMs = dt * 1000;
       lastTime = time;
 
+      const currentSession = sessionRef.current;
       const width = window.innerWidth;
       const height = window.innerHeight;
 
@@ -261,15 +274,15 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
       const lighting = lightingRef.current;
       const targets = targetsRef.current;
 
-      const timerPhase = session.timerState
-        ? (session.timerState.status === 'finished'
+      const timerPhase = currentSession.timerState
+        ? (currentSession.timerState.status === 'finished'
             ? 'finished'
-            : session.timerState.status === 'running'
-            ? (Math.ceil(session.timerState.remainingMs / 1000) <= 3
+            : currentSession.timerState.status === 'running'
+            ? (Math.ceil(currentSession.timerState.remainingMs / 1000) <= 3
                 ? 'last-3s'
-                : Math.ceil(session.timerState.remainingMs / 1000) <= 10
+                : Math.ceil(currentSession.timerState.remainingMs / 1000) <= 10
                 ? 'critical'
-                : session.timerState.remainingMs <= (session.timerState.warningAtMs || 30000)
+                : currentSession.timerState.remainingMs <= (currentSession.timerState.warningAtMs || 30000)
                 ? 'warning'
                 : 'normal')
             : 'normal')
@@ -302,14 +315,14 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
 
       // 2. Aurora Light Ribbon Layer
       aurora.update(dtMs);
-      aurora.render(ctx, width, height, curAurora * (session.appearanceSettings?.glowIntensity || 1.0));
+      aurora.render(ctx, width, height, curAurora * (currentSession.appearanceSettings?.glowIntensity || 1.0));
 
       // 3. Stars & Celestial Sky
       sky.update();
       sky.draw(ctx);
 
       // 4. Subtle Royal Crown Silhouette (Watermark)
-      if (session.appearanceSettings?.showCrownSilhouette !== false) {
+      if (currentSession.appearanceSettings?.showCrownSilhouette !== false) {
         crown.update(dtMs);
         crown.render(ctx, width, height, curCrown);
       }
@@ -319,7 +332,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
       crystal.render(ctx, curCrystal);
 
       // 6. Water Mirror Reflection Layer
-      if (session.appearanceSettings?.showWaterReflection !== false) {
+      if (currentSession.appearanceSettings?.showWaterReflection !== false) {
         reflection.update(dtMs);
         reflection.render(ctx, width, height, curReflection);
       }
@@ -343,8 +356,8 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
       }
 
       // 8. Stage Spotlight, Dynamic Vignette & Timer Glow
-      lighting.update(dt, session.currentState, 0.5, timerPhase);
-      lighting.draw(ctx, session.currentState, timerPhase);
+      lighting.update(dt, currentSession.currentState, 0.5, timerPhase);
+      lighting.draw(ctx, currentSession.currentState, timerPhase);
 
       animId = requestAnimationFrame(render);
     };
@@ -355,7 +368,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', handleResize);
     };
-  }, [session]);
+  }, []);
 
   return (
     <canvas
