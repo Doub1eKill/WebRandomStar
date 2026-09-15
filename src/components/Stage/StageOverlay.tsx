@@ -75,6 +75,7 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
               timerState={session.timerState}
               soundEnabled={isAnySoundEnabled}
               variant={displaySettings.timerDisplayMode}
+              stageDisplaySettings={displaySettings}
             />
           </div>
         )}
@@ -135,6 +136,7 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
                   timerState={session.timerState}
                   soundEnabled={isAnySoundEnabled}
                   variant="center"
+                  stageDisplaySettings={displaySettings}
                 />
               </div>
             )}
