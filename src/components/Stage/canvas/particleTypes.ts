@@ -42,3 +42,18 @@ export interface LeafParticle {
   targetX?: number;
   targetY?: number;
 }
+
+export interface CrystalParticle {
+  x: number;
+  y: number;
+  size: number;
+  opacity: number;
+  twinkleSpeed: number;
+  twinklePhase: number;
+  vx: number;
+  vy: number;
+  rotation: number;
+  rotSpeed: number;
+  color: string;
+  type: 'diamond' | 'star' | 'bokeh';
+}
