@@ -113,8 +113,11 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
                 style={{
                   transform: `translateY(${translateY}px) scale(${scale})`,
                   opacity,
-                  color: isCenter ? item.color || '#A5F3FC' : 'rgba(224, 231, 255, 0.7)',
-                  filter: isCenter ? 'drop-shadow(0 0 16px rgba(103, 232, 249, 0.7))' : 'none'
+                  color: isCenter ? '#ffffff' : `rgba(255, 255, 255, ${Math.max(0.2, 0.85 - absOffset * 0.25)})`,
+                  textShadow: isCenter
+                    ? '0 0 24px rgba(255, 255, 255, 0.95), 0 0 45px rgba(165, 243, 252, 0.45)'
+                    : 'none',
+                  filter: isCenter ? 'drop-shadow(0 0 16px rgba(255, 255, 255, 0.8))' : 'none'
                 }}
               >
                 {isCenter && <span className="word-accent-star left">✦</span>}
