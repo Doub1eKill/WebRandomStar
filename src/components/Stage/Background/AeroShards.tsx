@@ -39,7 +39,6 @@ export interface AeroShardsProps {
 const PLACEMENTS: Record<string, number> = { right: 0, left: 1, center: 2, full: 3 };
 const MATERIALS: Record<string, number> = { pearl: 0, chrome: 1, satin: 2 };
 const INTERACTIONS: Record<string, number> = { none: 0, repel: 1, attract: 2 };
-const EFFECTS: Record<string, number> = { none: 0, dither: 1, ascii: 2 };
 const FLOWS: Record<string, number> = { stream: 0, vortex: 1, ribbon: 2 };
 const RIPPLE_SPEED = 4.2;
 const RIPPLE_TAIL = 1.8;
@@ -892,12 +891,12 @@ const resolveDpr = (preset: { dpr: number; supersamplePixels: number }, canvas: 
   return Math.max(1, Math.min(window.devicePixelRatio || 1, preset.dpr, budgetDpr));
 };
 
-const resolveBloomSize = (size: number[], qualityLevel = 0) => {
+const resolveBloomSize = (size: readonly [number, number] | [number, number], qualityLevel = 0): [number, number] => {
   const bloomScale = BLOOM_SCALES[qualityLevel] ?? BLOOM_SCALES[0];
   return [Math.max(1, Math.round(size[0] * bloomScale)), Math.max(1, Math.round(size[1] * bloomScale))];
 };
 
-const createRenderGraph = (gpu: any, outputSize: number[], bloomSize = resolveBloomSize(outputSize)) => {
+const createRenderGraph = (gpu: any, outputSize: readonly [number, number] | [number, number], bloomSize: [number, number] = resolveBloomSize(outputSize)) => {
   const viewParams = uniforms(gpu, {
     viewport: [1, 0.0132, 1, 0],
     shape: [1, 1, 0.36, 0],
@@ -936,7 +935,7 @@ const createRenderGraph = (gpu: any, outputSize: number[], bloomSize = resolveBl
   });
   shardDraw.set({ view: viewParams });
   const sceneTarget = target(gpu, {
-    size: outputSize,
+    size: [outputSize[0], outputSize[1]],
     format: 'rgba8unorm',
     label: 'aero-shards-scene'
   });
@@ -1166,7 +1165,7 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
     if (!canvas || !root) return;
 
     // Check WebGPU browser support
-    if (typeof navigator === 'undefined' || !navigator.gpu) {
+    if (typeof navigator === 'undefined' || !(navigator as any).gpu) {
       onErrorRef.current?.(new Error('WebGPU is not supported in this browser environment'));
       return;
     }
@@ -1441,7 +1440,7 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
         const resizeOutput = () => {
           updateBounds();
           const dpr = resolveDpr(preset, canvas);
-          const nextSize = [
+          const nextSize: [number, number] = [
             Math.max(1, Math.round(canvas.clientWidth * dpr)),
             Math.max(1, Math.round(canvas.clientHeight * dpr))
           ];

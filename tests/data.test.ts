@@ -1,9 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { DEFAULT_QUESTIONS } from '../src/data/defaultQuestions.ts';
 import { DEFAULT_CONTESTANTS } from '../src/data/defaultContestants.ts';
+import { DEFAULT_WORDS } from '../src/data/defaultWords.ts';
+import { DEFAULT_APPEARANCE_SETTINGS } from '../src/types/appearance.ts';
 import { QuestionCategory } from '../src/types/question.ts';
 
-describe('Question and Contestant Data Integrity', () => {
+describe('Question, Contestant and Word Bank Data Integrity', () => {
   it('should have at least 35 default questions', () => {
     expect(DEFAULT_QUESTIONS.length).toBeGreaterThanOrEqual(35);
   });
@@ -31,5 +33,25 @@ describe('Question and Contestant Data Integrity', () => {
     const ids = DEFAULT_CONTESTANTS.map(c => c.id);
     const uniqueIds = new Set(ids);
     expect(uniqueIds.size).toBe(ids.length);
+  });
+
+  it('should have valid default keywords in Word Bank', () => {
+    expect(DEFAULT_WORDS.length).toBeGreaterThanOrEqual(8);
+    const wordIds = DEFAULT_WORDS.map(w => w.id);
+    const uniqueWordIds = new Set(wordIds);
+    expect(uniqueWordIds.size).toBe(wordIds.length);
+
+    // Each word must have a valid word string and category
+    for (const item of DEFAULT_WORDS) {
+      expect(item.word.trim().length).toBeGreaterThan(0);
+      expect(item.category).toBeDefined();
+      expect(item.enabled).toBe(true);
+    }
+  });
+
+  it('should have valid appearance default settings', () => {
+    expect(DEFAULT_APPEARANCE_SETTINGS.themeName).toBe('luxury-winter-pageant');
+    expect(DEFAULT_APPEARANCE_SETTINGS.spinMode).toBe('vertical');
+    expect(DEFAULT_APPEARANCE_SETTINGS.spinDurationMs).toBeGreaterThan(1000);
   });
 });

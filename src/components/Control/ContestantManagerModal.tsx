@@ -35,7 +35,7 @@ export const ContestantManagerModal: React.FC<ContestantManagerModalProps> = ({
       title
     };
 
-    onSaveContestants([...contestants, newC].sort((a, b) => a.number - b.number));
+    onSaveContestants([...contestants, newC].sort((a, b) => Number(a.number) - Number(b.number)));
     setName('');
     setFaculty('');
     setNum(contestants.length + 2);
@@ -87,7 +87,7 @@ export const ContestantManagerModal: React.FC<ContestantManagerModalProps> = ({
                   type="number"
                   className="custom-input"
                   value={num}
-                  onChange={(e) => setNum(parseInt(e.target.value) || 1)}
+                  onChange={(e) => setNum(parseInt(e.target.value, 10) || 1)}
                   required
                 />
               </div>

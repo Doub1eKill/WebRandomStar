@@ -5,13 +5,15 @@ interface KeyboardControllerProps {
   onProceed: () => void;
   onToggleDrawer: () => void;
   onToggleMute: () => void;
+  onToggleTimer?: () => void;
 }
 
 export const KeyboardController: React.FC<KeyboardControllerProps> = ({
   onStartOrPause,
   onProceed,
   onToggleDrawer,
-  onToggleMute
+  onToggleMute,
+  onToggleTimer
 }) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -41,6 +43,13 @@ export const KeyboardController: React.FC<KeyboardControllerProps> = ({
           onToggleMute();
           break;
 
+        case 'KeyT':
+          if (onToggleTimer) {
+            e.preventDefault();
+            onToggleTimer();
+          }
+          break;
+
         case 'KeyF':
           if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen().catch(() => {});
@@ -55,7 +64,7 @@ export const KeyboardController: React.FC<KeyboardControllerProps> = ({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onStartOrPause, onProceed, onToggleDrawer, onToggleMute]);
+  }, [onStartOrPause, onProceed, onToggleDrawer, onToggleMute, onToggleTimer]);
 
   return null;
 };

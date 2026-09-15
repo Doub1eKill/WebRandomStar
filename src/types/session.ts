@@ -1,35 +1,24 @@
 import { Question, QuestionCategory } from './question.ts';
+import { TimerState, TimerSoundSettings, StageDisplaySettings } from './timer.ts';
+import { KeywordItem, WordSpinMode } from './word.ts';
+import { AppearanceSettings } from './appearance.ts';
 
 export type AppState =
-  | 'idle'           // เวทีพร้อม รอเริ่มรอบ
-  | 'rain'           // เม็ดฝนเริ่มโปรยปรายแล้วค่อย ๆ เบาลง
-  | 'water-drop'     // หยดน้ำรวมตัวและไหลตามเส้นทาง
-  | 'mist'           // ม่านหมอกค่อย ๆ ปกคลุม
-  | 'wind'           // ลมหนาวแรกพัดผ่าน
-  | 'leaf'           // ใบไม้ปลิวตามแรงลม กำหนดหมวดคำถาม
-  | 'question'       // เปิดเผยคำถาม
-  | 'answered';      // ผู้เข้าแข่งขันตอบคำถามเสร็จสิ้น
-
-export interface StarNode {
-  id: string;
-  questionId: string;
-  question: Question;
-  x: number;
-  y: number;
-  brightness: number;
-  radius: number;
-}
-
-export interface MeteorTrajectory {
-  startX: number;
-  startY: number;
-  targetX: number;
-  targetY: number;
-  endX: number;
-  endY: number;
-  angle: number;
-  speed: number;
-}
+  | 'idle'
+  | 'pre-spin'
+  | 'word-spin'
+  | 'word-decelerate'
+  | 'word-lock'
+  | 'question-reveal'
+  | 'question'
+  | 'answered'
+  // Legacy aliases for backward compatibility if needed
+  | 'rain'
+  | 'water-drop'
+  | 'mist'
+  | 'wind'
+  | 'leaf'
+  | 'sky-clear';
 
 export interface SessionState {
   sessionId: string;
@@ -38,11 +27,50 @@ export interface SessionState {
   selectedContestantId?: string;
   selectedRound: string;
   selectedCategory?: QuestionCategory;
+  selectedWordId?: string;
+  selectedKeyword?: string;
+  selectedWordItem?: KeywordItem;
   selectedQuestion?: Question;
   usedQuestionIds: string[];
   isMuted: boolean;
   volume: number;
   isPaused: boolean;
-  candidateNodes: StarNode[];
-  meteorTrajectory?: MeteorTrajectory;
+  timerState: TimerState;
+  timerSoundSettings?: TimerSoundSettings;
+  stageDisplaySettings?: StageDisplaySettings;
+  appearanceSettings?: AppearanceSettings;
+  wordSpinMode?: WordSpinMode;
+}
+
+export type SyncMessageType =
+  | 'STAGE_SYNC_STATE'
+  | 'STAGE_START'
+  | 'STAGE_SPIN_START'
+  | 'STAGE_PAUSE'
+  | 'STAGE_RESUME'
+  | 'STAGE_SKIP'
+  | 'STAGE_DONE'
+  | 'STAGE_RESET'
+  | 'STAGE_SET_CONTESTANT'
+  | 'STAGE_SET_ROUND'
+  | 'STAGE_SET_VOLUME'
+  | 'STAGE_TOGGLE_MUTE'
+  | 'STAGE_SET_CATEGORY'
+  | 'STAGE_SET_WORD'
+  | 'STAGE_SET_WORD_BANK'
+  | 'STAGE_SET_APPEARANCE'
+  | 'STAGE_SET_TIMER_SOUND_SETTINGS'
+  | 'STAGE_SET_DISPLAY_SETTINGS'
+  | 'TIMER_SET'
+  | 'TIMER_START'
+  | 'TIMER_PAUSE'
+  | 'TIMER_RESUME'
+  | 'TIMER_RESET'
+  | 'TIMER_FINISH'
+  | 'TIMER_ADJUST';
+
+export interface SyncMessage {
+  type: SyncMessageType;
+  payload?: any;
+  timestamp: number;
 }

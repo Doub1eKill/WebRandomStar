@@ -1,0 +1,1051 @@
+ได้ครับ และจาก `PROJECT_SUMMARY(2).md` ตอนนี้ถือว่าเป็นการเปลี่ยน **แนวคิดหลักของระบบสุ่ม** เลย เพราะเอกสารปัจจุบันยังระบุชัดว่า “No Slot, No Wheel” และใช้การเปลี่ยนผ่านธรรมชาติเป็นตัวพาไปหาคำถาม 
+
+จากภาพอ้างอิงล่าสุดของคุณ ผมมองว่าทิศทางใหม่ควรเปลี่ยนจาก **Nature Transition Question** ไปเป็น **Luxury Pageant Word Spin** โดยยังเก็บบรรยากาศปลายฝน–ต้นหนาวไว้เป็นฉากหลัง แต่ให้ “การหมุนสุ่มคำ” เป็นพระเอกของหน้าเวที
+
+## 1. ระบบสุ่มใหม่ที่ผมแนะนำ
+
+ไม่แนะนำให้ทำเป็นวงล้อธรรมดา แต่เป็น **Luxury Word Spin**
+
+ลักษณะประมาณนี้:
+
+```text
+                ✦ SCI TECH TINE ✦
+             CHARM OF TRANSITION
+                    2026
+
+                     │
+              ┌─────────────┐
+              │ วิสัยทัศน์  │
+              ├─────────────┤
+              │ ความฝัน     │
+              ├─────────────┤
+              │ ภาวะผู้นำ   │
+              ├─────────────┤
+              │ ตัวตน       │
+              └─────────────┘
+                     │
+                 ✦ SPIN ✦
+                     ↓
+
+          วิสัยทัศน์ → ความฝัน → ตัวตน
+          → ความเป็นผู้นำ → คุณค่า
+          → ความฝัน → วิสัยทัศน์
+                     ↓
+              ช้าลงเรื่อย ๆ
+                     ↓
+                ✦ ตัวตน ✦
+                     ↓
+              QUESTION REVEAL
+```
+
+จุดสำคัญคือ **คำที่หมุนไม่จำเป็นต้องเป็นคำถามเต็ม ๆ**
+
+เช่น:
+
+```text
+ความฝัน
+วิสัยทัศน์
+ความกล้า
+ความรัก
+ภาวะผู้นำ
+ตัวตน
+การเปลี่ยนแปลง
+แรงบันดาลใจ
+คุณค่า
+อนาคต
+```
+
+แล้วเมื่อได้คำสุดท้าย:
+
+```text
+ตัวตน
+```
+
+Question Engine ค่อยเลือกคำถามที่อยู่ในกลุ่ม `ตัวตน`
+
+แบบนี้ภาพบนเวทีจะสวยกว่าการเอาคำถามยาว ๆ มาหมุนโดยตรงมาก
+
+---
+
+# 2. ไม่ควรทำเป็น Slot Machine แบบคาสิโน
+
+แม้ตอนนี้คุณเปลี่ยนใจมาใช้การหมุนสุ่มคำ ผมยังแนะนำว่าอย่าออกแบบเป็น:
+
+```text
+[ SLOT ][ SLOT ][ SLOT ]
+```
+
+เพราะจะทำให้ภาพรวมหลุดจาก Theme ประกวดดาว–เดือน
+
+ควรเป็น:
+
+### “Royal Word Carousel”
+
+ลักษณะเป็นข้อความที่หมุนผ่านแกนกลางแบบหรู ๆ
+
+มี:
+
+* Glass
+* Silver
+* Pearl
+* Crystal
+* Soft Gold
+* Violet Glow
+* Light Beam
+* Blur
+* Depth
+* Reflection
+
+ให้ความรู้สึกเหมือน **โชว์เปิดตัวบนเวที** มากกว่าเกมสุ่ม
+
+---
+
+# 3. State Machine ใหม่
+
+ของเดิมปัจจุบันเป็น:
+
+```text
+idle
+→ rain
+→ water-drop
+→ mist
+→ wind
+→ leaf
+→ sky-clear
+→ question-reveal
+→ question
+→ answered
+```
+
+ซึ่งอธิบายไว้ในไฟล์ปัจจุบัน 
+
+ผมแนะนำเปลี่ยนเป็น:
+
+```text
+idle
+   ↓
+pre-spin
+   ↓
+word-spin
+   ↓
+word-decelerate
+   ↓
+word-lock
+   ↓
+question-reveal
+   ↓
+question
+   ↓
+timer
+   ↓
+answered
+```
+
+### ความรู้สึกบนเวที
+
+```text
+READY
+ ↓
+แสงเริ่มเปิด
+ ↓
+คำเริ่มหมุน
+ ↓
+เร็วขึ้น
+ ↓
+เร็วที่สุด
+ ↓
+ค่อย ๆ ช้าลง
+ ↓
+เหลือคำสุดท้าย
+ ↓
+แสงจับคำ
+ ↓
+คำถามปรากฏ
+```
+
+อันนี้จะตรงกับสิ่งที่คุณต้องการมากกว่าเดิมครับ
+
+---
+
+# 4. การหมุนควรมี 3 ช่วง
+
+## Phase 1 — Build Up
+
+```text
+1x
+2x
+3x
+4x
+```
+
+เริ่มช้าแล้วเร็วขึ้น
+
+ใช้:
+
+* particle
+* glow
+* light trail
+* subtle camera zoom
+
+---
+
+## Phase 2 — High Speed
+
+คำหมุนเร็วมาก
+
+ตัวอย่าง:
+
+```text
+ตัวตน
+อนาคต
+ความฝัน
+ภาวะผู้นำ
+คุณค่า
+วิสัยทัศน์
+ความกล้า
+แรงบันดาลใจ
+...
+```
+
+ไม่ควรให้ผู้ชมอ่านได้ครบทุกคำ
+
+ให้เกิดความรู้สึก:
+
+> “กำลังจะเลือกแล้ว”
+
+---
+
+## Phase 3 — Deceleration
+
+นี่คือช่วงสำคัญที่สุด
+
+```text
+เร็ว
+ ↓
+เร็ว
+ ↓
+กลาง
+ ↓
+ช้า
+ ↓
+ช้าลง
+ ↓
+1 คำ
+```
+
+พร้อม:
+
+* tick
+* impact light
+* glow
+* slight scale
+* soft bass pulse
+
+แล้วหยุดที่:
+
+```text
+✦ ความฝัน ✦
+```
+
+---
+
+# 5. ต้องทำให้ “คำสุดท้าย” ดูพิเศษมาก
+
+เมื่อคำถูกเลือก:
+
+```text
+            ✦ ✦ ✦
+
+             ความฝัน
+
+            ✦ ✦ ✦
+```
+
+เอฟเฟกต์:
+
+* Soft Bloom
+* Glow
+* Particle burst แบบเบามาก
+* Reflection
+* Light sweep
+* ตัวอักษรขยายเล็กน้อย
+* background darken ชั่วครู่
+
+จากนั้น:
+
+```text
+ความฝัน
+       ↓
+QUESTION REVEAL
+```
+
+---
+
+# 6. ควรแยก Word Pool ออกจาก Question Pool
+
+นี่สำคัญมาก
+
+```text
+Word Pool
+     ↓
+Randomizer
+     ↓
+Selected Keyword
+     ↓
+Question Selector
+     ↓
+Question
+```
+
+ตัวอย่าง:
+
+```text
+Word:
+"ภาวะผู้นำ"
+
+Question Pool:
+
+Q-12
+Q-28
+Q-35
+Q-41
+
+Random:
+Q-28
+```
+
+ดังนั้นผู้ชมเห็นเพียง:
+
+```text
+ภาวะผู้นำ
+```
+
+ก่อนคำถามจริงจะปรากฏ
+
+---
+
+# 7. ระบบหลังบ้านควรเพิ่ม Word Bank
+
+ปัจจุบันในโปรเจกต์มี Question Bank / 7 หมวด / CRUD อยู่แล้ว 
+
+ให้เพิ่ม:
+
+```text
+Word Bank
+```
+
+เช่น:
+
+| Word       | Category | Enabled | Questions |
+| ---------- | -------- | ------: | --------: |
+| ความฝัน    | Moon     |       ✓ |         6 |
+| วิสัยทัศน์ | Mist     |       ✓ |         5 |
+| ภาวะผู้นำ  | Wind     |       ✓ |         7 |
+| ตัวตน      | Star     |       ✓ |         6 |
+| คุณค่า     | Final    |       ✓ |         4 |
+
+หลังบ้านจะเห็นได้เลยว่า:
+
+```text
+ตัวตน
+6 Questions
+
+ความฝัน
+6 Questions
+
+ภาวะผู้นำ
+7 Questions
+```
+
+---
+
+# 8. ผมแนะนำให้มี “Word Spin Modes”
+
+อย่ามีแค่แบบเดียว
+
+### Mode A — Vertical Royal Spin
+
+คำเลื่อนขึ้นลง
+
+```text
+ความฝัน
+วิสัยทัศน์
+ตัวตน
+ภาวะผู้นำ
+```
+
+เหมาะที่สุดสำหรับโปรเจกต์นี้
+
+### Mode B — Circular Orbital Words
+
+คำหมุนรอบศูนย์กลาง
+
+```text
+       ความฝัน
+
+ภาวะผู้นำ       ตัวตน
+
+       คุณค่า
+```
+
+แล้วค่อยล็อกคำตรงกลาง
+
+### Mode C — 3D Perspective Spin
+
+คำอยู่บนระนาบ 3D จำลอง
+
+```text
+      ตัวตน
+   ความฝัน
+วิสัยทัศน์
+```
+
+มี Depth + Blur + Glow
+
+### Mode D — Royal Ribbon Spin
+
+เป็นริบบิ้นแก้ว/ผ้าไหมแสง
+
+คำต่าง ๆ วิ่งผ่าน
+
+อันนี้น่าจะเข้ากับภาพ Crown / Pageant มากที่สุด
+
+---
+
+# 9. Theme จากภาพที่คุณส่งมา
+
+ภาพอ้างอิงของคุณมีองค์ประกอบที่ชัดมาก:
+
+```text
+Deep Navy
++
+Royal Blue
++
+Violet
++
+Silver
++
+White Light
++
+Pearl
++
+Crystal
++
+Soft Gold
+```
+
+และมี:
+
+* มงกุฎ
+* คริสตัล
+* แสงสะท้อนน้ำ
+* ภูมิประเทศหิมะ/น้ำแข็ง
+* ท้องฟ้ายามค่ำ
+* แสงออโรร่า/แสงฟ้า
+* บรรยากาศ Pageant Luxury
+
+ดังนั้นผมแนะนำ Theme ใหม่:
+
+# ✦ CHARM OF TRANSITION ✦
+
+### Luxury Winter Pageant
+
+---
+
+# 10. Background ใหม่
+
+แทน Background ธรรมชาติอย่างเดียว ให้เป็น **Luxury Cinematic Environment**
+
+โครงสร้าง:
+
+```text
+Background
+│
+├── Deep Night Gradient
+├── Aurora Glow
+├── Mountain / Snow Silhouette
+├── Reflective Water
+├── Floating Crystal Particles
+├── Light Rays
+├── Bokeh
+├── Pearl Dust
+├── Royal Glow
+└── Vignette
+```
+
+---
+
+# 11. ฉากหลักควรมี Layer
+
+### Layer 1
+
+Deep Navy
+
+```text
+#071126
+```
+
+### Layer 2
+
+Royal Blue
+
+```text
+#0D2854
+```
+
+### Layer 3
+
+Violet Glow
+
+```text
+#5B4BDB
+```
+
+### Layer 4
+
+Silver Light
+
+```text
+#DDE7FF
+```
+
+### Layer 5
+
+Warm Highlight
+
+```text
+#F5D98A
+```
+
+ไม่จำเป็นต้องใช้สีเหล่านี้แบบตายตัวในโค้ด ให้เป็น Theme Tokens
+
+---
+
+# 12. พื้นหลังไม่ควรนิ่ง
+
+ขณะรอ:
+
+* ดาวระยิบระยับแบบ abstract
+* Bokeh เคลื่อนช้า ๆ
+* fog
+* snow particles
+* light beam
+* subtle water reflection
+
+แต่ผมจะไม่ใช้ **Constellation เป็นระบบเลือกคำ** และไม่ใช้ Meteor
+
+ดาวสามารถเป็นเพียง **background decoration** ได้
+
+อันนี้เข้ากับภาพที่คุณส่งมามากกว่า และไม่ขัดกับการตัดระบบสุ่มแบบ constellation ก่อนหน้า
+
+---
+
+# 13. Crown Effect
+
+เพราะภาพมี Crown เป็นจุดเด่น ผมแนะนำให้มี:
+
+```text
+Crown Silhouette
+```
+
+แบบโปร่งใสอยู่หลัง Word Spin
+
+เช่น:
+
+```text
+            ✦
+
+         ♛ / Crown
+
+          ความฝัน
+
+       Word Spin
+```
+
+แต่ไม่ควรใหญ่จนทับคำ
+
+---
+
+# 14. Crystal Effect
+
+เพิ่ม Crystal Particles:
+
+```text
+✦
+   ✧
+      ✦
+ ✧
+        ✦
+```
+
+มี:
+
+* opacity
+* blur
+* parallax
+* rotation
+* depth
+
+ให้ดูเหมือนฝุ่นคริสตัล/ประกายบนเวที
+
+---
+
+# 15. Reflection
+
+จากภาพอ้างอิงมีพื้นน้ำสะท้อนภาพสวยมาก
+
+สามารถใช้:
+
+```text
+Bottom Reflection Layer
+```
+
+สะท้อน:
+
+* แสง
+* Crown
+* Word Spin
+* Background glow
+
+ไม่จำเป็นต้องสะท้อนทุก pixel จริง ๆ
+
+ใช้:
+
+```text
+CSS / Canvas Reflection
+```
+
+เพื่อประหยัด Performance
+
+---
+
+# 16. Header ของเว็บ
+
+จากเดิมที่เป็นเว็บ Dashboard ธรรมดา ควรเปลี่ยนเป็น:
+
+```text
+SCi TECH TINE
+CHARM OF TRANSITION
+AMBASSADOR 2026
+```
+
+จัดกึ่งกลางแบบ Luxury Branding
+
+ใช้:
+
+* Serif Title
+* Letter Spacing
+* Thin separator
+* Small caps
+* subtle glow
+
+---
+
+# 17. Word Spin UI
+
+ผมแนะนำหน้าตาประมาณนี้:
+
+```text
+                 ✦
+
+       CHARM OF TRANSITION
+            AMBASSADOR
+
+             ─────
+
+          ◇  ความฝัน  ◇
+
+      ╱ วิสัยทัศน์ ╲
+    ╱                ╲
+       ภาวะผู้นำ
+    ╲                ╱
+      ╲    ตัวตน    ╱
+
+             ✦
+
+          [ SPIN ]
+```
+
+เมื่อกำลังหมุน:
+
+```text
+            ✦
+      ความฝัน
+     วิสัยทัศน์
+      ตัวตน
+    ภาวะผู้นำ
+       คุณค่า
+    แรงบันดาลใจ
+            ✦
+```
+
+---
+
+# 18. ปุ่ม SPIN ก็ต้องเปลี่ยน
+
+ไม่ควรเป็นปุ่มธรรมดา:
+
+```text
+[ Start ]
+```
+
+ควรเป็น:
+
+```text
+╭──────────────────╮
+│   ✦  SPIN  ✦     │
+╰──────────────────╯
+```
+
+หรือ:
+
+```text
+      ✦
+   SPIN WORD
+      ✦
+```
+
+มี:
+
+* glass
+* silver border
+* soft glow
+* hover shine
+* click impact
+
+---
+
+# 19. Sound Design สำหรับ Word Spin
+
+ระบบ Audio เดิมใช้ Web Audio API อยู่แล้ว 
+
+จึงต่อยอดง่าย
+
+เพิ่ม:
+
+```text
+WordSpin Audio
+├── Spin Start
+├── Fast Spin
+├── Word Tick
+├── Slow Down
+├── Word Lock
+└── Question Reveal
+```
+
+ช่วงเร็ว:
+
+```text
+tick tick tick tick
+```
+
+ช่วงช้าลง:
+
+```text
+tick
+...
+tick
+.....
+tick
+```
+
+เมื่อ Lock:
+
+```text
+✨ Chime ✨
+```
+
+---
+
+# 20. Timer ยังสามารถเก็บของเดิมไว้
+
+หลังจาก Word Spin เลือกคำ:
+
+```text
+Word Selected
+      ↓
+Question Reveal
+      ↓
+Question
+      ↓
+Timer
+```
+
+Timer ที่มีอยู่ในระบบปัจจุบันยังใช้ต่อได้เลย โดยเอกสารเดิมรองรับทั้ง Grand Center, Corner HUD และ Floating Capsule อยู่แล้ว 
+
+แต่ผมแนะนำ:
+
+### ระหว่าง Word Spin
+
+ไม่ต้องแสดง Timer
+
+### เมื่อ Question ปรากฏ
+
+ค่อยแสดง Timer แบบ:
+
+```text
+                 01:30
+```
+
+เพื่อไม่แย่งความสนใจ
+
+---
+
+# 21. หลังบ้านใหม่ควรเปลี่ยนโครงสร้าง
+
+จาก:
+
+```text
+Stage Control
+Question Bank
+Timer
+Contestants
+History
+```
+
+เป็น:
+
+```text
+Stage Control
+Word Bank
+Question Bank
+Timer
+Contestants
+History
+Appearance
+Audio
+```
+
+เพิ่ม:
+
+### Appearance
+
+ให้ตั้ง:
+
+```text
+Theme
+Word Spin Mode
+Background Style
+Light Intensity
+Particle Density
+Glow Intensity
+Logo
+Crown Effect
+Reflection
+```
+
+---
+
+# 22. Word Spin Settings
+
+หลังบ้าน:
+
+```text
+WORD SPIN
+
+Mode
+[ Royal Vertical ▼ ]
+
+Spin Duration
+[ 4.5s ]
+
+Acceleration
+[ ████████░ ]
+
+Deceleration
+[ █████████ ]
+
+Visible Words
+[ 7 ]
+
+Glow
+[ ███████░ ]
+
+Sound
+[ ON ]
+
+Final Lock Effect
+[ Royal Shine ]
+```
+
+---
+
+# 23. สุ่มแบบ “ยุติธรรม”
+
+สำคัญมาก:
+
+Visual ไม่ควรเป็นตัวสุ่มจริง
+
+ให้:
+
+```text
+Question Engine
+      ↓
+เลือก Word
+      ↓
+เลือก Question
+      ↓
+Word Spin Animation
+      ↓
+หยุดตรง Word ที่เลือกไว้
+```
+
+ดังนั้น Animation เป็นเพียงการ **แสดงผลการสุ่ม**
+
+ไม่ใช่ Animation เป็นตัวตัดสินผล
+
+เหมือนระบบปัจจุบันที่แยก Question Selector ออกจาก Canvas อยู่แล้ว 
+
+---
+
+# 24. Architecture ใหม่
+
+```text
+                    Competition Session
+                            │
+              ┌─────────────┴─────────────┐
+              │                           │
+         Word Selector              Question Selector
+              │                           │
+              └─────────────┬─────────────┘
+                            │
+                     Selected Result
+                            │
+                            ▼
+                     Word Spin Engine
+                            │
+                            ▼
+                     Word Lock Effect
+                            │
+                            ▼
+                     Question Reveal
+                            │
+                            ▼
+                         Timer
+                            │
+                            ▼
+                         History
+```
+
+---
+
+# 25. ไฟล์ใหม่ที่ควรเพิ่ม
+
+จากโครงสร้างเดิมที่มี `questionSelector.ts`, `timerEngine.ts`, `audioEngine.ts` อยู่แล้ว  ผมแนะนำเพิ่ม:
+
+```text
+src/
+├── engine/
+│   ├── wordSelector.ts
+│   ├── wordSpinEngine.ts
+│   └── wordSpinAudio.ts
+│
+├── components/
+│   ├── Stage/
+│   │   ├── WordSpin/
+│   │   │   ├── WordSpinStage.tsx
+│   │   │   ├── WordCarousel.tsx
+│   │   │   ├── WordLockEffect.tsx
+│   │   │   ├── WordGlow.tsx
+│   │   │   └── WordParticles.tsx
+│   │   │
+│   │   ├── LuxuryBackground/
+│   │   │   ├── AuroraLayer.tsx
+│   │   │   ├── CrystalLayer.tsx
+│   │   │   ├── ReflectionLayer.tsx
+│   │   │   ├── LightRayLayer.tsx
+│   │   │   └── RoyalGlowLayer.tsx
+│   │
+│   └── Control/
+│       ├── WordBankDashboard.tsx
+│       ├── WordSpinSettings.tsx
+│       ├── AppearanceSettings.tsx
+│       └── AudioSettings.tsx
+```
+
+---
+
+# 26. สิ่งที่ควรเปลี่ยนจาก Version 2.5
+
+| เดิม                          | ใหม่                                |
+| ----------------------------- | ----------------------------------- |
+| Nature Transition เป็นตัวหลัก | Word Spin เป็นตัวหลัก               |
+| Rain → Mist → Wind → Leaf     | Pre-spin → Spin → Decelerate → Lock |
+| Question โดยตรง               | Word → Question                     |
+| No Wheel                      | Royal Word Spin                     |
+| Natural atmosphere            | Luxury Pageant atmosphere           |
+| Background ธรรมชาติ           | Winter / Royal / Crystal Cinematic  |
+| Category Launch               | Word/Category Spin                  |
+| Sky Clear เป็น climax         | Word Lock เป็น climax               |
+
+---
+
+# 27. จุดที่ผมไม่แนะนำให้ลบทิ้ง
+
+ระบบเหล่านี้ในโปรเจกต์ปัจจุบันควรเก็บ:
+
+* React 19
+* TypeScript
+* Vite
+* Canvas 2D
+* Web Audio
+* BroadcastChannel
+* LocalStorage
+* Timer
+* History
+* Question CRUD
+* Contestant Manager
+* Audit Log
+* Tests
+
+เพราะเป็นโครงสร้างที่ค่อนข้างพร้อมใช้งานอยู่แล้ว และเอกสารล่าสุดระบุว่า 11 test suites / 57 tests ผ่านทั้งหมด 
+
+---
+
+# 28. ภาพรวม Web ใหม่ที่ผมมองว่าเหมาะที่สุด
+
+```text
+╔══════════════════════════════════════════════╗
+║              ✦ SCi TECH TINE ✦              ║
+║             CHARM OF TRANSITION             ║
+║               AMBASSADOR 2026               ║
+║                                              ║
+║       ✦        ✧        ✦        ✧          ║
+║                                              ║
+║                   ♕                          ║
+║                                              ║
+║                ความฝัน                       ║
+║             วิสัยทัศน์                      ║
+║               ตัวตน                         ║
+║                                              ║
+║          ✧   WORD SPIN   ✧                  ║
+║                                              ║
+║              [ ✦ SPIN ✦ ]                   ║
+║                                              ║
+║         Crystal / Aurora / Snow              ║
+║       Water Reflection / Light Ray           ║
+║                                              ║
+╚══════════════════════════════════════════════╝
+```
+
+เมื่อเลือกได้:
+
+```text
+               ✦
+           ╔════════╗
+           ║  ความฝัน ║
+           ╚════════╝
+               ✦
+               ↓
+        QUESTION REVEAL
+               ↓
+      “คำถามสำหรับคืนนี้...”
+               ↓
+              01:30
+```
+
+แบบนี้จะใกล้กับ Mood ของภาพที่คุณส่งมามากกว่าเว็บสุ่มคำถามทั่วไปอย่างชัดเจนครับ
+
+**สรุป:** ผมแนะนำให้เปลี่ยนระบบหลักเป็น **Royal Word Spin + Luxury Winter Pageant UI** โดยใช้การหมุนคำเป็นจุดดึงสายตา, ให้ Word Engine เป็นตัวคัดเลือกผลลัพธ์จริง, แล้วค่อยเปิดคำถามและ Timer ต่อจากนั้น ส่วนภาพพื้นหลังให้ยึด **น้ำเงินเข้ม + ม่วง + เงิน + คริสตัล + แสงสะท้อน + Crown + Aurora/Cinematic Light** ตามงานอ้างอิงของคุณ โดยยังคงดาวเป็นเพียงองค์ประกอบตกแต่ง ไม่ใช่ระบบสุ่ม
+
+ถ้าจะปรับเอกสาร Project ให้ตรงกับระบบใหม่นี้จริง ๆ ควรเปลี่ยน `PROJECT_SUMMARY V2.5` เป็น **V3.0: Royal Word Spin / Luxury Pageant Edition** ทั้ง State Machine, Architecture, Word Bank, UI และ Background Specification ครับ

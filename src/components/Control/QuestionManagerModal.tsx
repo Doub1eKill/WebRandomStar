@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Question, QuestionCategory } from '../../types/question.ts';
+import { Question, QuestionCategory, CATEGORY_CONFIGS } from '../../types/question.ts';
 import { exportQuestionsAsJSON, parseImportedQuestions } from '../../utils/storage.ts';
 import { DEFAULT_QUESTIONS } from '../../data/defaultQuestions.ts';
 
@@ -131,14 +131,12 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
           >
-            <option value="all">ทุกหมวดธรรมชาติ</option>
-            <option value="rain">🌧️ Rain (ตัวตน)</option>
-            <option value="mist">🌫️ Mist (ทัศนคติ)</option>
-            <option value="wind">🍃 Wind (ความท้าทาย)</option>
-            <option value="leaf">🍂 Leaf (ประสบการณ์)</option>
-            <option value="moon">🌙 Moon (ความฝัน)</option>
-            <option value="star">⭐ Star (สังคม)</option>
-            <option value="final">☄️ Final (รอบตัดสิน)</option>
+            <option value="all">ทุกหมวดธรรมชาติ (All Categories)</option>
+            {Object.values(CATEGORY_CONFIGS).map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.icon} {cat.name} ({cat.englishName})
+              </option>
+            ))}
           </select>
 
           <button className="btn-primary btn-sm" onClick={() => setIsAdding(!isAdding)}>
@@ -166,13 +164,11 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
                   value={newCategory}
                   onChange={(e) => setNewCategory(e.target.value as QuestionCategory)}
                 >
-                  <option value="rain">🌧️ Rain</option>
-                  <option value="mist">🌫️ Mist</option>
-                  <option value="wind">🍃 Wind</option>
-                  <option value="leaf">🍂 Leaf</option>
-                  <option value="moon">🌙 Moon</option>
-                  <option value="star">⭐ Star</option>
-                  <option value="final">☄️ Final</option>
+                  {Object.values(CATEGORY_CONFIGS).map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.icon} {cat.name} ({cat.englishName})
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -254,7 +250,7 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
                     <p className="table-q-text">{q.text}</p>
                     <div className="table-tags">
                       <span className="table-id-tag">{q.id}</span>
-                      {q.tags.map((t, idx) => (
+                      {q.tags?.map((t, idx) => (
                         <span key={idx} className="table-tag">#{t}</span>
                       ))}
                     </div>
