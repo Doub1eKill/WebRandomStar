@@ -10,13 +10,17 @@ export const WordLockEffect: React.FC<WordLockEffectProps> = ({ wordItem }) => {
   const word = wordItem?.word || 'คำสำคัญประจำค่ำคืน';
   const category = wordItem?.category || 'final';
   const theme = wordItem?.englishTheme || 'Theme Keyword';
-  const color = wordItem?.color || '#F5D98A';
 
   return (
     <div className="word-lock-container">
       {/* Radiant Light Sweep Background */}
       <div className="lock-light-sweep" />
-      <div className="lock-radial-bloom" style={{ background: `radial-gradient(circle, ${color}33 0%, transparent 70%)` }} />
+      <div
+        className="lock-radial-bloom"
+        style={{
+          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, rgba(192, 132, 252, 0.2) 45%, transparent 70%)'
+        }}
+      />
 
       {/* Burst Sparks & Stars */}
       <div className="lock-sparks">
@@ -36,7 +40,13 @@ export const WordLockEffect: React.FC<WordLockEffectProps> = ({ wordItem }) => {
 
         <div className="lock-word-banner">
           <span className="lock-bracket left">◇ ✦</span>
-          <h2 className="locked-word-title" style={{ color, textShadow: `0 0 24px ${color}88, 0 0 48px ${color}44` }}>
+          <h2
+            className="locked-word-title"
+            style={{
+              color: '#ffffff',
+              textShadow: '0 0 25px rgba(255, 255, 255, 0.95), 0 0 50px rgba(192, 132, 252, 0.5), 0 0 75px rgba(165, 243, 252, 0.35)'
+            }}
+          >
             {word}
           </h2>
           <span className="lock-bracket right">✦ ◇</span>
