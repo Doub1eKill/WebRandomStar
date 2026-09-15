@@ -3,35 +3,42 @@
   --font-display: 'Outfit', 'Prompt', sans-serif;
   --font-serif: 'Cinzel', Georgia, serif;
 
-  /* Color Palette: Royal Diamond Pageant & Late Rain to Early Winter */
-  --sky-base: #070818;
-  --sky-deep: #100e2b;
-  --sky-stage: #191444;
-  --rain-tint: #c7d2fe;
-  --mist-gradient-1: rgba(168, 85, 247, 0.15);
-  --mist-gradient-2: rgba(26, 20, 68, 0.45);
+  /* Color Palette: Cosmic Diamond & Nebula Pageant (Charm of Transition 2026) */
+  --sky-base: #060919;
+  --sky-deep: #0b102b;
+  --sky-stage: #120d31;
+  --bg-stage-gradient: radial-gradient(circle at 50% 25%, #25124d 0%, #0d0e2e 50%, #060919 100%);
+  
+  --rain-tint: #a5f3fc;
+  --mist-gradient-1: rgba(124, 58, 237, 0.2);
+  --mist-gradient-2: rgba(11, 16, 43, 0.65);
   --wind-tint: #d8b4fe;
   --leaf-amber: #c084fc;
   --leaf-gold: #ffffff;
-  --moon-silver: #f1f5f9;
-  --moon-glow: rgba(192, 132, 252, 0.4);
-  --star-gold: #e9d5ff;
+  --moon-silver: #f8fafc;
+  --moon-glow: rgba(192, 132, 252, 0.45);
+  --star-gold: #a5f3fc;
   --star-core: #ffffff;
   --meteor-head: #ffffff;
-  --meteor-tail: #a855f7;
+  --meteor-tail: #7c3aed;
   
-  /* Glassmorphism & UI */
-  --glass-bg: rgba(14, 12, 38, 0.82);
-  --glass-border: rgba(192, 132, 252, 0.28);
-  --glass-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.85), 0 0 28px 0 rgba(168, 85, 247, 0.18);
-  --glass-highlight: rgba(255, 255, 255, 0.25);
+  /* Glassmorphism & Cosmic Surfaces */
+  --glass-bg: rgba(11, 16, 43, 0.82);
+  --glass-border: rgba(192, 132, 252, 0.35);
+  --glass-border-cyan: rgba(56, 189, 248, 0.4);
+  --glass-shadow: 0 16px 45px -8px rgba(0, 0, 0, 0.85), 0 0 30px 0 rgba(124, 58, 237, 0.25);
+  --glass-highlight: rgba(255, 255, 255, 0.35);
 
-  /* Typography & Colors */
-  --text-primary: #f8fafc;
-  --text-secondary: #c7d2fe;
-  --text-muted: #818cf8;
-  --accent-primary: #a855f7;
-  --accent-secondary: #c084fc;
+  /* Typography & Accents */
+  --text-primary: #ffffff;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --accent-primary: #7c3aed;
+  --accent-secondary: #38bdf8;
+  --accent-nebula-violet: #7c3aed;
+  --accent-diamond-cyan: #38bdf8;
+  --accent-starlight-ice: #67e8f9;
+  --accent-lavender: #c084fc;
   --accent-glow: #d8b4fe;
   --accent-diamond: #ffffff;
 
@@ -1863,11 +1870,11 @@ button {
    ========================================================================== */
 
 .btn-royal-spin {
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 35%, #4f46e5 70%, #d97706 100%);
+  background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 35%, #7c3aed 70%, #38bdf8 100%);
   background-size: 200% 200%;
   animation: shimmer-gold 4s ease infinite;
-  border: 1px solid rgba(245, 217, 138, 0.65);
-  box-shadow: 0 10px 32px rgba(79, 70, 229, 0.45), 0 0 24px rgba(245, 217, 138, 0.35);
+  border: 1px solid rgba(103, 232, 249, 0.65);
+  box-shadow: 0 10px 32px rgba(124, 58, 237, 0.5), 0 0 24px rgba(56, 189, 248, 0.4);
   color: #ffffff;
   padding: 18px 44px;
   font-size: 1.35rem;
@@ -1883,8 +1890,8 @@ button {
 
 .btn-royal-spin:hover {
   transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 16px 48px rgba(79, 70, 229, 0.65), 0 0 36px rgba(245, 217, 138, 0.6);
-  border-color: #F5D98A;
+  box-shadow: 0 16px 48px rgba(124, 58, 237, 0.7), 0 0 36px rgba(103, 232, 249, 0.65);
+  border-color: #67e8f9;
 }
 
 /* Word Carousel Stage Wrap */
@@ -1916,7 +1923,7 @@ button {
 
 .carousel-crown-icon {
   font-size: 1.8rem;
-  filter: drop-shadow(0 0 12px rgba(245, 217, 138, 0.8));
+  filter: drop-shadow(0 0 12px rgba(103, 232, 249, 0.8));
 }
 
 .carousel-title-badge {
@@ -1924,8 +1931,8 @@ button {
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: 0.25em;
-  color: #DDE7FF;
-  text-shadow: 0 0 12px rgba(91, 75, 219, 0.8);
+  color: #E0E7FF;
+  text-shadow: 0 0 14px rgba(124, 58, 237, 0.85);
 }
 
 .carousel-stage-frame {
@@ -1933,11 +1940,11 @@ button {
   width: 100%;
   height: 280px;
   border-radius: 20px;
-  border: 1px solid rgba(221, 231, 255, 0.25);
-  background: rgba(7, 17, 38, 0.75);
+  border: 1px solid rgba(192, 132, 252, 0.35);
+  background: rgba(11, 16, 43, 0.82);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), inset 0 0 30px rgba(91, 75, 219, 0.25);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(124, 58, 237, 0.3);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -1948,10 +1955,10 @@ button {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  color: #F5D98A;
+  color: #67e8f9;
   font-size: 1.1rem;
   z-index: 10;
-  filter: drop-shadow(0 0 8px #F5D98A);
+  filter: drop-shadow(0 0 8px #38bdf8);
 }
 .indicator-top { top: 12px; }
 .indicator-bottom { bottom: 12px; }
@@ -1986,7 +1993,7 @@ button {
 }
 
 .word-accent-star {
-  color: #F5D98A;
+  color: #67e8f9;
   font-size: 1.6rem;
   animation: pulse-glow 1.5s infinite;
 }
@@ -2001,7 +2008,7 @@ button {
 
 .active-theme-caption {
   font-size: 0.95rem;
-  color: #DDE7FF;
+  color: #E0E7FF;
   letter-spacing: 0.1em;
   font-style: italic;
 }
@@ -2011,7 +2018,7 @@ button {
   align-items: center;
   gap: 8px;
   font-size: 0.85rem;
-  color: rgba(221, 231, 255, 0.7);
+  color: rgba(224, 231, 255, 0.75);
 }
 
 .speed-dot {
@@ -2073,7 +2080,7 @@ button {
 
 .lock-sparks .spark {
   position: absolute;
-  color: #F5D98A;
+  color: #67e8f9;
   font-size: 1.6rem;
   animation: spark-float 2s infinite ease-in-out;
 }
@@ -2086,7 +2093,7 @@ button {
 
 @keyframes spark-float {
   0%, 100% { transform: translateY(0) scale(0.8); opacity: 0.3; }
-  50% { transform: translateY(-12px) scale(1.3); opacity: 1; filter: drop-shadow(0 0 10px #F5D98A); }
+  50% { transform: translateY(-12px) scale(1.3); opacity: 1; filter: drop-shadow(0 0 10px #38bdf8); }
 }
 
 .lock-content-card {
@@ -2095,9 +2102,9 @@ button {
   width: 100%;
   padding: 38px 48px;
   border-radius: 24px;
-  border: 1px solid rgba(245, 217, 138, 0.45);
-  background: rgba(7, 17, 38, 0.85);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 40px rgba(91, 75, 219, 0.4);
+  border: 1px solid rgba(192, 132, 252, 0.45);
+  background: rgba(11, 16, 43, 0.88);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 40px rgba(124, 58, 237, 0.45);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2109,7 +2116,7 @@ button {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #F5D98A;
+  color: #67e8f9;
   font-family: 'Cinzel', serif;
   font-size: 1.05rem;
   letter-spacing: 0.2em;
@@ -2122,7 +2129,7 @@ button {
 }
 
 .lock-bracket {
-  color: #F5D98A;
+  color: #67e8f9;
   font-size: 1.8rem;
   opacity: 0.8;
 }
