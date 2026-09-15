@@ -371,4 +371,16 @@ export const STORAGE_KEYS = {
    - เสียงระฆังเตือน 3 วินาทีสุดท้าย **Melodic Countdown Bells** (G5 $\rightarrow$ A5 $\rightarrow$ C6)
    - เสียงระฆังปิดเวลา **Royal Gong Triad** (C4 + G4 + C5) กังวานสง่างาม
 
+---
 
+## 14. การปรับปรุงหน้าตาระบบหลังบ้านแบบ Luxury Dark Glassmorphism (Backstage UI Overhaul)
+
+ศูนย์ควบคุมหลังเวที (Backstage Command Center) ได้รับการปรับปรุงดีไซน์ใหม่ทั้งหมดให้สวยงาม หรูหรา สอดคล้องกับธีมประกวด:
+1. **Word Bank Dashboard (คลังคำสำคัญ):**
+   - **Glassmorphic Metric Cards:** การ์ดสรุปสถิติ 3 ช่อง (คำสำคัญทั้งหมด, เปิดใช้งานในวงหมุน, ปิดการใช้งาน) พร้อมไอคอน Lucide React และเอฟเฟกต์ Glow เฉพาะสี
+   - **Modern Search & Filter Toolbar:** แถบค้นหาแบบ Dark Input และ Dropdown เลือกหมวดหมู่ดีไซน์กระจก พร้อมปุ่มกด `+ เพิ่มคำสำคัญใหม่` (Glow Gradient) และปุ่ม `↺ รีเซ็ตค่าเริ่มต้น`
+   - **Sticky Data Table with Custom Controls:** ตารางข้อมูลไร้รอยต่อ มี `toggle-switch-mini` สไตล์สวิตช์มินิเปิด/ปิดการใช้งานแบบทันที, ป้ายหมวดหมู่แบบ Chip Badge เรืองแสง (`cat-badge-chip`), และปุ่มแอ็กชัน Edit / Delete แบบการ์ดขนาดกะทัดรัด
+2. **Appearance Settings Panel (ปรับแต่งหน้าตาและเอฟเฟกต์):**
+   - **2x2 Word Spin Mode Grid:** การ์ดเลือกรูปแบบการหมุนคำสำคัญ 4 สไตล์ (Royal Vertical, 3D Perspective, Circular Orbital, Royal Ribbon) พร้อมกรอบเรืองแสงนีออน (`#818cf8`) เมื่อ Active
+   - **2x2 Atmospheric FX Toggles Grid:** การ์ดสวิตช์เปิด/ปิดเลเยอร์บรรยากาศ 4 ด้าน (เงาประกายมงกุฎ Crown, แสงสะท้อนผิวน้ำ Reflection, ม่านแสงออโรร่า Aurora, ฝุ่นคริสตัลโบเก้ Crystals) พร้อมคำอธิบายและเอฟเฟกต์ Hover ยกตัว
+   - **Smooth Percentage Range Sliders:** แถบเลื่อนปรับความหนาแน่นอนุภาคและความสว่างแสงออโรร่า พร้อม Badge Pill แสดงเปอร์เซ็นต์ค่าแบบ Realtime และ Thumb เรืองแสงนีออน
