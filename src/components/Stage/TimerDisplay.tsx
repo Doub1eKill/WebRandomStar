@@ -1,7 +1,7 @@
 import React from 'react';
 import { TimerState, TimerPhase, TimerDisplayMode } from '../../types/timer.ts';
 import { formatTimerDisplay, getTimerPhase } from '../../engine/timerEngine.ts';
-import { Clock, AlertTriangle, Flame, Volume2, VolumeX, Sparkles } from 'lucide-react';
+import { Clock, AlertTriangle, Volume2, VolumeX, Sparkles } from 'lucide-react';
 
 interface TimerDisplayProps {
   timerState: TimerState;
@@ -22,66 +22,32 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
 
   const phase: TimerPhase = getTimerPhase(timerState.remainingMs, timerState.status, timerState.warningAtMs);
   const isFinished = phase === 'finished';
-  const isLast3s = phase === 'last-3s';
-  const isCritical = phase === 'critical';
-  const isWarning = phase === 'warning';
-  const isRunning = timerState.status === 'running';
 
   const formatted = formatTimerDisplay(timerState.remainingMs);
-  const remainingSeconds = Math.ceil(timerState.remainingMs / 1000);
 
   const progress = timerState.durationMs > 0
     ? Math.max(0, Math.min(100, (timerState.remainingMs / timerState.durationMs) * 100))
     : 0;
 
-  // Dynamic phase styling parameters
-  const phaseStyles = {
-    'normal': {
-      bg: 'rgba(10, 14, 32, 0.9)',
-      border: 'rgba(56, 189, 248, 0.4)',
-      glow: '0 16px 48px rgba(0, 0, 0, 0.7), 0 0 35px rgba(56, 189, 248, 0.25)',
-      textGrad: 'linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%)',
-      accentColor: '#38bdf8',
-      label: 'กำลังนับเวลา',
-      badgeBg: 'rgba(56, 189, 248, 0.18)'
-    },
-    'warning': {
-      bg: 'rgba(28, 20, 10, 0.92)',
-      border: 'rgba(245, 158, 11, 0.7)',
-      glow: '0 16px 48px rgba(0, 0, 0, 0.8), 0 0 45px rgba(245, 158, 11, 0.4)',
-      textGrad: 'linear-gradient(180deg, #fef08a 0%, #f59e0b 100%)',
-      accentColor: '#f59e0b',
-      label: 'ช่วงเตือนเวลา',
-      badgeBg: 'rgba(245, 158, 11, 0.3)'
-    },
-    'critical': {
-      bg: 'rgba(42, 10, 18, 0.94)',
-      border: 'rgba(239, 68, 68, 0.85)',
-      glow: '0 18px 56px rgba(0, 0, 0, 0.85), 0 0 55px rgba(239, 68, 68, 0.6)',
-      textGrad: 'linear-gradient(180deg, #fee2e2 0%, #ef4444 100%)',
-      accentColor: '#ef4444',
-      label: '10 วินาทีสุดท้าย',
-      badgeBg: 'rgba(239, 68, 68, 0.35)'
-    },
-    'last-3s': {
-      bg: 'rgba(55, 6, 18, 0.98)',
-      border: 'rgba(255, 34, 34, 1)',
-      glow: '0 20px 65px rgba(0, 0, 0, 0.95), 0 0 75px rgba(255, 34, 34, 0.85)',
-      textGrad: 'linear-gradient(180deg, #ffffff 0%, #ff2222 100%)',
-      accentColor: '#ff2222',
-      label: 'นับถอยหลัง!',
-      badgeBg: 'rgba(255, 34, 34, 0.45)'
-    },
-    'finished': {
-      bg: 'rgba(35, 8, 14, 0.95)',
-      border: 'rgba(239, 68, 68, 0.9)',
-      glow: '0 16px 48px rgba(0, 0, 0, 0.85), 0 0 45px rgba(239, 68, 68, 0.5)',
-      textGrad: 'linear-gradient(180deg, #fecaca 0%, #f87171 100%)',
-      accentColor: '#ef4444',
-      label: 'สิ้นสุดเวลา',
-      badgeBg: 'rgba(239, 68, 68, 0.3)'
-    }
-  }[phase];
+  const phaseStyles = isFinished
+    ? {
+        bg: 'rgba(20, 10, 25, 0.92)',
+        border: 'rgba(244, 63, 94, 0.5)',
+        glow: '0 16px 48px rgba(0, 0, 0, 0.85), 0 0 35px rgba(244, 63, 94, 0.3)',
+        textGrad: 'linear-gradient(180deg, #fecaca 0%, #f87171 100%)',
+        accentColor: '#f43f5e',
+        label: 'สิ้นสุดเวลา',
+        badgeBg: 'rgba(244, 63, 94, 0.2)'
+      }
+    : {
+        bg: 'rgba(7, 17, 38, 0.88)',
+        border: 'rgba(56, 189, 248, 0.35)',
+        glow: '0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(13, 40, 84, 0.4)',
+        textGrad: 'linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%)',
+        accentColor: '#38bdf8',
+        label: 'กำลังนับเวลา',
+        badgeBg: 'rgba(56, 189, 248, 0.15)'
+      };
 
   // 1. CENTER FOCUS VARIANT (จอใหญ่ตรงกลางเวทีสำหรับจับเวลา)
   if (variant === 'center') {
@@ -103,7 +69,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
           border: `2px solid ${phaseStyles.border}`,
           borderRadius: '32px',
           boxShadow: phaseStyles.glow,
-          transition: 'background 0.6s ease, border-color 0.6s ease, box-shadow 0.6s ease, padding 0.4s ease',
+          transition: 'background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, padding 0.4s ease',
           userSelect: 'none',
           position: 'relative'
         }}
@@ -134,15 +100,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
               transition: 'all 0.4s ease'
             }}
           >
-            {isFinished ? (
-              <AlertTriangle size={17} />
-            ) : isLast3s ? (
-              <Flame size={17} style={{ opacity: 0.95 }} />
-            ) : isCritical || isWarning ? (
-              <AlertTriangle size={17} />
-            ) : (
-              <Clock size={17} />
-            )}
+            {isFinished ? <AlertTriangle size={17} /> : <Clock size={17} />}
             <span>{phaseStyles.label}</span>
           </div>
 
@@ -214,15 +172,10 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
               background: phaseStyles.textGrad,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              textShadow: isLast3s
-                ? '0 0 35px rgba(255, 34, 34, 0.7), 0 0 15px rgba(255, 255, 255, 0.6)'
-                : isCritical
-                ? '0 0 30px rgba(239, 68, 68, 0.6)'
-                : isWarning
-                ? '0 0 24px rgba(245, 158, 11, 0.5)'
-                : '0 0 20px rgba(56, 189, 248, 0.35)',
-              lineHeight: 1.05,
-              transition: 'text-shadow 0.4s ease'
+              textShadow: isFinished
+                ? '0 0 25px rgba(244, 63, 94, 0.45)'
+                : '0 2px 14px rgba(0, 0, 0, 0.8), 0 0 20px rgba(56, 189, 248, 0.25)',
+              lineHeight: 1.05
             }}
           >
             {isFinished ? 'หมดเวลา' : formatted}
@@ -246,13 +199,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
               style={{
                 width: `${progress}%`,
                 height: '100%',
-                background: isLast3s
-                  ? 'linear-gradient(90deg, #ff2222, #f43f5e)'
-                  : isCritical
-                  ? 'linear-gradient(90deg, #ef4444, #f97316)'
-                  : isWarning
-                  ? 'linear-gradient(90deg, #f59e0b, #fbbf24)'
-                  : 'linear-gradient(90deg, #0284c7, #38bdf8)',
+                background: 'linear-gradient(90deg, #0284c7, #38bdf8)',
                 boxShadow: `0 0 16px ${phaseStyles.accentColor}`,
                 transition: 'width 0.1s linear'
               }}
@@ -283,7 +230,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
         }}
       >
         <div style={{ color: phaseStyles.accentColor, display: 'flex', alignItems: 'center' }}>
-          {isFinished ? <AlertTriangle size={16} /> : isLast3s ? <Flame size={16} /> : <Clock size={16} />}
+          {isFinished ? <AlertTriangle size={16} /> : <Clock size={16} />}
         </div>
         <span
           style={{
@@ -323,7 +270,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
         border: `2px solid ${phaseStyles.border}`,
         borderRadius: '24px',
         boxShadow: phaseStyles.glow,
-        transition: 'background 0.6s ease, border-color 0.6s ease, box-shadow 0.6s ease, padding 0.4s ease',
+        transition: 'background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, padding 0.4s ease',
         userSelect: 'none',
         position: 'relative'
       }}
@@ -354,15 +301,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
             transition: 'all 0.4s ease'
           }}
         >
-          {isFinished ? (
-            <AlertTriangle size={14} />
-          ) : isLast3s ? (
-            <Flame size={14} style={{ opacity: 0.95 }} />
-          ) : isCritical || isWarning ? (
-            <AlertTriangle size={14} />
-          ) : (
-            <Clock size={14} />
-          )}
+          {isFinished ? <AlertTriangle size={14} /> : <Clock size={14} />}
           <span>{phaseStyles.label}</span>
         </div>
 
@@ -409,15 +348,10 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
             background: phaseStyles.textGrad,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            textShadow: isLast3s
-              ? '0 0 30px rgba(255, 34, 34, 0.7), 0 0 12px rgba(255, 255, 255, 0.6)'
-              : isCritical
-              ? '0 0 22px rgba(239, 68, 68, 0.6)'
-              : isWarning
-              ? '0 0 18px rgba(245, 158, 11, 0.5)'
-              : '0 0 14px rgba(56, 189, 248, 0.3)',
-            lineHeight: 1,
-            transition: 'text-shadow 0.4s ease'
+            textShadow: isFinished
+              ? '0 0 20px rgba(244, 63, 94, 0.45)'
+              : '0 2px 14px rgba(0, 0, 0, 0.8), 0 0 16px rgba(56, 189, 248, 0.25)',
+            lineHeight: 1
           }}
         >
           {isFinished ? 'หมดเวลา' : formatted}
@@ -441,13 +375,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
             style={{
               width: `${progress}%`,
               height: '100%',
-              background: isLast3s
-                ? 'linear-gradient(90deg, #ff2222, #f43f5e)'
-                : isCritical
-                ? 'linear-gradient(90deg, #ef4444, #f97316)'
-                : isWarning
-                ? 'linear-gradient(90deg, #f59e0b, #fbbf24)'
-                : 'linear-gradient(90deg, #0284c7, #38bdf8)',
+              background: 'linear-gradient(90deg, #0284c7, #38bdf8)',
               boxShadow: `0 0 12px ${phaseStyles.accentColor}`,
               transition: 'width 0.1s linear'
             }}
