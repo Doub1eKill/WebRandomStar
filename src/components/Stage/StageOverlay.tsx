@@ -8,6 +8,7 @@ import { QuestionCard } from './QuestionCard.tsx';
 import { WordCarousel } from './WordSpin/WordCarousel.tsx';
 import { WordLockEffect } from './WordSpin/WordLockEffect.tsx';
 import { TimerDisplay } from './TimerDisplay.tsx';
+import { SettingsSlidersIcon } from './CrystalIcons.tsx';
 
 interface StageOverlayProps {
   session: SessionState;
@@ -25,48 +26,43 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
   onOpenControlDrawer
 }) => {
   const isIdle = session.currentState === 'idle';
-  const isSpinning =
-    session.currentState === 'pre-spin' ||
-    session.currentState === 'word-spin' ||
-    session.currentState === 'word-decelerate';
+  const isSpinning = ['pre-spin', 'word-spin', 'word-decelerate'].includes(session.currentState);
   const isWordLocked = session.currentState === 'word-lock';
-  const showQuestion = session.currentState === 'question' || session.currentState === 'answered';
-  const displaySettings = session.stageDisplaySettings || DEFAULT_STAGE_DISPLAY_SETTINGS;
-
-  // Determine timer visibility according to settings
-  const isTimerActive = Boolean(
-    session.timerState &&
-    (displaySettings.showTimerOnlyWhenRunning
-      ? (session.timerState.status === 'running' || session.timerState.status === 'paused' || session.timerState.status === 'finished')
-      : (session.timerState.status !== 'idle'))
-  );
-
-  const isCenterTimer = isTimerActive && displaySettings.timerDisplayMode === 'center';
+  const showQuestion = ['question-reveal', 'question', 'answered'].includes(session.currentState);
   const isAnySoundEnabled = Boolean(
     session.timerSoundSettings?.tickSoundEnabled ||
     session.timerSoundSettings?.warningSoundEnabled ||
     session.timerSoundSettings?.finishSoundEnabled
   );
+  const displaySettings = session.stageDisplaySettings || DEFAULT_STAGE_DISPLAY_SETTINGS;
+
+  const isCornerTimer = displaySettings.timerDisplayMode === 'corner';
+  const isCenterTimer = displaySettings.timerDisplayMode === 'center';
 
   return (
     <div className="stage-overlay">
-      {/* Header Bar */}
-      <StageHeader round={session.selectedRound} currentState={session.currentState} />
+      {/* Top Bar / Header */}
+      <StageHeader
+        round={session.selectedRound}
+        currentState={session.currentState}
+      />
 
       {/* Main Content Area */}
-      <div className="stage-main-content">
+      <div className="stage-body">
         {/* Contestant Badge */}
-        <div className="stage-contestant-anchor">
-          <ContestantBadge contestant={contestant} />
-        </div>
+        {contestant && (
+          <div className="stage-contestant-anchor animate-fade-in">
+            <ContestantBadge contestant={contestant} />
+          </div>
+        )}
 
-        {/* Stage Timer Corner Anchor (when corner/compact mode is selected) */}
-        {isTimerActive && !isCenterTimer && (
+        {/* Corner Timer Widget (Only in Corner Mode) */}
+        {isCornerTimer && (
           <div
-            className="stage-timer-anchor"
+            className="stage-corner-timer animate-fade-in"
             style={{
               position: 'absolute',
-              top: '5.25rem',
+              top: '5.5rem',
               right: '2.5rem',
               zIndex: 30
             }}
@@ -74,7 +70,7 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
             <TimerDisplay
               timerState={session.timerState}
               soundEnabled={isAnySoundEnabled}
-              variant={displaySettings.timerDisplayMode}
+              variant="corner"
               stageDisplaySettings={displaySettings}
             />
           </div>
@@ -88,9 +84,10 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
             </div>
 
             <button className="btn-primary btn-royal-spin" onClick={onStart}>
-              <span className="btn-sparkle">👑</span>
-              <span>✦ SPIN WORD ✦</span>
-              <span className="btn-key-hint">[Space]</span>
+              <span className="btn-sparkle-star">✦</span>
+              <span className="btn-spin-text">SPIN WORD</span>
+              <span className="btn-sparkle-star">✦</span>
+              <span className="btn-key-hint">Space</span>
             </button>
           </div>
         )}
@@ -170,7 +167,8 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
           onClick={onOpenControlDrawer}
           title="เปิดแผงควบคุม (Esc)"
         >
-          ⚙️ แผงควบคุม
+          <SettingsSlidersIcon size={14} />
+          <span>แผงควบคุม</span>
         </button>
       </footer>
     </div>

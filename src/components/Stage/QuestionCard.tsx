@@ -1,5 +1,6 @@
 import React from 'react';
 import { Question, CATEGORY_CONFIGS } from '../../types/question.ts';
+import { CrystalTiaraIcon } from './CrystalIcons.tsx';
 
 interface QuestionCardProps {
   question?: Question;
@@ -20,7 +21,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
   const cat = CATEGORY_CONFIGS[question.category.toLowerCase()] || {
     name: question.category,
-    icon: '✨',
+    icon: '✦',
     subtitle: 'Question',
     color: '#38bdf8'
   };
@@ -28,44 +29,34 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   const getFontSize = () => {
     if (compact) {
       switch (fontSizeScale) {
-        case 'huge': return 'clamp(1.5rem, 2.4vw, 2.1rem)';
-        case 'large': return 'clamp(1.35rem, 2.1vw, 1.85rem)';
-        default: return 'clamp(1.2rem, 1.8vw, 1.6rem)';
+        case 'huge': return '2rem';
+        case 'large': return '1.75rem';
+        case 'normal':
+        default: return '1.5rem';
       }
     }
     switch (fontSizeScale) {
-      case 'huge': return 'clamp(2.1rem, 3.4vw, 2.8rem)';
-      case 'large': return 'clamp(1.85rem, 2.8vw, 2.35rem)';
-      default: return 'clamp(1.55rem, 2.3vw, 2rem)';
+      case 'huge': return '2.6rem';
+      case 'large': return '2.2rem';
+      case 'normal':
+      default: return '1.85rem';
     }
   };
 
   return (
-    <div className={`question-card-container animate-float ${compact ? 'question-card-compact-mode' : ''}`}>
-      <div
-        className="question-card glass-panel"
-        style={{
-          borderColor: `${cat.color}40`,
-          padding: compact ? '22px 32px' : '34px 44px',
-          gap: compact ? '16px' : '24px'
-        }}
-      >
-        {/* Diamond Corner Accents */}
-        <div className="card-diamond-corner top-left">✦</div>
-        <div className="card-diamond-corner top-right">✦</div>
-        <div className="card-diamond-corner bottom-left">✦</div>
-        <div className="card-diamond-corner bottom-right">✦</div>
+    <div className={`question-card tiara-glassmorphism animate-card-appear ${isAnswered ? 'answered' : ''} ${compact ? 'question-card-compact-mode' : ''}`}>
+      {/* Dynamic Diamond Ambient Glow behind card */}
+      <div className="card-ambient-glow" />
 
-        {/* Glowing Top Line */}
-        <div className="card-glow-bar" style={{ background: `linear-gradient(90deg, transparent, ${cat.color}, transparent)` }} />
-
-        {/* Category Header */}
-        <div className="card-category-row">
+      {/* Card Content Shell */}
+      <div className="card-inner-shell">
+        {/* Header Ribbon: Category + Tiara Accent */}
+        <div className="card-header-ribbon" style={{ padding: compact ? '8px 16px' : '14px 22px' }}>
           <div
-            className="cat-icon-wrap"
+            className="cat-icon-badge"
             style={{
-              background: `${cat.color}20`,
-              border: `1px solid ${cat.color}50`,
+              background: `linear-gradient(135deg, ${cat.color}22, ${cat.color}44)`,
+              borderColor: `${cat.color}66`,
               width: compact ? '38px' : '46px',
               height: compact ? '38px' : '46px',
               fontSize: compact ? '1.15rem' : '1.4rem'
@@ -78,7 +69,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             <span className="cat-sub" style={{ fontSize: compact ? '0.72rem' : '0.8rem' }}>{cat.subtitle}</span>
           </div>
           <div className="card-tiara-badge">
-            <span className="tiara-icon">👑</span>
+            <CrystalTiaraIcon size={16} />
             <span className="tiara-title">AMBASSADOR 2026</span>
           </div>
           <div className="question-id-chip">

@@ -1,5 +1,6 @@
 import React from 'react';
 import { KeywordItem } from '../../../types/word.ts';
+import { CrystalTiaraIcon } from '../CrystalIcons.tsx';
 
 interface WordLockEffectProps {
   wordItem?: KeywordItem | null;
@@ -34,7 +35,7 @@ export const WordLockEffect: React.FC<WordLockEffectProps> = ({ wordItem }) => {
 
       <div className="lock-content-card glassmorphism">
         <div className="lock-crown-seal">
-          <span className="seal-crown">👑</span>
+          <CrystalTiaraIcon size={24} />
           <span className="seal-text">✦ SELECTED KEYWORD ✦</span>
         </div>
 

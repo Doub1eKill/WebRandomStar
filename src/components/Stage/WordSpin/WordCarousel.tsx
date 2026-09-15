@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { KeywordItem } from '../../../types/word.ts';
+import { CrystalTiaraIcon } from '../CrystalIcons.tsx';
 import { generateSpinReel, calculateDecelerationEasing } from '../../../engine/wordSpinEngine.ts';
 import { DEFAULT_WORDS } from '../../../data/defaultWords.ts';
 
@@ -89,7 +90,7 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
       <div className="carousel-ambient-glow" />
 
       <div className="carousel-header">
-        <span className="carousel-crown-icon">👑</span>
+        <CrystalTiaraIcon size={20} />
         <div className="carousel-title-badge">✦ ROYAL WORD SELECTION ✦</div>
       </div>
 

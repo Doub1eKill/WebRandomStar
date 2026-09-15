@@ -1,5 +1,6 @@
 import React from 'react';
 import { AppState } from '../../types/session.ts';
+import { CrystalTiaraIcon } from './CrystalIcons.tsx';
 
 interface StageHeaderProps {
   round: string;
@@ -11,18 +12,18 @@ const STAGE_LABELS: Record<AppState, string> = {
   'pre-spin': '✦ เตรียมเริ่มการหมุนคำ ✦',
   'word-spin': '✦ ROYAL WORD SPIN ✦',
   'word-decelerate': '✦ กำลังคัดสรรคำสำคัญ ✦',
-  'word-lock': '👑 ล็อกคำสำคัญแห่งค่ำคืน',
-  'question-reveal': '✨ เปิดเผยคำถาม',
-  'question': '🌟 คำถามประจำค่ำคืน',
+  'word-lock': '✦ ล็อกคำสำคัญแห่งค่ำคืน ✦',
+  'question-reveal': '✦ เปิดเผยคำถาม ✦',
+  'question': '✦ คำถามประจำค่ำคืน ✦',
   'answered': '✓ ตอบคำถามเรียบร้อย',
 
   // Legacy fallback states
-  'rain': '🌧️ ฝนปลายฤดู',
-  'water-drop': '💧 หยดน้ำเกาะไอเย็น',
-  'mist': '🌫️ สายหมอกลอยต่ำ',
-  'wind': '🍃 ลมหนาวแรกพัดผ่าน',
-  'leaf': '🍂 ใบไม้ร่วงตามสายลม',
-  'sky-clear': '🌤️ ท้องฟ้าเปิดกว้าง'
+  'rain': 'ฝนปลายฤดู',
+  'water-drop': 'หยดน้ำเกาะไอเย็น',
+  'mist': 'สายหมอกลอยต่ำ',
+  'wind': 'ลมหนาวแรกพัดผ่าน',
+  'leaf': 'ใบไม้ร่วงตามสายลม',
+  'sky-clear': 'ท้องฟ้าเปิดกว้าง'
 };
 
 export const StageHeader: React.FC<StageHeaderProps> = ({ round, currentState }) => {
@@ -38,7 +39,7 @@ export const StageHeader: React.FC<StageHeaderProps> = ({ round, currentState })
     <header className="stage-header">
       <div className="header-left">
         <div className="brand-badge royal-badge">
-          <span className="brand-crown">👑</span>
+          <CrystalTiaraIcon size={18} />
           <span className="brand-season">AMBASSADOR 2026</span>
         </div>
         <div className="header-titles">
