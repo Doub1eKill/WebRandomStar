@@ -7,24 +7,32 @@ interface CinematicNarratorProps {
 
 const NARRATIVE_LINES: Partial<Record<AppState, { text: string; sub: string }>> = {
   'rain': {
-    text: 'สายฝนปลายฤดูโปรยปรายแผ่วเบา... สู่มนต์เสน่ห์แห่งการเปลี่ยนผ่าน',
+    text: 'เมื่อปลายฝนกำลังผ่านพ้น...',
     sub: 'Late rains softly whisper, ushering in the Charm of Transition.'
   },
   'water-drop': {
-    text: 'หยดน้ำค้างเกาะไอเย็น สะท้อนประกายคุณค่าและเจตนารมณ์แห่งค่ำคืน',
+    text: 'หยดสุดท้ายกำลังพาเราเข้าสู่การเปลี่ยนแปลง...',
     sub: 'Crystalline dewdrops gather, capturing the essence of purpose and light.'
   },
   'mist': {
-    text: 'สายหมอกลอยต่ำ อากาศหนาวเริ่มโอบล้อม ดั่งช่วงเวลาต้องมนตร์',
+    text: 'เมื่อสิ่งเดิมเริ่มเลือนหาย สิ่งใหม่จึงกำลังปรากฏ...',
     sub: 'Cool mist settles low as the enchanted winter air embraces the hall.'
   },
   'wind': {
-    text: 'สายลมหนาวแรกพัดผ่าน นำพาบททดสอบและเกียรติยศสู่ผู้กล้า',
+    text: 'สายลมแรกของฤดูหนาวกำลังเข้ามา...',
     sub: 'The first winter breeze stirs with anticipation of honor and glory.'
   },
   'leaf': {
-    text: 'ใบไม้สีทองร่อนลงสู่ผืนน้ำ... เผยคำถามแห่งมนต์เสน่ห์ CHARM OF TRANSITION!',
-    sub: 'The golden leaf touches still waters, unveiling the question of destiny.'
+    text: 'ใบไม้ร่วงปลิวตามกระแสลมหนาว...',
+    sub: 'Golden autumn leaves drift across the seasonal currents.'
+  },
+  'sky-clear': {
+    text: 'เมื่อฤดูกาลเปลี่ยนผ่าน ท้องฟ้าเปิดกว้างต้อนรับค่ำคืนนี้...',
+    sub: 'The atmosphere clears as the radiant night sky opens up.'
+  },
+  'question-reveal': {
+    text: 'คำตอบและคำถามของค่ำคืนนี้กำลังจะปรากฏ...',
+    sub: 'The decisive question of destiny reveals itself.'
   }
 };
 

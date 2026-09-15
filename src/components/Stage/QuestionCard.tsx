@@ -1,35 +1,55 @@
 import React from 'react';
-import { Question, QuestionCategory } from '../../types/question.ts';
+import { Question, CATEGORY_CONFIGS } from '../../types/question.ts';
 
 interface QuestionCardProps {
   question?: Question;
   isAnswered?: boolean;
+  fontSizeScale?: 'normal' | 'large' | 'huge';
+  compact?: boolean;
   onNext?: () => void;
 }
 
-const CATEGORY_DETAILS: Record<QuestionCategory, { name: string; icon: string; subtitle: string; color: string }> = {
-  rain: { name: 'สายฝนแห่งการปรับตัว', icon: '🌧️', subtitle: 'Adaptability & Growth', color: '#38bdf8' },
-  mist: { name: 'สายหมอกแห่งวิสัยทัศน์', icon: '🌫️', subtitle: 'Vision & Perspective', color: '#94a3b8' },
-  wind: { name: 'ลมหนาวแห่งแรงบันดาลใจ', icon: '🍃', subtitle: 'Leadership & Impact', color: '#86efac' },
-  leaf: { name: 'ใบไม้ทองแห่งพันธกิจ', icon: '🍂', subtitle: 'Purpose & Legacy', color: '#fbbf24' },
-  moon: { name: 'แสงจันทร์สะท้อนคุณค่า', icon: '🌙', subtitle: 'Authenticity & Empathy', color: '#e2e8f0' },
-  star: { name: 'คุณค่าและความเป็นผู้นำ', icon: '⭐', subtitle: 'Character & Leadership', color: '#fde047' },
-  final: { name: 'คำถามรอบตัดสิน', icon: '👑', subtitle: 'Final Decisive Question', color: '#f43f5e' }
-};
-
-export const QuestionCard: React.FC<QuestionCardProps> = ({ question, isAnswered, onNext }) => {
+export const QuestionCard: React.FC<QuestionCardProps> = ({
+  question,
+  isAnswered,
+  fontSizeScale = 'normal',
+  compact = false,
+  onNext
+}) => {
   if (!question) return null;
 
-  const cat = CATEGORY_DETAILS[question.category] || {
+  const cat = CATEGORY_CONFIGS[question.category.toLowerCase()] || {
     name: question.category,
     icon: '✨',
     subtitle: 'Question',
     color: '#38bdf8'
   };
 
+  const getFontSize = () => {
+    if (compact) {
+      switch (fontSizeScale) {
+        case 'huge': return 'clamp(1.5rem, 2.4vw, 2.1rem)';
+        case 'large': return 'clamp(1.35rem, 2.1vw, 1.85rem)';
+        default: return 'clamp(1.2rem, 1.8vw, 1.6rem)';
+      }
+    }
+    switch (fontSizeScale) {
+      case 'huge': return 'clamp(2.1rem, 3.4vw, 2.8rem)';
+      case 'large': return 'clamp(1.85rem, 2.8vw, 2.35rem)';
+      default: return 'clamp(1.55rem, 2.3vw, 2rem)';
+    }
+  };
+
   return (
-    <div className="question-card-container animate-float">
-      <div className="question-card glass-panel" style={{ borderColor: `${cat.color}40` }}>
+    <div className={`question-card-container animate-float ${compact ? 'question-card-compact-mode' : ''}`}>
+      <div
+        className="question-card glass-panel"
+        style={{
+          borderColor: `${cat.color}40`,
+          padding: compact ? '22px 32px' : '34px 44px',
+          gap: compact ? '16px' : '24px'
+        }}
+      >
         {/* Diamond Corner Accents */}
         <div className="card-diamond-corner top-left">✦</div>
         <div className="card-diamond-corner top-right">✦</div>
@@ -41,12 +61,21 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, isAnswered
 
         {/* Category Header */}
         <div className="card-category-row">
-          <div className="cat-icon-wrap" style={{ background: `${cat.color}20`, border: `1px solid ${cat.color}50` }}>
+          <div
+            className="cat-icon-wrap"
+            style={{
+              background: `${cat.color}20`,
+              border: `1px solid ${cat.color}50`,
+              width: compact ? '38px' : '46px',
+              height: compact ? '38px' : '46px',
+              fontSize: compact ? '1.15rem' : '1.4rem'
+            }}
+          >
             <span className="cat-icon">{cat.icon}</span>
           </div>
           <div className="cat-text-wrap">
-            <span className="cat-name" style={{ color: cat.color }}>{cat.name}</span>
-            <span className="cat-sub">{cat.subtitle}</span>
+            <span className="cat-name" style={{ color: cat.color, fontSize: compact ? '1.05rem' : '1.25rem' }}>{cat.name}</span>
+            <span className="cat-sub" style={{ fontSize: compact ? '0.72rem' : '0.8rem' }}>{cat.subtitle}</span>
           </div>
           <div className="card-tiara-badge">
             <span className="tiara-icon">👑</span>
@@ -58,16 +87,24 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, isAnswered
         </div>
 
         {/* Question Body */}
-        <div className="question-text-content">
-          <span className="quote-mark open">“</span>
-          <p className="question-text">{question.text}</p>
-          <span className="quote-mark close">”</span>
+        <div className="question-text-content" style={{ padding: compact ? '4px 10px' : '8px 14px' }}>
+          <span className="quote-mark open" style={{ fontSize: compact ? '2.4rem' : '3.2rem', top: compact ? '4px' : '10px' }}>“</span>
+          <p
+            className="question-text"
+            style={{
+              fontSize: getFontSize(),
+              lineHeight: compact ? 1.45 : 1.6
+            }}
+          >
+            {question.text}
+          </p>
+          <span className="quote-mark close" style={{ fontSize: compact ? '2.4rem' : '3.2rem' }}>”</span>
         </div>
 
         {/* Tags and Status Footer */}
-        <div className="card-footer">
+        <div className="card-footer" style={{ paddingTop: compact ? '12px' : '18px' }}>
           <div className="tags-row">
-            {question.tags.map((tag, idx) => (
+            {question.tags?.map((tag, idx) => (
               <span key={idx} className="tag-pill">#{tag}</span>
             ))}
           </div>
@@ -75,6 +112,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, isAnswered
           {onNext && (
             <button
               className={`btn-next-action ${isAnswered ? 'btn-next-ready' : ''}`}
+              style={{
+                padding: compact ? '8px 18px' : '11px 24px',
+                fontSize: compact ? '0.9rem' : '1rem'
+              }}
               onClick={onNext}
             >
               {isAnswered ? 'ไปสู่ผู้เข้าแข่งขันถัดไป ➔' : 'เสร็จสิ้นคำถามนี้ ✓'}
@@ -85,3 +126,4 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, isAnswered
     </div>
   );
 };
+

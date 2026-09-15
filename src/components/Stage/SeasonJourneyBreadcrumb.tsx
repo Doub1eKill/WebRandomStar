@@ -12,11 +12,13 @@ interface StepItem {
 }
 
 const MILESTONES: StepItem[] = [
-  { state: 'rain', icon: '🌧️', name: 'ฝนซา' },
+  { state: 'rain', icon: '🌧️', name: 'ฝนสุดท้าย' },
   { state: 'water-drop', icon: '💧', name: 'หยดน้ำ' },
   { state: 'mist', icon: '🌫️', name: 'สายหมอก' },
   { state: 'wind', icon: '🍃', name: 'ลมหนาว' },
-  { state: 'leaf', icon: '🍂', name: 'ใบไม้ทอง' }
+  { state: 'leaf', icon: '🍂', name: 'ใบไม้ร่วง' },
+  { state: 'sky-clear', icon: '🌤️', name: 'ฟ้าเปิด' },
+  { state: 'question-reveal', icon: '✨', name: 'เปิดคำถาม' }
 ];
 
 export const SeasonJourneyBreadcrumb: React.FC<SeasonJourneyBreadcrumbProps> = ({ currentState }) => {

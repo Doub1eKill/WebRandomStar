@@ -7,14 +7,22 @@ interface StageHeaderProps {
 }
 
 const STAGE_LABELS: Record<AppState, string> = {
-  'idle': 'เตรียมพร้อมสู่การเปลี่ยนผ่าน',
+  'idle': 'เตรียมพร้อมสู่การสุ่มคำสำคัญ',
+  'pre-spin': '✦ เตรียมเริ่มการหมุนคำ ✦',
+  'word-spin': '✦ ROYAL WORD SPIN ✦',
+  'word-decelerate': '✦ กำลังคัดสรรคำสำคัญ ✦',
+  'word-lock': '👑 ล็อกคำสำคัญแห่งค่ำคืน',
+  'question-reveal': '✨ เปิดเผยคำถาม',
+  'question': '🌟 คำถามประจำค่ำคืน',
+  'answered': '✓ ตอบคำถามเรียบร้อย',
+
+  // Legacy fallback states
   'rain': '🌧️ ฝนปลายฤดู',
   'water-drop': '💧 หยดน้ำเกาะไอเย็น',
   'mist': '🌫️ สายหมอกลอยต่ำ',
   'wind': '🍃 ลมหนาวแรกพัดผ่าน',
-  'leaf': '🍂 ใบไม้เลือกทิศทาง',
-  'question': '✨ คำถามประจำค่ำคืน',
-  'answered': '✓ ตอบคำถามเรียบร้อย'
+  'leaf': '🍂 ใบไม้ร่วงตามสายลม',
+  'sky-clear': '🌤️ ท้องฟ้าเปิดกว้าง'
 };
 
 export const StageHeader: React.FC<StageHeaderProps> = ({ round, currentState }) => {
@@ -39,7 +47,7 @@ export const StageHeader: React.FC<StageHeaderProps> = ({ round, currentState })
           <div className="event-post-title">
             <span className="post-ambassador">✦ AMBASSADOR 2026 ✦</span>
             <span className="post-divider">•</span>
-            <span className="event-subtitle">มนต์เสน่ห์แห่งรอยต่อฤดู — ปลายฝนต้นหนาว</span>
+            <span className="event-subtitle">เสน่ห์แห่งการเปลี่ยนผ่าน สู่ดาวนำทางแห่งอนาคต</span>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { QuestionCategory } from '../../types/question.ts';
+import { QuestionCategory, CATEGORY_CONFIGS } from '../../types/question.ts';
 import { AppState } from '../../types/session.ts';
 import { audioEngine } from '../../engine/audioEngine.ts';
 
@@ -8,75 +8,31 @@ interface CategoryAnnouncementBannerProps {
   currentState: AppState;
 }
 
-const CATEGORY_META: Record<QuestionCategory, { name: string; subtitle: string; icon: string; color: string; desc: string }> = {
-  rain: {
-    name: 'ความรู้สึกและตัวตน',
-    subtitle: 'Feelings & Identity',
-    icon: '🌧️',
-    color: '#38bdf8',
-    desc: 'คำถามสะท้อนจิตใจ การเติบโต และความงดงามในแบบฉบับตนเอง'
-  },
-  mist: {
-    name: 'มุมมองและทัศนคติ',
-    subtitle: 'Perspective & Attitude',
-    icon: '🌫️',
-    color: '#94a3b8',
-    desc: 'คำถามเชิงทัศนคติ การตัดสินใจ และการแยกแยะความจริง'
-  },
-  wind: {
-    name: 'การเปลี่ยนแปลงและความท้าทาย',
-    subtitle: 'Change & Challenge',
-    icon: '🍃',
-    color: '#86efac',
-    desc: 'คำถามเกี่ยวกับการปรับตัว การก้าวผ่านอุปสรรค และภาวะผู้นำ'
-  },
-  leaf: {
-    name: 'ประสบการณ์และชีวิตมหาวิทยาลัย',
-    subtitle: 'Experience & Memory',
-    icon: '🍂',
-    color: '#fbbf24',
-    desc: 'คำถามบทเรียนชีวิต มิตรภาพ และความทรงจำที่มีคุณค่า'
-  },
-  moon: {
-    name: 'ความฝันและเป้าหมาย',
-    subtitle: 'Dreams & Ambition',
-    icon: '🌙',
-    color: '#e2e8f0',
-    desc: 'คำถามถึงพลังใจ อนาคต และความหวังที่อยากส่งต่อ'
-  },
-  star: {
-    name: 'สังคมและการสร้างสรรค์',
-    subtitle: 'Society & Leadership',
-    icon: '⭐',
-    color: '#fde047',
-    desc: 'คำถามนวัตกรรม การพัฒนาชุมชน และบทบาทของตัวแทนเยาวชน'
-  },
-  final: {
-    name: 'คำถามรอบตัดสิน',
-    subtitle: 'Final Decisive Question',
-    icon: '☄️',
-    color: '#f43f5e',
-    desc: 'คำถามชี้ขาดคุณค่า ความเป็นผู้นำ และพันธกิจประจำตำแหน่ง'
-  }
-};
-
 export const CategoryAnnouncementBanner: React.FC<CategoryAnnouncementBannerProps> = ({
   category,
   currentState
 }) => {
-  // Show banner during leaf state
-  const isVisible = currentState === 'leaf' && !!category;
+  // Show banner during leaf / sky-clear state
+  const isVisible = (currentState === 'leaf' || currentState === 'sky-clear') && !!category;
 
   useEffect(() => {
     if (isVisible && currentState === 'leaf') {
-      audioEngine.playStarChime();
+      audioEngine.playSkyTransition();
     }
   }, [isVisible, currentState]);
 
   if (!isVisible || !category) return null;
 
-  const meta = CATEGORY_META[category] || {
-    name: category,
+  const key = String(category).toLowerCase();
+  const cfg = CATEGORY_CONFIGS[key];
+  const meta = cfg ? {
+    name: cfg.name,
+    subtitle: cfg.subtitle,
+    icon: cfg.icon,
+    color: cfg.color,
+    desc: cfg.description
+  } : {
+    name: String(category),
     subtitle: 'Question Category',
     icon: '✨',
     color: '#38bdf8',
