@@ -1,7 +1,7 @@
 import React from 'react';
 import { TimerState, TimerPhase, TimerDisplayMode, StageDisplaySettings, DEFAULT_STAGE_DISPLAY_SETTINGS } from '../../types/timer.ts';
 import { formatTimerDisplay, getTimerPhase } from '../../engine/timerEngine.ts';
-import { Clock, AlertTriangle, Volume2, VolumeX, Sparkles, Flame, Pause } from 'lucide-react';
+import { Clock, AlertTriangle, Flame, Pause } from 'lucide-react';
 
 interface TimerDisplayProps {
   timerState: TimerState;
@@ -13,7 +13,6 @@ interface TimerDisplayProps {
 
 export const TimerDisplay: React.FC<TimerDisplayProps> = ({
   timerState,
-  soundEnabled = true,
   variant = 'corner',
   stageDisplaySettings = DEFAULT_STAGE_DISPLAY_SETTINGS,
   className = ''
@@ -142,7 +141,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
   if (variant === 'center') {
     return (
       <div
-        className={`stage-timer-center-hero timer-phase-${phase} ${className}`}
+        className={`stage-timer-center-hero animate-timer-float-in timer-phase-${phase} ${className}`}
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -163,78 +162,6 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
           position: 'relative'
         }}
       >
-        {/* Top Header Row */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%',
-            marginBottom: '0.5rem'
-          }}
-        >
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.35rem 1rem',
-              borderRadius: '9999px',
-              background: phaseStyles.badgeBg,
-              border: `1px solid ${phaseStyles.badgeBorder}`,
-              color: phaseStyles.accentColor,
-              fontSize: '0.88rem',
-              fontWeight: 700,
-              letterSpacing: '0.06em',
-              transition: 'all 0.4s ease'
-            }}
-          >
-            {phaseStyles.icon(17)}
-            <span>{phaseStyles.label}</span>
-          </div>
-
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem'
-            }}
-          >
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                fontSize: '0.8rem',
-                color: '#cbd5e1',
-                background: 'rgba(255, 255, 255, 0.08)',
-                padding: '0.25rem 0.75rem',
-                borderRadius: '9999px'
-              }}
-            >
-              <Sparkles size={14} color="#fde047" />
-              <span>TIME FOCUS</span>
-            </div>
-
-            <div
-              title={soundEnabled ? 'เปิดเสียงติ๊กถอยหลัง (Tick Sound ON)' : 'ปิดเสียงติ๊กถอยหลัง (Tick Sound OFF)'}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.3rem',
-                color: soundEnabled ? phaseStyles.accentColor : '#64748b',
-                background: 'rgba(255, 255, 255, 0.06)',
-                padding: '0.3rem 0.6rem',
-                borderRadius: '8px',
-                fontSize: '0.75rem',
-                transition: 'color 0.3s ease'
-              }}
-            >
-              {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
-            </div>
-          </div>
-        </div>
-
         {/* Massive Digits Display */}
         <div
           className="timer-digit-wrapper"
@@ -345,12 +272,12 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
   // 3. CORNER HUD VARIANT (มุมขวาบนมาตรฐาน)
   return (
     <div
-      className={`stage-timer-hud timer-phase-${phase} ${className}`}
+      className={`stage-timer-hud animate-timer-float-in timer-phase-${phase} ${className}`}
       style={{
         display: 'inline-flex',
         flexDirection: 'column',
         alignItems: 'center',
-        padding: isFinished ? '0.75rem 1.6rem' : '0.85rem 1.75rem',
+        padding: isFinished ? '0.65rem 1.5rem' : '0.75rem 1.6rem',
         background: phaseStyles.bg,
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
@@ -362,54 +289,6 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
         position: 'relative'
       }}
     >
-      {/* Top Meta Header: Status & Sound Icon */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          width: '100%',
-          gap: '1rem',
-          marginBottom: '0.35rem'
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-            padding: '0.2rem 0.6rem',
-            borderRadius: '9999px',
-            background: phaseStyles.badgeBg,
-            border: `1px solid ${phaseStyles.badgeBorder}`,
-            color: phaseStyles.accentColor,
-            fontSize: '0.75rem',
-            fontWeight: 700,
-            letterSpacing: '0.04em',
-            transition: 'all 0.4s ease'
-          }}
-        >
-          {phaseStyles.icon(14)}
-          <span>{phaseStyles.label}</span>
-        </div>
-
-        {/* Subtle Sound Indicator */}
-        <div
-          title={soundEnabled ? 'เปิดเสียงติ๊กถอยหลัง (Tick Sound ON)' : 'ปิดเสียงติ๊กถอยหลัง (Tick Sound OFF)'}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.25rem',
-            color: soundEnabled ? phaseStyles.accentColor : '#64748b',
-            opacity: 0.85,
-            fontSize: '0.7rem',
-            transition: 'color 0.3s ease'
-          }}
-        >
-          {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
-        </div>
-      </div>
-
       {/* Main Large Countdown Digits */}
       <div
         className="timer-digit-wrapper"
@@ -417,7 +296,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          margin: '0.1rem 0',
+          margin: 0,
           fontVariantNumeric: 'tabular-nums',
           fontFeatureSettings: '"tnum"'
         }}
