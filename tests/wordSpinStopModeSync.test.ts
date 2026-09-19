@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getNextState, STAGE_SEQUENCE, isValidTransition } from '../src/engine/stateMachine.ts';
+import { getNextState, isValidTransition } from '../src/engine/stateMachine.ts';
 
 describe('Word Spin Stop Mode Transitions', () => {
   it('transitions from word-spin to word-decelerate', () => {

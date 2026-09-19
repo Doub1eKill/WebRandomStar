@@ -110,6 +110,7 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
   const [isContestantModalOpen, setIsContestantModalOpen] = useState(false);
 
   const activeContestant = contestants.find(c => c.id === session.selectedContestantId);
+  const isIdle = session.currentState === 'idle';
   const rounds = ['intro', 'general', 'attitude', 'scenario', 'final'];
 
   return (
