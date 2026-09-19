@@ -3,6 +3,7 @@ import { SessionState } from '../../types/session.ts';
 import { Contestant, QuestionCategory } from '../../types/question.ts';
 import { KeywordItem } from '../../types/word.ts';
 import { TimerSoundSettings, StageDisplaySettings, DEFAULT_STAGE_DISPLAY_SETTINGS } from '../../types/timer.ts';
+import { AppearanceSettings, DEFAULT_APPEARANCE_SETTINGS } from '../../types/appearance.ts';
 
 interface ControlDrawerProps {
   isOpen: boolean;
@@ -24,6 +25,7 @@ interface ControlDrawerProps {
   onOpenContestantManager: () => void;
   onSetTimerSoundSettings?: (settings: Partial<TimerSoundSettings>) => void;
   onSetStageDisplaySettings?: (settings: Partial<StageDisplaySettings>) => void;
+  onSetAppearanceSettings?: (settings: AppearanceSettings) => void;
   onAdjustTimer?: (deltaMs: number) => void;
 }
 
@@ -47,6 +49,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
   onOpenContestantManager,
   onSetTimerSoundSettings,
   onSetStageDisplaySettings,
+  onSetAppearanceSettings,
   onAdjustTimer
 }) => {
   if (!isOpen) return null;
@@ -172,6 +175,47 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
               </button>
             </div>
           </div>
+
+          {/* Section 3: Word Lock Showcase Phase Toggle */}
+          {onSetAppearanceSettings && (
+            <div className="control-section">
+              <label className="section-label">🎴 การ์ดคำที่สุ่มได้ (Word Lock Showcase)</label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                <button
+                  className="btn-secondary"
+                  style={{
+                    padding: '8px',
+                    fontSize: '0.8rem',
+                    background: (session.appearanceSettings?.showWordLockPhase !== false) ? 'rgba(99, 102, 241, 0.3)' : 'rgba(255,255,255,0.05)',
+                    borderColor: (session.appearanceSettings?.showWordLockPhase !== false) ? '#6366f1' : 'rgba(255,255,255,0.1)',
+                    color: (session.appearanceSettings?.showWordLockPhase !== false) ? '#a5b4fc' : '#cbd5e1'
+                  }}
+                  onClick={() => {
+                    const current = session.appearanceSettings || DEFAULT_APPEARANCE_SETTINGS;
+                    onSetAppearanceSettings({ ...current, showWordLockPhase: true });
+                  }}
+                >
+                  ✨ แสดงการ์ดคำ (ON)
+                </button>
+                <button
+                  className="btn-secondary"
+                  style={{
+                    padding: '8px',
+                    fontSize: '0.8rem',
+                    background: session.appearanceSettings?.showWordLockPhase === false ? 'rgba(239, 68, 68, 0.25)' : 'rgba(255,255,255,0.05)',
+                    borderColor: session.appearanceSettings?.showWordLockPhase === false ? '#ef4444' : 'rgba(255,255,255,0.1)',
+                    color: session.appearanceSettings?.showWordLockPhase === false ? '#fca5a5' : '#cbd5e1'
+                  }}
+                  onClick={() => {
+                    const current = session.appearanceSettings || DEFAULT_APPEARANCE_SETTINGS;
+                    onSetAppearanceSettings({ ...current, showWordLockPhase: false });
+                  }}
+                >
+                  ⚡ ข้ามไปคำถาม (OFF)
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Section 3: Direct Word Selection */}
           {words.length > 0 && (

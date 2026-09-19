@@ -38,6 +38,7 @@ export const App: React.FC = () => {
     setRound,
     setVolume,
     toggleMute,
+    setAppearanceSettings,
     startTimer,
     pauseTimer,
     resumeTimer,
@@ -168,6 +169,7 @@ export const App: React.FC = () => {
         onOpenContestantManager={() => setIsContestantModalOpen(true)}
         onSetTimerSoundSettings={setTimerSoundSettings}
         onSetStageDisplaySettings={setStageDisplaySettings}
+        onSetAppearanceSettings={setAppearanceSettings}
         onAdjustTimer={adjustTimer}
       />
 

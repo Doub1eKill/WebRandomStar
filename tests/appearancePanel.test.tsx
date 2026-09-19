@@ -45,4 +45,18 @@ describe('AppearanceSettingsPanel Font Selector', () => {
     expect(html).toContain('Playfair Display');
     expect(html).toContain('Google Fonts CSS URL');
   });
+
+  it('renders word lock showcase toggle controls', () => {
+    const html = renderToString(
+      React.createElement(AppearanceSettingsPanel, {
+        settings: DEFAULT_APPEARANCE_SETTINGS,
+        onChange: () => {}
+      })
+    );
+
+    expect(html).toContain('ช่วงแสดงการ์ดคำที่สุ่มได้');
+    expect(html).toContain('Selected Keyword Showcase');
+    expect(html).toContain('เปิดใช้งาน (ON)');
+    expect(html).toContain('ข้ามช่วงนี้ (OFF)');
+  });
 });
