@@ -900,6 +900,28 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
           <AppearanceSettingsPanel
             settings={session.appearanceSettings || DEFAULT_APPEARANCE_SETTINGS}
             onChange={onSetAppearanceSettings || (() => {})}
+            tracks={tracks}
+            musicState={musicState}
+            onAssignPhaseTrack={(phase, trackId) => {
+              musicPlayer.setPhaseTrackMapping({ [phase]: trackId });
+            }}
+            onAddTrack={async (newTrack, fileBlob) => {
+              const saved = await saveTrackToStorage(newTrack, fileBlob);
+              setTracks(prev => [...prev.filter(t => t.id !== saved.id), saved]);
+            }}
+            onDeleteTrack={async (id) => {
+              await deleteTrackFromStorage(id);
+              setTracks(prev => prev.filter(t => t.id !== id));
+              if (musicState.currentTrackId === id) {
+                musicPlayer.stop();
+              }
+            }}
+            onPlayTrack={(track) => {
+              musicPlayer.play(track);
+            }}
+            onStopMusic={() => {
+              musicPlayer.stop();
+            }}
           />
         )}
       </div>
