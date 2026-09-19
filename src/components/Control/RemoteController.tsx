@@ -20,6 +20,7 @@ export const RemoteController: React.FC = () => {
   const {
     session,
     startJourney,
+    stopWordSpin,
     pauseJourney,
     skipToQuestion,
     markAnswered,
@@ -102,6 +103,7 @@ export const RemoteController: React.FC = () => {
         words={words}
         history={history}
         onStartRandomization={handleStart}
+        onStopSpin={stopWordSpin}
         onPauseRandomization={pauseJourney}
         onSkipToQuestion={skipToQuestion}
         onMarkAnswered={markAnswered}

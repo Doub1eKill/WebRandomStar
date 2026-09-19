@@ -11,6 +11,7 @@ interface ControlDrawerProps {
   contestants: Contestant[];
   words?: KeywordItem[];
   onStart: (forceCategory?: QuestionCategory, forceWord?: KeywordItem) => void;
+  onStopSpin?: () => void;
   onPause: () => void;
   onSkip: () => void;
   onMarkAnswered: () => void;
@@ -33,6 +34,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
   contestants,
   words = [],
   onStart,
+  onStopSpin,
   onPause,
   onSkip,
   onMarkAnswered,
@@ -120,13 +122,23 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
           <div className="control-section">
             <label className="section-label">⚡ ควบคุมการหมุนคำและเวที</label>
             <div className="actions-grid">
-              <button
-                className="btn-primary"
-                onClick={() => onStart()}
-                disabled={!isIdle}
-              >
-                👑 ✦ SPIN WORD ✦ [Space]
-              </button>
+              {session.currentState === 'word-spin' ? (
+                <button
+                  className="btn-primary"
+                  style={{ background: 'linear-gradient(135deg, #ef4444, #dc2626)', borderColor: '#f87171' }}
+                  onClick={() => (onStopSpin ? onStopSpin() : onSkip())}
+                >
+                  🛑 STOP SPIN (หยุดสุ่ม) [Space]
+                </button>
+              ) : (
+                <button
+                  className="btn-primary"
+                  onClick={() => onStart()}
+                  disabled={!isIdle}
+                >
+                  👑 SPIN WORD [Space]
+                </button>
+              )}
 
               <button
                 className="btn-secondary"

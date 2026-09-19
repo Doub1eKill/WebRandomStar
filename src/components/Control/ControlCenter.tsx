@@ -37,6 +37,7 @@ interface ControlCenterProps {
   history: HistoryRecord[];
   words?: KeywordItem[];
   onStartRandomization: (forceCategory?: QuestionCategory, forceWord?: KeywordItem) => void;
+  onStopSpin?: () => void;
   onPauseRandomization: () => void;
   onSkipToQuestion: () => void;
   onMarkAnswered: () => void;
@@ -77,6 +78,7 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
   history,
   words = DEFAULT_WORDS,
   onStartRandomization,
+  onStopSpin,
   onPauseRandomization,
   onSkipToQuestion,
   onMarkAnswered,
@@ -472,28 +474,55 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
-                <button
-                  onClick={() => onStartRandomization()}
-                  style={{
-                    gridColumn: 'span 2',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.5rem',
-                    padding: '0.9rem',
-                    background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 35%, #4f46e5 70%, #d97706 100%)',
-                    border: '1px solid rgba(245, 217, 138, 0.6)',
-                    borderRadius: '8px',
-                    color: '#fff',
-                    fontWeight: 700,
-                    fontSize: '1.05rem',
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 16px rgba(79, 70, 229, 0.4)'
-                  }}
-                >
-                  <Crown size={18} color="#F5D98A" />
-                  ✦ SPIN WORD (หมุนคำสำคัญ) ✦
-                </button>
+                {session.currentState === 'word-spin' ? (
+                  <button
+                    onClick={() => (onStopSpin ? onStopSpin() : onSkipToQuestion())}
+                    style={{
+                      gridColumn: 'span 2',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      padding: '0.9rem',
+                      background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%)',
+                      border: '1px solid rgba(254, 202, 202, 0.6)',
+                      borderRadius: '8px',
+                      color: '#fff',
+                      fontWeight: 700,
+                      fontSize: '1.05rem',
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 16px rgba(239, 68, 68, 0.5)'
+                    }}
+                  >
+                    🛑 STOP SPIN (หยุดการหมุนคำ)
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => onStartRandomization()}
+                    disabled={!isIdle}
+                    style={{
+                      gridColumn: 'span 2',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      padding: '0.9rem',
+                      background: isIdle
+                        ? 'linear-gradient(135deg, #1e1b4b 0%, #312e81 35%, #4f46e5 70%, #d97706 100%)'
+                        : 'rgba(255, 255, 255, 0.05)',
+                      border: isIdle ? '1px solid rgba(245, 217, 138, 0.6)' : '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '8px',
+                      color: isIdle ? '#fff' : '#64748b',
+                      fontWeight: 700,
+                      fontSize: '1.05rem',
+                      cursor: isIdle ? 'pointer' : 'not-allowed',
+                      boxShadow: isIdle ? '0 4px 16px rgba(79, 70, 229, 0.4)' : 'none'
+                    }}
+                  >
+                    <Crown size={18} color="#F5D98A" />
+                    SPIN WORD (หมุนคำสำคัญ)
+                  </button>
+                )}
 
                 <button
                   onClick={onPauseRandomization}
