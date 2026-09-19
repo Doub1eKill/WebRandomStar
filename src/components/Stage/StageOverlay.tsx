@@ -81,16 +81,14 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
             </div>
 
             <button className="btn-primary btn-royal-spin" onClick={onStart}>
-              <span className="btn-sparkle-star">✦</span>
               <span className="btn-spin-text">SPIN WORD</span>
-              <span className="btn-sparkle-star">✦</span>
             </button>
           </div>
         )}
 
         {/* Royal Word Spin Carousel Phase */}
         {isSpinning && (
-          <div className="stage-spin-center-wrap">
+          <div className="stage-spin-center-wrap animate-carousel-entrance">
             <WordCarousel
               targetWord={session.selectedWordItem}
               phase={session.currentState as 'pre-spin' | 'word-spin' | 'word-decelerate'}
