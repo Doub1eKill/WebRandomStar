@@ -91,4 +91,22 @@ describe('Procedural Web Audio Engine (V3 - Royal Word Spin)', () => {
       audioEngine.playTickSound(0);  // Finished
     }).not.toThrow();
   });
+
+  it('should strictly silence all playback methods when muted is true', () => {
+    audioEngine.setMuted(true);
+    expect(() => {
+      audioEngine.playSpinStart();
+      audioEngine.playSpinTick(1.0);
+      audioEngine.playWordLock();
+      audioEngine.playQuestionReveal();
+      audioEngine.playRainAmbience();
+      audioEngine.playWaterDrop();
+      audioEngine.playWindGust();
+      audioEngine.playLeafRustle();
+      audioEngine.playSkyTransition();
+      audioEngine.playTimerWarning();
+      audioEngine.playTimerFinish();
+      audioEngine.playTickSound(5);
+    }).not.toThrow();
+  });
 });

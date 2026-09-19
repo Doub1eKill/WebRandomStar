@@ -36,13 +36,21 @@ export function useMusicStageRouter(
   tracks: MusicTrack[],
   player: MusicPlayerEngine
 ): void {
-  const lastStateRef = useRef<AppState | null>(null);
+  const lastTargetTrackIdRef = useRef<string | null>(null);
+  const wasAutoSyncRef = useRef<boolean>(musicState.autoSyncWithStage);
 
   useEffect(() => {
-    if (!musicState.autoSyncWithStage) return;
-    if (lastStateRef.current === currentState) return;
+    if (!musicState.autoSyncWithStage) {
+      if (wasAutoSyncRef.current) {
+        // Auto-sync was toggled off: immediately stop stage soundtrack
+        player.stop({ fadeOutDuration: 0.6 });
+        lastTargetTrackIdRef.current = null;
+      }
+      wasAutoSyncRef.current = false;
+      return;
+    }
 
-    lastStateRef.current = currentState;
+    wasAutoSyncRef.current = true;
 
     const targetTrack = getTargetTrackForStagePhase(
       currentState,
@@ -50,14 +58,20 @@ export function useMusicStageRouter(
       tracks
     );
 
-    if (targetTrack) {
-      const isOneShot = currentState === 'answered';
-      player.playTrack(targetTrack, {
-        fadeInDuration: 1.2,
-        loop: !isOneShot && targetTrack.loop
-      });
-    } else {
-      player.stop({ fadeOutDuration: 1.0 });
+    const targetId = targetTrack?.id || null;
+
+    if (targetId !== lastTargetTrackIdRef.current) {
+      lastTargetTrackIdRef.current = targetId;
+
+      if (targetTrack) {
+        const isOneShot = currentState === 'answered';
+        player.playTrack(targetTrack, {
+          fadeInDuration: 1.0,
+          loop: !isOneShot && targetTrack.loop
+        });
+      } else {
+        player.stop({ fadeOutDuration: 0.8 });
+      }
     }
   }, [currentState, musicState.autoSyncWithStage, musicState.phaseTrackMapping, tracks, player]);
 }

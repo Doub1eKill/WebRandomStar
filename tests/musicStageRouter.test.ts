@@ -28,4 +28,10 @@ describe('Music Stage Router', () => {
     const track = getTargetTrackForStagePhase('answered', DEFAULT_MUSIC_STATE.phaseTrackMapping, PRESET_MUSIC_TRACKS);
     expect(track?.id).toBe('preset-fanfare-royal');
   });
+
+  it('resolves null when a stage phase has no mapped track', () => {
+    const unmapped = { ...DEFAULT_MUSIC_STATE.phaseTrackMapping, ambient: null };
+    const track = getTargetTrackForStagePhase('idle', unmapped, PRESET_MUSIC_TRACKS);
+    expect(track).toBeNull();
+  });
 });

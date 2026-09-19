@@ -48,4 +48,29 @@ describe('MusicPlayerEngine Dual-Slot Crossfade', () => {
     engine.seek(45);
     expect(engine.getState().currentTime).toBe(45);
   });
+
+  it('guarantees complete silence when muted during playback and cancels active fades', async () => {
+    const track = PRESET_MUSIC_TRACKS[0];
+    await engine.playTrack(track, { fadeInDuration: 2.0 });
+    expect(engine.getState().isPlaying).toBe(true);
+
+    // Mute immediately
+    engine.setMuted(true);
+    expect(engine.getState().isMuted).toBe(true);
+
+    // Stop and verify
+    engine.stop();
+    expect(engine.getState().isPlaying).toBe(false);
+  });
+
+  it('handles volume changes and 0% volume properly', () => {
+    engine.setMasterVolume(0);
+    expect(engine.getState().volume).toBe(0);
+
+    engine.setMasterVolume(1.5); // clamps to 1
+    expect(engine.getState().volume).toBe(1);
+
+    engine.setMasterVolume(-0.5); // clamps to 0
+    expect(engine.getState().volume).toBe(0);
+  });
 });

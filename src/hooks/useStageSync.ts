@@ -23,6 +23,7 @@ import { STAGE_DURATION, getNextState } from '../engine/stateMachine.ts';
 import { createInitialTimerState, calculateRemainingMs, calculateTimeUsedMs, DEFAULT_TIMER_DURATION_MS } from '../engine/timerEngine.ts';
 import { createHistoryRecord } from '../engine/historyManager.ts';
 import { audioEngine } from '../engine/audioEngine.ts';
+import { musicPlayer } from '../engine/musicPlayerEngine.ts';
 
 const CHANNEL_NAME = 'season_transition_quiz_sync_v2';
 
@@ -116,15 +117,19 @@ export function useStageSync(role: 'stage' | 'controller') {
     }
   }, []);
 
-  // Sync volume and sound settings with AudioEngine
+  // Sync volume and sound settings with AudioEngine and MusicPlayer
   useEffect(() => {
     if (role === 'controller') {
       audioEngine.setMuted(true);
+      musicPlayer.setMuted(true);
       return;
     }
 
     audioEngine.setVolume(session.volume);
     audioEngine.setMuted(session.isMuted);
+    musicPlayer.setMasterVolume(session.volume);
+    musicPlayer.setMuted(session.isMuted);
+
     if (session.timerSoundSettings) {
       audioEngine.setTickSoundEnabled(session.timerSoundSettings.tickSoundEnabled);
       audioEngine.setWarningSoundEnabled(session.timerSoundSettings.warningSoundEnabled);

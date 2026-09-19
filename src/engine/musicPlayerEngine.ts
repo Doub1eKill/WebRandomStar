@@ -36,9 +36,15 @@ export class MusicPlayerEngine {
   private synthInterval: any = null;
   private listeners: Set<MusicStateListener> = new Set();
   private timeUpdateInterval: any = null;
+  private activeFadeTimers: Set<any> = new Set();
 
   constructor() {
     this.initAudioElements();
+  }
+
+  private cancelAllFades(): void {
+    this.activeFadeTimers.forEach(timer => clearInterval(timer));
+    this.activeFadeTimers.clear();
   }
 
   private initAudioElements(): void {
@@ -127,12 +133,19 @@ export class MusicPlayerEngine {
     this.volume = Math.max(0, Math.min(1, vol));
     const effectiveVol = this.isMuted ? 0 : this.volume;
 
-    if (this.audioSlotA) this.audioSlotA.volume = effectiveVol;
-    if (this.audioSlotB) this.audioSlotB.volume = effectiveVol;
+    if (this.audioSlotA) {
+      this.audioSlotA.volume = effectiveVol;
+      this.audioSlotA.muted = this.isMuted || effectiveVol === 0;
+    }
+    if (this.audioSlotB) {
+      this.audioSlotB.volume = effectiveVol;
+      this.audioSlotB.muted = this.isMuted || effectiveVol === 0;
+    }
 
     if (this.ctx && this.masterGain) {
       try {
-        this.masterGain.gain.setTargetAtTime(effectiveVol, this.ctx.currentTime, 0.05);
+        this.masterGain.gain.cancelScheduledValues(this.ctx.currentTime);
+        this.masterGain.gain.setValueAtTime(effectiveVol, this.ctx.currentTime);
       } catch {
         // ignore
       }
@@ -142,7 +155,33 @@ export class MusicPlayerEngine {
 
   public setMuted(muted: boolean): void {
     this.isMuted = muted;
-    this.setMasterVolume(this.volume);
+    this.cancelAllFades();
+
+    const effectiveVol = muted ? 0 : this.volume;
+
+    if (this.audioSlotA) {
+      this.audioSlotA.muted = muted;
+      this.audioSlotA.volume = effectiveVol;
+    }
+    if (this.audioSlotB) {
+      this.audioSlotB.muted = muted;
+      this.audioSlotB.volume = effectiveVol;
+    }
+
+    if (this.ctx && this.masterGain) {
+      try {
+        this.masterGain.gain.cancelScheduledValues(this.ctx.currentTime);
+        this.masterGain.gain.setValueAtTime(effectiveVol, this.ctx.currentTime);
+      } catch {
+        // ignore
+      }
+    }
+
+    if (muted && this.synthInterval) {
+      this.stopSynthesis(true);
+    }
+
+    this.notifyState();
   }
 
   public setAutoSyncWithStage(enabled: boolean): void {
@@ -163,8 +202,9 @@ export class MusicPlayerEngine {
    */
   public async playTrack(track: MusicTrack, options?: PlayOptions): Promise<void> {
     this.ensureContext();
-    this.stopSynthesis();
+    this.stopSynthesis(true);
     this.stopSimulatedPlayback();
+    this.cancelAllFades();
 
     const fadeIn = options?.fadeInDuration ?? 1.0;
     const startSec = options?.startTime ?? 0;
@@ -196,6 +236,7 @@ export class MusicPlayerEngine {
         incomingAudio.src = track.url;
         incomingAudio.currentTime = startSec;
         incomingAudio.loop = isLoop;
+        incomingAudio.muted = this.isMuted;
         incomingAudio.volume = 0;
 
         const playPromise = incomingAudio.play();
@@ -221,11 +262,29 @@ export class MusicPlayerEngine {
   }
 
   private fadeInSlot(audio: HTMLAudioElement, duration: number, targetVol: number): void {
+    if (this.isMuted || this.volume === 0) {
+      if (audio) {
+        audio.volume = 0;
+        audio.muted = true;
+      }
+      return;
+    }
+
     const steps = 15;
-    const interval = (duration * 1000) / steps;
+    const interval = Math.max(20, (duration * 1000) / steps);
     let step = 0;
 
     const timer = setInterval(() => {
+      if (this.isMuted || this.volume === 0) {
+        if (audio) {
+          audio.volume = 0;
+          audio.muted = true;
+        }
+        clearInterval(timer);
+        this.activeFadeTimers.delete(timer);
+        return;
+      }
+
       step++;
       const current = (targetVol * step) / steps;
       if (audio) {
@@ -233,14 +292,17 @@ export class MusicPlayerEngine {
       }
       if (step >= steps) {
         clearInterval(timer);
+        this.activeFadeTimers.delete(timer);
       }
     }, interval);
+
+    this.activeFadeTimers.add(timer);
   }
 
   private fadeOutSlot(audio: HTMLAudioElement, duration: number): void {
     const initialVol = audio.volume;
     const steps = 12;
-    const interval = (duration * 1000) / steps;
+    const interval = Math.max(20, (duration * 1000) / steps);
     let step = 0;
 
     const timer = setInterval(() => {
@@ -249,8 +311,9 @@ export class MusicPlayerEngine {
       if (audio) {
         audio.volume = Math.max(0, current);
       }
-      if (step >= steps) {
+      if (step >= steps || (audio && audio.volume <= 0)) {
         clearInterval(timer);
+        this.activeFadeTimers.delete(timer);
         try {
           audio.pause();
           audio.currentTime = 0;
@@ -259,31 +322,39 @@ export class MusicPlayerEngine {
         }
       }
     }, interval);
+
+    this.activeFadeTimers.add(timer);
   }
 
   public pause(): void {
     this.isPlaying = false;
-    const audio = this.activeSlot === 'A' ? this.audioSlotA : this.audioSlotB;
-    if (audio && !audio.paused) {
-      try {
-        audio.pause();
-      } catch {
-        // ignore
+    this.cancelAllFades();
+
+    [this.audioSlotA, this.audioSlotB].forEach(audio => {
+      if (audio && !audio.paused) {
+        try {
+          audio.pause();
+        } catch {
+          // ignore
+        }
       }
-    }
+    });
+
     this.stopSimulatedPlayback();
-    this.stopSynthesis();
+    this.stopSynthesis(true);
     this.notifyState();
   }
 
   public resume(options?: { fadeIn?: number }): void {
     if (!this.currentTrack) return;
     this.ensureContext();
+    this.cancelAllFades();
     this.isPlaying = true;
 
     const audio = this.activeSlot === 'A' ? this.audioSlotA : this.audioSlotB;
     if (audio && audio.src) {
       try {
+        audio.muted = this.isMuted;
         audio.play().catch(() => {});
         this.fadeInSlot(audio, options?.fadeIn ?? 0.4, (this.currentTrack.defaultVolume ?? 1) * (this.isMuted ? 0 : this.volume));
       } catch {
@@ -298,15 +369,28 @@ export class MusicPlayerEngine {
   public stop(options?: StopOptions): void {
     this.isPlaying = false;
     this.currentTime = 0;
+    this.cancelAllFades();
 
     const fadeOut = options?.fadeOutDuration ?? 0.8;
-    const audio = this.activeSlot === 'A' ? this.audioSlotA : this.audioSlotB;
-    if (audio && !audio.paused) {
-      this.fadeOutSlot(audio, fadeOut);
-    }
+
+    [this.audioSlotA, this.audioSlotB].forEach(audio => {
+      if (audio && !audio.paused) {
+        if (fadeOut > 0 && !this.isMuted && this.volume > 0) {
+          this.fadeOutSlot(audio, fadeOut);
+        } else {
+          try {
+            audio.pause();
+            audio.currentTime = 0;
+            audio.volume = 0;
+          } catch {
+            // ignore
+          }
+        }
+      }
+    });
 
     this.stopSimulatedPlayback();
-    this.stopSynthesis();
+    this.stopSynthesis(true);
     this.notifyState();
   }
 
@@ -350,10 +434,10 @@ export class MusicPlayerEngine {
   }
 
   private startPresetSynthesis(track: MusicTrack): void {
-    this.stopSynthesis();
+    this.stopSynthesis(true);
     this.startSimulatedPlayback();
 
-    if (!this.ctx || !this.masterGain || this.isMuted) return;
+    if (!this.ctx || !this.masterGain || this.isMuted || this.volume === 0) return;
 
     // Light ethereal synthesized arpeggio based on track phase
     try {
@@ -384,11 +468,18 @@ export class MusicPlayerEngine {
     }
   }
 
-  private stopSynthesis(): void {
+  private stopSynthesis(immediate: boolean = false): void {
     if (this.synthInterval) {
       try {
-        this.synthInterval.gain?.gain?.linearRampToValueAtTime(0, (this.ctx?.currentTime || 0) + 0.5);
-        this.synthInterval.osc?.stop((this.ctx?.currentTime || 0) + 0.6);
+        const now = this.ctx?.currentTime || 0;
+        if (immediate || this.isMuted || this.volume === 0) {
+          this.synthInterval.gain?.gain?.cancelScheduledValues(now);
+          this.synthInterval.gain?.gain?.setValueAtTime(0, now);
+          this.synthInterval.osc?.stop(now + 0.02);
+        } else {
+          this.synthInterval.gain?.gain?.linearRampToValueAtTime(0, now + 0.5);
+          this.synthInterval.osc?.stop(now + 0.6);
+        }
       } catch {
         // ignore
       }

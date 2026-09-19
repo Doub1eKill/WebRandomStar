@@ -793,10 +793,17 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
             onPlayTrack={(track) => musicPlayer.playTrack(track)}
             onPauseTrack={() => musicPlayer.pause()}
             onResumeTrack={() => musicPlayer.resume()}
-            onStopMusic={() => musicPlayer.stop({ fadeOutDuration: 1.0 })}
+            onStopMusic={() => musicPlayer.stop({ fadeOutDuration: 0.8 })}
             onSeekMusic={(sec) => musicPlayer.seek(sec)}
-            onSetVolume={(vol) => musicPlayer.setMasterVolume(vol)}
-            onToggleMute={() => musicPlayer.setMuted(!musicState.isMuted)}
+            onSetVolume={(vol) => {
+              musicPlayer.setMasterVolume(vol);
+              _onSetVolume?.(vol);
+            }}
+            onToggleMute={() => {
+              const nextMuted = !musicState.isMuted;
+              musicPlayer.setMuted(nextMuted);
+              _onToggleMute?.();
+            }}
             onToggleAutoSync={() => musicPlayer.setAutoSyncWithStage(!musicState.autoSyncWithStage)}
             onAssignPhaseTrack={(phase, trackId) => {
               musicPlayer.setPhaseTrackMapping({ [phase]: trackId });

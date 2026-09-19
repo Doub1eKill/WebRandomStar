@@ -55,7 +55,20 @@ class ProceduralAudioEngine {
   public setMuted(muted: boolean): void {
     this.muted = muted;
     if (this.ctx && this.masterGain) {
-      this.masterGain.gain.setTargetAtTime(this.muted ? 0 : this.volume, this.ctx.currentTime, 0.05);
+      try {
+        this.masterGain.gain.cancelScheduledValues(this.ctx.currentTime);
+        this.masterGain.gain.setValueAtTime(this.muted ? 0 : this.volume, this.ctx.currentTime);
+      } catch {
+        // ignore
+      }
+    }
+    if (this.muted && this.rainGain && this.ctx) {
+      try {
+        this.rainGain.gain.cancelScheduledValues(this.ctx.currentTime);
+        this.rainGain.gain.setValueAtTime(0, this.ctx.currentTime);
+      } catch {
+        // ignore
+      }
     }
   }
 
@@ -235,6 +248,7 @@ class ProceduralAudioEngine {
    * Continuous pink noise rain generator with low-pass filtering
    */
   public playRainAmbience(fadeDuration: number = 1.5): void {
+    if (this.muted) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
     if (this.rainNode) return;
 
@@ -302,6 +316,7 @@ class ProceduralAudioEngine {
    * Crisp water droplet "plop" with pitch envelope
    */
   public playWaterDrop(): void {
+    if (this.muted) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
 
     const osc = this.ctx.createOscillator();
@@ -329,6 +344,7 @@ class ProceduralAudioEngine {
    * Soft chilly winter wind gust
    */
   public playWindGust(): void {
+    if (this.muted) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
 
     const now = this.ctx.currentTime;
@@ -366,6 +382,7 @@ class ProceduralAudioEngine {
    * Autumn leaf rustle
    */
   public playLeafRustle(): void {
+    if (this.muted) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
 
     const now = this.ctx.currentTime;
@@ -399,6 +416,7 @@ class ProceduralAudioEngine {
    * Sky Transition ambient harmonic pad
    */
   public playSkyTransition(): void {
+    if (this.muted) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
 
     const chord = [392.0, 493.88, 587.33, 783.99]; // G4, B4, D5, G5
@@ -428,6 +446,7 @@ class ProceduralAudioEngine {
    * Majestic question reveal ethereal harmonic chord
    */
   public playQuestionReveal(): void {
+    if (this.muted) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
 
     const notes = [523.25, 659.25, 783.99, 987.77, 1046.5]; // C5, E5, G5, B5, C6
