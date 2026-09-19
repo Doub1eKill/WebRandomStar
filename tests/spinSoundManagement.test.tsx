@@ -6,7 +6,6 @@ import { DEFAULT_APPEARANCE_SETTINGS } from '../src/types/appearance.ts';
 import { DEFAULT_MUSIC_STATE, PRESET_MUSIC_TRACKS } from '../src/types/music.ts';
 
 import { ControlDrawer } from '../src/components/Control/ControlDrawer.tsx';
-import { DEFAULT_SESSION_STATE } from '../src/types/session.ts';
 
 describe('Spin Sound Management in AppearanceSettingsPanel', () => {
   it('renders spin audio selector and upload button', () => {

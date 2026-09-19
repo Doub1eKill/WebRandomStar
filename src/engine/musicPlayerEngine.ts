@@ -200,6 +200,10 @@ export class MusicPlayerEngine {
   /**
    * Play a track with smooth crossfade
    */
+  public async play(track: MusicTrack, options?: PlayOptions): Promise<void> {
+    return this.playTrack(track, options);
+  }
+
   public async playTrack(track: MusicTrack, options?: PlayOptions): Promise<void> {
     this.ensureContext();
     this.stopSynthesis(true);
