@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SessionState } from '../../types/session.ts';
 import { Question, Contestant, QuestionCategory, CATEGORY_CONFIGS } from '../../types/question.ts';
 import { KeywordItem } from '../../types/word.ts';
 import { HistoryRecord } from '../../types/history.ts';
 import { TimerSoundSettings, StageDisplaySettings } from '../../types/timer.ts';
 import { AppearanceSettings, DEFAULT_APPEARANCE_SETTINGS } from '../../types/appearance.ts';
+import { MusicTrack, MusicState, PRESET_MUSIC_TRACKS } from '../../types/music.ts';
+import { musicPlayer } from '../../engine/musicPlayerEngine.ts';
+import {
+  getAllTracksFromStorage,
+  saveTrackToStorage,
+  deleteTrackFromStorage,
+  saveMusicStateToStorage,
+  loadMusicStateFromStorage,
+  resetTracksToDefault
+} from '../../storage/musicStorage.ts';
 import { QuestionBankDashboard } from './QuestionBankDashboard.tsx';
 import { WordBankDashboard } from './WordBankDashboard.tsx';
 import { AppearanceSettingsPanel } from './AppearanceSettings.tsx';
 import { TimerPanel } from './TimerPanel.tsx';
 import { HistoryPanel } from './HistoryPanel.tsx';
+import { MusicPanel } from './MusicPanel.tsx';
 import { ContestantManagerModal } from './ContestantManagerModal.tsx';
 import { DEFAULT_WORDS } from '../../data/defaultWords.ts';
 import {
@@ -27,7 +38,8 @@ import {
   ExternalLink,
   Crown,
   Palette,
-  Key
+  Key,
+  Music
 } from 'lucide-react';
 
 interface ControlCenterProps {
@@ -69,7 +81,7 @@ interface ControlCenterProps {
   onOpenPopoutController?: () => void;
 }
 
-export type ControlTab = 'stage' | 'words' | 'questions' | 'timer' | 'contestants' | 'history' | 'appearance';
+export type ControlTab = 'stage' | 'words' | 'questions' | 'timer' | 'music' | 'contestants' | 'history' | 'appearance';
 
 export const ControlCenter: React.FC<ControlCenterProps> = ({
   session,
@@ -108,10 +120,22 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<ControlTab>('stage');
   const [isContestantModalOpen, setIsContestantModalOpen] = useState(false);
+  const [tracks, setTracks] = useState<MusicTrack[]>(() => PRESET_MUSIC_TRACKS);
+  const [musicState, setMusicState] = useState<MusicState>(() => loadMusicStateFromStorage());
+
+  useEffect(() => {
+    getAllTracksFromStorage().then(setTracks);
+    const unsubscribe = musicPlayer.subscribe(state => {
+      setMusicState(state);
+      saveMusicStateToStorage(state);
+    });
+    return () => unsubscribe();
+  }, []);
 
   const activeContestant = contestants.find(c => c.id === session.selectedContestantId);
   const isIdle = session.currentState === 'idle';
   const rounds = ['intro', 'general', 'attitude', 'scenario', 'final'];
+
 
   return (
     <div
@@ -274,6 +298,26 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
         >
           <Clock size={16} />
           ตัวจับเวลา (Timer)
+        </button>
+
+        <button
+          onClick={() => setActiveTab('music')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.75rem 1rem',
+            background: 'none',
+            border: 'none',
+            borderBottom: activeTab === 'music' ? '2px solid #6366f1' : '2px solid transparent',
+            color: activeTab === 'music' ? '#fff' : '#94a3b8',
+            fontSize: '0.875rem',
+            fontWeight: activeTab === 'music' ? 600 : 400,
+            cursor: 'pointer'
+          }}
+        >
+          <Music size={16} />
+          เพลงประกอบ ({tracks.length})
         </button>
 
         <button
@@ -738,6 +782,37 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
             onAdjustTimer={onAdjustTimer}
             onSetTimerSoundSettings={onSetTimerSoundSettings}
             onSetStageDisplaySettings={onSetStageDisplaySettings}
+          />
+        )}
+
+        {/* Tab 5: Music Control & Management */}
+        {activeTab === 'music' && (
+          <MusicPanel
+            musicState={musicState}
+            tracks={tracks}
+            onPlayTrack={(track) => musicPlayer.playTrack(track)}
+            onPauseTrack={() => musicPlayer.pause()}
+            onResumeTrack={() => musicPlayer.resume()}
+            onStopMusic={() => musicPlayer.stop({ fadeOutDuration: 1.0 })}
+            onSeekMusic={(sec) => musicPlayer.seek(sec)}
+            onSetVolume={(vol) => musicPlayer.setMasterVolume(vol)}
+            onToggleMute={() => musicPlayer.setMuted(!musicState.isMuted)}
+            onToggleAutoSync={() => musicPlayer.setAutoSyncWithStage(!musicState.autoSyncWithStage)}
+            onAssignPhaseTrack={(phase, trackId) => {
+              musicPlayer.setPhaseTrackMapping({ [phase]: trackId });
+            }}
+            onAddTrack={async (newTrack, fileBlob) => {
+              const saved = await saveTrackToStorage(newTrack, fileBlob);
+              setTracks(prev => [...prev.filter(t => t.id !== saved.id), saved]);
+            }}
+            onDeleteTrack={async (id) => {
+              await deleteTrackFromStorage(id);
+              setTracks(prev => prev.filter(t => t.id !== id));
+            }}
+            onResetPresets={async () => {
+              const presets = await resetTracksToDefault();
+              setTracks(presets);
+            }}
           />
         )}
 

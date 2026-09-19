@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useStageSync } from './hooks/useStageSync.ts';
+import { useMusicStageRouter } from './hooks/useMusicStageRouter.ts';
 import { applyTypography } from './utils/typography.ts';
 import {
   loadQuestions,
@@ -10,6 +11,9 @@ import {
 } from './utils/storage.ts';
 import { Question, Contestant, QuestionCategory } from './types/question.ts';
 import { KeywordItem } from './types/word.ts';
+import { MusicTrack, MusicState, PRESET_MUSIC_TRACKS } from './types/music.ts';
+import { musicPlayer } from './engine/musicPlayerEngine.ts';
+import { getAllTracksFromStorage, loadMusicStateFromStorage } from './storage/musicStorage.ts';
 import { StageBackground } from './components/Stage/StageBackground.tsx';
 import { StageOverlay } from './components/Stage/StageOverlay.tsx';
 import { ControlDrawer } from './components/Control/ControlDrawer.tsx';
@@ -42,6 +46,19 @@ export const App: React.FC = () => {
     setStageDisplaySettings
   } = useStageSync(isControllerMode ? 'controller' : 'stage');
 
+  // Music State & Tracks for Stage Auto-Sync
+  const [tracks, setTracks] = useState<MusicTrack[]>(() => PRESET_MUSIC_TRACKS);
+  const [musicState, setMusicState] = useState<MusicState>(() => loadMusicStateFromStorage());
+
+  useEffect(() => {
+    getAllTracksFromStorage().then(setTracks);
+    const unsubscribe = musicPlayer.subscribe(setMusicState);
+    return () => unsubscribe();
+  }, []);
+
+  // Hook to automatically play stage soundtrack per phase
+  useMusicStageRouter(session.currentState, musicState, tracks, musicPlayer);
+
   // Apply typography (Cinzel, Amoria, Verve, Outfit, Custom) dynamically
   useEffect(() => {
     applyTypography(session.appearanceSettings);
@@ -50,6 +67,7 @@ export const App: React.FC = () => {
   const [questions, setQuestions] = useState<Question[]>(() => loadQuestions());
   const [contestants, setContestants] = useState<Contestant[]>(() => loadContestants());
   const [words] = useState<KeywordItem[]>(() => loadWords());
+
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isQuestionModalOpen, setIsQuestionModalOpen] = useState(false);
@@ -137,6 +155,7 @@ export const App: React.FC = () => {
         contestants={contestants}
         words={words}
         onStart={handleStart}
+        onStopSpin={stopWordSpin}
         onPause={pauseJourney}
         onSkip={skipToQuestion}
         onMarkAnswered={markAnswered}
