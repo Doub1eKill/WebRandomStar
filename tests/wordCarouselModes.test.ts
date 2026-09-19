@@ -38,3 +38,27 @@ describe('VerticalSpinView (Mode 1: Royal Vertical Spin)', () => {
     expect(html).toContain('indicator-bottom');
   });
 });
+
+describe('Perspective3DSpinView (Mode 2: 3D Perspective Spin)', () => {
+  it('renders 3d perspective cylinder drum with depth blur and center item', async () => {
+    const React = (await import('react')).default;
+    const { renderToString } = await import('react-dom/server');
+    const { Perspective3DSpinView } = await import('../src/components/Stage/WordSpin/Perspective3DSpinView.tsx');
+
+    const html = renderToString(
+      React.createElement(Perspective3DSpinView, {
+        reel: mockWords,
+        currentIndex: 1,
+        targetWord: mockWords[1],
+        phase: 'word-spin'
+      })
+    );
+
+    expect(html).toContain('perspective-3d-spin-view');
+    expect(html).toContain('cylinder-stage');
+    expect(html).toContain('active-center');
+    expect(html).toContain('วิสัยทัศน์');
+    expect(html).toContain('vignette-top');
+    expect(html).toContain('vignette-bottom');
+  });
+});
