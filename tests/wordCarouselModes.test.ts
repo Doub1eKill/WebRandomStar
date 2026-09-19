@@ -85,3 +85,26 @@ describe('OrbitalSpinView (Mode 3: Circular Orbital Words)', () => {
     expect(html).toContain('ความฝัน');
   });
 });
+
+describe('RibbonSpinView (Mode 4: Royal Ribbon Spin)', () => {
+  it('renders horizontal glass ribbon stream with brackets and shimmer', async () => {
+    const React = (await import('react')).default;
+    const { renderToString } = await import('react-dom/server');
+    const { RibbonSpinView } = await import('../src/components/Stage/WordSpin/RibbonSpinView.tsx');
+
+    const html = renderToString(
+      React.createElement(RibbonSpinView, {
+        reel: mockWords,
+        currentIndex: 3,
+        targetWord: mockWords[3],
+        phase: 'word-spin'
+      })
+    );
+
+    expect(html).toContain('ribbon-spin-view');
+    expect(html).toContain('glass-ribbon-track');
+    expect(html).toContain('ribbon-shimmer-sweep');
+    expect(html).toContain('active-center');
+    expect(html).toContain('ตัวตน');
+  });
+});
