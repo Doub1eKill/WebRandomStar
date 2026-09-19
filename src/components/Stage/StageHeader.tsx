@@ -8,7 +8,7 @@ interface StageHeaderProps {
 
 export const StageHeader: React.FC<StageHeaderProps> = () => {
   return (
-    <header className="stage-header stage-header-center-clean">
+    <header className="stage-header stage-header-left-clean">
       <div className="header-titles">
         <div className="event-pre-title">✦ SCI TECH TINE ✦</div>
         <h1 className="event-title royal-serif">CHARM OF TRANSITION</h1>

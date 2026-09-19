@@ -204,9 +204,18 @@ button {
 .stage-header {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
   padding-bottom: 12px;
+}
+
+.stage-header-left-clean {
+  justify-content: flex-start;
+}
+
+.stage-header-left-clean .header-titles {
+  align-items: flex-start;
+  text-align: left;
 }
 
 .stage-header-center-clean {
@@ -260,8 +269,8 @@ button {
 .header-titles {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
+  text-align: left;
   gap: 1px;
 }
 
