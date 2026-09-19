@@ -53,8 +53,8 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
           </div>
         )}
 
-        {/* Corner Timer Widget (Only in Corner Mode) */}
-        {isCornerTimer && (
+        {/* Corner Timer Widget (Only in Corner Mode during Question Phase) */}
+        {showQuestion && isCornerTimer && (
           <div
             className="stage-corner-timer animate-fade-in"
             style={{
