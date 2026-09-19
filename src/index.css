@@ -204,9 +204,18 @@ button {
 .stage-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
   padding-bottom: 12px;
+}
+
+.stage-header-center-clean {
+  justify-content: center;
+}
+
+.stage-header-center-clean .header-titles {
+  align-items: center;
+  text-align: center;
 }
 
 .header-left {
@@ -251,6 +260,8 @@ button {
 .header-titles {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: 1px;
 }
 

@@ -8,22 +8,19 @@ import { QuestionCard } from './QuestionCard.tsx';
 import { WordCarousel } from './WordSpin/WordCarousel.tsx';
 import { WordLockEffect } from './WordSpin/WordLockEffect.tsx';
 import { TimerDisplay } from './TimerDisplay.tsx';
-import { SettingsSlidersIcon } from './CrystalIcons.tsx';
 
 interface StageOverlayProps {
   session: SessionState;
   contestant?: Contestant;
   onStart: () => void;
-  onNext: () => void;
-  onOpenControlDrawer: () => void;
+  onNext?: () => void;
+  onOpenControlDrawer?: () => void;
 }
 
 export const StageOverlay: React.FC<StageOverlayProps> = ({
   session,
   contestant,
-  onStart,
-  onNext,
-  onOpenControlDrawer
+  onStart
 }) => {
   const isIdle = session.currentState === 'idle';
   const isSpinning = ['pre-spin', 'word-spin', 'word-decelerate'].includes(session.currentState);
@@ -41,14 +38,14 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
 
   return (
     <div className="stage-overlay">
-      {/* Top Bar / Header */}
+      {/* Top Bar / Clean Centered Header */}
       <StageHeader
         round={session.selectedRound}
         currentState={session.currentState}
       />
 
       {/* Main Content Area */}
-      <div className="stage-body">
+      <div className="stage-main-content">
         {/* Contestant Badge */}
         {contestant && (
           <div className="stage-contestant-anchor animate-fade-in">
@@ -138,39 +135,16 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
               </div>
             )}
 
-            {/* Question Card */}
+            {/* Pure Minimalist Question Card */}
             <QuestionCard
               question={session.selectedQuestion}
               isAnswered={session.currentState === 'answered'}
               fontSizeScale={displaySettings.questionFontSize}
               compact={isCenterTimer}
-              onNext={onNext}
             />
           </div>
         )}
       </div>
-
-      {/* Footer / Discreet Operator Hint */}
-      <footer className="stage-footer">
-        <div className="footer-keys-hint">
-          <span>กด <code>Space</code> หมุนคำสำคัญ</span>
-          <span className="dot-sep">•</span>
-          <span>กด <code>Enter</code> ดำเนินการต่อ</span>
-          <span className="dot-sep">•</span>
-          <span>กด <code>T</code> สลับจับเวลา</span>
-          <span className="dot-sep">•</span>
-          <span>กด <code>Esc</code> แผงควบคุม</span>
-        </div>
-
-        <button
-          className="btn-drawer-trigger"
-          onClick={onOpenControlDrawer}
-          title="เปิดแผงควบคุม (Esc)"
-        >
-          <SettingsSlidersIcon size={14} />
-          <span>แผงควบคุม</span>
-        </button>
-      </footer>
     </div>
   );
 };

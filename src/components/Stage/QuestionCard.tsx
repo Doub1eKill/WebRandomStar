@@ -1,6 +1,5 @@
 import React from 'react';
-import { Question, CATEGORY_CONFIGS } from '../../types/question.ts';
-import { CrystalTiaraIcon } from './CrystalIcons.tsx';
+import { Question } from '../../types/question.ts';
 
 interface QuestionCardProps {
   question?: Question;
@@ -14,32 +13,24 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   question,
   isAnswered,
   fontSizeScale = 'normal',
-  compact = false,
-  onNext
+  compact = false
 }) => {
   if (!question) return null;
-
-  const cat = CATEGORY_CONFIGS[question.category.toLowerCase()] || {
-    name: question.category,
-    icon: '✦',
-    subtitle: 'Question',
-    color: '#38bdf8'
-  };
 
   const getFontSize = () => {
     if (compact) {
       switch (fontSizeScale) {
-        case 'huge': return '2rem';
-        case 'large': return '1.75rem';
+        case 'huge': return '2.1rem';
+        case 'large': return '1.85rem';
         case 'normal':
-        default: return '1.5rem';
+        default: return '1.6rem';
       }
     }
     switch (fontSizeScale) {
-      case 'huge': return '2.6rem';
-      case 'large': return '2.2rem';
+      case 'huge': return '2.8rem';
+      case 'large': return '2.4rem';
       case 'normal':
-      default: return '1.85rem';
+      default: return '2.0rem';
     }
   };
 
@@ -49,69 +40,22 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
       <div className="card-ambient-glow" />
 
       {/* Card Content Shell */}
-      <div className="card-inner-shell">
-        {/* Header Ribbon: Category + Tiara Accent */}
-        <div className="card-header-ribbon" style={{ padding: compact ? '8px 16px' : '14px 22px' }}>
-          <div
-            className="cat-icon-badge"
-            style={{
-              background: `linear-gradient(135deg, ${cat.color}22, ${cat.color}44)`,
-              borderColor: `${cat.color}66`,
-              width: compact ? '38px' : '46px',
-              height: compact ? '38px' : '46px',
-              fontSize: compact ? '1.15rem' : '1.4rem'
-            }}
-          >
-            <span className="cat-icon">{cat.icon}</span>
-          </div>
-          <div className="cat-text-wrap">
-            <span className="cat-name" style={{ color: cat.color, fontSize: compact ? '1.05rem' : '1.25rem' }}>{cat.name}</span>
-            <span className="cat-sub" style={{ fontSize: compact ? '0.72rem' : '0.8rem' }}>{cat.subtitle}</span>
-          </div>
-          <div className="card-tiara-badge">
-            <CrystalTiaraIcon size={16} />
-            <span className="tiara-title">AMBASSADOR 2026</span>
-          </div>
-          <div className="question-id-chip">
-            <span>{question.id}</span>
-          </div>
-        </div>
-
+      <div className="card-inner-shell" style={{ padding: compact ? '24px 36px' : '40px 54px' }}>
         {/* Question Body */}
-        <div className="question-text-content" style={{ padding: compact ? '4px 10px' : '8px 14px' }}>
-          <span className="quote-mark open" style={{ fontSize: compact ? '2.4rem' : '3.2rem', top: compact ? '4px' : '10px' }}>“</span>
+        <div className="question-text-content" style={{ padding: '0', margin: '0' }}>
+          <span className="quote-mark open" style={{ fontSize: compact ? '2.8rem' : '3.6rem', top: compact ? '0px' : '4px' }}>“</span>
           <p
             className="question-text"
             style={{
               fontSize: getFontSize(),
-              lineHeight: compact ? 1.45 : 1.6
+              lineHeight: compact ? 1.5 : 1.65,
+              margin: '0',
+              textAlign: 'center'
             }}
           >
             {question.text}
           </p>
-          <span className="quote-mark close" style={{ fontSize: compact ? '2.4rem' : '3.2rem' }}>”</span>
-        </div>
-
-        {/* Tags and Status Footer */}
-        <div className="card-footer" style={{ paddingTop: compact ? '12px' : '18px' }}>
-          <div className="tags-row">
-            {question.tags?.map((tag, idx) => (
-              <span key={idx} className="tag-pill">#{tag}</span>
-            ))}
-          </div>
-
-          {onNext && (
-            <button
-              className={`btn-next-action ${isAnswered ? 'btn-next-ready' : ''}`}
-              style={{
-                padding: compact ? '8px 18px' : '11px 24px',
-                fontSize: compact ? '0.9rem' : '1rem'
-              }}
-              onClick={onNext}
-            >
-              {isAnswered ? 'ไปสู่ผู้เข้าแข่งขันถัดไป ➔' : 'เสร็จสิ้นคำถามนี้ ✓'}
-            </button>
-          )}
+          <span className="quote-mark close" style={{ fontSize: compact ? '2.8rem' : '3.6rem' }}>”</span>
         </div>
       </div>
     </div>
