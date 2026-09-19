@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStageSync } from '../../hooks/useStageSync.ts';
 import { ControlCenter } from './ControlCenter.tsx';
+import { applyTypography } from '../../utils/typography.ts';
 import {
   loadQuestions,
   saveQuestions,
@@ -38,6 +39,11 @@ export const RemoteController: React.FC = () => {
     setTimerSoundSettings,
     setStageDisplaySettings
   } = useStageSync('controller');
+
+  // Apply typography in remote controller as well
+  useEffect(() => {
+    applyTypography(session.appearanceSettings);
+  }, [session.appearanceSettings?.fontPreset, session.appearanceSettings?.customFont]);
 
   const [questions, setQuestions] = useState<Question[]>(() => loadQuestions());
   const [contestants, setContestants] = useState<Contestant[]>(() => loadContestants());
