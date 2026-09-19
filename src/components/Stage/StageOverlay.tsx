@@ -84,7 +84,6 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
               <span className="btn-sparkle-star">✦</span>
               <span className="btn-spin-text">SPIN WORD</span>
               <span className="btn-sparkle-star">✦</span>
-              <span className="btn-key-hint">Space</span>
             </button>
           </div>
         )}
