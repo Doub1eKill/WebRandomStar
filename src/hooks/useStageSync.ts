@@ -197,7 +197,8 @@ export function useStageSync(role: 'stage' | 'controller') {
     if (!duration || duration <= 0) return;
 
     const timer = setTimeout(() => {
-      const next = getNextState(session.currentState);
+      const showWordLock = session.appearanceSettings?.showWordLockPhase ?? true;
+      const next = getNextState(session.currentState, showWordLock);
 
       // If transitioning to question, check if autoStartTimerOnReveal is enabled
       const willAutoStart = next === 'question' && session.stageDisplaySettings?.autoStartTimerOnReveal;
