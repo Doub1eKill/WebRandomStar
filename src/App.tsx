@@ -13,7 +13,7 @@ import { Question, Contestant, QuestionCategory } from './types/question.ts';
 import { KeywordItem } from './types/word.ts';
 import { MusicTrack, MusicState, PRESET_MUSIC_TRACKS } from './types/music.ts';
 import { musicPlayer } from './engine/musicPlayerEngine.ts';
-import { getAllTracksFromStorage, loadMusicStateFromStorage } from './storage/musicStorage.ts';
+import { getAllTracksFromStorage, loadMusicStateFromStorage, saveTrackToStorage, deleteTrackFromStorage } from './storage/musicStorage.ts';
 import { StageBackground } from './components/Stage/StageBackground.tsx';
 import { StageOverlay } from './components/Stage/StageOverlay.tsx';
 import { ControlDrawer } from './components/Control/ControlDrawer.tsx';
@@ -155,6 +155,8 @@ export const App: React.FC = () => {
         session={session}
         contestants={contestants}
         words={words}
+        tracks={tracks}
+        musicState={musicState}
         onStart={handleStart}
         onStopSpin={stopWordSpin}
         onPause={pauseJourney}
@@ -170,6 +172,26 @@ export const App: React.FC = () => {
         onSetTimerSoundSettings={setTimerSoundSettings}
         onSetStageDisplaySettings={setStageDisplaySettings}
         onSetAppearanceSettings={setAppearanceSettings}
+        onAssignPhaseTrack={(phase, trackId) => {
+          musicPlayer.setPhaseTrackMapping({ [phase]: trackId });
+        }}
+        onAddTrack={async (newTrack, fileBlob) => {
+          const saved = await saveTrackToStorage(newTrack, fileBlob);
+          setTracks(prev => [...prev.filter(t => t.id !== saved.id), saved]);
+        }}
+        onDeleteTrack={async (id) => {
+          await deleteTrackFromStorage(id);
+          setTracks(prev => prev.filter(t => t.id !== id));
+          if (musicState.currentTrackId === id) {
+            musicPlayer.stop();
+          }
+        }}
+        onPlayTrack={(track) => {
+          musicPlayer.play(track);
+        }}
+        onStopMusic={() => {
+          musicPlayer.stop();
+        }}
         onAdjustTimer={adjustTimer}
       />
 

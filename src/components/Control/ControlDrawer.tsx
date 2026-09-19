@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { SessionState } from '../../types/session.ts';
 import { Contestant, QuestionCategory } from '../../types/question.ts';
 import { KeywordItem } from '../../types/word.ts';
 import { TimerSoundSettings, StageDisplaySettings, DEFAULT_STAGE_DISPLAY_SETTINGS } from '../../types/timer.ts';
 import { AppearanceSettings, DEFAULT_APPEARANCE_SETTINGS } from '../../types/appearance.ts';
+import { MusicTrack, MusicState } from '../../types/music.ts';
 
 interface ControlDrawerProps {
   isOpen: boolean;
@@ -11,6 +12,8 @@ interface ControlDrawerProps {
   session: SessionState;
   contestants: Contestant[];
   words?: KeywordItem[];
+  tracks?: MusicTrack[];
+  musicState?: MusicState;
   onStart: (forceCategory?: QuestionCategory, forceWord?: KeywordItem) => void;
   onStopSpin?: () => void;
   onPause: () => void;
@@ -26,6 +29,11 @@ interface ControlDrawerProps {
   onSetTimerSoundSettings?: (settings: Partial<TimerSoundSettings>) => void;
   onSetStageDisplaySettings?: (settings: Partial<StageDisplaySettings>) => void;
   onSetAppearanceSettings?: (settings: AppearanceSettings) => void;
+  onAssignPhaseTrack?: (phase: keyof MusicState['phaseTrackMapping'], trackId: string | null) => void;
+  onAddTrack?: (track: MusicTrack, fileBlob?: Blob) => void;
+  onDeleteTrack?: (id: string) => void;
+  onPlayTrack?: (track: MusicTrack) => void;
+  onStopMusic?: () => void;
   onAdjustTimer?: (deltaMs: number) => void;
 }
 
@@ -35,6 +43,8 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
   session,
   contestants,
   words = [],
+  tracks,
+  musicState,
   onStart,
   onStopSpin,
   onPause,
@@ -50,9 +60,55 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
   onSetTimerSoundSettings,
   onSetStageDisplaySettings,
   onSetAppearanceSettings,
+  onAssignPhaseTrack,
+  onAddTrack,
+  onDeleteTrack,
+  onPlayTrack,
+  onStopMusic,
   onAdjustTimer
 }) => {
+  const spinFileInputRef = useRef<HTMLInputElement | null>(null);
+
   if (!isOpen) return null;
+
+  const selectedSpinTrackId = musicState?.phaseTrackMapping.spin;
+  const selectedSpinTrack = tracks?.find(t => t.id === selectedSpinTrackId);
+  const isPlayingSelected = musicState?.isPlaying && musicState.currentTrackId === selectedSpinTrackId;
+
+  const handleSpinFileUpload = (files: FileList | null) => {
+    if (!files || files.length === 0 || !onAddTrack) return;
+    const file = files[0];
+    const audioUrl = URL.createObjectURL(file);
+    const audio = new Audio();
+    audio.src = audioUrl;
+
+    const createAndAssign = (duration: number) => {
+      const newTrack: MusicTrack = {
+        id: `local-spin-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+        title: file.name.replace(/\.[^/.]+$/, ''),
+        artist: 'Custom Spin Audio',
+        sourceType: 'local_blob',
+        url: audioUrl,
+        duration: duration || 60,
+        defaultVolume: 0.8,
+        loop: true,
+        targetPhase: 'spin',
+        createdAt: Date.now()
+      };
+      onAddTrack(newTrack, file);
+      if (onAssignPhaseTrack) {
+        onAssignPhaseTrack('spin', newTrack.id);
+      }
+    };
+
+    audio.addEventListener('loadedmetadata', () => {
+      createAndAssign(Math.round(audio.duration) || 60);
+    });
+
+    audio.addEventListener('error', () => {
+      createAndAssign(60);
+    });
+  };
 
   const handleOpenRemoteWindow = () => {
     const url = `${window.location.origin}${window.location.pathname}?mode=controller`;
@@ -213,6 +269,85 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                 >
                   ⚡ ข้ามไปคำถาม (OFF)
                 </button>
+              </div>
+            </div>
+          )}
+
+          {/* Section: Word Spin Audio */}
+          {tracks && (
+            <div className="control-section">
+              <label className="section-label">🎵 เสียงเพลงช่วงสุ่มคำ (Word Spin Audio)</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <select
+                  className="custom-select"
+                  value={musicState?.phaseTrackMapping.spin || ''}
+                  onChange={e => onAssignPhaseTrack && onAssignPhaseTrack('spin', e.target.value || null)}
+                  style={{ width: '100%', fontSize: '0.8rem' }}
+                >
+                  <option value="">-- ไม่เปิดเพลง (ปิดเสียง) --</option>
+                  {tracks.map(t => (
+                    <option key={t.id} value={t.id}>
+                      {t.title} {t.isPreset ? '(เพลงระบบ)' : '(อัปโหลดเอง)'}
+                    </option>
+                  ))}
+                </select>
+
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  {selectedSpinTrack && (
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      style={{ flex: 1, padding: '6px', fontSize: '0.75rem' }}
+                      onClick={() => {
+                        if (isPlayingSelected) {
+                          onStopMusic && onStopMusic();
+                        } else if (onPlayTrack && selectedSpinTrack) {
+                          onPlayTrack(selectedSpinTrack);
+                        }
+                      }}
+                    >
+                      {isPlayingSelected ? '⏸️ หยุดฟัง' : '▶️ ฟังตัวอย่าง'}
+                    </button>
+                  )}
+
+                  <input
+                    type="file"
+                    ref={spinFileInputRef}
+                    accept="audio/*"
+                    onChange={e => handleSpinFileUpload(e.target.files)}
+                    style={{ display: 'none' }}
+                  />
+                  <button
+                    type="button"
+                    className="btn-primary"
+                    style={{
+                      flex: 1,
+                      padding: '6px',
+                      fontSize: '0.75rem',
+                      background: 'linear-gradient(135deg, #d97706, #b45309)',
+                      borderColor: '#f59e0b'
+                    }}
+                    onClick={() => spinFileInputRef.current?.click()}
+                  >
+                    + อัปโหลดเสียงสุ่ม
+                  </button>
+
+                  {selectedSpinTrack && !selectedSpinTrack.isPreset && onDeleteTrack && (
+                    <button
+                      type="button"
+                      className="btn-secondary btn-danger-soft"
+                      style={{ padding: '6px 10px', fontSize: '0.75rem' }}
+                      title="ลบเพลงนี้ออกจากระบบ"
+                      onClick={() => {
+                        if (confirm(`ต้องการลบเพลง "${selectedSpinTrack.title}" ใช่หรือไม่?`)) {
+                          onDeleteTrack(selectedSpinTrack.id);
+                        }
+                      }}
+                    >
+                      🗑️
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           )}
