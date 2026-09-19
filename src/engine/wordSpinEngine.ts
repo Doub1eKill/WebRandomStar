@@ -25,6 +25,29 @@ export function generateSpinReel(
 }
 
 /**
+ * Calculates a continuous stopping target index on the reel that:
+ * 1. Is ahead of currentFloat by at least minRunway items (smooth deceleration runway)
+ * 2. Matches targetIndex modulo reelLength so it lands precisely on the predetermined target word
+ * 3. Never causes backwards movement or positional discontinuity
+ */
+export function calculateContinuousDecelTarget(
+  currentFloat: number,
+  reelLength: number,
+  targetIndex: number,
+  minRunway: number = 12
+): number {
+  const safeLength = Math.max(1, reelLength);
+  const safeTarget = ((targetIndex % safeLength) + safeLength) % safeLength;
+  const rawTarget = currentFloat + minRunway;
+  const cycles = Math.floor(rawTarget / safeLength);
+  let candidate = cycles * safeLength + safeTarget;
+  if (candidate < currentFloat + minRunway) {
+    candidate += safeLength;
+  }
+  return candidate;
+}
+
+/**
  * Deceleration easing curve: fast initial spin with smooth exponential/cubic ease-out
  */
 export function calculateDecelerationEasing(t: number): number {
@@ -32,6 +55,14 @@ export function calculateDecelerationEasing(t: number): number {
   const clamped = Math.max(0, Math.min(1, t));
   // 1 - (1 - t)^3 (Cubic ease out)
   return 1 - Math.pow(1 - clamped, 3);
+}
+
+/**
+ * High-precision quintic deceleration curve for ultra-silky gradual stop (zero harsh deceleration spike)
+ */
+export function calculateQuinticDecel(t: number): number {
+  const clamped = Math.max(0, Math.min(1, t));
+  return 1 - Math.pow(1 - clamped, 4);
 }
 
 /**
@@ -45,3 +76,4 @@ export function getWordAtProgress(reel: KeywordItem[], progress: number): Keywor
   const index = Math.min(Math.floor(clamped * reel.length), reel.length - 1);
   return reel[index];
 }
+

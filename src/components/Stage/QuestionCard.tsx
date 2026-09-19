@@ -35,7 +35,11 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   };
 
   return (
-    <div className={`question-card tiara-glassmorphism animate-card-appear ${isAnswered ? 'answered' : ''} ${compact ? 'question-card-compact-mode' : ''}`}>
+    <div
+      className={`question-card tiara-glassmorphism question-card-crystal-cinematic ${
+        isAnswered ? 'answered card-answered-settle' : ''
+      } ${compact ? 'question-card-compact-mode' : ''}`}
+    >
       {/* Dynamic Diamond Ambient Glow behind card */}
       <div className="card-ambient-glow" />
 

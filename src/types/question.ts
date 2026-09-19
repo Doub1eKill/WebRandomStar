@@ -31,7 +31,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     name: 'สายฝนแห่งการปรับตัว',
     englishName: 'Rain',
     subtitle: 'Adaptability & Growth',
-    icon: '🌧️',
+    icon: '◈',
     color: '#38bdf8',
     description: 'คำถามสะท้อนจิตใจ การเติบโต และความงดงามในการปรับตัว'
   },
@@ -40,7 +40,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     name: 'สายหมอกแห่งวิสัยทัศน์',
     englishName: 'Mist',
     subtitle: 'Vision & Perspective',
-    icon: '🌫️',
+    icon: '◇',
     color: '#94a3b8',
     description: 'คำถามเชิงวิสัยทัศน์ ทัศนคติ และการตัดสินใจ'
   },
@@ -49,7 +49,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     name: 'ลมหนาวแห่งแรงบันดาลใจ',
     englishName: 'Wind',
     subtitle: 'Leadership & Impact',
-    icon: '🍃',
+    icon: '❖',
     color: '#86efac',
     description: 'คำถามเกี่ยวกับการนำทีม ภาวะผู้นำ และการสร้างแรงบันดาลใจ'
   },
@@ -58,7 +58,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     name: 'ใบไม้ทองแห่งพันธกิจ',
     englishName: 'Leaf',
     subtitle: 'Purpose & Legacy',
-    icon: '🍂',
+    icon: '✧',
     color: '#fbbf24',
     description: 'คำถามบทเรียนชีวิต ประสบการณ์ และคุณค่าแห่งพันธกิจ'
   },
@@ -67,7 +67,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     name: 'แสงจันทร์สะท้อนคุณค่า',
     englishName: 'Moon',
     subtitle: 'Authenticity & Empathy',
-    icon: '🌙',
+    icon: '⬡',
     color: '#e2e8f0',
     description: 'คำถามความจริงใจ ความเห็นอกเห็นใจ และพลังความฝัน'
   },
@@ -76,7 +76,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     name: 'คุณค่าและความเป็นผู้นำ',
     englishName: 'Star',
     subtitle: 'Character & Leadership',
-    icon: '⭐',
+    icon: '✦',
     color: '#fde047',
     description: 'คำถามอัตลักษณ์ ตัวตน และการสร้างสรรค์สังคม'
   },
@@ -85,7 +85,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     name: 'คำถามรอบตัดสิน',
     englishName: 'Final',
     subtitle: 'Final Decisive Question',
-    icon: '👑',
+    icon: '✦',
     color: '#f43f5e',
     description: 'คำถามชี้ขาดคุณค่า ความเป็นผู้นำ และพันธกิจประจำตำแหน่ง'
   }

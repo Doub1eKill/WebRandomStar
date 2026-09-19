@@ -5,6 +5,7 @@ export interface SpinViewProps {
   currentIndex: number;
   targetWord: KeywordItem;
   phase: 'pre-spin' | 'word-spin' | 'word-decelerate';
+  floatOffset?: number;
 }
 
 export interface VisibleSpinItem {
@@ -12,3 +13,4 @@ export interface VisibleSpinItem {
   offset: number;
   isCenter: boolean;
 }
+

@@ -64,6 +64,23 @@ export function resolveFontFamily(preset?: FontPresetId, custom?: CustomFontConf
   return FONT_PRESETS.cinzel.fontFamily;
 }
 
+/**
+ * Strict validation for Google Font stylesheet URLs
+ * Whitelists https://fonts.googleapis.com/css and https://fonts.googleapis.com/css2
+ */
+export function isValidGoogleFontUrl(url?: string): boolean {
+  if (!url || typeof url !== 'string') return false;
+  try {
+    const parsed = new URL(url.trim());
+    if (parsed.protocol !== 'https:') return false;
+    if (parsed.hostname !== 'fonts.googleapis.com') return false;
+    if (parsed.pathname !== '/css' && parsed.pathname !== '/css2') return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function applyTypography(settings?: Partial<AppearanceSettings>): void {
   if (typeof document === 'undefined') return;
 
@@ -74,21 +91,24 @@ export function applyTypography(settings?: Partial<AppearanceSettings>): void {
   document.documentElement.style.setProperty('--font-display', resolvedFont);
   document.documentElement.style.setProperty('--font-serif', resolvedFont);
 
-  // Dynamic Google Font Injection
+  // Dynamic Google Font Injection with strict URL validation
   const existingLink = document.getElementById('dynamic-google-font') as HTMLLinkElement | null;
-  if (preset === 'custom' && custom?.googleFontUrl) {
+  const customUrl = custom?.googleFontUrl?.trim();
+  const isValidUrl = customUrl ? isValidGoogleFontUrl(customUrl) : false;
+
+  if (preset === 'custom' && isValidUrl && customUrl) {
     if (existingLink) {
-      if (existingLink.href !== custom.googleFontUrl) {
-        existingLink.href = custom.googleFontUrl;
+      if (existingLink.href !== customUrl) {
+        existingLink.href = customUrl;
       }
     } else {
       const link = document.createElement('link');
       link.id = 'dynamic-google-font';
       link.rel = 'stylesheet';
-      link.href = custom.googleFontUrl;
+      link.href = customUrl;
       document.head.appendChild(link);
     }
-  } else if (existingLink && preset !== 'custom') {
+  } else if (existingLink) {
     existingLink.remove();
   }
 }

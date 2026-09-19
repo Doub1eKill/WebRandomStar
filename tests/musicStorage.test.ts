@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   saveTrackToStorage,
   getAllTracksFromStorage,
@@ -63,4 +63,25 @@ describe('IndexedDB & LocalStorage Music Storage', () => {
     const updatedState = loadMusicStateFromStorage();
     expect(updatedState.phaseTrackMapping.spin).not.toBe('custom-spin-123');
   });
+
+  it('revokes Blob Object URL when custom track is deleted', async () => {
+    const revokeSpy = vi.spyOn(URL, 'revokeObjectURL');
+    const blobTrack: MusicTrack = {
+      id: 'custom-blob-to-delete',
+      title: 'Custom Spin Track',
+      sourceType: 'local_blob',
+      url: 'blob:http://localhost:5173/sample-uuid',
+      duration: 30,
+      defaultVolume: 0.8,
+      loop: false,
+      createdAt: Date.now()
+    };
+
+    await saveTrackToStorage(blobTrack);
+    await deleteTrackFromStorage('custom-blob-to-delete');
+
+    expect(revokeSpy).toHaveBeenCalledWith('blob:http://localhost:5173/sample-uuid');
+    revokeSpy.mockRestore();
+  });
 });
+

@@ -141,9 +141,24 @@ export function saveHistory(history: HistoryRecord[]): void {
   }
 }
 
+export const MAX_HISTORY_RECORDS = 200;
+
+/**
+ * Sanitize text to remove HTML, script, iframe, and dangerous tags
+ */
+export function sanitizeText(input: string): string {
+  if (!input || typeof input !== 'string') return '';
+  return input
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .trim();
+}
+
 export function appendHistoryRecord(record: HistoryRecord): HistoryRecord[] {
   const current = loadHistory();
-  const updated = [record, ...current];
+  const updated = [record, ...current].slice(0, MAX_HISTORY_RECORDS);
   saveHistory(updated);
   return updated;
 }
@@ -174,16 +189,16 @@ export function parseImportedQuestions(jsonString: string): { success: boolean; 
         return { success: false, error: `ข้อมูลแถวที่ ${i + 1} ไม่ครบถ้วน (ต้องมี id, text, category)` };
       }
       validated.push({
-        id: String(item.id),
-        text: String(item.text),
-        category: item.category,
+        id: sanitizeText(String(item.id)),
+        text: sanitizeText(String(item.text)),
+        category: sanitizeText(String(item.category)) as any,
         difficulty: item.difficulty || 'medium',
         round: item.round || 'attitude',
         enabled: item.enabled !== false,
         used: Boolean(item.used),
-        tags: Array.isArray(item.tags) ? item.tags : [],
+        tags: Array.isArray(item.tags) ? item.tags.map((t: unknown) => sanitizeText(String(t))).filter(Boolean) : [],
         timeLimit: typeof item.timeLimit === 'number' ? item.timeLimit : undefined,
-        notes: item.notes ? String(item.notes) : undefined
+        notes: item.notes ? sanitizeText(String(item.notes)) : undefined
       });
     }
 
@@ -191,6 +206,46 @@ export function parseImportedQuestions(jsonString: string): { success: boolean; 
   } catch (err: unknown) {
     return { success: false, error: err instanceof Error ? err.message : 'รูปแบบ JSON ไม่ถูกต้อง' };
   }
+}
+
+export function exportHistoryAsCSV(history: HistoryRecord[]): string {
+  const headers = [
+    'ID',
+    'Timestamp',
+    'Round',
+    'ContestantNumber',
+    'ContestantName',
+    'ContestantID',
+    'QuestionID',
+    'Category',
+    'QuestionText',
+    'TimerConfiguredSec',
+    'TimerUsedSec',
+    'IsTimeout'
+  ];
+
+  const escapeCSV = (val: string | number | boolean | undefined | null) => {
+    if (val === undefined || val === null) return '""';
+    const s = String(val).replace(/"/g, '""');
+    return `"${s}"`;
+  };
+
+  const rows = history.map(rec => [
+    escapeCSV(rec.id),
+    escapeCSV(new Date(rec.timestamp).toISOString()),
+    escapeCSV(rec.round),
+    escapeCSV(rec.contestantNumber ?? ''),
+    escapeCSV(rec.contestantName ?? ''),
+    escapeCSV(rec.contestantId ?? ''),
+    escapeCSV(rec.questionId ?? ''),
+    escapeCSV(rec.category ?? ''),
+    escapeCSV(rec.questionText ?? ''),
+    escapeCSV(Math.round(rec.timerConfiguredMs / 1000)),
+    escapeCSV(Math.round(rec.timerUsedMs / 1000)),
+    escapeCSV(rec.isTimeout)
+  ].join(','));
+
+  return [headers.join(','), ...rows].join('\n');
 }
 
 export function loadTimerSoundSettings(): TimerSoundSettings {

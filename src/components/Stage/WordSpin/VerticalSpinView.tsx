@@ -4,15 +4,28 @@ import { SpinViewProps } from './types.ts';
 export const VerticalSpinView: React.FC<SpinViewProps> = ({
   reel,
   currentIndex,
-  targetWord
+  targetWord,
+  floatOffset = currentIndex
 }) => {
-  const windowSize = 7;
-  const half = Math.floor(windowSize / 2);
-  const visible: { item: typeof targetWord; offset: number }[] = [];
+  const windowRange = 5;
+  const centerFloat = floatOffset;
+  const baseCenterInt = Math.round(centerFloat);
+  const visible: { item: typeof targetWord; relativeDistance: number; isCenter: boolean; key: string }[] = [];
 
-  for (let o = -half; o <= half; o++) {
-    const idx = (currentIndex + o + reel.length) % reel.length;
-    visible.push({ item: reel[idx] || targetWord, offset: o });
+  for (let o = -windowRange; o <= windowRange; o++) {
+    const itemIndex = baseCenterInt + o;
+    const wrappedIdx = ((itemIndex % reel.length) + reel.length) % reel.length;
+    const relativeDistance = itemIndex - centerFloat;
+    const absDist = Math.abs(relativeDistance);
+
+    if (absDist <= windowRange + 0.6) {
+      visible.push({
+        item: reel[wrappedIdx] || targetWord,
+        relativeDistance,
+        isCenter: absDist < 0.45,
+        key: `vertical-${itemIndex}`
+      });
+    }
   }
 
   return (
@@ -22,30 +35,33 @@ export const VerticalSpinView: React.FC<SpinViewProps> = ({
       </div>
 
       <div className="carousel-reel-track">
-        {visible.map(({ item, offset }) => {
-          const isCenter = offset === 0;
-          const absOffset = Math.abs(offset);
-          const scale = 1 - absOffset * 0.12;
-          const opacity = isCenter ? 1 : Math.max(0.15, 0.7 - absOffset * 0.22);
-          const translateY = offset * 56;
+        {visible.map(({ item, relativeDistance, isCenter, key }) => {
+          const absDist = Math.abs(relativeDistance);
+          const proximity = Math.max(0, 1 - absDist * 0.85);
+          const scale = 0.68 + 0.38 * Math.pow(proximity, 1.4);
+          const opacity = Math.max(0.08, Math.pow(Math.max(0, 1 - absDist * 0.25), 1.6));
+          const translateY = relativeDistance * 60;
+          const starOpacity = Math.pow(proximity, 2.5);
 
           return (
             <div
-              key={`${item.id}-${offset}`}
+              key={key}
               className={`carousel-word-item ${isCenter ? 'active-center' : ''}`}
               style={{
-                transform: `translateY(${translateY}px) scale(${scale})`,
+                transform: `translate3d(0, ${translateY}px, 0) scale(${scale})`,
                 opacity,
-                color: isCenter ? '#ffffff' : `rgba(255, 255, 255, ${Math.max(0.2, 0.85 - absOffset * 0.25)})`,
-                textShadow: isCenter
-                  ? '0 0 24px rgba(255, 255, 255, 0.95), 0 0 45px rgba(165, 243, 252, 0.45)'
+                color: `rgba(255, 255, 255, ${0.35 + 0.65 * proximity})`,
+                textShadow: proximity > 0.25
+                  ? `0 0 ${Math.round(proximity * 24)}px rgba(255, 255, 255, 0.95), 0 0 ${Math.round(proximity * 45)}px rgba(165, 243, 252, 0.5)`
                   : 'none',
-                filter: isCenter ? 'drop-shadow(0 0 16px rgba(255, 255, 255, 0.8))' : 'none'
+                filter: proximity > 0.3
+                  ? `drop-shadow(0 0 ${Math.round(proximity * 16)}px rgba(255, 255, 255, 0.8))`
+                  : 'none'
               }}
             >
-              {isCenter && <span className="word-accent-star left">✦</span>}
+              <span className="word-accent-star left" style={{ opacity: starOpacity }}>✦</span>
               <span className="word-text">{item.word}</span>
-              {isCenter && <span className="word-accent-star right">✦</span>}
+              <span className="word-accent-star right" style={{ opacity: starOpacity }}>✦</span>
             </div>
           );
         })}

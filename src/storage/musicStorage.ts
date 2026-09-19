@@ -181,6 +181,15 @@ export async function saveTrackToStorage(track: MusicTrack, fileBlob?: Blob): Pr
  * Delete a track from storage
  */
 export async function deleteTrackFromStorage(id: string): Promise<void> {
+  const existingTrack = inMemoryTracks.find(t => t.id === id);
+  if (existingTrack?.url && typeof URL !== 'undefined' && existingTrack.url.startsWith('blob:')) {
+    try {
+      URL.revokeObjectURL(existingTrack.url);
+    } catch {
+      // ignore
+    }
+  }
+
   inMemoryTracks = inMemoryTracks.filter(t => t.id !== id);
 
   try {
@@ -234,6 +243,16 @@ export async function deleteTrackFromStorage(id: string): Promise<void> {
  * Reset track library to default presets
  */
 export async function resetTracksToDefault(): Promise<MusicTrack[]> {
+  inMemoryTracks.forEach(t => {
+    if (t.url && typeof URL !== 'undefined' && t.url.startsWith('blob:')) {
+      try {
+        URL.revokeObjectURL(t.url);
+      } catch {
+        // ignore
+      }
+    }
+  });
+
   inMemoryTracks = [...PRESET_MUSIC_TRACKS];
 
   try {

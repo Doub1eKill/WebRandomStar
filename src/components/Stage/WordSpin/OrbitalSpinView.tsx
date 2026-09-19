@@ -5,20 +5,28 @@ import { CrystalTiaraIcon } from '../CrystalIcons.tsx';
 export const OrbitalSpinView: React.FC<SpinViewProps> = ({
   reel,
   currentIndex,
-  targetWord
+  targetWord,
+  floatOffset = currentIndex
 }) => {
   const totalSlots = 8;
-  const radiusX = 230; // Horizontal ellipse radius
-  const radiusY = 62;  // Vertical ellipse radius (inclined perspective)
+  const radiusX = 240; // Horizontal ellipse radius
+  const radiusY = 66;  // Vertical ellipse radius (inclined perspective)
 
-  const wordsOnRing: { item: typeof targetWord; slotIndex: number; isCenter: boolean }[] = [];
+  const centerFloat = floatOffset;
+  const baseCenterInt = Math.round(centerFloat);
+  const wordsOnRing: { item: typeof targetWord; relativeDistance: number; isCenter: boolean; key: string }[] = [];
 
   for (let s = 0; s < totalSlots; s++) {
-    const idx = (currentIndex + s + reel.length) % reel.length;
+    const itemIndex = baseCenterInt + s;
+    const wrappedIdx = ((itemIndex % reel.length) + reel.length) % reel.length;
+    const relativeDistance = itemIndex - centerFloat;
+    const absDist = Math.abs(relativeDistance % totalSlots);
+
     wordsOnRing.push({
-      item: reel[idx] || targetWord,
-      slotIndex: s,
-      isCenter: s === 0
+      item: reel[wrappedIdx] || targetWord,
+      relativeDistance,
+      isCenter: absDist < 0.45 || Math.abs(absDist - totalSlots) < 0.45,
+      key: `orbital-${itemIndex}`
     });
   }
 
@@ -35,33 +43,35 @@ export const OrbitalSpinView: React.FC<SpinViewProps> = ({
 
       {/* Orbiting Words */}
       <div className="orbital-words-container">
-        {wordsOnRing.map(({ item, slotIndex, isCenter }) => {
-          // Angle around orbit: slot 0 is foreground front-center (PI / 2)
-          const angle = (Math.PI / 2) - (slotIndex * (2 * Math.PI / totalSlots));
+        {wordsOnRing.map(({ item, relativeDistance, isCenter, key }) => {
+          const angle = (Math.PI / 2) - (relativeDistance * (2 * Math.PI / totalSlots));
           const posX = Math.cos(angle) * radiusX;
           const posY = Math.sin(angle) * radiusY;
 
-          // Depth properties: front items (posY > 0) have higher scale & zIndex
           const depthProgress = (Math.sin(angle) + 1) / 2; // 0 (back) to 1 (front)
+          const proximity = Math.max(0, 1 - Math.min(Math.abs(relativeDistance % totalSlots), Math.abs((relativeDistance % totalSlots) - totalSlots)));
           const scale = 0.65 + depthProgress * 0.45;
-          const opacity = isCenter ? 1 : Math.max(0.25, 0.4 + depthProgress * 0.55);
+          const opacity = Math.max(0.2, 0.35 + depthProgress * 0.65);
           const zIndex = Math.round(depthProgress * 20) + (isCenter ? 10 : 0);
+          const starOpacity = Math.pow(proximity, 2.5);
 
           return (
             <div
-              key={`${item.id}-${slotIndex}`}
+              key={key}
               className={`orbital-word-item ${isCenter ? 'active-center' : ''}`}
               style={{
-                transform: `translate(${posX}px, ${posY}px) scale(${scale})`,
+                transform: `translate3d(${posX}px, ${posY}px, 0) scale(${scale})`,
                 opacity,
                 zIndex,
-                color: isCenter ? '#ffffff' : depthProgress > 0.6 ? 'rgba(224, 231, 255, 0.85)' : 'rgba(148, 163, 184, 0.45)',
-                textShadow: isCenter ? '0 0 24px rgba(255, 255, 255, 0.95), 0 0 45px rgba(165, 243, 252, 0.5)' : 'none'
+                color: `rgba(255, 255, 255, ${0.4 + 0.6 * depthProgress})`,
+                textShadow: depthProgress > 0.75
+                  ? `0 0 24px rgba(255, 255, 255, 0.95), 0 0 45px rgba(165, 243, 252, 0.5)`
+                  : 'none'
               }}
             >
-              {isCenter && <span className="word-accent-star left">✦</span>}
+              <span className="word-accent-star left" style={{ opacity: starOpacity }}>✦</span>
               <span className="word-text">{item.word}</span>
-              {isCenter && <span className="word-accent-star right">✦</span>}
+              <span className="word-accent-star right" style={{ opacity: starOpacity }}>✦</span>
             </div>
           );
         })}

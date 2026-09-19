@@ -195,4 +195,85 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
     expect(loaded.warningThresholdMs).toBe(45000);
     expect(loaded.criticalThresholdMs).toBe(15000);
   });
+
+  it('should cap history to MAX_HISTORY_RECORDS (200 records)', () => {
+    for (let i = 0; i < 250; i++) {
+      appendHistoryRecord({
+        id: `h_${i}`,
+        sessionId: 'sess',
+        timestamp: Date.now() + i,
+        round: 'attitude',
+        contestantId: `C_${i}`,
+        contestantName: `ผู้เข้าแข่งขัน ${i}`,
+        contestantNumber: i + 1,
+        questionId: `Q_${i}`,
+        questionText: `คำถาม ${i}`,
+        category: 'Rain',
+        seed: i,
+        timerConfiguredMs: 90000,
+        timerUsedMs: 30000,
+        isTimeout: false,
+        result: 'completed'
+      });
+    }
+    const history = loadHistory();
+    expect(history.length).toBe(200);
+    expect(history[0].id).toBe('h_249'); // latest record is at the front
+  });
+
+  it('should sanitize HTML and script tags in imported questions', () => {
+    const maliciousJson = JSON.stringify([
+      {
+        id: 'MAL_01',
+        text: '<script>alert("xss")</script><b>คำถามทดสอบ</b><img src=x onerror=alert(1)>',
+        category: '<svg onload=alert(1)>Rain</svg>',
+        difficulty: 'medium',
+        round: 'attitude',
+        notes: '<iframe src="evil.html"></iframe>โน้ตทดสอบ',
+        tags: ['<script>evil</script>', 'valid-tag']
+      }
+    ]);
+
+    const result = parseImportedQuestions(maliciousJson);
+    expect(result.success).toBe(true);
+    expect(result.data?.length).toBe(1);
+    const q = result.data![0];
+    expect(q.text).not.toContain('<script>');
+    expect(q.text).not.toContain('<img');
+    expect(q.text).toContain('คำถามทดสอบ');
+    expect(q.category).not.toContain('<svg');
+    expect(q.notes).not.toContain('<iframe');
+    expect(q.tags).not.toContain('<script>evil</script>');
+    expect(q.tags).toEqual(['valid-tag']);
+  });
+
+  it('should export history records as valid CSV string', async () => {
+    const { exportHistoryAsCSV } = await import('../src/utils/storage.ts');
+    const records: HistoryRecord[] = [
+      {
+        id: 'rec_1',
+        sessionId: 'sess_100',
+        timestamp: 1774000000000,
+        round: 'attitude',
+        contestantId: 'C_1',
+        contestantName: 'สมชาย ใจดี',
+        contestantNumber: 1,
+        questionId: 'Q_1',
+        questionText: 'คำถามข้อที่หนึ่ง "มีเครื่องหมายคำพูด"',
+        category: 'Rain',
+        seed: 'seed-123',
+        timerConfiguredMs: 90000,
+        timerUsedMs: 45000,
+        isTimeout: false,
+        result: 'completed'
+      }
+    ];
+
+    const csv = exportHistoryAsCSV(records);
+    expect(csv).toContain('ID,Timestamp,Round,ContestantNumber,ContestantName,ContestantID,QuestionID,Category,QuestionText,TimerConfiguredSec,TimerUsedSec,IsTimeout');
+    expect(csv).toContain('สมชาย ใจดี');
+    expect(csv).toContain('45');
+  });
 });
+
+

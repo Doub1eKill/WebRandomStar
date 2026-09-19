@@ -4,45 +4,63 @@ import { SpinViewProps } from './types.ts';
 export const Perspective3DSpinView: React.FC<SpinViewProps> = ({
   reel,
   currentIndex,
-  targetWord
+  targetWord,
+  floatOffset = currentIndex
 }) => {
-  const windowSize = 7;
-  const half = Math.floor(windowSize / 2);
-  const visible: { item: typeof targetWord; offset: number }[] = [];
+  const windowRange = 5;
+  const radius = 175; // px cylinder radius
+  const centerFloat = floatOffset;
+  const baseCenterInt = Math.round(centerFloat);
+  const visible: { item: typeof targetWord; relativeDistance: number; isCenter: boolean; key: string }[] = [];
 
-  for (let o = -half; o <= half; o++) {
-    const idx = (currentIndex + o + reel.length) % reel.length;
-    visible.push({ item: reel[idx] || targetWord, offset: o });
+  for (let o = -windowRange; o <= windowRange; o++) {
+    const itemIndex = baseCenterInt + o;
+    const wrappedIdx = ((itemIndex % reel.length) + reel.length) % reel.length;
+    const relativeDistance = itemIndex - centerFloat;
+    const absDist = Math.abs(relativeDistance);
+
+    if (absDist <= windowRange + 0.6) {
+      visible.push({
+        item: reel[wrappedIdx] || targetWord,
+        relativeDistance,
+        isCenter: absDist < 0.45,
+        key: `persp3d-${itemIndex}`
+      });
+    }
   }
-
-  const radius = 150; // px cylinder radius
 
   return (
     <div className="perspective-3d-spin-view">
       <div className="cylinder-vignette vignette-top" />
 
       <div className="cylinder-stage">
-        {visible.map(({ item, offset }) => {
-          const isCenter = offset === 0;
-          const absOffset = Math.abs(offset);
-          const angleDeg = offset * 38;
-          const blurPx = absOffset * 2.2;
-          const opacity = isCenter ? 1 : Math.max(0.2, 0.85 - absOffset * 0.22);
+        {visible.map(({ item, relativeDistance, isCenter, key }) => {
+          const absDist = Math.abs(relativeDistance);
+          const proximity = Math.max(0, 1 - absDist * 0.85);
+          const angleDeg = relativeDistance * 34;
+          const blurPx = Math.min(6, absDist * 1.8);
+          const opacity = Math.max(0.1, Math.pow(Math.max(0, 1 - absDist * 0.24), 1.6));
+          const starOpacity = Math.pow(proximity, 2.5);
 
           return (
             <div
-              key={`${item.id}-${offset}`}
+              key={key}
               className={`cylinder-word-item ${isCenter ? 'active-center' : ''}`}
               style={{
                 transform: `rotateX(${-angleDeg}deg) translateZ(${radius}px)`,
-                filter: isCenter ? 'drop-shadow(0 0 16px rgba(255, 255, 255, 0.85))' : `blur(${blurPx}px)`,
+                filter: proximity > 0.3
+                  ? `drop-shadow(0 0 ${Math.round(proximity * 18)}px rgba(255, 255, 255, 0.85))`
+                  : `blur(${blurPx}px)`,
                 opacity,
-                color: isCenter ? '#ffffff' : `rgba(224, 231, 255, ${Math.max(0.3, 0.8 - absOffset * 0.2)})`
+                color: `rgba(255, 255, 255, ${0.35 + 0.65 * proximity})`,
+                textShadow: proximity > 0.25
+                  ? `0 0 ${Math.round(proximity * 24)}px rgba(255, 255, 255, 0.95), 0 0 ${Math.round(proximity * 45)}px rgba(165, 243, 252, 0.5)`
+                  : 'none'
               }}
             >
-              {isCenter && <span className="word-accent-star left">✦</span>}
+              <span className="word-accent-star left" style={{ opacity: starOpacity }}>✦</span>
               <span className="word-text">{item.word}</span>
-              {isCenter && <span className="word-accent-star right">✦</span>}
+              <span className="word-accent-star right" style={{ opacity: starOpacity }}>✦</span>
             </div>
           );
         })}

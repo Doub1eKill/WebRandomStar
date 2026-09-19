@@ -80,4 +80,32 @@ describe('Typography Engine', () => {
     applyTypography({ fontPreset: 'cinzel' });
     expect(document.getElementById('dynamic-google-font')).toBeNull();
   });
+
+  it('should validate Google Fonts URLs correctly', async () => {
+    const { isValidGoogleFontUrl } = await import('../src/utils/typography.ts');
+    expect(isValidGoogleFontUrl('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap')).toBe(true);
+    expect(isValidGoogleFontUrl('https://fonts.googleapis.com/css?family=Open+Sans')).toBe(true);
+    
+    // Malicious or invalid URLs
+    expect(isValidGoogleFontUrl('http://fonts.googleapis.com/css2?family=Test')).toBe(false); // must be https
+    expect(isValidGoogleFontUrl('http://evil.com/malicious.css')).toBe(false);
+    expect(isValidGoogleFontUrl('https://evil.com/fonts.googleapis.com/css')).toBe(false);
+    expect(isValidGoogleFontUrl('javascript:alert(1)')).toBe(false);
+    expect(isValidGoogleFontUrl('data:text/css,body{background:red}')).toBe(false);
+    expect(isValidGoogleFontUrl('')).toBe(false);
+  });
+
+  it('should reject invalid or malicious custom font URLs in applyTypography', () => {
+    applyTypography({
+      fontPreset: 'custom',
+      customFont: {
+        name: 'Hacked',
+        fontFamily: "'Hacked', cursive",
+        googleFontUrl: 'http://malicious-domain.com/evil.css'
+      }
+    });
+
+    const link = document.getElementById('dynamic-google-font');
+    expect(link).toBeNull();
+  });
 });
