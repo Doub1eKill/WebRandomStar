@@ -187,6 +187,25 @@ export async function deleteTrackFromStorage(id: string): Promise<void> {
     if (typeof localStorage !== 'undefined') {
       const serializable = inMemoryTracks.map(({ blob: _blob, ...rest }) => rest);
       localStorage.setItem(FALLBACK_TRACKS_KEY, JSON.stringify(serializable));
+
+      // Clean up any phase mappings pointing to this track
+      const musicState = loadMusicStateFromStorage();
+      let stateModified = false;
+      const newMapping = { ...musicState.phaseTrackMapping };
+      (Object.keys(newMapping) as Array<keyof typeof newMapping>).forEach(phase => {
+        if (newMapping[phase] === id) {
+          // If a preset exists for this phase, fallback to it, else null
+          const defaultPreset = DEFAULT_MUSIC_STATE.phaseTrackMapping[phase];
+          newMapping[phase] = defaultPreset !== id ? defaultPreset : null;
+          stateModified = true;
+        }
+      });
+      if (stateModified) {
+        saveMusicStateToStorage({
+          ...musicState,
+          phaseTrackMapping: newMapping
+        });
+      }
     }
   } catch {
     // ignore

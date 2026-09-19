@@ -42,4 +42,25 @@ describe('IndexedDB & LocalStorage Music Storage', () => {
     const afterDelete = await getAllTracksFromStorage();
     expect(afterDelete.some(t => t.id === 'custom-1')).toBe(false);
   });
+
+  it('unassigns phase when the assigned custom track is deleted', async () => {
+    const customTrack: MusicTrack = {
+      id: 'custom-spin-123',
+      title: 'Custom Tension Spin',
+      sourceType: 'local_blob',
+      duration: 60,
+      defaultVolume: 0.8,
+      loop: true,
+      targetPhase: 'spin',
+      createdAt: Date.now()
+    };
+    await saveTrackToStorage(customTrack);
+    const state = loadMusicStateFromStorage();
+    state.phaseTrackMapping.spin = 'custom-spin-123';
+    saveMusicStateToStorage(state);
+
+    await deleteTrackFromStorage('custom-spin-123');
+    const updatedState = loadMusicStateFromStorage();
+    expect(updatedState.phaseTrackMapping.spin).not.toBe('custom-spin-123');
+  });
 });
