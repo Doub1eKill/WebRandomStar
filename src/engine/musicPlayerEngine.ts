@@ -31,8 +31,6 @@ export class MusicPlayerEngine {
   private activeSlot: 'A' | 'B' = 'A';
 
   private ctx: AudioContext | null = null;
-  private gainSlotA: GainNode | null = null;
-  private gainSlotB: GainNode | null = null;
   private masterGain: GainNode | null = null;
 
   private synthInterval: any = null;

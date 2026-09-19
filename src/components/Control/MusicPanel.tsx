@@ -7,15 +7,12 @@ import {
   RotateCcw,
   Volume2,
   VolumeX,
-  Plus,
   Trash2,
   Upload,
   Link as LinkIcon,
   Sparkles,
-  Repeat,
   Square,
-  Radio,
-  CheckCircle2
+  Radio
 } from 'lucide-react';
 
 interface MusicPanelProps {
@@ -63,7 +60,6 @@ export const MusicPanel: React.FC<MusicPanelProps> = ({
   const [urlArtist, setUrlArtist] = useState('');
   const [urlAddress, setUrlAddress] = useState('');
   const [urlPhase, setUrlPhase] = useState<StagePhaseTarget>('none');
-  const [deletingTrackId, setDeletingTrackId] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
