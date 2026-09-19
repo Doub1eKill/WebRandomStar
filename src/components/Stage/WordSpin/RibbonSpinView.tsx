@@ -48,7 +48,7 @@ export const RibbonSpinView: React.FC<SpinViewProps> = ({
             const proximity = Math.max(0, 1 - absDist * 0.85);
             const scale = 0.65 + 0.42 * Math.pow(proximity, 1.4);
             const opacity = Math.max(0.06, Math.pow(Math.max(0, 1 - absDist * 0.26), 1.6));
-            const translateX = relativeDistance * 360;
+            const translateX = relativeDistance * 460;
 
             return (
               <div
@@ -59,10 +59,10 @@ export const RibbonSpinView: React.FC<SpinViewProps> = ({
                   opacity,
                   color: `rgba(255, 255, 255, ${0.4 + 0.6 * proximity})`,
                   textShadow: proximity > 0.25
-                    ? `0 0 ${Math.round(proximity * 28)}px rgba(255, 255, 255, 0.95), 0 0 ${Math.round(proximity * 55)}px rgba(165, 243, 252, 0.7)`
+                    ? `0 0 ${Math.round(proximity * 32)}px rgba(255, 255, 255, 1.0), 0 0 ${Math.round(proximity * 65)}px rgba(168, 85, 247, 0.8), 0 0 ${Math.round(proximity * 90)}px rgba(56, 189, 248, 0.6)`
                     : 'none',
                   filter: proximity > 0.3
-                    ? `drop-shadow(0 0 ${Math.round(proximity * 20)}px rgba(255, 255, 255, 0.9))`
+                    ? `drop-shadow(0 0 ${Math.round(proximity * 24)}px rgba(255, 255, 255, 0.95))`
                     : 'none'
                 }}
               >
