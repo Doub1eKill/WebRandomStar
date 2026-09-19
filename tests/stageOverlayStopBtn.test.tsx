@@ -19,8 +19,8 @@ const createMockSession = (overrides: Partial<SessionState>): SessionState => ({
   ...overrides
 });
 
-describe('StageOverlay Stop Button in Manual Mode', () => {
-  it('renders STOP SPIN button when in word-spin with manual stop mode', () => {
+describe('StageOverlay Clean Screen in Word Spin', () => {
+  it('keeps stage clean without on-screen STOP button (controlled via backstage only)', () => {
     const session = createMockSession({
       currentState: 'word-spin',
       appearanceSettings: {
@@ -39,28 +39,7 @@ describe('StageOverlay Stop Button in Manual Mode', () => {
       })
     );
 
-    expect(html).toContain('STOP SPIN');
-  });
-
-  it('does not render STOP SPIN button when in auto mode', () => {
-    const session = createMockSession({
-      currentState: 'word-spin',
-      appearanceSettings: {
-        ...DEFAULT_APPEARANCE_SETTINGS,
-        spinStopMode: 'auto'
-      }
-    });
-
-    const html = renderToString(
-      React.createElement(StageOverlay, {
-        session,
-        onStart: () => {},
-        onNext: () => {},
-        onStopSpin: () => {},
-        onOpenControlDrawer: () => {}
-      })
-    );
-
-    expect(html).not.toContain('STOP SPIN');
+    expect(html).not.toContain('btn-royal-stop-spin');
+    expect(html).not.toContain('spin-speed-indicator');
   });
 });

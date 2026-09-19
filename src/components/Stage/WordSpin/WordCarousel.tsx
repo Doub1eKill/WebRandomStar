@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { KeywordItem } from '../../../types/word.ts';
 import { CrystalTiaraIcon } from '../CrystalIcons.tsx';
-import { generateSpinReel, calculateDecelerationEasing } from '../../../engine/wordSpinEngine.ts';
+import {
+  generateSpinReel,
+  calculateContinuousDecelTarget,
+  calculateQuinticDecel
+} from '../../../engine/wordSpinEngine.ts';
 import { DEFAULT_WORDS } from '../../../data/defaultWords.ts';
 import { VerticalSpinView } from './VerticalSpinView.tsx';
 import { Perspective3DSpinView } from './Perspective3DSpinView.tsx';
@@ -29,39 +33,63 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
     generateSpinReel(allWords, finalTarget, 36, `carousel_${Date.now()}`)
   );
 
+  const [floatOffset, setFloatOffset] = useState(0);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const currentPosRef = useRef(0);
+  const decelStartRef = useRef(0);
+  const decelEndRef = useRef(0);
 
   useEffect(() => {
     let animId: number;
     const startTime = performance.now();
-    const spinDuration = phase === 'word-decelerate' ? 2000 : 2500;
+    const targetIdx = reel.length - 1;
+
+    if (phase === 'pre-spin') {
+      currentPosRef.current = 0;
+      setFloatOffset(0);
+      setCurrentIndex(0);
+      return;
+    }
+
+    if (phase === 'word-decelerate') {
+      const startPos = currentPosRef.current;
+      const endPos = calculateContinuousDecelTarget(startPos, reel.length, targetIdx, 14);
+      decelStartRef.current = startPos;
+      decelEndRef.current = endPos;
+    }
+
+    const spinSpeed = 0.013; // items per ms (smooth high-speed cruise)
+    const decelDuration = 2100; // ms to smoothly land on target
 
     const animate = (now: number) => {
       const elapsed = now - startTime;
-      const progress = Math.min(1, elapsed / spinDuration);
-
-      if (phase === 'pre-spin') {
-        setCurrentIndex(0);
-        return;
-      }
 
       if (phase === 'word-spin') {
-        // High speed continuous cycling
-        const idx = Math.floor((elapsed / 60) % (reel.length - 1));
-        setCurrentIndex(idx);
+        const currentFloat = elapsed * spinSpeed;
+        currentPosRef.current = currentFloat;
+        setFloatOffset(currentFloat);
+        const wrappedIndex = ((Math.round(currentFloat) % reel.length) + reel.length) % reel.length;
+        setCurrentIndex(wrappedIndex);
         animId = requestAnimationFrame(animate);
       } else if (phase === 'word-decelerate') {
-        // Smooth cubic deceleration landing on reel.length - 1 (targetWord)
-        const eased = calculateDecelerationEasing(progress);
-        const startOffset = Math.floor(reel.length * 0.4);
-        const remainingSteps = reel.length - 1 - startOffset;
-        const targetIdx = Math.min(reel.length - 1, startOffset + Math.floor(eased * remainingSteps));
-        setCurrentIndex(targetIdx);
+        const progress = Math.min(1, elapsed / decelDuration);
+        const eased = calculateQuinticDecel(progress);
+        const start = decelStartRef.current;
+        const end = decelEndRef.current;
+        const currentFloat = start + (end - start) * eased;
+
+        currentPosRef.current = currentFloat;
+        setFloatOffset(currentFloat);
+        const wrappedIndex = ((Math.round(currentFloat) % reel.length) + reel.length) % reel.length;
+        setCurrentIndex(wrappedIndex);
 
         if (progress < 1) {
           animId = requestAnimationFrame(animate);
         } else {
-          setCurrentIndex(reel.length - 1);
+          currentPosRef.current = end;
+          setFloatOffset(end);
+          setCurrentIndex(targetIdx);
           if (onSpinComplete) {
             onSpinComplete();
           }
@@ -98,6 +126,7 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
             currentIndex={currentIndex}
             targetWord={finalTarget}
             phase={phase}
+            floatOffset={floatOffset}
           />
         );
       case 'orbital':
@@ -107,6 +136,7 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
             currentIndex={currentIndex}
             targetWord={finalTarget}
             phase={phase}
+            floatOffset={floatOffset}
           />
         );
       case 'ribbon':
@@ -116,6 +146,7 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
             currentIndex={currentIndex}
             targetWord={finalTarget}
             phase={phase}
+            floatOffset={floatOffset}
           />
         );
       case 'vertical':
@@ -126,6 +157,7 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
             currentIndex={currentIndex}
             targetWord={finalTarget}
             phase={phase}
+            floatOffset={floatOffset}
           />
         );
     }
@@ -147,10 +179,6 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
       <div className="carousel-footer-info">
         <div className="active-theme-caption">
           {currentWord.englishTheme || 'Theme Keyword'}
-        </div>
-        <div className="spin-speed-indicator">
-          <span className={`speed-dot ${phase === 'word-spin' ? 'pulse-fast' : 'pulse-slow'}`} />
-          <span>{phase === 'word-spin' ? 'หมุนด้วยความเร็วสูง...' : phase === 'word-decelerate' ? 'กำลังชะลอเพื่อเลือกคำ...' : 'พร้อมเริ่มสุ่ม'}</span>
         </div>
       </div>
     </div>
