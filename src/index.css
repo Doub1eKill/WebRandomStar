@@ -192,6 +192,17 @@ button {
   font-family: inherit;
   font-size: 0.95rem;
   outline: none;
+  color-scheme: dark;
+}
+
+select {
+  color-scheme: dark;
+}
+
+select option {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  padding: 8px 12px;
 }
 
 .custom-select:focus, .custom-input:focus, .custom-textarea:focus {

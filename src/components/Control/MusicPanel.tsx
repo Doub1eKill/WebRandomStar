@@ -456,18 +456,19 @@ export const MusicPanel: React.FC<MusicPanelProps> = ({
               onChange={e => onAssignPhaseTrack('ambient', e.target.value || null)}
               style={{
                 width: '100%',
-                padding: '0.5rem',
-                background: 'rgba(15, 23, 42, 0.8)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                borderRadius: '6px',
-                color: '#fff',
-                fontSize: '0.8rem',
-                marginBottom: '0.5rem'
+                padding: '0.55rem',
+                background: '#0f172a',
+                border: '1px solid rgba(56, 189, 248, 0.3)',
+                borderRadius: '8px',
+                color: '#f8fafc',
+                fontSize: '0.85rem',
+                marginBottom: '0.5rem',
+                colorScheme: 'dark'
               }}
             >
-              <option value="">-- ไม่เปิดเพลง (ปิดเสียง) --</option>
+              <option value="" style={{ background: '#0f172a', color: '#f8fafc' }}>-- ไม่เปิดเพลง (ปิดเสียง) --</option>
               {tracks.map(t => (
-                <option key={t.id} value={t.id}>{t.title}</option>
+                <option key={t.id} value={t.id} style={{ background: '#0f172a', color: '#f8fafc' }}>{t.title}</option>
               ))}
             </select>
           </div>
@@ -482,18 +483,19 @@ export const MusicPanel: React.FC<MusicPanelProps> = ({
               onChange={e => onAssignPhaseTrack('spin', e.target.value || null)}
               style={{
                 width: '100%',
-                padding: '0.5rem',
-                background: 'rgba(15, 23, 42, 0.8)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                borderRadius: '6px',
-                color: '#fff',
-                fontSize: '0.8rem',
-                marginBottom: '0.5rem'
+                padding: '0.55rem',
+                background: '#0f172a',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+                borderRadius: '8px',
+                color: '#f8fafc',
+                fontSize: '0.85rem',
+                marginBottom: '0.5rem',
+                colorScheme: 'dark'
               }}
             >
-              <option value="">-- ไม่เปิดเพลง (ปิดเสียง) --</option>
+              <option value="" style={{ background: '#0f172a', color: '#f8fafc' }}>-- ไม่เปิดเพลง (ปิดเสียง) --</option>
               {tracks.map(t => (
-                <option key={t.id} value={t.id}>{t.title}</option>
+                <option key={t.id} value={t.id} style={{ background: '#0f172a', color: '#f8fafc' }}>{t.title}</option>
               ))}
             </select>
           </div>
@@ -508,18 +510,19 @@ export const MusicPanel: React.FC<MusicPanelProps> = ({
               onChange={e => onAssignPhaseTrack('question', e.target.value || null)}
               style={{
                 width: '100%',
-                padding: '0.5rem',
-                background: 'rgba(15, 23, 42, 0.8)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                borderRadius: '6px',
-                color: '#fff',
-                fontSize: '0.8rem',
-                marginBottom: '0.5rem'
+                padding: '0.55rem',
+                background: '#0f172a',
+                border: '1px solid rgba(99, 102, 241, 0.3)',
+                borderRadius: '8px',
+                color: '#f8fafc',
+                fontSize: '0.85rem',
+                marginBottom: '0.5rem',
+                colorScheme: 'dark'
               }}
             >
-              <option value="">-- ไม่เปิดเพลง (ปิดเสียง) --</option>
+              <option value="" style={{ background: '#0f172a', color: '#f8fafc' }}>-- ไม่เปิดเพลง (ปิดเสียง) --</option>
               {tracks.map(t => (
-                <option key={t.id} value={t.id}>{t.title}</option>
+                <option key={t.id} value={t.id} style={{ background: '#0f172a', color: '#f8fafc' }}>{t.title}</option>
               ))}
             </select>
           </div>
@@ -534,18 +537,19 @@ export const MusicPanel: React.FC<MusicPanelProps> = ({
               onChange={e => onAssignPhaseTrack('answered', e.target.value || null)}
               style={{
                 width: '100%',
-                padding: '0.5rem',
-                background: 'rgba(15, 23, 42, 0.8)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                borderRadius: '6px',
-                color: '#fff',
-                fontSize: '0.8rem',
-                marginBottom: '0.5rem'
+                padding: '0.55rem',
+                background: '#0f172a',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                borderRadius: '8px',
+                color: '#f8fafc',
+                fontSize: '0.85rem',
+                marginBottom: '0.5rem',
+                colorScheme: 'dark'
               }}
             >
-              <option value="">-- ไม่เปิดเพลง (ปิดเสียง) --</option>
+              <option value="" style={{ background: '#0f172a', color: '#f8fafc' }}>-- ไม่เปิดเพลง (ปิดเสียง) --</option>
               {tracks.map(t => (
-                <option key={t.id} value={t.id}>{t.title}</option>
+                <option key={t.id} value={t.id} style={{ background: '#0f172a', color: '#f8fafc' }}>{t.title}</option>
               ))}
             </select>
           </div>
@@ -851,19 +855,20 @@ export const MusicPanel: React.FC<MusicPanelProps> = ({
                 onChange={e => setUrlPhase(e.target.value as StagePhaseTarget)}
                 style={{
                   width: '100%',
-                  padding: '0.6rem',
-                  background: 'rgba(255, 255, 255, 0.06)',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  padding: '0.65rem',
+                  background: '#1e293b',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
                   borderRadius: '8px',
-                  color: '#fff',
-                  fontSize: '0.9rem'
+                  color: '#f8fafc',
+                  fontSize: '0.9rem',
+                  colorScheme: 'dark'
                 }}
               >
-                <option value="none">-- ไม่ผูกช่วงเวที (เปิดเล่นเอง) --</option>
-                <option value="ambient">🏠 ช่วงพักเวที (Idle / Ambient)</option>
-                <option value="spin">⚡ ช่วงหมุนคำสุ่ม (Word Spin)</option>
-                <option value="question">💡 ช่วงคิดคำตอบ (Question / Timer)</option>
-                <option value="answered">🎉 ช่วงตอบเสร็จสิ้น (Celebration)</option>
+                <option value="none" style={{ background: '#0f172a', color: '#f8fafc' }}>-- ไม่ผูกช่วงเวที (เปิดเล่นเอง) --</option>
+                <option value="ambient" style={{ background: '#0f172a', color: '#f8fafc' }}>🏠 ช่วงพักเวที (Idle / Ambient)</option>
+                <option value="spin" style={{ background: '#0f172a', color: '#f8fafc' }}>⚡ ช่วงหมุนคำสุ่ม (Word Spin)</option>
+                <option value="question" style={{ background: '#0f172a', color: '#f8fafc' }}>💡 ช่วงคิดคำตอบ (Question / Timer)</option>
+                <option value="answered" style={{ background: '#0f172a', color: '#f8fafc' }}>🎉 ช่วงตอบเสร็จสิ้น (Celebration)</option>
               </select>
             </div>
 
