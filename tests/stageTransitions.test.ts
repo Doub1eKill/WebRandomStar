@@ -1,0 +1,122 @@
+import { describe, it, expect } from 'vitest';
+import fs from 'fs';
+import path from 'path';
+
+describe('Stage Transition CSS & Tokens', () => {
+  it('contains royal cinematic easing tokens and keyframes in index.css', () => {
+    const cssPath = path.resolve(__dirname, '../src/index.css');
+    const css = fs.readFileSync(cssPath, 'utf-8');
+
+    expect(css).toContain('--ease-royal-spring');
+    expect(css).toContain('stage-card-cinematic-reveal');
+    expect(css).toContain('stage-hero-dissolve-out');
+    expect(css).toContain('contestant-badge-slide-in');
+    expect(css).toContain('timer-cinematic-float');
+    expect(css).toContain('carousel-cinematic-entrance');
+  });
+});
+
+describe('QuestionCard Transitions', () => {
+  it('renders with cinematic reveal animation and clean centered typography', async () => {
+    const React = (await import('react')).default;
+    const { renderToString } = await import('react-dom/server');
+    const { QuestionCard } = await import('../src/components/Stage/QuestionCard.tsx');
+
+    const html = renderToString(
+      React.createElement(QuestionCard, {
+        question: {
+          id: 'q1',
+          text: 'คุณคิดว่าอะไรคือคุณสมบัติสำคัญที่สุดของผู้นำ?',
+          category: 'wind',
+          round: 'intro',
+          tags: [],
+          difficulty: 'medium',
+          enabled: true
+        },
+        isAnswered: false
+      })
+    );
+
+    expect(html).toContain('question-card-crystal-cinematic');
+    expect(html).toContain('คุณคิดว่าอะไรคือคุณสมบัติสำคัญที่สุดของผู้นำ?');
+  });
+
+  it('applies answered celebration settle styling when isAnswered is true', async () => {
+    const React = (await import('react')).default;
+    const { renderToString } = await import('react-dom/server');
+    const { QuestionCard } = await import('../src/components/Stage/QuestionCard.tsx');
+
+    const html = renderToString(
+      React.createElement(QuestionCard, {
+        question: {
+          id: 'q1',
+          text: 'ทดสอบคำถาม',
+          category: 'wind',
+          round: 'intro',
+          tags: [],
+          difficulty: 'medium',
+          enabled: true
+        },
+        isAnswered: true
+      })
+    );
+
+    expect(html).toContain('card-answered-settle');
+  });
+});
+
+describe('WordLockEffect Transitions', () => {
+  it('renders word lock container with royal bloom aura and crown seal', async () => {
+    const React = (await import('react')).default;
+    const { renderToString } = await import('react-dom/server');
+    const { WordLockEffect } = await import('../src/components/Stage/WordSpin/WordLockEffect.tsx');
+
+    const html = renderToString(
+      React.createElement(WordLockEffect, {
+        wordItem: { id: 'w1', word: 'วิสัยทัศน์', category: 'moon', enabled: true }
+      })
+    );
+
+    expect(html).toContain('word-lock-container');
+    expect(html).toContain('lock-radial-bloom');
+    expect(html).toContain('วิสัยทัศน์');
+    expect(html).toContain('lock-crown-seal');
+  });
+});
+
+describe('ContestantBadge & Timer Transitions', () => {
+  it('renders contestant badge with slide-in animation and crystal shimmer sweep', async () => {
+    const React = (await import('react')).default;
+    const { renderToString } = await import('react-dom/server');
+    const { ContestantBadge } = await import('../src/components/Stage/ContestantBadge.tsx');
+
+    const html = renderToString(
+      React.createElement(ContestantBadge, {
+        contestant: { id: 'c1', number: 5, name: 'อาริยา สมบูรณ์', title: 'ตัวแทนคณะวิทยาศาสตร์', faculty: 'วิทยาศาสตร์' }
+      })
+    );
+
+    expect(html).toContain('contestant-badge-cinematic');
+    expect(html).toContain('badge-shimmer-sweep-layer');
+    expect(html).toContain('อาริยา สมบูรณ์');
+  });
+
+  it('renders timer with cinematic float animation', async () => {
+    const React = (await import('react')).default;
+    const { renderToString } = await import('react-dom/server');
+    const { TimerDisplay } = await import('../src/components/Stage/TimerDisplay.tsx');
+
+    const html = renderToString(
+      React.createElement(TimerDisplay, {
+        timerState: { status: 'running', durationMs: 60000, remainingMs: 55000, startTimestamp: Date.now() },
+        variant: 'corner'
+      })
+    );
+
+    expect(html).toContain('stage-timer-hud');
+    expect(html).toContain('animate-timer-float-in');
+  });
+});
+
+
+
