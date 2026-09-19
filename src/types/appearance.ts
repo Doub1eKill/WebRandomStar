@@ -41,6 +41,7 @@ export interface AppearanceSettings {
   showLightRays: boolean;
   showAurora: boolean;
   showCrystals: boolean;
+  showWordLockPhase?: boolean;
   fontPreset: FontPresetId;
   customFont?: CustomFontConfig;
   customColors?: Partial<ThemeColors>;
@@ -59,5 +60,6 @@ export const DEFAULT_APPEARANCE_SETTINGS: AppearanceSettings = {
   showLightRays: true,
   showAurora: true,
   showCrystals: true,
+  showWordLockPhase: true,
   fontPreset: 'cinzel'
 };

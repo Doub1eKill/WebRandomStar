@@ -33,6 +33,15 @@ describe('Version 3.0 Stage State Machine (Royal Word Spin)', () => {
     expect(getNextState('answered')).toBe('idle');
   });
 
+  it('skips word-lock phase when showWordLockPhase is false', () => {
+    expect(getNextState('word-decelerate', false)).toBe('question-reveal');
+  });
+
+  it('includes word-lock phase when showWordLockPhase is true', () => {
+    expect(getNextState('word-decelerate', true)).toBe('word-lock');
+    expect(getNextState('word-decelerate')).toBe('word-lock');
+  });
+
   it('should validate legal and illegal transitions', () => {
     expect(isValidTransition('idle', 'pre-spin')).toBe(true);
     expect(isValidTransition('pre-spin', 'word-spin')).toBe(true);
