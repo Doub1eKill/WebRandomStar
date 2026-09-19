@@ -25,6 +25,7 @@ export const App: React.FC = () => {
   const {
     session,
     startJourney,
+    stopWordSpin,
     pauseJourney,
     skipToQuestion,
     markAnswered,
@@ -78,6 +79,8 @@ export const App: React.FC = () => {
   const handleStartOrPause = () => {
     if (session.currentState === 'idle') {
       handleStart();
+    } else if (session.currentState === 'word-spin') {
+      stopWordSpin();
     } else if (session.currentState === 'question') {
       markAnswered();
     } else if (session.currentState === 'answered') {
@@ -90,6 +93,8 @@ export const App: React.FC = () => {
   const handleProceed = () => {
     if (session.currentState === 'idle') {
       handleStart();
+    } else if (session.currentState === 'word-spin') {
+      stopWordSpin();
     } else if (session.currentState === 'question') {
       markAnswered();
     } else if (session.currentState === 'answered') {
@@ -120,6 +125,7 @@ export const App: React.FC = () => {
         contestant={activeContestant}
         onStart={() => handleStart()}
         onNext={handleProceed}
+        onStopSpin={stopWordSpin}
         onOpenControlDrawer={() => setIsDrawerOpen(true)}
       />
 

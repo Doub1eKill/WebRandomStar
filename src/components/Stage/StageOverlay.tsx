@@ -14,13 +14,15 @@ interface StageOverlayProps {
   contestant?: Contestant;
   onStart: () => void;
   onNext?: () => void;
+  onStopSpin?: () => void;
   onOpenControlDrawer?: () => void;
 }
 
 export const StageOverlay: React.FC<StageOverlayProps> = ({
   session,
   contestant,
-  onStart
+  onStart,
+  onStopSpin
 }) => {
   const isIdle = session.currentState === 'idle';
   const isSpinning = ['pre-spin', 'word-spin', 'word-decelerate'].includes(session.currentState);
@@ -88,12 +90,26 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
 
         {/* Royal Word Spin Carousel Phase */}
         {isSpinning && (
-          <div className="stage-spin-center-wrap animate-carousel-entrance">
+          <div className="stage-spin-center-wrap animate-carousel-entrance" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.25rem' }}>
             <WordCarousel
               targetWord={session.selectedWordItem}
               phase={session.currentState as 'pre-spin' | 'word-spin' | 'word-decelerate'}
               mode={session.appearanceSettings?.spinMode || 'vertical'}
             />
+
+            {/* Manual Stop Spin Trigger Button */}
+            {session.currentState === 'word-spin' && session.appearanceSettings?.spinStopMode === 'manual' && (
+              <div className="stage-stop-spin-container animate-fade-in">
+                <button
+                  type="button"
+                  className="btn-royal-stop-spin"
+                  onClick={onStopSpin}
+                >
+                  <span className="btn-stop-icon">⏹</span>
+                  <span className="btn-stop-text">STOP SPIN</span>
+                </button>
+              </div>
+            )}
           </div>
         )}
 
