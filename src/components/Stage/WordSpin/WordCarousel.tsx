@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { KeywordItem } from '../../../types/word.ts';
-import { CrystalTiaraIcon } from '../CrystalIcons.tsx';
 import {
   generateSpinReel,
   calculateContinuousDecelTarget,
@@ -101,22 +100,6 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
     return () => cancelAnimationFrame(animId);
   }, [phase, reel, onSpinComplete]);
 
-  const currentWord = reel[currentIndex] || finalTarget;
-
-  const getModeTitle = () => {
-    switch (mode) {
-      case '3d':
-        return '✦ 3D PERSPECTIVE SPIN ✦';
-      case 'orbital':
-        return '✦ CIRCULAR ORBITAL WORDS ✦';
-      case 'ribbon':
-        return '✦ ROYAL RIBBON STREAM ✦';
-      case 'vertical':
-      default:
-        return '✦ ROYAL WORD SELECTION ✦';
-    }
-  };
-
   const renderActiveView = () => {
     switch (mode) {
       case '3d':
@@ -165,21 +148,8 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
 
   return (
     <div className={`word-carousel-container mode-${mode}`}>
-      <div className="carousel-ambient-glow" />
-
-      <div className="carousel-header">
-        <CrystalTiaraIcon size={20} />
-        <div className="carousel-title-badge">{getModeTitle()}</div>
-      </div>
-
-      <div className="carousel-stage-frame glassmorphism">
+      <div className="carousel-stage-frame">
         {renderActiveView()}
-      </div>
-
-      <div className="carousel-footer-info">
-        <div className="active-theme-caption">
-          {currentWord.englishTheme || 'Theme Keyword'}
-        </div>
       </div>
     </div>
   );
