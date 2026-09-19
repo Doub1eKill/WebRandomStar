@@ -183,6 +183,11 @@ export function useStageSync(role: 'stage' | 'controller') {
       return;
     }
 
+    // In manual spin stop mode, do not auto-progress past word-spin
+    if (session.currentState === 'word-spin' && session.appearanceSettings?.spinStopMode === 'manual') {
+      return;
+    }
+
     const duration = STAGE_DURATION[session.currentState];
     if (!duration || duration <= 0) return;
 
@@ -324,6 +329,15 @@ export function useStageSync(role: 'stage' | 'controller') {
       ...session,
       isPaused: !session.isPaused
     }, 'STAGE_PAUSE');
+  }, [session, broadcastState]);
+
+  const stopWordSpin = useCallback(() => {
+    if (session.currentState === 'word-spin') {
+      broadcastState({
+        ...session,
+        currentState: 'word-decelerate'
+      }, 'STAGE_STOP_WORD_SPIN');
+    }
   }, [session, broadcastState]);
 
   const skipToQuestion = useCallback(() => {
@@ -612,6 +626,7 @@ export function useStageSync(role: 'stage' | 'controller') {
     session,
     role,
     startJourney,
+    stopWordSpin,
     pauseJourney,
     skipToQuestion,
     markAnswered,
