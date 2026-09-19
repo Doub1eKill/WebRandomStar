@@ -2,6 +2,7 @@ import { Question, QuestionCategory } from './question.ts';
 import { TimerState, TimerSoundSettings, StageDisplaySettings } from './timer.ts';
 import { KeywordItem, WordSpinMode } from './word.ts';
 import { AppearanceSettings } from './appearance.ts';
+import { MusicState } from './music.ts';
 
 export type AppState =
   | 'idle'
@@ -40,6 +41,7 @@ export interface SessionState {
   stageDisplaySettings?: StageDisplaySettings;
   appearanceSettings?: AppearanceSettings;
   wordSpinMode?: WordSpinMode;
+  musicState?: MusicState;
 }
 
 export type SyncMessageType =
@@ -62,6 +64,7 @@ export type SyncMessageType =
   | 'STAGE_SET_APPEARANCE'
   | 'STAGE_SET_TIMER_SOUND_SETTINGS'
   | 'STAGE_SET_DISPLAY_SETTINGS'
+  | 'STAGE_SET_MUSIC_STATE'
   | 'TIMER_SET'
   | 'TIMER_START'
   | 'TIMER_PAUSE'
@@ -75,3 +78,4 @@ export interface SyncMessage {
   payload?: any;
   timestamp: number;
 }
+
