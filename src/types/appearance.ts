@@ -18,6 +18,14 @@ export const DEFAULT_THEME_COLORS: ThemeColors = {
   softGold: '#F5D98A'
 };
 
+export type FontPresetId = 'cinzel' | 'amoria' | 'verve' | 'outfit' | 'custom';
+
+export interface CustomFontConfig {
+  name: string;
+  fontFamily: string;
+  googleFontUrl?: string;
+}
+
 export interface AppearanceSettings {
   backgroundMode?: BackgroundMode; // 'cosmic-canvas' | 'aero-shards'
   themeName: 'luxury-winter-pageant' | 'ethereal-gold' | 'custom';
@@ -30,6 +38,8 @@ export interface AppearanceSettings {
   showLightRays: boolean;
   showAurora: boolean;
   showCrystals: boolean;
+  fontPreset: FontPresetId;
+  customFont?: CustomFontConfig;
   customColors?: Partial<ThemeColors>;
 }
 
@@ -44,5 +54,6 @@ export const DEFAULT_APPEARANCE_SETTINGS: AppearanceSettings = {
   showWaterReflection: true,
   showLightRays: true,
   showAurora: true,
-  showCrystals: true
+  showCrystals: true,
+  fontPreset: 'cinzel'
 };
