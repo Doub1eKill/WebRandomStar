@@ -3,6 +3,10 @@ import { KeywordItem } from '../../../types/word.ts';
 import { CrystalTiaraIcon } from '../CrystalIcons.tsx';
 import { generateSpinReel, calculateDecelerationEasing } from '../../../engine/wordSpinEngine.ts';
 import { DEFAULT_WORDS } from '../../../data/defaultWords.ts';
+import { VerticalSpinView } from './VerticalSpinView.tsx';
+import { Perspective3DSpinView } from './Perspective3DSpinView.tsx';
+import { OrbitalSpinView } from './OrbitalSpinView.tsx';
+import { RibbonSpinView } from './RibbonSpinView.tsx';
 
 interface WordCarouselProps {
   allWords?: KeywordItem[];
@@ -69,21 +73,63 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
     return () => cancelAnimationFrame(animId);
   }, [phase, reel, onSpinComplete]);
 
-  // Active visible window of words around currentIndex
-  const getVisibleItems = () => {
-    const visible: { item: KeywordItem; offset: number }[] = [];
-    const windowSize = mode === '3d' ? 5 : 7;
-    const half = Math.floor(windowSize / 2);
+  const currentWord = reel[currentIndex] || finalTarget;
 
-    for (let o = -half; o <= half; o++) {
-      const idx = (currentIndex + o + reel.length) % reel.length;
-      visible.push({ item: reel[idx], offset: o });
+  const getModeTitle = () => {
+    switch (mode) {
+      case '3d':
+        return '✦ 3D PERSPECTIVE SPIN ✦';
+      case 'orbital':
+        return '✦ CIRCULAR ORBITAL WORDS ✦';
+      case 'ribbon':
+        return '✦ ROYAL RIBBON STREAM ✦';
+      case 'vertical':
+      default:
+        return '✦ ROYAL WORD SELECTION ✦';
     }
-    return visible;
   };
 
-  const visibleItems = getVisibleItems();
-  const currentWord = reel[currentIndex] || finalTarget;
+  const renderActiveView = () => {
+    switch (mode) {
+      case '3d':
+        return (
+          <Perspective3DSpinView
+            reel={reel}
+            currentIndex={currentIndex}
+            targetWord={finalTarget}
+            phase={phase}
+          />
+        );
+      case 'orbital':
+        return (
+          <OrbitalSpinView
+            reel={reel}
+            currentIndex={currentIndex}
+            targetWord={finalTarget}
+            phase={phase}
+          />
+        );
+      case 'ribbon':
+        return (
+          <RibbonSpinView
+            reel={reel}
+            currentIndex={currentIndex}
+            targetWord={finalTarget}
+            phase={phase}
+          />
+        );
+      case 'vertical':
+      default:
+        return (
+          <VerticalSpinView
+            reel={reel}
+            currentIndex={currentIndex}
+            targetWord={finalTarget}
+            phase={phase}
+          />
+        );
+    }
+  };
 
   return (
     <div className={`word-carousel-container mode-${mode}`}>
@@ -91,47 +137,11 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
 
       <div className="carousel-header">
         <CrystalTiaraIcon size={20} />
-        <div className="carousel-title-badge">✦ ROYAL WORD SELECTION ✦</div>
+        <div className="carousel-title-badge">{getModeTitle()}</div>
       </div>
 
       <div className="carousel-stage-frame glassmorphism">
-        <div className="carousel-indicator indicator-top">
-          <span className="indicator-diamond">◆</span>
-        </div>
-
-        <div className="carousel-reel-track">
-          {visibleItems.map(({ item, offset }) => {
-            const isCenter = offset === 0;
-            const absOffset = Math.abs(offset);
-            const scale = 1 - absOffset * 0.12;
-            const opacity = isCenter ? 1 : Math.max(0.15, 0.7 - absOffset * 0.22);
-            const translateY = offset * 56;
-
-            return (
-              <div
-                key={`${item.id}-${offset}`}
-                className={`carousel-word-item ${isCenter ? 'active-center' : ''}`}
-                style={{
-                  transform: `translateY(${translateY}px) scale(${scale})`,
-                  opacity,
-                  color: isCenter ? '#ffffff' : `rgba(255, 255, 255, ${Math.max(0.2, 0.85 - absOffset * 0.25)})`,
-                  textShadow: isCenter
-                    ? '0 0 24px rgba(255, 255, 255, 0.95), 0 0 45px rgba(165, 243, 252, 0.45)'
-                    : 'none',
-                  filter: isCenter ? 'drop-shadow(0 0 16px rgba(255, 255, 255, 0.8))' : 'none'
-                }}
-              >
-                {isCenter && <span className="word-accent-star left">✦</span>}
-                <span className="word-text">{item.word}</span>
-                {isCenter && <span className="word-accent-star right">✦</span>}
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="carousel-indicator indicator-bottom">
-          <span className="indicator-diamond">◆</span>
-        </div>
+        {renderActiveView()}
       </div>
 
       <div className="carousel-footer-info">

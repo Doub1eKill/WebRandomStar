@@ -108,3 +108,73 @@ describe('RibbonSpinView (Mode 4: Royal Ribbon Spin)', () => {
     expect(html).toContain('ตัวตน');
   });
 });
+
+describe('WordCarousel Orchestrator Mode Switching', () => {
+  it('renders vertical view by default or when mode="vertical"', async () => {
+    const React = (await import('react')).default;
+    const { renderToString } = await import('react-dom/server');
+    const { WordCarousel } = await import('../src/components/Stage/WordSpin/WordCarousel.tsx');
+
+    const html = renderToString(
+      React.createElement(WordCarousel, {
+        allWords: mockWords,
+        targetWord: mockWords[0],
+        phase: 'word-spin',
+        mode: 'vertical'
+      })
+    );
+
+    expect(html).toContain('vertical-spin-view');
+  });
+
+  it('renders 3D perspective view when mode="3d"', async () => {
+    const React = (await import('react')).default;
+    const { renderToString } = await import('react-dom/server');
+    const { WordCarousel } = await import('../src/components/Stage/WordSpin/WordCarousel.tsx');
+
+    const html = renderToString(
+      React.createElement(WordCarousel, {
+        allWords: mockWords,
+        targetWord: mockWords[0],
+        phase: 'word-spin',
+        mode: '3d'
+      })
+    );
+
+    expect(html).toContain('perspective-3d-spin-view');
+  });
+
+  it('renders orbital view when mode="orbital"', async () => {
+    const React = (await import('react')).default;
+    const { renderToString } = await import('react-dom/server');
+    const { WordCarousel } = await import('../src/components/Stage/WordSpin/WordCarousel.tsx');
+
+    const html = renderToString(
+      React.createElement(WordCarousel, {
+        allWords: mockWords,
+        targetWord: mockWords[0],
+        phase: 'word-spin',
+        mode: 'orbital'
+      })
+    );
+
+    expect(html).toContain('orbital-spin-view');
+  });
+
+  it('renders ribbon view when mode="ribbon"', async () => {
+    const React = (await import('react')).default;
+    const { renderToString } = await import('react-dom/server');
+    const { WordCarousel } = await import('../src/components/Stage/WordSpin/WordCarousel.tsx');
+
+    const html = renderToString(
+      React.createElement(WordCarousel, {
+        allWords: mockWords,
+        targetWord: mockWords[0],
+        phase: 'word-spin',
+        mode: 'ribbon'
+      })
+    );
+
+    expect(html).toContain('ribbon-spin-view');
+  });
+});
