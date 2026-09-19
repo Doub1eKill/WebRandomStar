@@ -62,3 +62,26 @@ describe('Perspective3DSpinView (Mode 2: 3D Perspective Spin)', () => {
     expect(html).toContain('vignette-bottom');
   });
 });
+
+describe('OrbitalSpinView (Mode 3: Circular Orbital Words)', () => {
+  it('renders circular orbit container with core tiara and orbiting words', async () => {
+    const React = (await import('react')).default;
+    const { renderToString } = await import('react-dom/server');
+    const { OrbitalSpinView } = await import('../src/components/Stage/WordSpin/OrbitalSpinView.tsx');
+
+    const html = renderToString(
+      React.createElement(OrbitalSpinView, {
+        reel: mockWords,
+        currentIndex: 0,
+        targetWord: mockWords[0],
+        phase: 'word-spin'
+      })
+    );
+
+    expect(html).toContain('orbital-spin-view');
+    expect(html).toContain('orbital-core-tiara');
+    expect(html).toContain('orbital-ring-track');
+    expect(html).toContain('active-center');
+    expect(html).toContain('ความฝัน');
+  });
+});
