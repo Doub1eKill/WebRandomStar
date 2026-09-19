@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppearanceSettings, DEFAULT_APPEARANCE_SETTINGS, FontPresetId } from '../../types/appearance.ts';
+import { AppearanceSettings, DEFAULT_APPEARANCE_SETTINGS } from '../../types/appearance.ts';
 import { FONT_PRESETS } from '../../utils/typography.ts';
 
 interface AppearanceSettingsProps {
