@@ -20,6 +20,8 @@ export const DEFAULT_THEME_COLORS: ThemeColors = {
 
 export type FontPresetId = 'cinzel' | 'amoria' | 'verve' | 'outfit' | 'custom';
 
+export type WordSpinStopMode = 'auto' | 'manual';
+
 export interface CustomFontConfig {
   name: string;
   fontFamily: string;
@@ -30,6 +32,7 @@ export interface AppearanceSettings {
   backgroundMode?: BackgroundMode; // 'cosmic-canvas' | 'aero-shards'
   themeName: 'luxury-winter-pageant' | 'ethereal-gold' | 'custom';
   spinMode: WordSpinMode;
+  spinStopMode: WordSpinStopMode;
   spinDurationMs: number;
   particleDensity: number; // 0.1 to 2.0 (default 1.0)
   glowIntensity: number;   // 0.1 to 2.0 (default 1.0)
@@ -47,6 +50,7 @@ export const DEFAULT_APPEARANCE_SETTINGS: AppearanceSettings = {
   backgroundMode: 'cosmic-canvas',
   themeName: 'luxury-winter-pageant',
   spinMode: 'vertical',
+  spinStopMode: 'auto',
   spinDurationMs: 4500,
   particleDensity: 1.0,
   glowIntensity: 1.0,
