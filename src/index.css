@@ -2801,6 +2801,64 @@ select option {
   -webkit-backface-visibility: hidden;
 }
 
+/* Question Bank Mode Carousel Item Overrides */
+.ribbon-word-item.is-question {
+  max-width: clamp(380px, 48vw, 660px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: clamp(1.1rem, 1.8vw, 1.55rem);
+  letter-spacing: 0.02em;
+}
+
+.ribbon-word-item.is-question.active-center {
+  font-size: clamp(1.4rem, 2.3vw, 2.1rem);
+  font-weight: 800;
+  max-width: clamp(420px, 52vw, 720px);
+}
+
+.carousel-word-item.is-question {
+  max-width: clamp(400px, 60vw, 750px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+}
+
+.carousel-word-item.is-question.active-center {
+  font-size: clamp(1.45rem, 2.3vw, 2.1rem);
+  font-weight: 800;
+}
+
+.cylinder-word-item.is-question {
+  max-width: clamp(360px, 50vw, 620px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+}
+
+.cylinder-word-item.is-question.active-center {
+  font-size: clamp(1.4rem, 2.2vw, 2.0rem);
+  font-weight: 800;
+}
+
+.orbital-word-item.is-question {
+  max-width: clamp(260px, 35vw, 500px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+}
+
+.orbital-word-item.is-question.active-center {
+  font-size: clamp(1.25rem, 2.0vw, 1.75rem);
+  font-weight: 800;
+}
+
 .word-accent-star {
   color: #ffffff;
   font-size: 1.4rem;

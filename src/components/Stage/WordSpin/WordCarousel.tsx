@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { KeywordItem } from '../../../types/word.ts';
+import { SpinItem } from './types.ts';
 import {
   generateSpinReel,
   calculateContinuousDecelTarget,
@@ -12,24 +12,31 @@ import { OrbitalSpinView } from './OrbitalSpinView.tsx';
 import { RibbonSpinView } from './RibbonSpinView.tsx';
 
 interface WordCarouselProps {
-  allWords?: KeywordItem[];
-  targetWord?: KeywordItem | null;
+  items?: SpinItem[];
+  allWords?: SpinItem[];
+  targetWord?: SpinItem | null;
+  targetItem?: SpinItem | null;
   phase: 'pre-spin' | 'word-spin' | 'word-decelerate';
   durationMs?: number;
   mode?: 'vertical' | 'orbital' | '3d' | 'ribbon';
+  displayType?: 'keyword' | 'question';
   onSpinComplete?: () => void;
 }
 
 export const WordCarousel: React.FC<WordCarouselProps> = ({
-  allWords = DEFAULT_WORDS,
+  items,
+  allWords,
   targetWord,
+  targetItem,
   phase,
   mode = 'vertical',
+  displayType = 'keyword',
   onSpinComplete
 }) => {
-  const finalTarget = targetWord || allWords[0] || { id: 'default', word: 'ความฝัน', category: 'moon', enabled: true };
-  const [reel] = useState<KeywordItem[]>(() =>
-    generateSpinReel(allWords, finalTarget, 36, `carousel_${Date.now()}`)
+  const pool = items || allWords || DEFAULT_WORDS;
+  const finalTarget = targetItem || targetWord || pool[0] || { id: 'default', word: 'ความฝัน', category: 'moon', enabled: true };
+  const [reel] = useState<SpinItem[]>(() =>
+    generateSpinReel(pool, finalTarget, 36, `carousel_${Date.now()}`)
   );
 
   const [floatOffset, setFloatOffset] = useState(0);
@@ -110,6 +117,7 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
             targetWord={finalTarget}
             phase={phase}
             floatOffset={floatOffset}
+            displayType={displayType}
           />
         );
       case 'orbital':
@@ -120,6 +128,7 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
             targetWord={finalTarget}
             phase={phase}
             floatOffset={floatOffset}
+            displayType={displayType}
           />
         );
       case 'ribbon':
@@ -130,6 +139,7 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
             targetWord={finalTarget}
             phase={phase}
             floatOffset={floatOffset}
+            displayType={displayType}
           />
         );
       case 'vertical':
@@ -141,6 +151,7 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
             targetWord={finalTarget}
             phase={phase}
             floatOffset={floatOffset}
+            displayType={displayType}
           />
         );
     }

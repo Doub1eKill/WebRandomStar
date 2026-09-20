@@ -1,11 +1,13 @@
 import React from 'react';
 import { SpinViewProps } from './types.ts';
+import { getDisplayText } from '../../../engine/wordSpinEngine.ts';
 
 export const RibbonSpinView: React.FC<SpinViewProps> = ({
   reel,
   currentIndex,
   targetWord,
-  floatOffset = currentIndex
+  floatOffset = currentIndex,
+  displayType = 'keyword'
 }) => {
   const windowRange = 5;
   const visible: { item: typeof targetWord; relativeDistance: number; isCenter: boolean; key: string }[] = [];
@@ -46,14 +48,17 @@ export const RibbonSpinView: React.FC<SpinViewProps> = ({
           {visible.map(({ item, relativeDistance, isCenter, key }) => {
             const absDist = Math.abs(relativeDistance);
             const proximity = Math.max(0, 1 - absDist * 0.85);
-            const scale = 0.65 + 0.42 * Math.pow(proximity, 1.4);
+            const scale = displayType === 'question'
+              ? (0.75 + 0.3 * Math.pow(proximity, 1.4))
+              : (0.65 + 0.42 * Math.pow(proximity, 1.4));
             const opacity = Math.max(0.06, Math.pow(Math.max(0, 1 - absDist * 0.26), 1.6));
-            const translateX = relativeDistance * 460;
+            const translateX = relativeDistance * (displayType === 'question' ? 540 : 460);
+            const text = getDisplayText(item);
 
             return (
               <div
                 key={key}
-                className={`ribbon-word-item ${isCenter ? 'active-center' : ''}`}
+                className={`ribbon-word-item ${isCenter ? 'active-center' : ''} ${displayType === 'question' ? 'is-question' : ''}`}
                 style={{
                   transform: `translate3d(${translateX}px, 0, 0) scale(${scale})`,
                   opacity,
@@ -66,7 +71,7 @@ export const RibbonSpinView: React.FC<SpinViewProps> = ({
                     : 'none'
                 }}
               >
-                <span className="word-text">{item.word}</span>
+                <span className="word-text">{text}</span>
               </div>
             );
           })}

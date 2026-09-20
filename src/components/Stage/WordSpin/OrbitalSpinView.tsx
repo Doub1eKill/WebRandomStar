@@ -1,15 +1,17 @@
 import React from 'react';
 import { SpinViewProps } from './types.ts';
 import { CrystalTiaraIcon } from '../CrystalIcons.tsx';
+import { getDisplayText } from '../../../engine/wordSpinEngine.ts';
 
 export const OrbitalSpinView: React.FC<SpinViewProps> = ({
   reel,
   currentIndex,
   targetWord,
-  floatOffset = currentIndex
+  floatOffset = currentIndex,
+  displayType = 'keyword'
 }) => {
   const totalSlots = 8;
-  const radiusX = 240; // Horizontal ellipse radius
+  const radiusX = displayType === 'question' ? 280 : 240; // Horizontal ellipse radius
   const radiusY = 66;  // Vertical ellipse radius (inclined perspective)
 
   const centerFloat = floatOffset;
@@ -31,7 +33,7 @@ export const OrbitalSpinView: React.FC<SpinViewProps> = ({
   }
 
   return (
-    <div className="orbital-spin-view">
+    <div className={`orbital-spin-view ${displayType === 'question' ? 'is-question' : ''}`}>
       {/* Radiant Tiara Core */}
       <div className="orbital-core-tiara">
         <div className="core-glow-aura" />
@@ -50,15 +52,18 @@ export const OrbitalSpinView: React.FC<SpinViewProps> = ({
 
           const depthProgress = (Math.sin(angle) + 1) / 2; // 0 (back) to 1 (front)
           const proximity = Math.max(0, 1 - Math.min(Math.abs(relativeDistance % totalSlots), Math.abs((relativeDistance % totalSlots) - totalSlots)));
-          const scale = 0.65 + depthProgress * 0.45;
+          const scale = displayType === 'question'
+            ? (0.7 + depthProgress * 0.35)
+            : (0.65 + depthProgress * 0.45);
           const opacity = Math.max(0.2, 0.35 + depthProgress * 0.65);
           const zIndex = Math.round(depthProgress * 20) + (isCenter ? 10 : 0);
           const starOpacity = Math.pow(proximity, 2.5);
+          const text = getDisplayText(item);
 
           return (
             <div
               key={key}
-              className={`orbital-word-item ${isCenter ? 'active-center' : ''}`}
+              className={`orbital-word-item ${isCenter ? 'active-center' : ''} ${displayType === 'question' ? 'is-question' : ''}`}
               style={{
                 transform: `translate3d(${posX}px, ${posY}px, 0) scale(${scale})`,
                 opacity,
@@ -70,7 +75,7 @@ export const OrbitalSpinView: React.FC<SpinViewProps> = ({
               }}
             >
               <span className="word-accent-star left" style={{ opacity: starOpacity }}>✦</span>
-              <span className="word-text">{item.word}</span>
+              <span className="word-text">{text}</span>
               <span className="word-accent-star right" style={{ opacity: starOpacity }}>✦</span>
             </div>
           );

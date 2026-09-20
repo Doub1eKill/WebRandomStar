@@ -177,4 +177,29 @@ describe('WordCarousel Orchestrator Mode Switching', () => {
 
     expect(html).toContain('ribbon-spin-view');
   });
+
+  it('renders question text and is-question class when provided Question objects and displayType="question"', async () => {
+    const React = (await import('react')).default;
+    const { renderToString } = await import('react-dom/server');
+    const { WordCarousel } = await import('../src/components/Stage/WordSpin/WordCarousel.tsx');
+
+    const sampleQuestions = [
+      { id: 'q1', text: 'ในยุคดิจิทัล ทักษะใดสำคัญที่สุดสำหรับผู้นำ?', category: 'general', enabled: true },
+      { id: 'q2', text: 'แนวคิดการพัฒนาที่ยั่งยืนคืออะไร?', category: 'attitude', enabled: true }
+    ];
+
+    const html = renderToString(
+      React.createElement(WordCarousel, {
+        items: sampleQuestions,
+        targetItem: sampleQuestions[0],
+        phase: 'word-spin',
+        mode: 'ribbon',
+        displayType: 'question'
+      })
+    );
+
+    expect(html).toContain('ribbon-spin-view');
+    expect(html).toContain('is-question');
+    expect(html).toContain('ในยุคดิจิทัล ทักษะใดสำคัญที่สุดสำหรับผู้นำ?');
+  });
 });
