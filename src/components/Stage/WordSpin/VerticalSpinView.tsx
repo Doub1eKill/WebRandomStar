@@ -9,7 +9,7 @@ export const VerticalSpinView: React.FC<SpinViewProps> = ({
   floatOffset = currentIndex,
   displayType = 'keyword'
 }) => {
-  const windowRange = 5;
+  const windowRange = 4;
   const centerFloat = floatOffset;
   const baseCenterInt = Math.round(centerFloat);
   const visible: { item: typeof targetWord; relativeDistance: number; isCenter: boolean; key: string }[] = [];
@@ -55,13 +55,7 @@ export const VerticalSpinView: React.FC<SpinViewProps> = ({
               style={{
                 transform: `translate3d(0, ${translateY}px, 0) scale(${scale})`,
                 opacity,
-                color: `rgba(255, 255, 255, ${0.35 + 0.65 * proximity})`,
-                textShadow: proximity > 0.25
-                  ? `0 0 ${Math.round(proximity * 24)}px rgba(255, 255, 255, 0.95), 0 0 ${Math.round(proximity * 45)}px rgba(165, 243, 252, 0.5)`
-                  : 'none',
-                filter: proximity > 0.3
-                  ? `drop-shadow(0 0 ${Math.round(proximity * 16)}px rgba(255, 255, 255, 0.8))`
-                  : 'none'
+                color: `rgba(255, 255, 255, ${0.4 + 0.6 * proximity})`
               }}
             >
               <span className="word-accent-star left" style={{ opacity: starOpacity }}>✦</span>
@@ -78,3 +72,4 @@ export const VerticalSpinView: React.FC<SpinViewProps> = ({
     </div>
   );
 };
+

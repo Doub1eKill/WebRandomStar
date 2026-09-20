@@ -10,7 +10,7 @@ export const RibbonSpinView: React.FC<SpinViewProps> = ({
   displayType = 'keyword'
 }) => {
   const isQuestion = displayType === 'question';
-  const windowRange = isQuestion ? 3 : 5;
+  const windowRange = isQuestion ? 2 : 4;
   const visible: { item: typeof targetWord; relativeDistance: number; isCenter: boolean; key: string }[] = [];
 
   const centerFloat = floatOffset;
@@ -38,11 +38,11 @@ export const RibbonSpinView: React.FC<SpinViewProps> = ({
         <div className="ribbon-border-edge top-edge" />
         <div className="ribbon-shimmer-sweep" />
 
-        {/* Fixed Center Luxury Viewfinder Reticle */}
+        {/* Center Luxury Viewfinder Reticle */}
         <div className={`ribbon-center-reticle ${isQuestion ? 'is-question' : ''}`}>
-          <span className="reticle-bracket left">⟨</span>
+          {!isQuestion && <span className="reticle-bracket left">⟨</span>}
           <div className="reticle-center-glow" />
-          <span className="reticle-bracket right">⟩</span>
+          {!isQuestion && <span className="reticle-bracket right">⟩</span>}
         </div>
 
         <div className="ribbon-words-stream">
@@ -50,7 +50,7 @@ export const RibbonSpinView: React.FC<SpinViewProps> = ({
             const absDist = Math.abs(relativeDistance);
             const proximity = Math.max(0, 1 - absDist * 0.85);
             const scale = isQuestion
-              ? (0.8 + 0.25 * Math.pow(proximity, 1.4))
+              ? (0.85 + 0.2 * Math.pow(proximity, 1.4))
               : (0.65 + 0.42 * Math.pow(proximity, 1.4));
             const opacity = isQuestion
               ? (isCenter ? 1 : Math.max(0, Math.pow(Math.max(0, 1 - absDist * 0.55), 2.2)))
@@ -65,13 +65,7 @@ export const RibbonSpinView: React.FC<SpinViewProps> = ({
                 style={{
                   transform: `translate3d(${translateX}px, 0, 0) scale(${scale})`,
                   opacity,
-                  color: `rgba(255, 255, 255, ${0.4 + 0.6 * proximity})`,
-                  textShadow: proximity > 0.25
-                    ? `0 0 ${Math.round(proximity * 32)}px rgba(255, 255, 255, 1.0), 0 0 ${Math.round(proximity * 65)}px rgba(168, 85, 247, 0.8), 0 0 ${Math.round(proximity * 90)}px rgba(56, 189, 248, 0.6)`
-                    : 'none',
-                  filter: proximity > 0.3
-                    ? `drop-shadow(0 0 ${Math.round(proximity * 24)}px rgba(255, 255, 255, 0.95))`
-                    : 'none'
+                  color: `rgba(255, 255, 255, ${0.45 + 0.55 * proximity})`
                 }}
               >
                 {isQuestion ? (
@@ -94,3 +88,4 @@ export const RibbonSpinView: React.FC<SpinViewProps> = ({
     </div>
   );
 };
+

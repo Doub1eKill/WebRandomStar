@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { SpinItem } from './types.ts';
 import {
   generateSpinReel,
@@ -35,12 +35,13 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
 }) => {
   const pool = items || allWords || DEFAULT_WORDS;
   const finalTarget = targetItem || targetWord || pool[0] || { id: 'default', word: 'ความฝัน', category: 'moon', enabled: true };
-  const [reel] = useState<SpinItem[]>(() =>
-    generateSpinReel(pool, finalTarget, 36, `carousel_${Date.now()}`)
+  const reel = useMemo(
+    () => generateSpinReel(pool, finalTarget, 36, `carousel_${Date.now()}`),
+    // Re-generate only when pool or finalTarget changes
+    [pool, finalTarget]
   );
 
   const [floatOffset, setFloatOffset] = useState(0);
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   const currentPosRef = useRef(0);
   const decelStartRef = useRef(0);
@@ -54,14 +55,13 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
     if (phase === 'pre-spin') {
       currentPosRef.current = 0;
       setFloatOffset(0);
-      setCurrentIndex(0);
       return;
     }
 
     const isQuestion = displayType === 'question';
     const runway = isQuestion ? 8 : 14;
-    const spinSpeed = isQuestion ? 0.0038 : 0.013; // items per ms (smooth readable glide for questions)
-    const decelDuration = isQuestion ? 2500 : 2100; // ms to smoothly land on target
+    const spinSpeed = isQuestion ? 0.0038 : 0.013; // items per ms
+    const decelDuration = isQuestion ? 2500 : 2100; // ms
 
     if (phase === 'word-decelerate') {
       const startPos = currentPosRef.current;
@@ -77,8 +77,6 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
         const currentFloat = elapsed * spinSpeed;
         currentPosRef.current = currentFloat;
         setFloatOffset(currentFloat);
-        const wrappedIndex = ((Math.round(currentFloat) % reel.length) + reel.length) % reel.length;
-        setCurrentIndex(wrappedIndex);
         animId = requestAnimationFrame(animate);
       } else if (phase === 'word-decelerate') {
         const progress = Math.min(1, elapsed / decelDuration);
@@ -89,15 +87,12 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
 
         currentPosRef.current = currentFloat;
         setFloatOffset(currentFloat);
-        const wrappedIndex = ((Math.round(currentFloat) % reel.length) + reel.length) % reel.length;
-        setCurrentIndex(wrappedIndex);
 
         if (progress < 1) {
           animId = requestAnimationFrame(animate);
         } else {
           currentPosRef.current = end;
           setFloatOffset(end);
-          setCurrentIndex(targetIdx);
           if (onSpinComplete) {
             onSpinComplete();
           }
@@ -107,7 +102,9 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
 
     animId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animId);
-  }, [phase, reel, onSpinComplete]);
+  }, [phase, reel, displayType, onSpinComplete]);
+
+  const currentIndex = ((Math.round(floatOffset) % reel.length) + reel.length) % reel.length;
 
   const renderActiveView = () => {
     switch (mode) {
@@ -167,3 +164,4 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
     </div>
   );
 };
+

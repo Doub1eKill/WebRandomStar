@@ -72,8 +72,6 @@ export class CrystalSystem {
       if (p.type === 'diamond') {
         // 4-point diamond crystal
         ctx.fillStyle = p.color;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 10;
         ctx.beginPath();
         ctx.moveTo(0, -p.size);
         ctx.lineTo(p.size * 0.5, 0);
@@ -84,8 +82,6 @@ export class CrystalSystem {
       } else if (p.type === 'star') {
         // 4-point star flare
         ctx.fillStyle = p.color;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 12;
         ctx.beginPath();
         ctx.moveTo(0, -p.size * 1.5);
         ctx.lineTo(p.size * 0.22, -p.size * 0.22);
@@ -98,10 +94,8 @@ export class CrystalSystem {
         ctx.closePath();
         ctx.fill();
       } else {
-        // Soft blurred celestial bokeh orb
+        // Soft celestial bokeh orb
         ctx.fillStyle = p.color;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 16;
         ctx.beginPath();
         ctx.arc(0, 0, p.size, 0, Math.PI * 2);
         ctx.fill();
@@ -112,3 +106,4 @@ export class CrystalSystem {
     ctx.restore();
   }
 }
+

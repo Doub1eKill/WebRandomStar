@@ -68,10 +68,7 @@ export const OrbitalSpinView: React.FC<SpinViewProps> = ({
                 transform: `translate3d(${posX}px, ${posY}px, 0) scale(${scale})`,
                 opacity,
                 zIndex,
-                color: `rgba(255, 255, 255, ${0.4 + 0.6 * depthProgress})`,
-                textShadow: depthProgress > 0.75
-                  ? `0 0 24px rgba(255, 255, 255, 0.95), 0 0 45px rgba(165, 243, 252, 0.5)`
-                  : 'none'
+                color: `rgba(255, 255, 255, ${0.4 + 0.6 * depthProgress})`
               }}
             >
               <span className="word-accent-star left" style={{ opacity: starOpacity }}>✦</span>
@@ -84,3 +81,4 @@ export const OrbitalSpinView: React.FC<SpinViewProps> = ({
     </div>
   );
 };
+

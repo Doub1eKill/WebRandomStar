@@ -9,7 +9,7 @@ export const Perspective3DSpinView: React.FC<SpinViewProps> = ({
   floatOffset = currentIndex,
   displayType = 'keyword'
 }) => {
-  const windowRange = 5;
+  const windowRange = 4;
   const radius = 175; // px cylinder radius
   const centerFloat = floatOffset;
   const baseCenterInt = Math.round(centerFloat);
@@ -40,8 +40,7 @@ export const Perspective3DSpinView: React.FC<SpinViewProps> = ({
           const absDist = Math.abs(relativeDistance);
           const proximity = Math.max(0, 1 - absDist * 0.85);
           const angleDeg = relativeDistance * (displayType === 'question' ? 30 : 34);
-          const blurPx = Math.min(6, absDist * 1.8);
-          const opacity = Math.max(0.1, Math.pow(Math.max(0, 1 - absDist * 0.24), 1.6));
+          const opacity = Math.max(0.12, Math.pow(Math.max(0, 1 - absDist * 0.24), 1.6));
           const starOpacity = Math.pow(proximity, 2.5);
           const text = getDisplayText(item);
 
@@ -51,14 +50,8 @@ export const Perspective3DSpinView: React.FC<SpinViewProps> = ({
               className={`cylinder-word-item ${isCenter ? 'active-center' : ''} ${displayType === 'question' ? 'is-question' : ''}`}
               style={{
                 transform: `rotateX(${-angleDeg}deg) translateZ(${radius}px)`,
-                filter: proximity > 0.3
-                  ? `drop-shadow(0 0 ${Math.round(proximity * 18)}px rgba(255, 255, 255, 0.85))`
-                  : `blur(${blurPx}px)`,
                 opacity,
-                color: `rgba(255, 255, 255, ${0.35 + 0.65 * proximity})`,
-                textShadow: proximity > 0.25
-                  ? `0 0 ${Math.round(proximity * 24)}px rgba(255, 255, 255, 0.95), 0 0 ${Math.round(proximity * 45)}px rgba(165, 243, 252, 0.5)`
-                  : 'none'
+                color: `rgba(255, 255, 255, ${0.4 + 0.6 * proximity})`
               }}
             >
               <span className="word-accent-star left" style={{ opacity: starOpacity }}>✦</span>
@@ -73,3 +66,4 @@ export const Perspective3DSpinView: React.FC<SpinViewProps> = ({
     </div>
   );
 };
+
