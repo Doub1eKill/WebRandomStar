@@ -10,6 +10,8 @@ import { WordCarousel } from './WordSpin/WordCarousel.tsx';
 import { WordLockEffect } from './WordSpin/WordLockEffect.tsx';
 import { TimerDisplay } from './TimerDisplay.tsx';
 
+import { loadQuestions, loadWords } from '../../utils/storage.ts';
+
 interface StageOverlayProps {
   session: SessionState;
   contestant?: Contestant;
@@ -37,6 +39,17 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
 
   const isCornerTimer = displaySettings.timerDisplayMode === 'corner';
   const isCenterTimer = displaySettings.timerDisplayMode === 'center';
+  const isKeywordMode = session.appearanceSettings?.quizMode === 'keyword';
+
+  const allQuestions = React.useMemo(() => {
+    const questions = loadQuestions().filter(q => q.enabled !== false);
+    const roundQuestions = questions.filter(q => q.round === session.selectedRound);
+    return roundQuestions.length > 0 ? roundQuestions : questions;
+  }, [session.selectedRound]);
+
+  const allWords = React.useMemo(() => {
+    return loadWords().filter(w => w.enabled !== false);
+  }, []);
 
   return (
     <div className="stage-overlay">
@@ -79,30 +92,41 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
         {isIdle && (
           <div className="stage-idle-hero animate-float">
             <div className="idle-nature-quote">
-              “ประกายแสงแห่งค่ำคืน... สู่การคัดสรรคำสำคัญแห่งเวทีประกวด”
+              {isKeywordMode
+                ? '“ประกายแสงแห่งค่ำคืน... สู่การคัดสรรคำสำคัญแห่งเวทีประกวด”'
+                : '“เสียงสะท้อนแห่งปัญญา... สู่การคัดเลือกคำถามแห่งเวทีประกวด”'}
             </div>
 
             <button className="btn-primary btn-royal-spin" onClick={onStart}>
-              <span className="btn-spin-text">SPIN WORD</span>
+              <span className="btn-spin-text">
+                {isKeywordMode ? 'SPIN WORD' : 'SPIN QUESTION'}
+              </span>
             </button>
           </div>
         )}
 
-        {/* Royal Word Spin Carousel Phase */}
+        {/* Royal Word/Question Spin Carousel Phase */}
         {isSpinning && (
           <div className="stage-spin-center-wrap animate-carousel-entrance">
             <WordCarousel
+              items={isKeywordMode ? allWords : allQuestions}
+              targetItem={isKeywordMode ? session.selectedWordItem : session.selectedQuestion}
               targetWord={session.selectedWordItem}
+              displayType={isKeywordMode ? 'keyword' : 'question'}
               phase={session.currentState as 'pre-spin' | 'word-spin' | 'word-decelerate'}
               mode={session.appearanceSettings?.spinMode || 'vertical'}
             />
           </div>
         )}
 
-        {/* Climax Word Lock Aura */}
+        {/* Climax Word/Question Lock Aura */}
         {isWordLocked && (
           <div className="stage-lock-center-wrap">
-            <WordLockEffect wordItem={session.selectedWordItem} />
+            <WordLockEffect
+              wordItem={session.selectedWordItem}
+              question={session.selectedQuestion}
+              quizMode={session.appearanceSettings?.quizMode || 'question'}
+            />
           </div>
         )}
 

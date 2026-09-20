@@ -1,19 +1,31 @@
 import React from 'react';
 import { KeywordItem } from '../../../types/word.ts';
+import { Question } from '../../../types/question.ts';
 import { CrystalTiaraIcon } from '../CrystalIcons.tsx';
 
 interface WordLockEffectProps {
   wordItem?: KeywordItem | null;
+  question?: Question | null;
+  quizMode?: 'keyword' | 'question';
   onRevealTrigger?: () => void;
 }
 
-export const WordLockEffect: React.FC<WordLockEffectProps> = ({ wordItem }) => {
-  const word = wordItem?.word || 'คำสำคัญประจำค่ำคืน';
-  const category = wordItem?.category || 'final';
-  const theme = wordItem?.englishTheme || 'Theme Keyword';
+export const WordLockEffect: React.FC<WordLockEffectProps> = ({
+  wordItem,
+  question,
+  quizMode
+}) => {
+  const isQuestionMode = quizMode ? quizMode === 'question' : Boolean(question);
+  const word = isQuestionMode
+    ? (question?.text || 'คำถามประจำรอบ')
+    : (wordItem?.word || 'คำสำคัญประจำค่ำคืน');
+  const category = (isQuestionMode ? question?.category : wordItem?.category) || 'general';
+  const theme = isQuestionMode
+    ? (question?.round ? `รอบ ${question.round}` : 'Question')
+    : (wordItem?.englishTheme || 'Theme Keyword');
 
   return (
-    <div className="word-lock-container">
+    <div className={`word-lock-container ${isQuestionMode ? 'is-question' : ''}`}>
       {/* Radiant Light Sweep Background */}
       <div className="lock-light-sweep" />
       <div
@@ -33,18 +45,23 @@ export const WordLockEffect: React.FC<WordLockEffectProps> = ({ wordItem }) => {
         <span className="spark s6">✦</span>
       </div>
 
-      <div className="lock-content-card glassmorphism">
+      <div className="lock-content-card glassmorphism" style={{ maxWidth: isQuestionMode ? '860px' : '720px' }}>
         <div className="lock-crown-seal">
           <CrystalTiaraIcon size={24} />
-          <span className="seal-text">✦ SELECTED KEYWORD ✦</span>
+          <span className="seal-text">
+            {isQuestionMode ? '✦ SELECTED QUESTION ✦' : '✦ SELECTED KEYWORD ✦'}
+          </span>
         </div>
 
-        <div className="lock-word-banner">
+        <div className="lock-word-banner" style={{ margin: isQuestionMode ? '16px 0' : '20px 0' }}>
           <span className="lock-bracket left">◇ ✦</span>
           <h2
             className="locked-word-title"
             style={{
               color: '#ffffff',
+              fontSize: isQuestionMode ? 'clamp(1.4rem, 2.3vw, 2.2rem)' : 'clamp(2.5rem, 4vw, 3.8rem)',
+              lineHeight: isQuestionMode ? 1.4 : 1.2,
+              fontWeight: 800,
               textShadow: '0 0 25px rgba(255, 255, 255, 0.95), 0 0 50px rgba(192, 132, 252, 0.5), 0 0 75px rgba(165, 243, 252, 0.35)'
             }}
           >
@@ -65,7 +82,7 @@ export const WordLockEffect: React.FC<WordLockEffectProps> = ({ wordItem }) => {
 
         <div className="lock-reveal-cue">
           <span className="cue-pulse" />
-          <span>กำลังเปิดเผยคำถาม...</span>
+          <span>{isQuestionMode ? 'กำลังเปิดเผยการ์ดคำถาม...' : 'กำลังเปิดเผยการ์ดคำสำคัญ...'}</span>
         </div>
       </div>
     </div>

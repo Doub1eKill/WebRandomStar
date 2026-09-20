@@ -81,6 +81,25 @@ describe('WordLockEffect Transitions', () => {
     expect(html).toContain('lock-radial-bloom');
     expect(html).toContain('วิสัยทัศน์');
     expect(html).toContain('lock-crown-seal');
+    expect(html).toContain('SELECTED KEYWORD');
+  });
+
+  it('renders question lock container with question title and SELECTED QUESTION seal when quizMode is question', async () => {
+    const React = (await import('react')).default;
+    const { renderToString } = await import('react-dom/server');
+    const { WordLockEffect } = await import('../src/components/Stage/WordSpin/WordLockEffect.tsx');
+
+    const html = renderToString(
+      React.createElement(WordLockEffect, {
+        question: { id: 'q1', text: 'คำถามข้อทดสอบใหญ่', category: 'final', round: 'final', enabled: true, tags: [], difficulty: 'hard' },
+        quizMode: 'question'
+      })
+    );
+
+    expect(html).toContain('word-lock-container');
+    expect(html).toContain('SELECTED QUESTION');
+    expect(html).toContain('คำถามข้อทดสอบใหญ่');
+    expect(html).toContain('กำลังเปิดเผยการ์ดคำถาม');
   });
 });
 
