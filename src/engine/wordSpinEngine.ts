@@ -1,26 +1,37 @@
-import { KeywordItem } from '../types/word.ts';
 import { createPRNG, randomChoice } from './prng.ts';
 
 /**
- * Generates an ordered sequence of words for the Word Carousel reel,
- * guaranteeing that the last word in the sequence is the targetWord.
+ * Extracts display text from any spin item (Question, KeywordItem, or custom string wrapper)
  */
-export function generateSpinReel(
-  allWords: KeywordItem[],
-  targetWord: KeywordItem,
+export function getDisplayText(item: any): string {
+  if (!item) return '';
+  if (typeof item === 'string') return item;
+  if (typeof item.text === 'string') return item.text;
+  if (typeof item.word === 'string') return item.word;
+  if (typeof item.displayText === 'string') return item.displayText;
+  return String(item);
+}
+
+/**
+ * Generates an ordered sequence of items for the Carousel reel,
+ * guaranteeing that the last item in the sequence is the targetItem.
+ */
+export function generateSpinReel<T extends { id: string; enabled?: boolean }>(
+  allItems: T[],
+  targetItem: T,
   reelLength: number = 30,
   seed?: string
-): KeywordItem[] {
-  const enabledWords = allWords.filter(w => w.enabled);
-  const pool = enabledWords.length > 0 ? enabledWords : [targetWord];
+): T[] {
+  const enabledItems = allItems.filter(w => w.enabled !== false);
+  const pool = enabledItems.length > 0 ? enabledItems : [targetItem];
   const prng = createPRNG(seed || `reel_seed_${Date.now()}`);
 
-  const reel: KeywordItem[] = [];
+  const reel: T[] = [];
   for (let i = 0; i < reelLength - 1; i++) {
     reel.push(randomChoice(pool, prng));
   }
-  // Ensure the final element is the predetermined target word
-  reel.push(targetWord);
+  // Ensure the final element is the predetermined target item
+  reel.push(targetItem);
   return reel;
 }
 

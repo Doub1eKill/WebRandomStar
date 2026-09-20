@@ -4,7 +4,8 @@ import {
   calculateDecelerationEasing,
   calculateQuinticDecel,
   calculateContinuousDecelTarget,
-  getWordAtProgress
+  getWordAtProgress,
+  getDisplayText
 } from '../src/engine/wordSpinEngine.ts';
 import { DEFAULT_WORDS } from '../src/data/defaultWords.ts';
 
@@ -60,6 +61,27 @@ describe('Word Spin Engine', () => {
 
     const lastWord = getWordAtProgress(reel, 1);
     expect(lastWord).toEqual(targetWord);
+  });
+
+  it('generates a question spin reel where the final item is the target question', () => {
+    const sampleQuestions = [
+      { id: 'Q1', text: 'คำถามข้อที่ 1', category: 'general', difficulty: 'easy', round: 'intro', enabled: true },
+      { id: 'Q2', text: 'คำถามข้อที่ 2', category: 'general', difficulty: 'easy', round: 'intro', enabled: true },
+      { id: 'Q3', text: 'คำถามข้อที่ 3', category: 'general', difficulty: 'easy', round: 'intro', enabled: true }
+    ];
+    const target = sampleQuestions[1];
+    const reel = generateSpinReel(sampleQuestions, target, 20, 'test_seed_q');
+    expect(reel.length).toBe(20);
+    expect(reel[19].id).toBe('Q2');
+    expect(reel[19].text).toBe('คำถามข้อที่ 2');
+  });
+
+  it('correctly extracts display text with getDisplayText', () => {
+    expect(getDisplayText({ text: 'คำถามสำคัญ' })).toBe('คำถามสำคัญ');
+    expect(getDisplayText({ word: 'อนาคต' })).toBe('อนาคต');
+    expect(getDisplayText({ displayText: 'ข้อความกำหนดเอง' })).toBe('ข้อความกำหนดเอง');
+    expect(getDisplayText('ข้อความตรง')).toBe('ข้อความตรง');
+    expect(getDisplayText(null)).toBe('');
   });
 });
 
