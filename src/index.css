@@ -432,6 +432,7 @@ select option {
   position: absolute;
   top: 10px;
   left: 0;
+  z-index: 20;
 }
 
 .contestant-badge {
@@ -441,7 +442,14 @@ select option {
   align-items: center;
   gap: 16px;
   padding: 12px 20px;
-  max-width: 380px;
+  min-width: 320px;
+  max-width: 440px;
+  background: linear-gradient(135deg, rgba(18, 13, 49, 0.88) 0%, rgba(11, 16, 43, 0.92) 50%, rgba(37, 18, 77, 0.88) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  border-radius: 18px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 14px 40px -6px rgba(0, 0, 0, 0.8), 0 0 24px -2px rgba(245, 158, 11, 0.2), 0 0 16px 0 rgba(124, 58, 237, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.35), inset 0 0 18px rgba(245, 158, 11, 0.08);
 }
 
 .contestant-badge-cinematic {
@@ -457,33 +465,66 @@ select option {
   left: 0;
   width: 60%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
-  animation: badge-shimmer-sweep 3s infinite var(--ease-soft-out);
+  background: linear-gradient(90deg, transparent, rgba(254, 240, 138, 0.25), rgba(165, 243, 252, 0.2), transparent);
+  animation: badge-shimmer-sweep 3.5s infinite var(--ease-soft-out);
+  pointer-events: none;
+}
+
+.badge-corner-glow {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.35) 0%, transparent 70%);
   pointer-events: none;
 }
 
 .contestant-number-badge {
-  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+  background: linear-gradient(145deg, #fef08a 0%, #f59e0b 35%, #d97706 70%, #92400e 100%);
   padding: 8px 14px;
+  min-width: 66px;
   border-radius: 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+  justify-content: center;
+  border: 1px solid rgba(254, 240, 138, 0.85);
+  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -2px 4px rgba(0, 0, 0, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.num-badge-shine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 100%);
+  border-radius: 13px 13px 0 0;
+  pointer-events: none;
 }
 
 .num-prefix {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
+  font-weight: 700;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.9);
-  letter-spacing: 0.05em;
+  color: #451a03;
+  letter-spacing: 0.1em;
+  line-height: 1.1;
+  text-shadow: 0 0.5px 0 rgba(255, 255, 255, 0.4);
 }
 
 .num-val {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #ffffff;
-  line-height: 1.1;
+  font-size: 1.65rem;
+  font-weight: 900;
+  font-family: var(--font-display, 'Cinzel'), 'Prompt', serif;
+  color: #1e1035;
+  line-height: 1;
+  margin-top: 1px;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5), 0 -0.5px 0.5px rgba(0, 0, 0, 0.2);
 }
 
 .contestant-info {
@@ -491,25 +532,62 @@ select option {
   flex-direction: column;
 }
 
+.contestant-title-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 9px;
+  margin-bottom: 2px;
+  background: linear-gradient(135deg, rgba(253, 224, 71, 0.18) 0%, rgba(245, 158, 11, 0.1) 100%);
+  border: 1px solid rgba(253, 224, 71, 0.45);
+  border-radius: 9999px;
+  width: fit-content;
+  box-shadow: 0 0 10px rgba(253, 224, 71, 0.18);
+}
+
+.contestant-title-tag .title-star-icon {
+  font-size: 0.65rem;
+  color: #fde047;
+  text-shadow: 0 0 8px rgba(253, 224, 71, 0.8);
+}
+
 .contestant-title-tag span {
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
   color: #fde047;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 8px rgba(253, 224, 71, 0.5);
 }
 
 .contestant-name {
-  font-size: 1.15rem;
-  font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 700;
   color: #ffffff;
-  margin: 2px 0;
+  font-family: var(--font-display), 'Prompt', sans-serif;
+  margin: 1px 0 3px 0;
+  letter-spacing: 0.02em;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 60%, #e2e8f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
 }
 
 .contestant-faculty {
   font-size: 0.85rem;
-  color: var(--text-secondary);
+  color: #cbd5e1;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.92;
 }
+
+.contestant-faculty .faculty-bullet {
+  font-size: 0.6rem;
+  color: rgba(192, 132, 252, 0.8);
+}
+
 
 /* Idle State Hero */
 .stage-idle-hero {
