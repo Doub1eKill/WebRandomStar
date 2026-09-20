@@ -77,9 +77,9 @@ export function calculateQuinticDecel(t: number): number {
 }
 
 /**
- * Gets the active visible word item based on progress ratio (0 to 1)
+ * Gets the active visible item based on progress ratio (0 to 1)
  */
-export function getWordAtProgress(reel: KeywordItem[], progress: number): KeywordItem {
+export function getWordAtProgress<T>(reel: T[], progress: number): T {
   if (reel.length === 0) {
     throw new Error('Reel cannot be empty');
   }
