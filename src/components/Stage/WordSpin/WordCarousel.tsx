@@ -58,15 +58,17 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
       return;
     }
 
+    const isQuestion = displayType === 'question';
+    const runway = isQuestion ? 8 : 14;
+    const spinSpeed = isQuestion ? 0.0038 : 0.013; // items per ms (smooth readable glide for questions)
+    const decelDuration = isQuestion ? 2500 : 2100; // ms to smoothly land on target
+
     if (phase === 'word-decelerate') {
       const startPos = currentPosRef.current;
-      const endPos = calculateContinuousDecelTarget(startPos, reel.length, targetIdx, 14);
+      const endPos = calculateContinuousDecelTarget(startPos, reel.length, targetIdx, runway);
       decelStartRef.current = startPos;
       decelEndRef.current = endPos;
     }
-
-    const spinSpeed = 0.013; // items per ms (smooth high-speed cruise)
-    const decelDuration = 2100; // ms to smoothly land on target
 
     const animate = (now: number) => {
       const elapsed = now - startTime;
