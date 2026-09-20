@@ -5,6 +5,7 @@ import { DEFAULT_STAGE_DISPLAY_SETTINGS } from '../../types/timer.ts';
 import { StageHeader } from './StageHeader.tsx';
 import { ContestantBadge } from './ContestantBadge.tsx';
 import { QuestionCard } from './QuestionCard.tsx';
+import { KeywordShowcaseCard } from './KeywordShowcaseCard.tsx';
 import { WordCarousel } from './WordSpin/WordCarousel.tsx';
 import { WordLockEffect } from './WordSpin/WordLockEffect.tsx';
 import { TimerDisplay } from './TimerDisplay.tsx';
@@ -133,14 +134,24 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
               </div>
             )}
 
-            {/* Pure Minimalist Question Card */}
-            <QuestionCard
-              question={session.selectedQuestion}
-              isAnswered={session.currentState === 'answered'}
-              fontSizeScale={displaySettings.questionFontSize}
-              compact={isCenterTimer}
-            />
+            {/* Pure Minimalist Question Card or Royal Keyword Showcase Card */}
+            {session.appearanceSettings?.quizMode === 'keyword' ? (
+              <KeywordShowcaseCard
+                keyword={session.selectedKeyword || session.selectedWordItem?.word}
+                category={session.selectedCategory || session.selectedWordItem?.category}
+                isAnswered={session.currentState === 'answered'}
+                compact={isCenterTimer}
+              />
+            ) : (
+              <QuestionCard
+                question={session.selectedQuestion}
+                isAnswered={session.currentState === 'answered'}
+                fontSizeScale={displaySettings.questionFontSize}
+                compact={isCenterTimer}
+              />
+            )}
           </div>
+
         )}
       </div>
     </div>

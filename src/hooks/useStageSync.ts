@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { SessionState, SyncMessage } from '../types/session.ts';
-import { QuestionCategory } from '../types/question.ts';
+import { Question, QuestionCategory } from '../types/question.ts';
 import { KeywordItem } from '../types/word.ts';
 import { TimerSoundSettings, StageDisplaySettings } from '../types/timer.ts';
 import { AppearanceSettings } from '../types/appearance.ts';
@@ -198,7 +198,8 @@ export function useStageSync(role: 'stage' | 'controller') {
 
     const timer = setTimeout(() => {
       const showWordLock = session.appearanceSettings?.showWordLockPhase ?? true;
-      const next = getNextState(session.currentState, showWordLock);
+      const quizMode = session.appearanceSettings?.quizMode || 'question';
+      const next = getNextState(session.currentState, showWordLock, quizMode);
 
       // If transitioning to question, check if autoStartTimerOnReveal is enabled
       const willAutoStart = next === 'question' && session.stageDisplaySettings?.autoStartTimerOnReveal;
@@ -372,7 +373,17 @@ export function useStageSync(role: 'stage' | 'controller') {
   }, [session, broadcastState]);
 
   const markAnswered = useCallback(() => {
-    if (!session.selectedQuestion) return;
+    const isKeywordMode = session.appearanceSettings?.quizMode === 'keyword';
+    const activeQuestion: Question | undefined = session.selectedQuestion || (isKeywordMode && session.selectedKeyword ? {
+      id: `KW_${session.selectedWordItem?.id || Date.now()}`,
+      text: session.selectedKeyword,
+      category: (session.selectedCategory || session.selectedWordItem?.category || 'general') as any,
+      difficulty: 'medium',
+      round: session.selectedRound,
+      enabled: true
+    } : undefined);
+
+    if (!activeQuestion) return;
 
     const timeUsed = calculateTimeUsedMs(session.timerState.durationMs, session.timerState.remainingMs);
     const contestants = loadContestants();
@@ -383,7 +394,7 @@ export function useStageSync(role: 'stage' | 'controller') {
       sessionId: session.sessionId,
       round: session.selectedRound,
       contestant: activeContestant,
-      question: session.selectedQuestion,
+      question: activeQuestion,
       seed: session.seed,
       timerConfiguredMs: session.timerState.durationMs,
       timerUsedMs: timeUsed,
@@ -391,7 +402,10 @@ export function useStageSync(role: 'stage' | 'controller') {
     });
     appendHistoryRecord(record);
 
-    const updatedUsed = Array.from(new Set([...session.usedQuestionIds, session.selectedQuestion.id]));
+    const updatedUsed = session.selectedQuestion
+      ? Array.from(new Set([...session.usedQuestionIds, session.selectedQuestion.id]))
+      : session.usedQuestionIds;
+
     broadcastState({
       ...session,
       currentState: 'answered',
@@ -402,6 +416,7 @@ export function useStageSync(role: 'stage' | 'controller') {
       }
     }, 'STAGE_DONE');
   }, [session, broadcastState]);
+
 
   const resetStage = useCallback(() => {
     const safeDuration = session.timerState.durationMs || DEFAULT_TIMER_DURATION_MS;

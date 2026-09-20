@@ -116,7 +116,27 @@ describe('ContestantBadge & Timer Transitions', () => {
     expect(html).toContain('stage-timer-hud');
     expect(html).toContain('animate-timer-float-in');
   });
+
+  it('renders KeywordShowcaseCard for Competition Flow Mode (keyword mode)', async () => {
+    const React = (await import('react')).default;
+    const { renderToString } = await import('react-dom/server');
+    const { KeywordShowcaseCard } = await import('../src/components/Stage/KeywordShowcaseCard.tsx');
+
+    const html = renderToString(
+      React.createElement(KeywordShowcaseCard, {
+        keyword: 'นวัตกรรมเพื่อสังคม',
+        category: 'Innovation',
+        isAnswered: false
+      })
+    );
+
+    expect(html).toContain('keyword-showcase-card');
+    expect(html).toContain('นวัตกรรมเพื่อสังคม');
+    expect(html).toContain('Innovation');
+    expect(html).toContain('คำสำคัญประจำรอบการประกวด');
+  });
 });
+
 
 
 

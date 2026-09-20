@@ -59,4 +59,23 @@ describe('AppearanceSettingsPanel Font Selector', () => {
     expect(html).toContain('เปิดใช้งาน (ON)');
     expect(html).toContain('ข้ามช่วงนี้ (OFF)');
   });
+
+  it('renders competition flow mode selector cards in AppearanceSettingsPanel', () => {
+    const html = renderToString(
+      React.createElement(AppearanceSettingsPanel, {
+        settings: {
+          ...DEFAULT_APPEARANCE_SETTINGS,
+          quizMode: 'keyword'
+        },
+        onChange: () => {}
+      })
+    );
+
+    expect(html).toContain('รูปแบบการแข่งขันบนเวที (Competition Flow Mode)');
+    expect(html).toContain('โหมดสุ่มคลังคำถาม');
+    expect(html).toContain('โหมดสุ่มคำสำคัญ');
+    expect(html).toContain('data-testid="quiz-mode-keyword"');
+    expect(html).toContain('data-testid="quiz-mode-question"');
+    expect(html).toContain('สุนทรพจน์ / คีย์เวิร์ด');
+  });
 });

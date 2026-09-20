@@ -136,6 +136,61 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
         </div>
 
         <div className="drawer-body">
+          {/* Section 0: Competition Flow Mode Quick Toggle */}
+          {onSetAppearanceSettings && (
+            <div className="control-section">
+              <label className="section-label">🏆 รูปแบบการแข่งขัน (Competition Mode)</label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                <button
+                  type="button"
+                  data-testid="drawer-mode-question"
+                  className="btn-secondary"
+                  style={{
+                    padding: '8px',
+                    fontSize: '0.8rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    background: (session.appearanceSettings?.quizMode !== 'keyword') ? 'rgba(99, 102, 241, 0.3)' : 'rgba(255,255,255,0.05)',
+                    borderColor: (session.appearanceSettings?.quizMode !== 'keyword') ? '#6366f1' : 'rgba(255,255,255,0.1)',
+                    color: (session.appearanceSettings?.quizMode !== 'keyword') ? '#a5b4fc' : '#cbd5e1'
+                  }}
+                  onClick={() => {
+                    const current = session.appearanceSettings || DEFAULT_APPEARANCE_SETTINGS;
+                    onSetAppearanceSettings({ ...current, quizMode: 'question' });
+                  }}
+                >
+                  <span>📜</span>
+                  <span>คลังคำถาม (Question)</span>
+                </button>
+                <button
+                  type="button"
+                  data-testid="drawer-mode-keyword"
+                  className="btn-secondary"
+                  style={{
+                    padding: '8px',
+                    fontSize: '0.8rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    background: session.appearanceSettings?.quizMode === 'keyword' ? 'rgba(192, 132, 252, 0.3)' : 'rgba(255,255,255,0.05)',
+                    borderColor: session.appearanceSettings?.quizMode === 'keyword' ? '#c084fc' : 'rgba(255,255,255,0.1)',
+                    color: session.appearanceSettings?.quizMode === 'keyword' ? '#d8b4fe' : '#cbd5e1'
+                  }}
+                  onClick={() => {
+                    const current = session.appearanceSettings || DEFAULT_APPEARANCE_SETTINGS;
+                    onSetAppearanceSettings({ ...current, quizMode: 'keyword' });
+                  }}
+                >
+                  <span>🏷️</span>
+                  <span>คำสำคัญ (Keyword)</span>
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Section 1: Contestant & Round */}
           <div className="control-section">
             <label className="section-label">👤 ผู้เข้าแข่งขันปัจจุบัน</label>

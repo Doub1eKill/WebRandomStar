@@ -39,16 +39,31 @@ export const STAGE_DURATION: Record<AppState, number> = {
 /**
  * Returns the next logical state in the sequence
  */
-export function getNextState(currentState: AppState, showWordLockPhase: boolean = true): AppState {
-  if (currentState === 'word-decelerate' && !showWordLockPhase) {
-    return 'question-reveal';
+export function getNextState(
+  currentState: AppState,
+  showWordLockPhase: boolean = true,
+  quizMode: 'keyword' | 'question' = 'question'
+): AppState {
+  if (quizMode === 'keyword') {
+    if (currentState === 'word-lock') {
+      return 'question';
+    }
+    if (currentState === 'word-decelerate' && !showWordLockPhase) {
+      return 'question';
+    }
+  } else {
+    if (currentState === 'word-decelerate' && !showWordLockPhase) {
+      return 'question-reveal';
+    }
   }
+
   const currentIndex = STAGE_SEQUENCE.indexOf(currentState);
   if (currentIndex === -1 || currentIndex === STAGE_SEQUENCE.length - 1) {
     return 'idle';
   }
   return STAGE_SEQUENCE[currentIndex + 1];
 }
+
 
 /**
  * Check whether moving from one state to another is allowed

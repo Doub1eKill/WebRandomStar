@@ -70,4 +70,15 @@ describe('Version 3.0 Stage State Machine (Royal Word Spin)', () => {
     const totalDuration = activeStages.reduce((acc, st) => acc + STAGE_DURATION[st], 0);
     expect(totalDuration).toBe(7800);
   });
+
+  it('supports Competition Flow Modes: keyword mode transitions directly from lock to question/answering', () => {
+    // In keyword mode, word-lock transitions directly to question (showcasing keyword + timer)
+    expect(getNextState('word-lock', true, 'keyword')).toBe('question');
+    expect(getNextState('word-decelerate', false, 'keyword')).toBe('question');
+
+    // In question bank mode, word-lock proceeds to question-reveal
+    expect(getNextState('word-lock', true, 'question')).toBe('question-reveal');
+    expect(getNextState('word-decelerate', false, 'question')).toBe('question-reveal');
+  });
 });
+

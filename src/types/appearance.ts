@@ -22,6 +22,8 @@ export type FontPresetId = 'cinzel' | 'amoria' | 'verve' | 'outfit' | 'custom';
 
 export type WordSpinStopMode = 'auto' | 'manual';
 
+export type CompetitionFlowMode = 'keyword' | 'question';
+
 export interface CustomFontConfig {
   name: string;
   fontFamily: string;
@@ -31,6 +33,7 @@ export interface CustomFontConfig {
 export interface AppearanceSettings {
   backgroundMode?: BackgroundMode; // 'cosmic-canvas' | 'aero-shards'
   themeName: 'luxury-winter-pageant' | 'ethereal-gold' | 'custom';
+  quizMode?: CompetitionFlowMode; // 'keyword' | 'question' (default: 'question')
   spinMode: WordSpinMode;
   spinStopMode: WordSpinStopMode;
   spinDurationMs: number;
@@ -50,6 +53,7 @@ export interface AppearanceSettings {
 export const DEFAULT_APPEARANCE_SETTINGS: AppearanceSettings = {
   backgroundMode: 'cosmic-canvas',
   themeName: 'luxury-winter-pageant',
+  quizMode: 'question',
   spinMode: 'vertical',
   spinStopMode: 'auto',
   spinDurationMs: 4500,
@@ -63,3 +67,4 @@ export const DEFAULT_APPEARANCE_SETTINGS: AppearanceSettings = {
   showWordLockPhase: true,
   fontPreset: 'cinzel'
 };
+

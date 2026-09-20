@@ -396,7 +396,66 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
               }}
             >
               <div style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: '1rem', color: '#e2e8f0' }}>
-                👤 ข้อมูลผู้เข้าแข่งขันที่อยู่บนเวที
+                👤 ข้อมูลผู้เข้าแข่งขันและการแข่งขัน
+              </div>
+
+              {/* Competition Flow Mode Quick Toggle */}
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.4rem' }}>
+                  🏆 รูปแบบขั้นตอนการแข่งขัน (Competition Mode)
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                  <button
+                    type="button"
+                    data-testid="controlcenter-mode-question"
+                    onClick={() => {
+                      const cur = session.appearanceSettings || DEFAULT_APPEARANCE_SETTINGS;
+                      onSetAppearanceSettings?.({ ...cur, quizMode: 'question' });
+                    }}
+                    style={{
+                      padding: '0.6rem 0.75rem',
+                      background: (session.appearanceSettings?.quizMode !== 'keyword') ? 'rgba(99, 102, 241, 0.3)' : 'rgba(15, 23, 42, 0.6)',
+                      border: (session.appearanceSettings?.quizMode !== 'keyword') ? '1px solid #6366f1' : '1px solid rgba(255, 255, 255, 0.15)',
+                      borderRadius: '8px',
+                      color: (session.appearanceSettings?.quizMode !== 'keyword') ? '#a5b4fc' : '#94a3b8',
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.4rem'
+                    }}
+                  >
+                    <span>📜</span>
+                    <span>คลังคำถาม</span>
+                  </button>
+                  <button
+                    type="button"
+                    data-testid="controlcenter-mode-keyword"
+                    onClick={() => {
+                      const cur = session.appearanceSettings || DEFAULT_APPEARANCE_SETTINGS;
+                      onSetAppearanceSettings?.({ ...cur, quizMode: 'keyword' });
+                    }}
+                    style={{
+                      padding: '0.6rem 0.75rem',
+                      background: session.appearanceSettings?.quizMode === 'keyword' ? 'rgba(192, 132, 252, 0.3)' : 'rgba(15, 23, 42, 0.6)',
+                      border: session.appearanceSettings?.quizMode === 'keyword' ? '1px solid #c084fc' : '1px solid rgba(255, 255, 255, 0.15)',
+                      borderRadius: '8px',
+                      color: session.appearanceSettings?.quizMode === 'keyword' ? '#d8b4fe' : '#94a3b8',
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.4rem'
+                    }}
+                  >
+                    <span>🏷️</span>
+                    <span>คำสำคัญ</span>
+                  </button>
+                </div>
               </div>
 
               <div style={{ marginBottom: '1rem' }}>
