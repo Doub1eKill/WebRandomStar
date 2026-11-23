@@ -104,3 +104,4 @@ src/
 ├── data/                          # ฐานข้อมูลคำถาม 42 ข้อ และรายชื่อผู้เข้าแข่งขันเริ่มต้น
 └── utils/                         # Multi-Namespace LocalStorage & JSON Schema Validation
 ```
+"# WebRandomStar" 
