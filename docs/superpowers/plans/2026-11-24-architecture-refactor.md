@@ -281,13 +281,14 @@ store ◀──────────SNAPSHOT (เมื่อ state เปล
 - [x] JS ที่จอเวทีโหลดตอนเปิด: 416 KB (gzip 126 KB) เพิ่มขึ้น ~15 KB gzip จาก react-router ส่วนหน้าควบคุมแยกเป็น chunk ละ 2–30 KB
 
 ### Phase 6: ย้ายโฟลเดอร์ และแยกไฟล์ใหญ่ (A2, A5, A7, A8, A9, PF9)
-- [ ] A7: ตั้ง alias `@/` แล้วย้ายไฟล์ด้วย `git mv` เพื่อเก็บ history และแก้ import ในเทสต์ (ตอนนี้มีราว 28 path)
-- [ ] `AeroShards.tsx` → `shaders/` (บรรทัด 208–872), `presets.ts` (39–72), `motion.ts` (73–207), `renderGraph.ts` (873–1012), `AeroShards.tsx` (เฉพาะคอมโพเนนต์)
-- [ ] A8: `stateTargets.ts` + `stateSounds.ts` แทน `switch` ใน StageCanvas
-- [ ] `MusicPanel`, `TimerPanel`, `AppearanceSettings`, `QuestionBankDashboard` → แยกเป็นคอมโพเนนต์ย่อยตาม section
-- [ ] PF9: `audio/audioContext.ts` ใช้ร่วมกัน และแยก `audioEngine` ออกเป็น recipe ทีละไฟล์ โดยคง API `audioEngine.*` เดิม
-- [ ] A5: ลบ `any` ที่เหลือ
-- [ ] A9: ลบ props ที่ไม่ได้ใช้
+- [x] A7: ตั้ง alias `@/` (tsconfig `paths` + Vite `resolve.alias`) แล้วย้าย 68 ไฟล์ด้วย `git mv` ตามข้อ 3.2 ใช้สคริปต์แก้ import ทั้ง src และ tests (114 ไฟล์) โดย resolve จากตำแหน่งเดิมของไฟล์ ผล build ได้ไฟล์เหมือนเดิมทุกไบต์ (`index.html` ชี้ไป `src/app/main.tsx`; ไฟล์ facade เปลี่ยนชื่อเป็น `storage/storageApi.ts`)
+- [x] `AeroShards.tsx` 1,785 → 730 บรรทัด แยกเป็น `presets.ts`, `motion.ts`, `shaders.ts`, `renderGraph.ts` และ `settings.ts` (แปลง props เป็น settings แบบมี type) **ส่วนที่เหลือเป็น effect WebGPU ก้อนเดียวที่แชร์ state ผ่าน closure** ถ้าแยกต่อต้องออกแบบใหม่ ซึ่งเสี่ยงและไม่มีเทสต์ครอบคลุม WebGPU จึงหยุดไว้ที่นี่ ทดสอบในเบราว์เซอร์จริงแล้ว (รองรับ WebGPU) แสดงผลได้ปกติ
+- [x] A8: `stateTargets.ts` (STATE_TARGETS, LEGACY_TARGET_PATCHES, STATE_SOUNDS) แทน `switch` ใน StageCanvas โดยคงค่าเดิมทุกตัว (StageCanvas 403 → 264 บรรทัด) ไม่ได้แยกไฟล์ `stateSounds.ts` เพราะตารางเสียงสั้น จึงรวมไว้ในไฟล์เดียวกัน
+- [x] `MusicPanel`, `TimerPanel`, `AppearanceSettings`, `QuestionBankDashboard` แยกเป็น `use<Panel>Model` (ย้าย state/handler มาทั้งก้อน) + `sections/*` (JSX เดิมทุกตัวอักษร) ด้วยสคริปต์ มีเทสต์ `panels.visual` ที่บันทึก snapshot จากตัวก่อนแยกไว้ 12 สถานะ และยังตรงกันทั้งหมด (section ที่ใหญ่สุด 270 บรรทัด)
+- [x] PF9: `audio/audioContext.ts` ทำให้ sound engine กับ music player ใช้ AudioContext ตัวเดียวกัน เสียงแบบไม่มี state 10 ตัวย้ายไป `audio/recipes.ts` โดยคง API `audioEngine.*` เดิม (เสียงฝนที่มี state และ `playTickSound` ยังอยู่ใน engine) เพิ่มเทสต์ที่ใช้ AudioContext จำลองเพื่อรันเสียงทุกตัวจริง
+- [x] A5: ไม่มี `any` เหลือในโค้ดแล้ว (ใช้ type `Gpu`/`Frame`/`FramePass` ของ vgpu, `PointerMotion`/`Ripple` ฯลฯ) และแก้ warning `exhaustive-deps` 2 จุดที่เหลือด้วย ตอนนี้ **lint ได้ 0 errors และ 0 warnings**
+- [x] A9: ลบ props ที่ไม่ได้ใช้ (StageCanvas/StageBackground `onLeafLanded`/`onQuestionReady`, StageOverlay `onNext`/`onStopSpin`/`onOpenControlDrawer`, QuestionCard `onNext`)
+- ไฟล์ที่ยังเกิน ~400 บรรทัด: `AeroShards.tsx` 730 (เหตุผลข้างบน), `shaders.ts` 666 (WGSL ได้รับยกเว้น), `ControlDrawer` 577 และ `LivePage` 466 (รวม UI ใน Phase 7), `musicPlayerEngine` 535 (class เดียว), `LeafSystem` 420 (dead code ลบใน Phase 9)
 
 ### Phase 7: Styles (A6, PF11)
 - [ ] แยก `index.css` เป็น `tokens.css`, `base.css`, `components.css` แล้วย้าย CSS ของแต่ละฟีเจอร์ไปไว้ข้างคอมโพเนนต์ (Vite จะตัด CSS ไปตาม lazy chunk)
