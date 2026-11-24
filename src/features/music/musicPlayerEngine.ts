@@ -34,9 +34,9 @@ export class MusicPlayerEngine {
   private ctx: AudioContext | null = null;
   private masterGain: GainNode | null = null;
 
-  private synthInterval: any = null;
+  private synthInterval: { osc: OscillatorNode; gain: GainNode } | null = null;
   private listeners: Set<MusicStateListener> = new Set();
-  private timeUpdateInterval: any = null;
+  private timeUpdateInterval: ReturnType<typeof setInterval> | null = null;
   /** B3: one fade per slot, so cancelling can finish a fade-out instead of orphaning it. */
   private fades = new Map<HTMLAudioElement, { timer: ReturnType<typeof setInterval>; kind: 'in' | 'out' }>();
 

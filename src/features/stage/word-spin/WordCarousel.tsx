@@ -35,7 +35,12 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
   onSpinComplete
 }) => {
   const pool = items || allWords || DEFAULT_WORDS;
-  const finalTarget = targetItem || targetWord || pool[0] || { id: 'default', word: 'ความฝัน', category: 'moon', enabled: true };
+  // Memoised so the fallback object keeps its identity between renders (the reel below
+  // regenerates whenever finalTarget changes identity).
+  const finalTarget = useMemo(
+    () => targetItem || targetWord || pool[0] || { id: 'default', word: 'ความฝัน', category: 'moon', enabled: true },
+    [targetItem, targetWord, pool]
+  );
   const reel = useMemo(
     () => generateSpinReel(pool, finalTarget, 36, `carousel_${Date.now()}`),
     // Re-generate only when pool or finalTarget changes

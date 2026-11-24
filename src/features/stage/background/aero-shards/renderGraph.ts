@@ -1,5 +1,6 @@
 /** GPU render graph (targets, bloom chain, pipelines) for AeroShards (Phase 6, A2). */
 import { draw, effect, sampler, target, uniforms } from 'vgpu';
+import type { Gpu } from 'vgpu';
 import { BLOOM_SCALES, MATERIALS, MATERIAL_PRESETS } from './presets.ts';
 import { SHARD_SHADER, BLOOM_SHADER, BLOOM_BLUR_SHADER, FINISH_SHADER } from './shaders.ts';
 import { mixColor } from './motion.ts';
@@ -11,7 +12,7 @@ export const parseColor = (value: string | undefined, fallback: string): number[
 };
 
 export const resolveQuality = (canvas: HTMLCanvasElement) => {
-  const memory = (navigator as any).deviceMemory || 6;
+  const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory || 6;
   const cores = navigator.hardwareConcurrency || 6;
   const cssPixels = Math.max(1, canvas.clientWidth * canvas.clientHeight);
   if (canvas.clientWidth < 640 || memory <= 4 || cores <= 4) return 'low';
@@ -30,7 +31,7 @@ export const resolveBloomSize = (size: readonly [number, number] | [number, numb
   return [Math.max(1, Math.round(size[0] * bloomScale)), Math.max(1, Math.round(size[1] * bloomScale))];
 };
 
-export const createRenderGraph = (gpu: any, outputSize: readonly [number, number] | [number, number], bloomSize: [number, number] = resolveBloomSize(outputSize)) => {
+export const createRenderGraph = (gpu: Gpu, outputSize: readonly [number, number] | [number, number], bloomSize: [number, number] = resolveBloomSize(outputSize)) => {
   const viewParams = uniforms(gpu, {
     viewport: [1, 0.0132, 1, 0],
     shape: [1, 1, 0.36, 0],
@@ -133,7 +134,9 @@ export const createRenderGraph = (gpu: any, outputSize: readonly [number, number
   };
 };
 
-export const prepareRenderGraph = async (graph: any, outputFormat: string) => {
+export type RenderGraph = ReturnType<typeof createRenderGraph>;
+
+export const prepareRenderGraph = async (graph: RenderGraph, outputFormat: string) => {
   await Promise.all([
     graph.shardDraw.compile({ colors: [outputFormat] }),
     graph.shardDraw.compile(graph.sceneTarget),

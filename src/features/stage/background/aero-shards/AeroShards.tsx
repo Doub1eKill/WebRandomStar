@@ -1,10 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { frame, init, surface } from 'vgpu';
+import type { Frame, FramePass, Gpu } from 'vgpu';
 import './AeroShards.css';
 import { advanceFormation, advanceFrameDeadline, advanceHold, advancePointer, advanceRipples, createFormation, createHold, createRipples, mixColor, resetPointerMotion, resolveFrameInterval, resolvePathLength, startRipple } from './motion.ts';
 import { FRAME_STATES, INTERACTIONS, QUALITY_PRESETS, RUNTIME_QUALITY } from './presets.ts';
 import { resolveAeroSettings, AeroSettings } from './settings.ts';
 import { createRenderGraph, prepareRenderGraph, resolveBloomSize, resolveDpr, resolveQuality } from './renderGraph.ts';
+
+/** navigator.gpu is not in TypeScript's DOM lib yet; only the parts used here (A5). */
+type WebGpuNavigator = Navigator & { gpu?: { getPreferredCanvasFormat(): string } };
+type FrameState = (typeof FRAME_STATES)[keyof typeof FRAME_STATES];
 
 export interface AeroShardsProps {
   backgroundColor?: string;
@@ -110,7 +115,7 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
     if (!canvas || !root) return;
 
     // Check WebGPU browser support
-    if (typeof navigator === 'undefined' || !(navigator as any).gpu) {
+    if (typeof navigator === 'undefined' || !(navigator as WebGpuNavigator).gpu) {
       onErrorRef.current?.(new Error('WebGPU is not supported in this browser environment'));
       return;
     }
@@ -121,7 +126,7 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
 
     let disposed = false;
     let runtimeFailed = false;
-    let gpu: any;
+    let gpu: Gpu | undefined;
     let animationFrameId = 0;
     let timeoutId = 0;
     let unsubscribeResize: (() => void) | undefined;
@@ -143,7 +148,7 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
     };
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-    const reportFailure = (error: any) => {
+    const reportFailure = (error: unknown) => {
       if (disposed || runtimeFailed) return;
       runtimeFailed = true;
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
@@ -307,12 +312,12 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
       try {
         setReady(false);
         const resolvedQuality = resolveQuality(canvas);
-        const preset = (QUALITY_PRESETS as any)[resolvedQuality] || QUALITY_PRESETS.medium;
+        const preset = QUALITY_PRESETS[resolvedQuality as keyof typeof QUALITY_PRESETS] || QUALITY_PRESETS.medium;
         gpu = await init({ powerPreference: 'low-power' });
         if (disposed) return gpu.dispose();
         unsubscribeGpuError = gpu.onError(reportFailure);
 
-        const outputFormat = (navigator as any).gpu.getPreferredCanvasFormat();
+        const outputFormat = (navigator as WebGpuNavigator).gpu!.getPreferredCanvasFormat();
         const output = surface(gpu, canvas, {
           dpr: resolveDpr(preset, canvas),
           autoResize: false,
@@ -406,7 +411,7 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
         });
         resizeObserver.observe(canvas);
 
-        const setRuntimeQuality = (nextLevel: number, now: number, frameState: any) => {
+        const setRuntimeQuality = (nextLevel: number, now: number, frameState: FrameState) => {
           const clampedLevel = Math.max(0, Math.min(RUNTIME_QUALITY.length - 1, nextLevel));
           if (clampedLevel === runtimeQualityLevel) return;
           runtimeQualityLevel = clampedLevel;
@@ -422,7 +427,7 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
           }
         };
 
-        const renderFrame = (currentFrame: any) => {
+        const renderFrame = (currentFrame: Frame) => {
           const settings = settingsRef.current;
           const frozen = settings.paused || reduceMotion.matches || settings.speed <= 0.0001;
           const elapsed =
@@ -541,25 +546,25 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
             settings.chromaticAberration > 0.000001;
 
           if (!postEnabled) {
-            currentFrame.pass({ target: output, clear: settings.background }, (pass: any) => {
+            currentFrame.pass({ target: output, clear: settings.background }, (pass: FramePass) => {
               pass.draw(graph.shardDraw, { instances: activeCount });
             });
           } else {
-            currentFrame.pass({ target: graph.sceneTarget, clear: settings.background }, (pass: any) => {
+            currentFrame.pass({ target: graph.sceneTarget, clear: settings.background }, (pass: FramePass) => {
               pass.draw(graph.shardDraw, { instances: activeCount });
             });
             if (settings.bloom > 0.0001) {
-              currentFrame.pass({ target: graph.bloomTarget, clear: [0, 0, 0, 0] }, (pass: any) => {
+              currentFrame.pass({ target: graph.bloomTarget, clear: [0, 0, 0, 0] }, (pass: FramePass) => {
                 pass.draw(graph.bloomEffect);
               });
-              currentFrame.pass({ target: graph.bloomScratchTarget, clear: [0, 0, 0, 0] }, (pass: any) => {
+              currentFrame.pass({ target: graph.bloomScratchTarget, clear: [0, 0, 0, 0] }, (pass: FramePass) => {
                 pass.draw(graph.bloomBlurX);
               });
-              currentFrame.pass({ target: graph.bloomTarget, clear: [0, 0, 0, 0] }, (pass: any) => {
+              currentFrame.pass({ target: graph.bloomTarget, clear: [0, 0, 0, 0] }, (pass: FramePass) => {
                 pass.draw(graph.bloomBlurY);
               });
             }
-            currentFrame.pass({ target: output, clear: settings.background }, (pass: any) => {
+            currentFrame.pass({ target: output, clear: settings.background }, (pass: FramePass) => {
               pass.draw(graph.finishEffect);
             });
           }
@@ -632,7 +637,9 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
           renderTimestamp = timestamp;
           const encodeStart = performance.now();
           try {
-            frame(gpu, renderFrame);
+            // Set before the loop starts; if it was torn down, frame() throws and the catch
+            // reports it exactly as before (the variable used to be `any`).
+            frame(gpu!, renderFrame);
           } catch (error) {
             reportFailure(error);
             return;

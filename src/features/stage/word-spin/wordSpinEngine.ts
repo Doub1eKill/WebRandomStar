@@ -3,12 +3,13 @@ import { createPRNG, randomChoice } from '@/shared/lib/prng.ts';
 /**
  * Extracts display text from any spin item (Question, KeywordItem, or custom string wrapper)
  */
-export function getDisplayText(item: any): string {
+export function getDisplayText(item: unknown): string {
   if (!item) return '';
   if (typeof item === 'string') return item;
-  if (typeof item.text === 'string') return item.text;
-  if (typeof item.word === 'string') return item.word;
-  if (typeof item.displayText === 'string') return item.displayText;
+  const fields = item as { text?: unknown; word?: unknown; displayText?: unknown };
+  if (typeof fields.text === 'string') return fields.text;
+  if (typeof fields.word === 'string') return fields.word;
+  if (typeof fields.displayText === 'string') return fields.displayText;
   return String(item);
 }
 

@@ -1,6 +1,24 @@
 /** Formation, hold, pointer and ripple motion helpers for AeroShards (Phase 6, A2). */
 import { RIPPLE_SPEED, RIPPLE_TAIL } from './presets.ts';
 
+/** Smoothed pointer state (A5: typed, was `any`). */
+export interface PointerMotion {
+  raw: number[];
+  position: number[];
+  velocity: number[];
+  active: number;
+  presence: number;
+  presenceVelocity: number;
+  initialized: boolean;
+}
+
+export interface Ripple {
+  origin: number[];
+  age: number;
+  duration: number;
+  strength: number;
+}
+
 export const resolveFrameInterval = (frameState: { interval: number; continuous: boolean }, refreshInterval: number) =>
   frameState.continuous ? Math.max(frameState.interval, refreshInterval) : frameState.interval;
 
@@ -74,14 +92,14 @@ export const advanceHold = (hold: { pointerId: number | null; elapsed: number; a
   if (hold.amount > 0) hold.phase += elapsed * (0.35 + hold.amount * 0.5);
 };
 
-export const resetPointerMotion = (pointer: any) => {
+export const resetPointerMotion = (pointer: PointerMotion) => {
   pointer.velocity ??= [0, 0];
   pointer.velocity[0] = 0;
   pointer.velocity[1] = 0;
   pointer.presenceVelocity = 0;
 };
 
-export const advancePointer = (pointer: any, elapsed: number) => {
+export const advancePointer = (pointer: PointerMotion, elapsed: number) => {
   if (elapsed <= 0) return;
   const response = 26;
   const decay = Math.exp(-response * elapsed);
@@ -108,7 +126,7 @@ export const advancePointer = (pointer: any, elapsed: number) => {
 
 export const createRipples = () => Array.from({ length: 4 }, () => ({ origin: [0.5, 0.5], age: 0, duration: 0, strength: 0 }));
 
-export const startRipple = (ripples: any[], origin: number[], aspect: number, strength = 1) => {
+export const startRipple = (ripples: Ripple[], origin: number[], aspect: number, strength = 1) => {
   const ripple = ripples.find(value => value.strength === 0);
   if (!ripple) return false;
   ripple.origin = [...origin];
@@ -120,7 +138,7 @@ export const startRipple = (ripples: any[], origin: number[], aspect: number, st
   return true;
 };
 
-export const advanceRipples = (ripples: any[], elapsed: number, disabled: boolean) => {
+export const advanceRipples = (ripples: Ripple[], elapsed: number, disabled: boolean) => {
   for (const ripple of ripples) {
     if (disabled) ripple.strength = 0;
     if (!ripple.strength) continue;

@@ -75,10 +75,13 @@ export const StagePage: React.FC = () => {
   // Hook to automatically play stage soundtrack per phase
   useMusicStageRouter(session.currentState, musicState, library.tracks, musicPlayer);
 
-  // Apply typography (Cinzel, Amoria, Verve, Outfit, Custom) dynamically
+  // Apply typography (Cinzel, Amoria, Verve, Outfit, Custom) dynamically.
+  // applyTypography only reads these two fields, so they are the effect's exact inputs.
+  const fontPreset = session.appearanceSettings?.fontPreset;
+  const customFont = session.appearanceSettings?.customFont;
   useEffect(() => {
-    applyTypography(session.appearanceSettings);
-  }, [session.appearanceSettings?.fontPreset, session.appearanceSettings?.customFont]);
+    applyTypography({ fontPreset, customFont });
+  }, [fontPreset, customFont]);
 
   // B8: live data, updated when the remote window edits it.
   const questions = useQuestions();

@@ -116,7 +116,7 @@ export function useMusicPanelModel(props: MusicPanelProps) {
     onAddTrack(newTrack);
 
     if (urlPhase !== 'none') {
-      onAssignPhaseTrack(urlPhase as any, newTrack.id);
+      onAssignPhaseTrack(urlPhase, newTrack.id);
     }
 
     setUrlTitle('');

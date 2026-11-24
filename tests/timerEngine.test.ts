@@ -87,8 +87,8 @@ describe('Timer Engine Pure Calculations', () => {
 
   it('should defensively handle NaN, undefined and null without crashing or producing NaN:NaN', () => {
     expect(formatTimerDisplay(NaN)).toBe('00:00');
-    expect(formatTimerDisplay(undefined as any)).toBe('00:00');
-    expect(formatTimerDisplay(null as any)).toBe('00:00');
+    expect(formatTimerDisplay(undefined as unknown as number)).toBe('00:00');
+    expect(formatTimerDisplay(null as unknown as number)).toBe('00:00');
     expect(formatTimerDisplay(-5000)).toBe('00:00');
 
     expect(calculateRemainingMs(NaN, NaN)).toBeGreaterThan(0);
