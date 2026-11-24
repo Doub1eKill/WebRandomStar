@@ -34,8 +34,10 @@
 | fix CI | `4cae1fe` | snapshot ปัดทศนิยม 10 หลัก เพราะ CI ใช้ Node 22 แต่เครื่อง dev ใช้ Node 24 |
 | 6 | `b11c62b` → `1eef097` (4 commits) | ย้าย 68 ไฟล์ไปโครงสร้างตามฟีเจอร์ + alias `@/` (build ได้ไฟล์เหมือนเดิมทุกไบต์), แยก AeroShards (1,785 → 730 บรรทัด), StageCanvas ใช้ตาราง (A8), AudioContext ตัวเดียว + `recipes.ts` (PF9), แยก 4 panel ใหญ่เป็น model + sections (snapshot ตรงกัน 12 สถานะ), ไม่มี `any` เหลือ (A5), ลบ props ที่ไม่ได้ใช้ (A9) |
 
+| B16 (แทรกก่อน Phase 7) | (ดู git log) | แก้เสียงค้าง: เพลง preset ที่เคยลากโน้ตตัวเดียวยาวตลอด phase เปลี่ยนเป็น arpeggio เบา ๆ (`features/music/presetArpeggio.ts`) ทุกโน้ตมีเวลา stop และเมื่อเลิก mute หรือ volume กลับจาก 0 เพลงจะเล่นต่อ ยืนยันในเบราว์เซอร์แล้วว่าหลัง stop ไม่มีโน้ตใหม่และไม่มี oscillator ค้าง |
+
 **ตัวเลขล่าสุด:**
-- เทสต์ผ่าน **270/270** (42 ไฟล์), **lint 0 errors / 0 warnings**
+- เทสต์ผ่าน **277/277** (43 ไฟล์), **lint 0 errors / 0 warnings**
 - JS ที่จอเวทีโหลดตอนเปิด **416 KB (gzip 126 KB)** เทียบกับ baseline 751 KB (gzip 208 KB)
 - Draft PR: [Doub1eKill/WebRandomStar#1](https://github.com/Doub1eKill/WebRandomStar/pull/1) เปิด Auto-fix ไว้แล้ว
 
@@ -47,7 +49,7 @@
 
 ## 3. [Current Task & Blockers]
 
-- **สถานะ:** Phase 6 เสร็จ commit และ push แล้ว **รอผู้ใช้อนุมัติก่อนเริ่ม Phase 7**
+- **สถานะ:** Phase 6 เสร็จ และแก้ B16 (เสียงค้าง) แล้ว **ผู้ใช้อนุมัติ Phase 7 แล้ว** ขอบเขต = "Targeted" และให้คงหน้าตาทั้ง drawer และหน้า Live ไว้ (ใช้ component เดียวกันแต่มี variant ของแต่ละแบบ)
 - **Phase ถัดไป (7): Styles (A6, PF11)**
   - แยก `src/index.css` (~3,400 บรรทัด) เป็น `shared/styles/tokens.css`, `base.css`, `components.css` และ CSS ข้างคอมโพเนนต์
   - สร้าง `shared/ui/*` (Button, Toggle, Slider, Tabs, Card, Modal, …) แล้วแทน inline style ราว 560 จุด
@@ -157,9 +159,10 @@ export const STORAGE_KEYS = {
 2) docs/superpowers/plans/2026-11-24-architecture-refactor.md (Phase 0–6 ติ๊กครบแล้ว)
 3) docs/superpowers/plans/2026-11-24-baseline.md
 
-สถานะ: Phase 6 เสร็จแล้ว รอผู้ใช้อนุมัติ ห้ามเริ่ม Phase 7 เอง ให้ถามผู้ใช้ก่อน
-
-เมื่อผู้ใช้สั่งให้ทำต่อ ให้ทำ Phase 7 (Styles: A6, PF11 และรวม UI ของ ControlDrawer กับ LivePage) ตามแผน
+สถานะ: Phase 6 และ B16 (เสียงค้าง) เสร็จแล้ว ผู้ใช้อนุมัติ Phase 7 แล้ว
+ให้ทำ Phase 7 (Styles: A6, PF11 และรวม UI ของ ControlDrawer กับ LivePage) ตามแผน
+ขอบเขต "Targeted": แยก index.css ตามลำดับ cascade, ใช้ CSS variables กับสีที่ซ้ำกัน, สร้าง shared/ui สำหรับ pattern ที่ซ้ำ,
+การ์ดของ drawer กับหน้า Live ใช้ component เดียวกันแต่มี variant ที่คงหน้าตาเดิมของแต่ละฝั่ง และแก้ปุ่มที่เบียดกันในหน้าตรวจสอบการนำเข้า
 กติกา:
 - ทำทีละ Phase และหยุดรออนุมัติ
 - หน้าตาต้องเหมือนเดิม: เทียบ screenshot ก่อน/หลังในเบราว์เซอร์จริงทุกหน้า (เวทีทุก state + #/control ทุกหน้า)

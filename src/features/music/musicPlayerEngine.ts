@@ -1,5 +1,6 @@
 import { MusicTrack, MusicState, DEFAULT_MUSIC_STATE } from '@/types/music.ts';
 import { getSharedAudioContext } from '@/features/audio/audioContext.ts';
+import { startArpeggio, patternFor, ArpeggioHandle } from './presetArpeggio.ts';
 
 export interface PlayOptions {
   fadeInDuration?: number; // seconds
@@ -34,7 +35,8 @@ export class MusicPlayerEngine {
   private ctx: AudioContext | null = null;
   private masterGain: GainNode | null = null;
 
-  private synthInterval: { osc: OscillatorNode; gain: GainNode } | null = null;
+  /** Arpeggio for preset tracks (they have no audio file). */
+  private synth: ArpeggioHandle | null = null;
   private listeners: Set<MusicStateListener> = new Set();
   private timeUpdateInterval: ReturnType<typeof setInterval> | null = null;
   /** B3: one fade per slot, so cancelling can finish a fade-out instead of orphaning it. */
@@ -185,6 +187,8 @@ export class MusicPlayerEngine {
         // ignore
       }
     }
+    // A preset started at volume 0 never began its arpeggio; start it once volume comes back.
+    this.resumePresetIfSilent();
     this.notifyState();
   }
 
@@ -212,8 +216,11 @@ export class MusicPlayerEngine {
       }
     }
 
-    if (muted && this.synthInterval) {
+    if (muted && this.synth) {
       this.stopSynthesis(true);
+    } else if (!muted) {
+      // Unmuting used to leave a preset silent while the player still reported "playing".
+      this.resumePresetIfSilent();
     }
 
     this.notifyState();
@@ -483,51 +490,32 @@ export class MusicPlayerEngine {
 
     if (!this.ctx || !this.masterGain || this.isMuted || this.volume === 0) return;
 
-    // Light ethereal synthesized arpeggio based on track phase
+    // Presets have no audio file: play a soft looping arpeggio per phase. It replaces a single
+    // oscillator that held one note for the whole phase and sounded like a stuck tone.
     try {
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-
-      const freqMap: Record<string, number> = {
-        'preset-ambient-luxury': 329.63, // E4
-        'preset-spin-tension': 220.00,    // A3
-        'preset-question-focus': 261.63,  // C4
-        'preset-fanfare-royal': 523.25    // C5
-      };
-
-      osc.frequency.setValueAtTime(freqMap[track.id] || 440, now);
-      osc.type = 'triangle';
-
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.08 * (this.isMuted ? 0 : this.volume), now + 0.8);
-
-      osc.connect(gain);
-      gain.connect(this.masterGain);
-      osc.start(now);
-
-      this.synthInterval = { osc, gain };
+      this.synth = startArpeggio(this.ctx, this.masterGain, patternFor(track.id), () => (this.isMuted ? 0 : this.volume));
     } catch {
       // ignore
     }
   }
 
-  private stopSynthesis(immediate: boolean = false): void {
-    if (this.synthInterval) {
+  /** A preset is "playing" but silent because it was muted or at volume 0: bring it back. */
+  private resumePresetIfSilent(): void {
+    const track = this.currentTrack;
+    if (this.isPlaying && track && !track.url && !this.synth && !this.isMuted && this.volume > 0) {
+      this.ensureContext();
+      this.startPresetSynthesis(track);
+    }
+  }
+
+  private stopSynthesis(_immediate: boolean = false): void {
+    if (this.synth) {
       try {
-        const now = this.ctx?.currentTime || 0;
-        if (immediate || this.isMuted || this.volume === 0) {
-          this.synthInterval.gain?.gain?.cancelScheduledValues(now);
-          this.synthInterval.gain?.gain?.setValueAtTime(0, now);
-          this.synthInterval.osc?.stop(now + 0.02);
-        } else {
-          this.synthInterval.gain?.gain?.linearRampToValueAtTime(0, now + 0.5);
-          this.synthInterval.osc?.stop(now + 0.6);
-        }
+        this.synth.stop();
       } catch {
         // ignore
       }
-      this.synthInterval = null;
+      this.synth = null;
     }
   }
 }
