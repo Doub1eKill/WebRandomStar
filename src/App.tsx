@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useStageSync } from './hooks/useStageSync.ts';
 import { useMusicStageRouter } from './hooks/useMusicStageRouter.ts';
 import { applyTypography } from './utils/typography.ts';
@@ -14,7 +14,8 @@ import { KeywordItem } from './types/word.ts';
 import { MusicTrack, PRESET_MUSIC_TRACKS } from './types/music.ts';
 import { musicPlayer } from './engine/musicPlayerEngine.ts';
 import { useMusicPlayerState } from './hooks/useMusicPlayerState.ts';
-import { getAllTracksFromStorage, loadMusicStateFromStorage, saveTrackToStorage, deleteTrackFromStorage } from './storage/musicStorage.ts';
+import { getAllTracksFromStorage, saveTrackToStorage, deleteTrackFromStorage } from './storage/musicStorage.ts';
+import { hydratePlayerFromStorage, startMusicHost } from './features/music/musicRemote.ts';
 import { StageBackground } from './components/Stage/StageBackground.tsx';
 import { StageOverlay } from './components/Stage/StageOverlay.tsx';
 import { KeyboardController } from './components/Control/KeyboardController.tsx';
@@ -32,8 +33,22 @@ export const App: React.FC = () => {
   // Check if opened as secondary remote controller window
   const isControllerMode = typeof window !== 'undefined' && window.location.search.includes('mode=controller');
 
+  // Phase 3: the remote window gets only the operator view (one session mirror, no stage
+  // music router); the stage window is the session host.
+  if (isControllerMode) {
+    return (
+      <Suspense fallback={null}>
+        <RemoteController />
+      </Suspense>
+    );
+  }
+  return <StageApp />;
+};
+
+const StageApp: React.FC = () => {
   const {
     session,
+    isPeerConnected: isRemoteConnected,
     startJourney,
     stopWordSpin,
     pauseJourney,
@@ -51,15 +66,31 @@ export const App: React.FC = () => {
     adjustTimer,
     setTimerSoundSettings,
     setStageDisplaySettings
-  } = useStageSync(isControllerMode ? 'controller' : 'stage');
+  } = useStageSync('stage');
+
+  // B15: restore the saved phase mapping / auto-sync into the player once, before anything plays.
+  useState(() => {
+    hydratePlayerFromStorage(musicPlayer);
+    return true;
+  });
 
   // Music State & Tracks for Stage Auto-Sync
   const [tracks, setTracks] = useState<MusicTrack[]>(() => PRESET_MUSIC_TRACKS);
+  const tracksRef = useRef(tracks);
+  tracksRef.current = tracks;
   // PF5: the stage never shows playback progress, so ignore progress-only updates.
-  const musicState = useMusicPlayerState({ initial: loadMusicStateFromStorage });
+  const musicState = useMusicPlayerState();
 
   useEffect(() => {
     getAllTracksFromStorage().then(setTracks);
+    // B14: the remote window's music tab sends its commands here; the stage plays and persists.
+    return startMusicHost(musicPlayer, {
+      getTracks: () => tracksRef.current,
+      reloadTracks: () => getAllTracksFromStorage().then(list => {
+        setTracks(list);
+        return list;
+      })
+    });
   }, []);
 
   // Hook to automatically play stage soundtrack per phase
@@ -91,15 +122,6 @@ export const App: React.FC = () => {
     setContestants(updated);
     saveContestants(updated);
   };
-
-  // If in Remote Controller window, render dedicated operator view
-  if (isControllerMode) {
-    return (
-      <Suspense fallback={null}>
-        <RemoteController />
-      </Suspense>
-    );
-  }
 
   const activeContestant = contestants.find(c => c.id === session.selectedContestantId);
 
@@ -211,8 +233,9 @@ export const App: React.FC = () => {
         </Suspense>
       )}
 
-      {/* Operator notices (replaces alert(), B10/B11) */}
-      <OperatorToasts />
+      {/* Operator notices (replaces alert(), B10/B11). Hidden on the projector while a remote
+          controller window is connected; the operator sees them there instead. */}
+      <OperatorToasts hidden={isRemoteConnected} />
 
       {/* 4. Global Keyboard Navigation */}
       <KeyboardController

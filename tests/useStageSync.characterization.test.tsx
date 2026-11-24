@@ -343,7 +343,7 @@ describe('useStageSync: restore after reload', () => {
 });
 
 describe('useStageSync: multi-window (stage + remote controller window)', () => {
-  // The real controller window mounts useStageSync twice (App.tsx:48 and RemoteController.tsx:42).
+  // Before Phase 3 the controller window mounted useStageSync twice; two mirrors must stay harmless.
   function openStageAndController() {
     const stage = mountSync('stage');
     const controllerApp = mountSync('controller');
@@ -358,7 +358,7 @@ describe('useStageSync: multi-window (stage + remote controller window)', () => 
     expect(state(stage).selectedRound).toBe('final');
   });
 
-  it('[known bug B1 → Phase 3] the finish sound plays more than once when a controller window is open', async () => {
+  it('B1: the finish sound plays exactly once with a controller window open (Phase 0 measured 3)', async () => {
     const finish = vi.spyOn(audioEngine, 'playTimerFinish');
     const { controllerPanel } = openStageAndController();
     act(() => controllerPanel.result.current.startTimer(2_000));
@@ -367,17 +367,60 @@ describe('useStageSync: multi-window (stage + remote controller window)', () => 
       advance(100);
       await flushChannel();
     }
-    // Measured in Phase 0: 3 plays (stage interval + one TIMER_FINISH from each controller hook).
-    expect(finish.mock.calls.length).toBe(3); // Phase 3 must change this to exactly 1
+    expect(finish).toHaveBeenCalledTimes(1);
   });
 
-  it('[redundant → Phase 3] every snapshot received by the stage re-applies mute on the music player', async () => {
+  it('B1: phases advance exactly once and the controller mirrors them', async () => {
+    const { stage, controllerPanel } = openStageAndController();
+    const seen: string[] = [];
+    act(() => controllerPanel.result.current.startJourney());
+    await flushChannel();
+    for (let i = 0; i < 80; i++) {
+      advance(100);
+      await flushChannel();
+      const now = state(stage).currentState;
+      if (seen[seen.length - 1] !== now) seen.push(now);
+    }
+    expect(seen).toEqual(['pre-spin', 'word-spin', 'word-decelerate', 'word-lock', 'question-reveal', 'question']);
+    expect(state(controllerPanel).currentState).toBe('question');
+    expect(state(controllerPanel).selectedQuestion?.id).toBe(state(stage).selectedQuestion?.id);
+  });
+
+  it('receiving a command does not re-apply audio settings on the stage (was on every snapshot)', async () => {
     const { stage, controllerPanel } = openStageAndController();
     const setMuted = vi.spyOn(musicPlayer, 'setMuted');
     act(() => controllerPanel.result.current.setRound('final'));
     await flushChannel();
     expect(state(stage).selectedRound).toBe('final');
-    // Since Phase 2 (B3) setMuted() no longer cancels fades, so this is harmless; Phase 3 removes the redundant calls.
-    expect(setMuted).toHaveBeenCalled();
+    expect(setMuted).not.toHaveBeenCalled();
+
+    act(() => controllerPanel.result.current.toggleMute());
+    await flushChannel();
+    expect(setMuted).toHaveBeenCalledWith(true);
+  });
+
+  it('both sides know whether the other is connected', async () => {
+    const { stage, controllerPanel } = openStageAndController();
+    await flushChannel();
+    expect(controllerPanel.result.current.isPeerConnected).toBe(true);
+    expect(stage.result.current.isPeerConnected).toBe(true);
+
+    // Close the controller windows: the stage notices after the heartbeat timeout.
+    mounted.splice(1).forEach(h => h.unmount());
+    for (let i = 0; i < 4; i++) {
+      advance(1000);
+      await flushChannel();
+    }
+    expect(stage.result.current.isPeerConnected).toBe(false);
+  });
+
+  it('Q2: without a stage window, controller commands do nothing and it reports "not connected"', async () => {
+    const controller = mountSync('controller');
+    act(() => controller.result.current.startJourney());
+    await flushChannel();
+    advance(3000);
+    await flushChannel();
+    expect(state(controller).currentState).toBe('idle');
+    expect(controller.result.current.isPeerConnected).toBe(false);
   });
 });

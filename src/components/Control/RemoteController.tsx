@@ -20,6 +20,7 @@ import { HistoryRecord } from '../../types/history.ts';
 export const RemoteController: React.FC = () => {
   const {
     session,
+    isPeerConnected: isStageConnected,
     startJourney,
     stopWordSpin,
     pauseJourney,
@@ -98,6 +99,12 @@ export const RemoteController: React.FC = () => {
   return (
     <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
       <OperatorToasts />
+      {/* Q2: the stage window is the only host; without it commands have no effect. */}
+      {!isStageConnected && (
+        <div className="stage-disconnected-banner" role="alert">
+          ⚠ ไม่พบหน้าจอเวทีที่เปิดอยู่ — คำสั่งจะไม่มีผลจนกว่าจะเปิดหน้าเวที (หน้าเว็บหลักแบบไม่มี ?mode=controller) ในเบราว์เซอร์เดียวกัน
+        </div>
+      )}
       <ControlCenter
         session={session}
         questions={questions}

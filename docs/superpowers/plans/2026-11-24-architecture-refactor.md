@@ -246,14 +246,17 @@ store ◀──────────SNAPSHOT (เมื่อ state เปล
 - [x] S8 (ส่วนแรก): registry ของ object URL ต่อเพลงใน `musicStorage` ใช้ URL ที่สร้างไว้อ่านความยาวเพลงเป็น URL ของเพลงเลย, โหลดซ้ำในหน้าเดิมไม่สร้างใหม่ และ revoke ตอนลบ/รีเซ็ต
 
 ### Phase 3: Session core (B1, A1, A5, S7, D5)
-- [ ] ย้ายตรรกะของ 20 action ใน `useStageSync` มาเป็น `sessionReducer` + `commands.ts` แบบบรรทัดต่อบรรทัด แล้วเทสต์ทุก command
-- [ ] `sessionStore` + `useSession(selector)`
-- [ ] `sessionChannel`: `COMMAND`, `SNAPSHOT`, `HELLO`/heartbeat (แสดงสถานะ "เวทีเชื่อมต่ออยู่") และ validate ทุก message
-- [ ] `stageHost` ทำงานเฉพาะจอเวที: auto-advance, ตรวจหมดเวลา, tick/finish sound ให้ดังครั้งเดียว
-- [ ] เลิกเรียก hook ซ้ำในหน้าต่างรีโมต
-- [ ] D5: ลบ `SyncMessageType` เดิมที่ไม่ได้ใช้ แล้วแทนด้วย protocol ใหม่
-- [ ] คง `useStageSync` ไว้เป็น wrapper ชั่วคราวที่คืน API เดิม (ลบทิ้งใน Phase 9)
-- [ ] เทสต์ sync สองหน้าต่างด้วย `BroadcastChannel` จำลอง เพื่อยืนยันว่าเสียง finish เล่นครั้งเดียว และไม่มีการเลื่อน state ซ้ำ
+- [x] ย้ายตรรกะของ 20 action ใน `useStageSync` มาเป็น `features/session/sessionReducer.ts` + `commands.ts` แบบบรรทัดต่อบรรทัด โดย side effect (บันทึก storage, history, เสียง, notice) ถูกคืนออกมาเป็นข้อมูล แล้วให้ host เป็นคนทำ มีเทสต์ reducer โดยตรง และทุก command ยังผ่าน characterization tests เดิม
+- [x] `sessionStore` (external store สำหรับ `useSyncExternalStore`) ส่วน **`useSession(selector)` ยังไม่ได้ทำ** จะทำใน Phase 5 ตอนที่หน้าต่าง ๆ เลิกใช้ `useStageSync` แล้วอ่าน store ตรง
+- [x] `sessionChannel` (v3): `COMMAND`, `SNAPSHOT`, `HELLO`, `HEARTBEAT` (รีโมตขึ้นแถบเตือน "ไม่พบหน้าจอเวที") และ validate ทุก message (S7) โดยไม่รับคำสั่งภายในของ scheduler จาก channel
+- [x] `features/session/runtime.ts`: stage host ทำงานเฉพาะจอเวที (auto-advance, ตรวจหมดเวลา, tick/finish sound ดังครั้งเดียว, บันทึก session) และ controller mirror ที่ส่งได้แค่คำสั่ง
+- [x] เลิกเรียก hook ซ้ำในหน้าต่างรีโมต (`App` แยกเป็น `RemoteController` กับ `StageApp`)
+- [x] D5: ลบ `SyncMessage`/`SyncMessageType` แล้วแทนด้วย protocol ใหม่
+- [x] คง `useStageSync` ไว้เป็น wrapper ที่คืน API เดิม และเพิ่ม `isPeerConnected` (ลบทิ้งใน Phase 9)
+- [x] เทสต์ sync สองหน้าต่าง: เสียง finish ดัง 1 ครั้ง (เดิม 3), เลื่อน phase ครั้งเดียวตามลำดับ, รับคำสั่งแล้วไม่ตั้งค่าเสียงซ้ำ, สถานะการเชื่อมต่อทั้งสองฝั่ง และกรณีไม่มีจอเวที
+- [x] B14: แท็บเพลงในรีโมตส่งคำสั่งไปให้จอเวทีเล่น (`features/music/musicRemote.ts`) และแสดงสถานะเพลงจริงของจอเวที ส่วนการเพิ่ม/ลบเพลงจะบอกจอเวทีให้โหลดคลังใหม่
+- [x] B15: จอเวทีโหลดการตั้งเพลงของแต่ละ phase จาก storage ตอนเปิด และบันทึกจากจอเวทีที่เดียว
+- [x] notice (B10) ซ่อนบนจอโปรเจกเตอร์เมื่อมีรีโมตเชื่อมต่ออยู่ และเตือนผู้ควบคุมเมื่อหน้าเวทีถูกซ่อนอยู่ในแท็บพื้นหลัง เพราะเบราว์เซอร์จะหน่วง timer ของ host
 
 ### Phase 4: Data repositories และความปลอดภัยของข้อมูล (B7, B8, PF12, S1–S4, S6)
 - [ ] `shared/lib/createRepository<T>({ key, defaults, schemaVersion, validate, migrate })` → `load/save/subscribe` พร้อม cache ในหน่วยความจำ และรับ `storage` event จากหน้าต่างอื่น

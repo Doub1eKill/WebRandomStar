@@ -8,7 +8,7 @@ const MAX_VISIBLE = 3;
  * B10/B11: small, non-blocking notices for the operator in the corner of the screen.
  * Replaces window.alert(), which blocked the whole stage until someone clicked OK.
  */
-export const OperatorToasts: React.FC = () => {
+export const OperatorToasts: React.FC<{ hidden?: boolean }> = ({ hidden = false }) => {
   const [notices, setNotices] = useState<OperatorNotice[]>([]);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export const OperatorToasts: React.FC = () => {
     };
   }, []);
 
-  if (notices.length === 0) return null;
+  if (hidden || notices.length === 0) return null;
 
   return (
     <div className="operator-toasts" role="status" aria-live="polite">

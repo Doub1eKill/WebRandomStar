@@ -3863,3 +3863,18 @@ select option {
 .operator-toast-close:hover {
   opacity: 1;
 }
+
+/* Remote controller: shown while no stage window is connected (Phase 3, Q2) */
+.stage-disconnected-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10001;
+  padding: 8px 16px;
+  background: rgba(127, 29, 29, 0.95);
+  border-bottom: 1px solid rgba(244, 63, 94, 0.6);
+  color: #fecdd3;
+  font-size: 0.85rem;
+  text-align: center;
+}

@@ -6,13 +6,11 @@ import { HistoryRecord } from '../../types/history.ts';
 import { TimerSoundSettings, StageDisplaySettings } from '../../types/timer.ts';
 import { AppearanceSettings, DEFAULT_APPEARANCE_SETTINGS } from '../../types/appearance.ts';
 import { MusicTrack, PRESET_MUSIC_TRACKS } from '../../types/music.ts';
-import { musicPlayer } from '../../engine/musicPlayerEngine.ts';
-import { useMusicPlayerState } from '../../hooks/useMusicPlayerState.ts';
+import { useRemoteMusic } from '../../features/music/musicRemote.ts';
 import {
   getAllTracksFromStorage,
   saveTrackToStorage,
   deleteTrackFromStorage,
-  saveMusicStateToStorage,
   loadMusicStateFromStorage,
   resetTracksToDefault
 } from '../../storage/musicStorage.ts';
@@ -122,14 +120,29 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
   const [activeTab, setActiveTab] = useState<ControlTab>('stage');
   const [isContestantModalOpen, setIsContestantModalOpen] = useState(false);
   const [tracks, setTracks] = useState<MusicTrack[]>(() => PRESET_MUSIC_TRACKS);
-  // PF5: only the music tab shows the progress bar, so only it re-renders on progress updates.
-  const musicState = useMusicPlayerState({ withProgress: activeTab === 'music', initial: loadMusicStateFromStorage });
+  // B14: music plays on the stage window. This window shows the stage player's state and sends
+  // commands to it. PF5: only the music tab re-renders on playback progress.
+  const { musicState, remote: stageMusic } = useRemoteMusic({ withProgress: activeTab === 'music' });
 
   useEffect(() => {
     getAllTracksFromStorage().then(setTracks);
-    // Persisting does not need a re-render, so it has its own subscription.
-    return musicPlayer.subscribe(saveMusicStateToStorage);
   }, []);
+
+  /** Library changed in this window (IndexedDB is shared): tell the stage to reload it. */
+  const addTrack = async (newTrack: MusicTrack, fileBlob?: Blob) => {
+    const saved = await saveTrackToStorage(newTrack, fileBlob);
+    setTracks(prev => [...prev.filter(t => t.id !== saved.id), saved]);
+    stageMusic.tracksChanged();
+  };
+
+  const deleteTrack = async (id: string) => {
+    if (musicState.currentTrackId === id) stageMusic.stop();
+    await deleteTrackFromStorage(id);
+    setTracks(prev => prev.filter(t => t.id !== id));
+    // deleteTrackFromStorage re-pointed any phase that used this track; apply that on the stage.
+    stageMusic.setPhaseTrackMapping(loadMusicStateFromStorage().phaseTrackMapping);
+    stageMusic.tracksChanged();
+  };
 
   const activeContestant = contestants.find(c => c.id === session.selectedContestantId);
   const isIdle = session.currentState === 'idle';
@@ -848,35 +861,24 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
           <MusicPanel
             musicState={musicState}
             tracks={tracks}
-            onPlayTrack={(track) => musicPlayer.playTrack(track)}
-            onPauseTrack={() => musicPlayer.pause()}
-            onResumeTrack={() => musicPlayer.resume()}
-            onStopMusic={() => musicPlayer.stop({ fadeOutDuration: 0.8 })}
-            onSeekMusic={(sec) => musicPlayer.seek(sec)}
-            onSetVolume={(vol) => {
-              musicPlayer.setMasterVolume(vol);
-              _onSetVolume?.(vol);
-            }}
-            onToggleMute={() => {
-              const nextMuted = !musicState.isMuted;
-              musicPlayer.setMuted(nextMuted);
-              _onToggleMute?.();
-            }}
-            onToggleAutoSync={() => musicPlayer.setAutoSyncWithStage(!musicState.autoSyncWithStage)}
+            onPlayTrack={(track) => stageMusic.playTrack(track)}
+            onPauseTrack={() => stageMusic.pause()}
+            onResumeTrack={() => stageMusic.resume()}
+            onStopMusic={() => stageMusic.stop({ fadeOutDuration: 0.8 })}
+            onSeekMusic={(sec) => stageMusic.seek(sec)}
+            // Volume and mute are session settings; the stage host applies them to its player.
+            onSetVolume={(vol) => _onSetVolume?.(vol)}
+            onToggleMute={() => _onToggleMute?.()}
+            onToggleAutoSync={() => stageMusic.setAutoSyncWithStage(!musicState.autoSyncWithStage)}
             onAssignPhaseTrack={(phase, trackId) => {
-              musicPlayer.setPhaseTrackMapping({ [phase]: trackId });
+              stageMusic.setPhaseTrackMapping({ [phase]: trackId });
             }}
-            onAddTrack={async (newTrack, fileBlob) => {
-              const saved = await saveTrackToStorage(newTrack, fileBlob);
-              setTracks(prev => [...prev.filter(t => t.id !== saved.id), saved]);
-            }}
-            onDeleteTrack={async (id) => {
-              await deleteTrackFromStorage(id);
-              setTracks(prev => prev.filter(t => t.id !== id));
-            }}
+            onAddTrack={addTrack}
+            onDeleteTrack={deleteTrack}
             onResetPresets={async () => {
               const presets = await resetTracksToDefault();
               setTracks(presets);
+              stageMusic.tracksChanged();
             }}
           />
         )}
@@ -961,25 +963,12 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
             tracks={tracks}
             musicState={musicState}
             onAssignPhaseTrack={(phase, trackId) => {
-              musicPlayer.setPhaseTrackMapping({ [phase]: trackId });
+              stageMusic.setPhaseTrackMapping({ [phase]: trackId });
             }}
-            onAddTrack={async (newTrack, fileBlob) => {
-              const saved = await saveTrackToStorage(newTrack, fileBlob);
-              setTracks(prev => [...prev.filter(t => t.id !== saved.id), saved]);
-            }}
-            onDeleteTrack={async (id) => {
-              await deleteTrackFromStorage(id);
-              setTracks(prev => prev.filter(t => t.id !== id));
-              if (musicState.currentTrackId === id) {
-                musicPlayer.stop();
-              }
-            }}
-            onPlayTrack={(track) => {
-              musicPlayer.play(track);
-            }}
-            onStopMusic={() => {
-              musicPlayer.stop();
-            }}
+            onAddTrack={addTrack}
+            onDeleteTrack={deleteTrack}
+            onPlayTrack={(track) => stageMusic.playTrack(track)}
+            onStopMusic={() => stageMusic.stop()}
           />
         )}
       </div>

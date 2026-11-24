@@ -44,38 +44,6 @@ export interface SessionState {
   musicState?: MusicState;
 }
 
-export type SyncMessageType =
-  | 'STAGE_SYNC_STATE'
-  | 'STAGE_START'
-  | 'STAGE_SPIN_START'
-  | 'STAGE_PAUSE'
-  | 'STAGE_RESUME'
-  | 'STAGE_SKIP'
-  | 'STAGE_DONE'
-  | 'STAGE_RESET'
-  | 'STAGE_SET_CONTESTANT'
-  | 'STAGE_SET_ROUND'
-  | 'STAGE_SET_VOLUME'
-  | 'STAGE_TOGGLE_MUTE'
-  | 'STAGE_SET_CATEGORY'
-  | 'STAGE_SET_WORD'
-  | 'STAGE_SET_WORD_BANK'
-  | 'STAGE_STOP_WORD_SPIN'
-  | 'STAGE_SET_APPEARANCE'
-  | 'STAGE_SET_TIMER_SOUND_SETTINGS'
-  | 'STAGE_SET_DISPLAY_SETTINGS'
-  | 'STAGE_SET_MUSIC_STATE'
-  | 'TIMER_SET'
-  | 'TIMER_START'
-  | 'TIMER_PAUSE'
-  | 'TIMER_RESUME'
-  | 'TIMER_RESET'
-  | 'TIMER_FINISH'
-  | 'TIMER_ADJUST';
-
-export interface SyncMessage {
-  type: SyncMessageType;
-  payload?: any;
-  timestamp: number;
-}
+// D5: the old SyncMessage / SyncMessageType (payload?: any) were replaced by the typed
+// protocol in features/session/sessionChannel.ts.
 
