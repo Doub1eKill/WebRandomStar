@@ -32,6 +32,18 @@ export function calculateRemainingMs(
 }
 
 /**
+ * Remaining time right now. While running, `timerState.remainingMs` is NOT kept up to date
+ * (PF1: the session is no longer rewritten every 100ms), so readers must derive it from the
+ * start timestamp. In every other status the stored value is authoritative.
+ */
+export function getLiveRemainingMs(timerState: TimerState, now: number = Date.now()): number {
+  if (timerState.status === 'running' && timerState.startTimestamp) {
+    return calculateRemainingMs(timerState.startTimestamp, timerState.durationMs, now);
+  }
+  return timerState.remainingMs;
+}
+
+/**
  * Calculates time used in milliseconds.
  */
 export function calculateTimeUsedMs(durationMs: number, remainingMs: number): number {

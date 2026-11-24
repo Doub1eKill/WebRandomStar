@@ -5,8 +5,9 @@ import { KeywordItem } from '../../types/word.ts';
 import { HistoryRecord } from '../../types/history.ts';
 import { TimerSoundSettings, StageDisplaySettings } from '../../types/timer.ts';
 import { AppearanceSettings, DEFAULT_APPEARANCE_SETTINGS } from '../../types/appearance.ts';
-import { MusicTrack, MusicState, PRESET_MUSIC_TRACKS } from '../../types/music.ts';
+import { MusicTrack, PRESET_MUSIC_TRACKS } from '../../types/music.ts';
 import { musicPlayer } from '../../engine/musicPlayerEngine.ts';
+import { useMusicPlayerState } from '../../hooks/useMusicPlayerState.ts';
 import {
   getAllTracksFromStorage,
   saveTrackToStorage,
@@ -121,15 +122,13 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
   const [activeTab, setActiveTab] = useState<ControlTab>('stage');
   const [isContestantModalOpen, setIsContestantModalOpen] = useState(false);
   const [tracks, setTracks] = useState<MusicTrack[]>(() => PRESET_MUSIC_TRACKS);
-  const [musicState, setMusicState] = useState<MusicState>(() => loadMusicStateFromStorage());
+  // PF5: only the music tab shows the progress bar, so only it re-renders on progress updates.
+  const musicState = useMusicPlayerState({ withProgress: activeTab === 'music', initial: loadMusicStateFromStorage });
 
   useEffect(() => {
     getAllTracksFromStorage().then(setTracks);
-    const unsubscribe = musicPlayer.subscribe(state => {
-      setMusicState(state);
-      saveMusicStateToStorage(state);
-    });
-    return () => unsubscribe();
+    // Persisting does not need a re-render, so it has its own subscription.
+    return musicPlayer.subscribe(saveMusicStateToStorage);
   }, []);
 
   const activeContestant = contestants.find(c => c.id === session.selectedContestantId);

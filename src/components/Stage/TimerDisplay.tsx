@@ -1,6 +1,7 @@
 import React from 'react';
 import { TimerState, TimerPhase, TimerDisplayMode, StageDisplaySettings, DEFAULT_STAGE_DISPLAY_SETTINGS } from '../../types/timer.ts';
 import { formatTimerDisplay, getTimerPhase } from '../../engine/timerEngine.ts';
+import { useRemainingMs } from '../../hooks/useRemainingMs.ts';
 import { Clock, AlertTriangle, Flame, Pause } from 'lucide-react';
 
 interface TimerDisplayProps {
@@ -17,6 +18,8 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
   stageDisplaySettings = DEFAULT_STAGE_DISPLAY_SETTINGS,
   className = ''
 }) => {
+  const remainingMs = useRemainingMs(timerState);
+
   if (timerState.status === 'idle') {
     return null;
   }
@@ -25,7 +28,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
   const criticalThresholdMs = stageDisplaySettings?.criticalThresholdMs ?? 10000;
 
   const phase: TimerPhase = getTimerPhase(
-    timerState.remainingMs,
+    remainingMs,
     timerState.status,
     warningThresholdMs,
     criticalThresholdMs
@@ -37,10 +40,10 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
   const isWarning = phase === 'warning';
   const isPaused = timerState.status === 'paused';
 
-  const formatted = formatTimerDisplay(timerState.remainingMs);
+  const formatted = formatTimerDisplay(remainingMs);
 
   const progress = timerState.durationMs > 0
-    ? Math.max(0, Math.min(100, (timerState.remainingMs / timerState.durationMs) * 100))
+    ? Math.max(0, Math.min(100, (remainingMs / timerState.durationMs) * 100))
     : 0;
 
   // Compute dynamic phase styles matching the controller and alert thresholds

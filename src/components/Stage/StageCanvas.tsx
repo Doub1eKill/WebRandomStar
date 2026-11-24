@@ -11,6 +11,8 @@ import { LeafSystem } from './canvas/LeafSystem.ts';
 import { SkySystem } from './canvas/SkySystem.ts';
 import { TransitionLightingSystem } from './canvas/TransitionLightingSystem.ts';
 import { audioEngine } from '../../engine/audioEngine.ts';
+import { getLiveRemainingMs } from '../../engine/timerEngine.ts';
+import { useLazyRef } from '../../hooks/useLazyRef.ts';
 
 interface StageCanvasProps {
   session: SessionState;
@@ -25,19 +27,19 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // Canvas luxury pageant & atmospheric systems
-  const auroraRef = useRef<AuroraSystem>(new AuroraSystem());
-  const crystalRef = useRef<CrystalSystem>(new CrystalSystem());
-  const crownRef = useRef<CrownSystem>(new CrownSystem());
-  const reflectionRef = useRef<ReflectionSystem>(new ReflectionSystem());
+  // Canvas luxury pageant & atmospheric systems (PF2: constructed once, not on every render)
+  const auroraRef = useLazyRef(() => new AuroraSystem());
+  const crystalRef = useLazyRef(() => new CrystalSystem());
+  const crownRef = useLazyRef(() => new CrownSystem());
+  const reflectionRef = useLazyRef(() => new ReflectionSystem());
 
   // Natural layer systems (retained for organic richness)
-  const rainRef = useRef<RainSystem>(new RainSystem());
-  const dropRef = useRef<WaterDropSystem>(new WaterDropSystem());
-  const mistRef = useRef<MistSystem>(new MistSystem());
-  const leafRef = useRef<LeafSystem>(new LeafSystem());
-  const skyRef = useRef<SkySystem>(new SkySystem());
-  const lightingRef = useRef<TransitionLightingSystem>(new TransitionLightingSystem());
+  const rainRef = useLazyRef(() => new RainSystem());
+  const dropRef = useLazyRef(() => new WaterDropSystem());
+  const mistRef = useLazyRef(() => new MistSystem());
+  const leafRef = useLazyRef(() => new LeafSystem());
+  const skyRef = useLazyRef(() => new SkySystem());
+  const lightingRef = useLazyRef(() => new TransitionLightingSystem());
 
   // Target values for smooth cross-fading
   const targetsRef = useRef({
@@ -196,14 +198,14 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
         audioEngine.playSkyTransition();
         break;
     }
-  }, [session.currentState]);
+  }, [session.currentState, leafRef, lightingRef]); // refs from useLazyRef are stable
 
   // Update crystal density only when appearance settings actually change
   useEffect(() => {
     const width = window.innerWidth;
     const height = window.innerHeight;
     crystalRef.current.init(width, height, session.appearanceSettings?.particleDensity || 1.0);
-  }, [session.appearanceSettings?.particleDensity]);
+  }, [session.appearanceSettings?.particleDensity, crystalRef]);
 
   // Setup Continuous Canvas render loop (runs once on mount, 60fps stable)
   useEffect(() => {
@@ -214,10 +216,18 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
 
     let animId: number;
 
+    // PF7: viewport size and the background gradient only change on resize, so compute them
+    // there instead of on every frame.
+    let viewWidth = window.innerWidth;
+    let viewHeight = window.innerHeight;
+    let skyGrad: CanvasGradient | null = null;
+
     const handleResize = () => {
       const dpr = window.devicePixelRatio || 1;
       const width = window.innerWidth;
       const height = window.innerHeight;
+      viewWidth = width;
+      viewHeight = height;
 
       canvas.width = width * dpr;
       canvas.height = height * dpr;
@@ -226,6 +236,12 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
 
       ctx.resetTransform();
       ctx.scale(dpr, dpr);
+
+      skyGrad = ctx.createLinearGradient(0, 0, 0, height);
+      skyGrad.addColorStop(0, '#060919');
+      skyGrad.addColorStop(0.35, '#0b102b');
+      skyGrad.addColorStop(0.7, '#120d31');
+      skyGrad.addColorStop(1, '#060919');
 
       crystalRef.current.init(width, height, sessionRef.current.appearanceSettings?.particleDensity || 1.0);
       rainRef.current.resize(width, height);
@@ -258,8 +274,8 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
       lastTime = time;
 
       const currentSession = sessionRef.current;
-      const width = window.innerWidth;
-      const height = window.innerHeight;
+      const width = viewWidth;
+      const height = viewHeight;
 
       const aurora = auroraRef.current;
       const crystal = crystalRef.current;
@@ -274,15 +290,17 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
       const lighting = lightingRef.current;
       const targets = targetsRef.current;
 
+      // PF1: remainingMs is no longer rewritten into the session every tick, derive it live.
+      const liveRemainingMs = currentSession.timerState ? getLiveRemainingMs(currentSession.timerState) : 0;
       const timerPhase = currentSession.timerState
         ? (currentSession.timerState.status === 'finished'
             ? 'finished'
             : currentSession.timerState.status === 'running'
-            ? (Math.ceil(currentSession.timerState.remainingMs / 1000) <= 3
+            ? (Math.ceil(liveRemainingMs / 1000) <= 3
                 ? 'last-3s'
-                : Math.ceil(currentSession.timerState.remainingMs / 1000) <= 10
+                : Math.ceil(liveRemainingMs / 1000) <= 10
                 ? 'critical'
-                : currentSession.timerState.remainingMs <= (currentSession.timerState.warningAtMs || 30000)
+                : liveRemainingMs <= (currentSession.timerState.warningAtMs || 30000)
                 ? 'warning'
                 : 'normal')
             : 'normal')
@@ -305,13 +323,10 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
       ctx.fillStyle = '#060919';
       ctx.fillRect(0, 0, width, height);
 
-      const skyGrad = ctx.createLinearGradient(0, 0, 0, height);
-      skyGrad.addColorStop(0, '#060919');
-      skyGrad.addColorStop(0.35, '#0b102b');
-      skyGrad.addColorStop(0.7, '#120d31');
-      skyGrad.addColorStop(1, '#060919');
-      ctx.fillStyle = skyGrad;
-      ctx.fillRect(0, 0, width, height);
+      if (skyGrad) {
+        ctx.fillStyle = skyGrad;
+        ctx.fillRect(0, 0, width, height);
+      }
 
       // 2. Aurora Light Ribbon Layer
       aurora.update(dtMs);
@@ -368,7 +383,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [auroraRef, crownRef, crystalRef, dropRef, leafRef, lightingRef, mistRef, rainRef, reflectionRef, skyRef]); // stable refs: runs once
 
   return (
     <canvas

@@ -8,6 +8,7 @@ import {
   DEFAULT_STAGE_DISPLAY_SETTINGS
 } from '../../types/timer.ts';
 import { formatTimerDisplay, getTimerPhase } from '../../engine/timerEngine.ts';
+import { useRemainingMs } from '../../hooks/useRemainingMs.ts';
 import { audioEngine } from '../../engine/audioEngine.ts';
 import {
   Play,
@@ -59,7 +60,8 @@ export const TimerPanel: React.FC<TimerPanelProps> = ({
   const [customMinutes, setCustomMinutes] = useState('1');
   const [customSeconds, setCustomSeconds] = useState('30');
 
-  const phase = getTimerPhase(timerState.remainingMs, timerState.status, timerState.warningAtMs || stageDisplaySettings.warningThresholdMs);
+  const remainingMs = useRemainingMs(timerState);
+  const phase = getTimerPhase(remainingMs, timerState.status, timerState.warningAtMs || stageDisplaySettings.warningThresholdMs);
   const isFinished = phase === 'finished';
   const isLast3s = phase === 'last-3s';
   const isCritical = phase === 'critical';
@@ -67,7 +69,7 @@ export const TimerPanel: React.FC<TimerPanelProps> = ({
   const isRunning = timerState.status === 'running';
   const isPaused = timerState.status === 'paused';
 
-  const formatted = formatTimerDisplay(timerState.remainingMs);
+  const formatted = formatTimerDisplay(remainingMs);
 
   const handleApplyCustom = (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,7 +82,7 @@ export const TimerPanel: React.FC<TimerPanelProps> = ({
   };
 
   const progress = timerState.durationMs > 0
-    ? Math.max(0, Math.min(100, (timerState.remainingMs / timerState.durationMs) * 100))
+    ? Math.max(0, Math.min(100, (remainingMs / timerState.durationMs) * 100))
     : 0;
 
   return (

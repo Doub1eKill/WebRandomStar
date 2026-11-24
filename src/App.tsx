@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useStageSync } from './hooks/useStageSync.ts';
 import { useMusicStageRouter } from './hooks/useMusicStageRouter.ts';
 import { applyTypography } from './utils/typography.ts';
@@ -11,16 +11,21 @@ import {
 } from './utils/storage.ts';
 import { Question, Contestant, QuestionCategory } from './types/question.ts';
 import { KeywordItem } from './types/word.ts';
-import { MusicTrack, MusicState, PRESET_MUSIC_TRACKS } from './types/music.ts';
+import { MusicTrack, PRESET_MUSIC_TRACKS } from './types/music.ts';
 import { musicPlayer } from './engine/musicPlayerEngine.ts';
+import { useMusicPlayerState } from './hooks/useMusicPlayerState.ts';
 import { getAllTracksFromStorage, loadMusicStateFromStorage, saveTrackToStorage, deleteTrackFromStorage } from './storage/musicStorage.ts';
 import { StageBackground } from './components/Stage/StageBackground.tsx';
 import { StageOverlay } from './components/Stage/StageOverlay.tsx';
-import { ControlDrawer } from './components/Control/ControlDrawer.tsx';
-import { RemoteController } from './components/Control/RemoteController.tsx';
 import { KeyboardController } from './components/Control/KeyboardController.tsx';
-import { QuestionManagerModal } from './components/Control/QuestionManagerModal.tsx';
-import { ContestantManagerModal } from './components/Control/ContestantManagerModal.tsx';
+import { useHasBeenTrue } from './hooks/useHasBeenTrue.ts';
+
+// PF3: operator-only UI is split into separate chunks. The stage never downloads the remote
+// controller, and the drawer/modals load the first time they are opened.
+const RemoteController = lazy(() => import('./components/Control/RemoteController.tsx').then(m => ({ default: m.RemoteController })));
+const ControlDrawer = lazy(() => import('./components/Control/ControlDrawer.tsx').then(m => ({ default: m.ControlDrawer })));
+const QuestionManagerModal = lazy(() => import('./components/Control/QuestionManagerModal.tsx').then(m => ({ default: m.QuestionManagerModal })));
+const ContestantManagerModal = lazy(() => import('./components/Control/ContestantManagerModal.tsx').then(m => ({ default: m.ContestantManagerModal })));
 
 export const App: React.FC = () => {
   // Check if opened as secondary remote controller window
@@ -49,12 +54,11 @@ export const App: React.FC = () => {
 
   // Music State & Tracks for Stage Auto-Sync
   const [tracks, setTracks] = useState<MusicTrack[]>(() => PRESET_MUSIC_TRACKS);
-  const [musicState, setMusicState] = useState<MusicState>(() => loadMusicStateFromStorage());
+  // PF5: the stage never shows playback progress, so ignore progress-only updates.
+  const musicState = useMusicPlayerState({ initial: loadMusicStateFromStorage });
 
   useEffect(() => {
     getAllTracksFromStorage().then(setTracks);
-    const unsubscribe = musicPlayer.subscribe(setMusicState);
-    return () => unsubscribe();
   }, []);
 
   // Hook to automatically play stage soundtrack per phase
@@ -73,6 +77,9 @@ export const App: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isQuestionModalOpen, setIsQuestionModalOpen] = useState(false);
   const [isContestantModalOpen, setIsContestantModalOpen] = useState(false);
+  const drawerLoaded = useHasBeenTrue(isDrawerOpen);
+  const questionModalLoaded = useHasBeenTrue(isQuestionModalOpen);
+  const contestantModalLoaded = useHasBeenTrue(isContestantModalOpen);
 
   const handleSaveQuestions = (updated: Question[]) => {
     setQuestions(updated);
@@ -86,7 +93,11 @@ export const App: React.FC = () => {
 
   // If in Remote Controller window, render dedicated operator view
   if (isControllerMode) {
-    return <RemoteController />;
+    return (
+      <Suspense fallback={null}>
+        <RemoteController />
+      </Suspense>
+    );
   }
 
   const activeContestant = contestants.find(c => c.id === session.selectedContestantId);
@@ -148,52 +159,56 @@ export const App: React.FC = () => {
         onOpenControlDrawer={() => setIsDrawerOpen(true)}
       />
 
-      {/* 3. Operator Slide-over Control Drawer */}
-      <ControlDrawer
-        isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
-        session={session}
-        contestants={contestants}
-        words={words}
-        tracks={tracks}
-        musicState={musicState}
-        onStart={handleStart}
-        onStopSpin={stopWordSpin}
-        onPause={pauseJourney}
-        onSkip={skipToQuestion}
-        onMarkAnswered={markAnswered}
-        onReset={resetStage}
-        onSelectContestant={setContestant}
-        onSelectRound={setRound}
-        onSetVolume={setVolume}
-        onToggleMute={toggleMute}
-        onOpenQuestionManager={() => setIsQuestionModalOpen(true)}
-        onOpenContestantManager={() => setIsContestantModalOpen(true)}
-        onSetTimerSoundSettings={setTimerSoundSettings}
-        onSetStageDisplaySettings={setStageDisplaySettings}
-        onSetAppearanceSettings={setAppearanceSettings}
-        onAssignPhaseTrack={(phase, trackId) => {
-          musicPlayer.setPhaseTrackMapping({ [phase]: trackId });
-        }}
-        onAddTrack={async (newTrack, fileBlob) => {
-          const saved = await saveTrackToStorage(newTrack, fileBlob);
-          setTracks(prev => [...prev.filter(t => t.id !== saved.id), saved]);
-        }}
-        onDeleteTrack={async (id) => {
-          await deleteTrackFromStorage(id);
-          setTracks(prev => prev.filter(t => t.id !== id));
-          if (musicState.currentTrackId === id) {
-            musicPlayer.stop();
-          }
-        }}
-        onPlayTrack={(track) => {
-          musicPlayer.play(track);
-        }}
-        onStopMusic={() => {
-          musicPlayer.stop();
-        }}
-        onAdjustTimer={adjustTimer}
-      />
+      {/* 3. Operator Slide-over Control Drawer (loaded on first open, then kept mounted) */}
+      {drawerLoaded && (
+        <Suspense fallback={null}>
+          <ControlDrawer
+            isOpen={isDrawerOpen}
+            onClose={() => setIsDrawerOpen(false)}
+            session={session}
+            contestants={contestants}
+            words={words}
+            tracks={tracks}
+            musicState={musicState}
+            onStart={handleStart}
+            onStopSpin={stopWordSpin}
+            onPause={pauseJourney}
+            onSkip={skipToQuestion}
+            onMarkAnswered={markAnswered}
+            onReset={resetStage}
+            onSelectContestant={setContestant}
+            onSelectRound={setRound}
+            onSetVolume={setVolume}
+            onToggleMute={toggleMute}
+            onOpenQuestionManager={() => setIsQuestionModalOpen(true)}
+            onOpenContestantManager={() => setIsContestantModalOpen(true)}
+            onSetTimerSoundSettings={setTimerSoundSettings}
+            onSetStageDisplaySettings={setStageDisplaySettings}
+            onSetAppearanceSettings={setAppearanceSettings}
+            onAssignPhaseTrack={(phase, trackId) => {
+              musicPlayer.setPhaseTrackMapping({ [phase]: trackId });
+            }}
+            onAddTrack={async (newTrack, fileBlob) => {
+              const saved = await saveTrackToStorage(newTrack, fileBlob);
+              setTracks(prev => [...prev.filter(t => t.id !== saved.id), saved]);
+            }}
+            onDeleteTrack={async (id) => {
+              await deleteTrackFromStorage(id);
+              setTracks(prev => prev.filter(t => t.id !== id));
+              if (musicState.currentTrackId === id) {
+                musicPlayer.stop();
+              }
+            }}
+            onPlayTrack={(track) => {
+              musicPlayer.play(track);
+            }}
+            onStopMusic={() => {
+              musicPlayer.stop();
+            }}
+            onAdjustTimer={adjustTimer}
+          />
+        </Suspense>
+      )}
 
       {/* 4. Global Keyboard Navigation */}
       <KeyboardController
@@ -204,21 +219,29 @@ export const App: React.FC = () => {
         onToggleTimer={handleToggleTimer}
       />
 
-      {/* 5. Question Manager Modal */}
-      <QuestionManagerModal
-        isOpen={isQuestionModalOpen}
-        onClose={() => setIsQuestionModalOpen(false)}
-        questions={questions}
-        onSaveQuestions={handleSaveQuestions}
-      />
+      {/* 5. Question Manager Modal (loaded on first open) */}
+      {questionModalLoaded && (
+        <Suspense fallback={null}>
+          <QuestionManagerModal
+            isOpen={isQuestionModalOpen}
+            onClose={() => setIsQuestionModalOpen(false)}
+            questions={questions}
+            onSaveQuestions={handleSaveQuestions}
+          />
+        </Suspense>
+      )}
 
-      {/* 6. Contestant Manager Modal */}
-      <ContestantManagerModal
-        isOpen={isContestantModalOpen}
-        onClose={() => setIsContestantModalOpen(false)}
-        contestants={contestants}
-        onSaveContestants={handleSaveContestants}
-      />
+      {/* 6. Contestant Manager Modal (loaded on first open) */}
+      {contestantModalLoaded && (
+        <Suspense fallback={null}>
+          <ContestantManagerModal
+            isOpen={isContestantModalOpen}
+            onClose={() => setIsContestantModalOpen(false)}
+            contestants={contestants}
+            onSaveContestants={handleSaveContestants}
+          />
+        </Suspense>
+      )}
     </div>
   );
 };

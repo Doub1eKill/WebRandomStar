@@ -20,7 +20,7 @@ import {
 import { selectNextQuestion } from '../engine/questionSelector.ts';
 import { selectTargetWord } from '../engine/wordSelector.ts';
 import { STAGE_DURATION, getNextState } from '../engine/stateMachine.ts';
-import { createInitialTimerState, calculateRemainingMs, calculateTimeUsedMs, DEFAULT_TIMER_DURATION_MS } from '../engine/timerEngine.ts';
+import { createInitialTimerState, calculateRemainingMs, calculateTimeUsedMs, getLiveRemainingMs, DEFAULT_TIMER_DURATION_MS } from '../engine/timerEngine.ts';
 import { createHistoryRecord } from '../engine/historyManager.ts';
 import { audioEngine } from '../engine/audioEngine.ts';
 import { musicPlayer } from '../engine/musicPlayerEngine.ts';
@@ -258,20 +258,12 @@ export function useStageSync(role: 'stage' | 'controller') {
           ...current,
           timerState: updatedTimer
         }, 'TIMER_FINISH');
-      } else {
-        // Trigger per-second tick sound when crossing whole-second boundary on stage
-        if (role === 'stage' && lastTickSecondRef.current !== secondsLeft) {
-          lastTickSecondRef.current = secondsLeft;
-          audioEngine.playTickSound(secondsLeft);
-        }
-
-        setSession(prev => ({
-          ...prev,
-          timerState: {
-            ...prev.timerState,
-            remainingMs: remaining
-          }
-        }));
+      } else if (role === 'stage' && lastTickSecondRef.current !== secondsLeft) {
+        // Trigger per-second tick sound when crossing whole-second boundary on stage.
+        // PF1: no setSession() here any more; displays derive remaining time with
+        // getLiveRemainingMs()/useRemainingMs() so the whole app does not re-render 10×/s.
+        lastTickSecondRef.current = secondsLeft;
+        audioEngine.playTickSound(secondsLeft);
       }
     }, 100);
 
@@ -385,7 +377,8 @@ export function useStageSync(role: 'stage' | 'controller') {
 
     if (!activeQuestion) return;
 
-    const timeUsed = calculateTimeUsedMs(session.timerState.durationMs, session.timerState.remainingMs);
+    // B13: remainingMs is not updated while running (PF1), so measure from the timestamp.
+    const timeUsed = calculateTimeUsedMs(session.timerState.durationMs, getLiveRemainingMs(session.timerState));
     const contestants = loadContestants();
     const activeContestant = contestants.find(c => c.id === session.selectedContestantId);
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState, useMemo } from 'react';
 import { SpinItem } from './types.ts';
 import {
   generateSpinReel,
@@ -10,6 +10,7 @@ import { VerticalSpinView } from './VerticalSpinView.tsx';
 import { Perspective3DSpinView } from './Perspective3DSpinView.tsx';
 import { OrbitalSpinView } from './OrbitalSpinView.tsx';
 import { RibbonSpinView } from './RibbonSpinView.tsx';
+import { ApplyOffset } from './spinDom.ts';
 
 interface WordCarouselProps {
   items?: SpinItem[];
@@ -41,11 +42,33 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
     [pool, finalTarget]
   );
 
+  // PF4: `floatOffset` is the reel position React last rendered. It only changes when the
+  // centred slot moves to another integer; frames in between go through `applyRef`, which
+  // writes the same styles straight to the DOM (see spinDom.ts).
   const [floatOffset, setFloatOffset] = useState(0);
 
   const currentPosRef = useRef(0);
+  const renderedPosRef = useRef(0);
   const decelStartRef = useRef(0);
   const decelEndRef = useRef(0);
+  const applyRef = useRef<ApplyOffset | null>(null);
+  const registerApply = useCallback((apply: ApplyOffset | null) => { applyRef.current = apply; }, []);
+
+  /** Move the reel: re-render when the visible slot set changes, otherwise patch the DOM. */
+  const moveTo = useCallback((pos: number, forceRender = false) => {
+    currentPosRef.current = pos;
+    if (forceRender || Math.round(pos) !== Math.round(renderedPosRef.current)) {
+      renderedPosRef.current = pos;
+      setFloatOffset(pos);
+    }
+    applyRef.current?.(pos);
+  }, []);
+
+  // After any commit (ours or a parent's), make sure the DOM shows the true current position,
+  // not the possibly older position React rendered with.
+  useLayoutEffect(() => {
+    applyRef.current?.(currentPosRef.current);
+  });
 
   useEffect(() => {
     let animId: number;
@@ -53,8 +76,7 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
     const targetIdx = reel.length - 1;
 
     if (phase === 'pre-spin') {
-      currentPosRef.current = 0;
-      setFloatOffset(0);
+      moveTo(0, true);
       return;
     }
 
@@ -74,25 +96,19 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
       const elapsed = now - startTime;
 
       if (phase === 'word-spin') {
-        const currentFloat = elapsed * spinSpeed;
-        currentPosRef.current = currentFloat;
-        setFloatOffset(currentFloat);
+        moveTo(elapsed * spinSpeed);
         animId = requestAnimationFrame(animate);
       } else if (phase === 'word-decelerate') {
         const progress = Math.min(1, elapsed / decelDuration);
         const eased = calculateQuinticDecel(progress);
         const start = decelStartRef.current;
         const end = decelEndRef.current;
-        const currentFloat = start + (end - start) * eased;
-
-        currentPosRef.current = currentFloat;
-        setFloatOffset(currentFloat);
 
         if (progress < 1) {
+          moveTo(start + (end - start) * eased);
           animId = requestAnimationFrame(animate);
         } else {
-          currentPosRef.current = end;
-          setFloatOffset(end);
+          moveTo(end, true); // settle: React state ends exactly on the target, as before
           if (onSpinComplete) {
             onSpinComplete();
           }
@@ -102,57 +118,31 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
 
     animId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animId);
-  }, [phase, reel, displayType, onSpinComplete]);
+  }, [phase, reel, displayType, onSpinComplete, moveTo]);
 
   const currentIndex = ((Math.round(floatOffset) % reel.length) + reel.length) % reel.length;
+
+  const viewProps = {
+    reel,
+    currentIndex,
+    targetWord: finalTarget,
+    phase,
+    floatOffset,
+    displayType,
+    registerApply
+  };
 
   const renderActiveView = () => {
     switch (mode) {
       case '3d':
-        return (
-          <Perspective3DSpinView
-            reel={reel}
-            currentIndex={currentIndex}
-            targetWord={finalTarget}
-            phase={phase}
-            floatOffset={floatOffset}
-            displayType={displayType}
-          />
-        );
+        return <Perspective3DSpinView {...viewProps} />;
       case 'orbital':
-        return (
-          <OrbitalSpinView
-            reel={reel}
-            currentIndex={currentIndex}
-            targetWord={finalTarget}
-            phase={phase}
-            floatOffset={floatOffset}
-            displayType={displayType}
-          />
-        );
+        return <OrbitalSpinView {...viewProps} />;
       case 'ribbon':
-        return (
-          <RibbonSpinView
-            reel={reel}
-            currentIndex={currentIndex}
-            targetWord={finalTarget}
-            phase={phase}
-            floatOffset={floatOffset}
-            displayType={displayType}
-          />
-        );
+        return <RibbonSpinView {...viewProps} />;
       case 'vertical':
       default:
-        return (
-          <VerticalSpinView
-            reel={reel}
-            currentIndex={currentIndex}
-            targetWord={finalTarget}
-            phase={phase}
-            floatOffset={floatOffset}
-            displayType={displayType}
-          />
-        );
+        return <VerticalSpinView {...viewProps} />;
     }
   };
 
@@ -164,4 +154,3 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
     </div>
   );
 };
-

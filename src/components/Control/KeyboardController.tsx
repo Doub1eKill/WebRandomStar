@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface KeyboardControllerProps {
   onStartOrPause: () => void;
@@ -8,13 +8,12 @@ interface KeyboardControllerProps {
   onToggleTimer?: () => void;
 }
 
-export const KeyboardController: React.FC<KeyboardControllerProps> = ({
-  onStartOrPause,
-  onProceed,
-  onToggleDrawer,
-  onToggleMute,
-  onToggleTimer
-}) => {
+export const KeyboardController: React.FC<KeyboardControllerProps> = (props) => {
+  // PF6: the parent passes new inline handlers on every render. Keep the latest ones in a ref
+  // and attach the window listener once, instead of detaching/re-attaching it on each render.
+  const handlersRef = useRef(props);
+  handlersRef.current = props;
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't trigger shortcuts if typing inside an input or textarea
@@ -22,6 +21,8 @@ export const KeyboardController: React.FC<KeyboardControllerProps> = ({
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
         return;
       }
+
+      const { onStartOrPause, onProceed, onToggleDrawer, onToggleMute, onToggleTimer } = handlersRef.current;
 
       switch (e.code) {
         case 'Space':
@@ -64,7 +65,7 @@ export const KeyboardController: React.FC<KeyboardControllerProps> = ({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onStartOrPause, onProceed, onToggleDrawer, onToggleMute, onToggleTimer]);
+  }, []);
 
   return null;
 };

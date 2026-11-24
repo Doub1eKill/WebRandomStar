@@ -31,6 +31,8 @@
 | B11 ✅ | ตัวสุ่มเปลี่ยนไปหยิบรอบหรือหมวดอื่นแทนโดยไม่บอก และเมื่อคำถามหมดคลังก็วนกลับมาใช้ซ้ำแบบเงียบ ๆ | `questionSelector.ts:45-74` | คืนค่า `fallbackReason` แล้วแสดงคำเตือนให้ผู้ควบคุม โดยตรรกะการเลือกยังเหมือนเดิม | 2 |
 | B12 ✅ | ไม่มีโฟลเดอร์ `public/` ทำให้ favicon `/leaf.svg` เป็น 404 และฟอนต์ Amoria/Verve ไม่มีไฟล์ | `index.html:5`, `index.css` (`/fonts/*`) | เพิ่ม `public/` พร้อม favicon และฟอนต์ หรือเอา preset ออก (ข้อ Q4) | 8 |
 | B13 ✅ | **ความเสี่ยงที่ refactor จะสร้างขึ้นเอง:** `markAnswered` คำนวณเวลาที่ใช้จาก `remainingMs` ใน session ซึ่งตอนนี้ถูกอัปเดตทุก 100ms ถ้าเลิกอัปเดตตาม PF1 แล้วไม่แก้จุดนี้ เวลาที่บันทึกใน history จะเป็น 0 | `useStageSync.ts:388` | คำนวณจาก `startTimestamp` ด้วย `calculateRemainingMs()` ณ ตอนกด และเพิ่มเทสต์ | 1 (ทำพร้อม PF1) |
+| B14 ✅ (พบระหว่าง Phase 1) | **ปุ่มเพลงในหน้าต่างรีโมตไม่มีผลกับจอเวที:** แท็บเพลงใน `ControlCenter` สั่ง `musicPlayer` ของหน้าต่างรีโมตเอง ซึ่งถูก mute ไว้ (`useStageSync.ts:121-126`) และไม่มีการส่งคำสั่งเพลงผ่าน channel ส่วนจอเวทีอ่านสถานะเพลงจาก storage แค่ตอนเปิด การเล่น/หยุดเพลง, ปรับเสียง หรือเปลี่ยนเพลงของแต่ละ phase จากรีโมตจึงไม่ถึงเวที | `ControlCenter.tsx:848-880`, `useStageSync.ts:121-126` | ส่งคำสั่งเพลงเป็น `COMMAND` ไปให้จอเวที (host) เล่น | 3 |
+| B15 ✅ (พบระหว่าง Phase 1) | **การตั้งเพลงของแต่ละ phase ที่บันทึกไว้ไม่ถูกนำมาใช้:** `musicPlayer` เริ่มด้วย `DEFAULT_MUSIC_STATE.phaseTrackMapping` ทุกครั้ง ส่วน `loadMusicStateFromStorage()` ใช้เป็นแค่ค่าเริ่มต้นของ React state ซึ่งถูก player เขียนทับทันที และถ้าตั้งเพลงจาก drawer บนจอเวที ค่าก็ไม่ถูกบันทึก (มีแค่ `ControlCenter` ที่บันทึก) | `musicPlayerEngine.ts:27`, `App.tsx` (`useMusicPlayerState`), `ControlCenter.tsx` | ให้ player โหลด mapping/volume จาก storage ตอนเริ่ม และบันทึกจากที่เดียว | 3 |
 
 ### 1.2 ประสิทธิภาพ (PF)
 
@@ -222,15 +224,15 @@ store ◀──────────SNAPSHOT (เมื่อ state เปล
 - [x] บันทึก baseline: ขนาด chunk, จำนวน commit ต่อวินาทีจาก React Profiler ระหว่างจับเวลาและระหว่างวงล้อหมุน และ FPS
 
 ### Phase 1: Performance quick wins (พฤติกรรมเหมือนเดิม)
-- [ ] PF2: `useLazyRef` แทน `useRef(new X())`
-- [ ] PF7: cache gradient และขนาดจอไว้ใน resize handler
-- [ ] PF3: `React.lazy` ให้ AeroShards (โดยใช้ `StageCanvas` เป็น fallback ระหว่างโหลด), RemoteController/ControlCenter และ ControlDrawer
-- [ ] PF1 + B13: เลิกเขียน `remainingMs` ลง session ทุก 100ms แล้วใช้ `useRemainingMs` ใน `TimerDisplay`, ให้ StageCanvas คำนวณ timer phase ในลูป rAF และให้ `markAnswered` คำนวณเวลาจาก timestamp
-- [ ] PF4: WordCarousel แบบ ref-driven
-- [ ] PF5: subscribe เพลงแบบ selector
-- [ ] PF6: ผูก listener คีย์ลัดครั้งเดียว
-- [ ] O3: ยืนยันว่าคำเตือน chunk เกิน 500 KB หายไปแล้ว
-- [ ] วัดผลเทียบกับ baseline แล้วจดตัวเลขไว้ใน PR
+- [x] PF2: `useLazyRef` แทน `useRef(new X())`
+- [x] PF7: cache gradient และขนาดจอไว้ใน resize handler
+- [x] PF3: `React.lazy` ให้ AeroShards (โดยใช้ `StageCanvas` เป็น fallback ระหว่างโหลด), RemoteController และ ControlDrawer + modal ทั้ง 2 ตัว (โหลดตอนเปิดครั้งแรก แล้ว mount ค้างไว้ เพื่อให้ state ภายในเหมือนเดิม)
+- [x] PF1 + B13: เลิกเขียน `remainingMs` ลง session ทุก 100ms แล้วใช้ `useRemainingMs` ใน `TimerDisplay` และ `TimerPanel`, ให้ StageCanvas คำนวณ timer phase ในลูป rAF และให้ `markAnswered` คำนวณเวลาจาก timestamp
+- [x] PF4: WordCarousel แบบ ref-driven (มีเทสต์ snapshot และเทสต์ DOM ยืนยันว่า markup เหมือนเดิมทุก view)
+- [x] PF5: subscribe เพลงแบบ selector (`useMusicPlayerState`)
+- [x] PF6: ผูก listener คีย์ลัดครั้งเดียว
+- [x] O3: ยืนยันว่าคำเตือน chunk เกิน 500 KB หายไปแล้ว
+- [x] วัดผลเทียบกับ baseline (ดู `2026-11-24-baseline.md` หัวข้อ "หลัง Phase 1")
 
 ### Phase 2: แก้บั๊กที่แยกทำได้ (ไม่ต้องรอโครงสร้างใหม่)
 - [ ] B2: ไม่บันทึก blob URL ลง storage และสร้างใหม่ตอนโหลดทุกครั้ง (มีเทสต์ save → reload → URL ใหม่)

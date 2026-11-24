@@ -8,6 +8,7 @@ export interface Mounted {
   /** Number of React commits inside the mounted tree since mount. */
   commits: () => number;
   unmount: () => void;
+  container: HTMLElement;
 }
 
 /** Mount an element inside a <Profiler> so tests can count commits. */
@@ -25,7 +26,8 @@ export function mount(element: React.ReactElement): Mounted {
   });
   return {
     commits: () => commits,
-    unmount: () => act(() => root.unmount())
+    unmount: () => act(() => root.unmount()),
+    container
   };
 }
 

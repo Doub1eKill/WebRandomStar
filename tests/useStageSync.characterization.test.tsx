@@ -7,8 +7,10 @@
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { act } from 'react';
-import { renderHook, HookResult } from './helpers/render.tsx';
+import { renderHook, mount, HookResult } from './helpers/render.tsx';
 import { useStageSync } from '../src/hooks/useStageSync.ts';
+import { getLiveRemainingMs } from '../src/engine/timerEngine.ts';
+import { TimerDisplay } from '../src/components/Stage/TimerDisplay.tsx';
 import { STORAGE_KEYS, loadHistory } from '../src/utils/storage.ts';
 import { DEFAULT_APPEARANCE_SETTINGS, AppearanceSettings } from '../src/types/appearance.ts';
 import { AppState } from '../src/types/session.ts';
@@ -57,6 +59,7 @@ function expectSequence(h: HookResult<Sync>, steps: Array<[number, AppState]>) {
 }
 
 const state = (h: HookResult<Sync>) => h.result.current.session;
+const live = (h: HookResult<Sync>) => getLiveRemainingMs(state(h).timerState);
 
 beforeEach(() => {
   localStorage.clear();
@@ -194,7 +197,8 @@ describe('useStageSync: timer', () => {
     expect(state(h).timerState).toMatchObject({ status: 'running', durationMs: 60_000, remainingMs: 60_000 });
 
     advance(10_000);
-    expect(state(h).timerState.remainingMs).toBe(50_000);
+    // Phase 1 (PF1): while running, the session keeps the start value and readers derive it live.
+    expect(live(h)).toBe(50_000);
 
     act(() => h.result.current.pauseTimer());
     expect(state(h).timerState).toMatchObject({ status: 'paused', remainingMs: 50_000, pausedRemainingMs: 50_000 });
@@ -203,7 +207,8 @@ describe('useStageSync: timer', () => {
 
     act(() => h.result.current.resumeTimer());
     advance(10_000);
-    expect(state(h).timerState).toMatchObject({ status: 'running', remainingMs: 40_000 });
+    expect(state(h).timerState.status).toBe('running');
+    expect(live(h)).toBe(40_000);
   });
 
   it('adjustTimer() extends remaining and duration, and finishes when it drops to zero', () => {
@@ -231,14 +236,21 @@ describe('useStageSync: timer', () => {
     expect(finish).toHaveBeenCalledTimes(1);
   });
 
-  it('[baseline → Phase 1 PF1] a running timer re-renders the hook owner ~10 times per second', () => {
+  it('PF1: a running timer does not re-render the hook owner (baseline before Phase 1: ~10/s)', () => {
     const h = mountSync();
     act(() => h.result.current.startTimer(60_000));
     const before = h.commits();
     advanceStepped(10_000);
-    const perSecond = (h.commits() - before) / 10;
-    expect(perSecond).toBeGreaterThanOrEqual(9);
-    expect(perSecond).toBeLessThanOrEqual(11);
+    expect(h.commits() - before).toBe(0);
+  });
+
+  it('PF1: the timer display alone re-renders while running, and shows the live value', () => {
+    const view = mount(<TimerDisplay timerState={{ status: 'running', durationMs: 60_000, remainingMs: 60_000, startTimestamp: Date.now() }} variant="center" />);
+    const before = view.commits();
+    advanceStepped(1_000);
+    expect(view.commits() - before).toBeGreaterThanOrEqual(9);
+    expect(view.commits() - before).toBeLessThanOrEqual(11);
+    view.unmount();
   });
 });
 
