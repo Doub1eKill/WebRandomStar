@@ -10,21 +10,15 @@ import { MistSystem } from './MistSystem.ts';
 import { LeafSystem } from './LeafSystem.ts';
 import { SkySystem } from './SkySystem.ts';
 import { TransitionLightingSystem } from './TransitionLightingSystem.ts';
-import { audioEngine } from '@/features/audio/audioEngine.ts';
+import { INITIAL_TARGETS, LEGACY_TARGET_PATCHES, STATE_SOUNDS, STATE_TARGETS, LayerTargets } from './stateTargets.ts';
 import { getLiveRemainingMs } from '@/features/timer/timerEngine.ts';
 import { useLazyRef } from '@/shared/lib/useLazyRef.ts';
 
 interface StageCanvasProps {
   session: SessionState;
-  onLeafLanded?: () => void;
-  onQuestionReady?: () => void;
 }
 
-export const StageCanvas: React.FC<StageCanvasProps> = ({
-  session,
-  onLeafLanded: _onLeafLanded,
-  onQuestionReady: _onQuestionReady
-}) => {
+export const StageCanvas: React.FC<StageCanvasProps> = ({ session }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // Canvas luxury pageant & atmospheric systems (PF2: constructed once, not on every render)
@@ -42,162 +36,29 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({
   const lightingRef = useLazyRef(() => new TransitionLightingSystem());
 
   // Target values for smooth cross-fading
-  const targetsRef = useRef({
-    auroraIntensity: 0.8,
-    crystalOpacity: 0.85,
-    crownOpacity: 0.6,
-    reflectionOpacity: 0.7,
-    rainIntensity: 0.0,
-    dropOpacity: 0.0,
-    mistDensity: 0.05,
-    leafOpacity: 0.0,
-    skyClarity: 0.85,
-    moonOpacity: 0.6
-  });
+  const targetsRef = useRef<LayerTargets>({ ...INITIAL_TARGETS });
 
   const sessionRef = useRef<SessionState>(session);
   useEffect(() => {
     sessionRef.current = session;
   }, [session]);
 
-  // Handle stage state transitions & synchronized procedural audio
+  // Handle stage state transitions & synchronized procedural audio (A8: table-driven)
   useEffect(() => {
     const currentState = session.currentState;
-    const leaf = leafRef.current;
+    const nextTargets = STATE_TARGETS[currentState];
+    if (nextTargets) targetsRef.current = { ...nextTargets };
+    const patch = LEGACY_TARGET_PATCHES[currentState];
+    if (patch) Object.assign(targetsRef.current, patch);
 
-    switch (currentState) {
-      case 'idle':
-        targetsRef.current = {
-          auroraIntensity: 0.7,
-          crystalOpacity: 0.7,
-          crownOpacity: 0.5,
-          reflectionOpacity: 0.65,
-          rainIntensity: 0.0,
-          dropOpacity: 0.0,
-          mistDensity: 0.05,
-          leafOpacity: 0.0,
-          skyClarity: 0.6,
-          moonOpacity: 0.5
-        };
-        leaf.reset();
-        lightingRef.current.reset();
-        break;
-
-      case 'pre-spin':
-        targetsRef.current = {
-          auroraIntensity: 1.0,
-          crystalOpacity: 0.9,
-          crownOpacity: 0.8,
-          reflectionOpacity: 0.8,
-          rainIntensity: 0.0,
-          dropOpacity: 0.0,
-          mistDensity: 0.03,
-          leafOpacity: 0.0,
-          skyClarity: 0.8,
-          moonOpacity: 0.6
-        };
-        audioEngine.playSpinStart();
-        break;
-
-      case 'word-spin':
-        targetsRef.current = {
-          auroraIntensity: 1.2,
-          crystalOpacity: 1.0,
-          crownOpacity: 0.85,
-          reflectionOpacity: 0.9,
-          rainIntensity: 0.0,
-          dropOpacity: 0.0,
-          mistDensity: 0.02,
-          leafOpacity: 0.0,
-          skyClarity: 0.9,
-          moonOpacity: 0.7
-        };
-        audioEngine.playSpinTick(1.0);
-        break;
-
-      case 'word-decelerate':
-        targetsRef.current = {
-          auroraIntensity: 1.1,
-          crystalOpacity: 0.95,
-          crownOpacity: 0.9,
-          reflectionOpacity: 0.85,
-          rainIntensity: 0.0,
-          dropOpacity: 0.0,
-          mistDensity: 0.02,
-          leafOpacity: 0.0,
-          skyClarity: 0.95,
-          moonOpacity: 0.8
-        };
-        audioEngine.playSpinTick(0.4);
-        break;
-
-      case 'word-lock':
-        targetsRef.current = {
-          auroraIntensity: 1.3,
-          crystalOpacity: 1.0,
-          crownOpacity: 1.0,
-          reflectionOpacity: 1.0,
-          rainIntensity: 0.0,
-          dropOpacity: 0.0,
-          mistDensity: 0.0,
-          leafOpacity: 0.0,
-          skyClarity: 1.0,
-          moonOpacity: 0.9
-        };
-        audioEngine.playWordLock();
-        break;
-
-      case 'question-reveal':
-        targetsRef.current = {
-          auroraIntensity: 1.0,
-          crystalOpacity: 0.8,
-          crownOpacity: 0.6,
-          reflectionOpacity: 0.7,
-          rainIntensity: 0.0,
-          dropOpacity: 0.0,
-          mistDensity: 0.0,
-          leafOpacity: 0.0,
-          skyClarity: 1.0,
-          moonOpacity: 0.9
-        };
-        audioEngine.playQuestionReveal();
-        break;
-
-      case 'question':
-      case 'answered':
-        targetsRef.current = {
-          auroraIntensity: 0.85,
-          crystalOpacity: 0.75,
-          crownOpacity: 0.5,
-          reflectionOpacity: 0.65,
-          rainIntensity: 0.0,
-          dropOpacity: 0.0,
-          mistDensity: 0.0,
-          leafOpacity: 0.0,
-          skyClarity: 1.0,
-          moonOpacity: 0.85
-        };
-        leaf.active = false;
-        break;
-
-      // Legacy fallback states
-      case 'rain':
-        targetsRef.current.rainIntensity = 1.0;
-        audioEngine.playRainAmbience(1.5);
-        break;
-      case 'water-drop':
-        audioEngine.playWaterDrop();
-        break;
-      case 'wind':
-        audioEngine.playWindGust();
-        break;
-      case 'leaf':
-        audioEngine.playLeafRustle();
-        break;
-      case 'sky-clear':
-        audioEngine.playSkyTransition();
-        break;
+    if (currentState === 'idle') {
+      leafRef.current.reset();
+      lightingRef.current.reset();
+    } else if (currentState === 'question' || currentState === 'answered') {
+      leafRef.current.active = false;
     }
+
+    STATE_SOUNDS[currentState]?.();
   }, [session.currentState, leafRef, lightingRef]); // refs from useLazyRef are stable
 
   // Update crystal density only when appearance settings actually change

@@ -3,6 +3,8 @@
  * Generates procedural audio synthesis (Spin Whoosh, Spin Ticks, Word Lock Chime, Question Reveal, Ambient & Timer Chimes)
  * without relying on external MP3 files. Works 100% offline.
  */
+import * as recipes from './recipes.ts';
+import { getSharedAudioContext } from './audioContext.ts';
 class ProceduralAudioEngine {
   private ctx: AudioContext | null = null;
   private masterGain: GainNode | null = null;
@@ -19,10 +21,9 @@ class ProceduralAudioEngine {
   public init(): void {
     if (this.ctx) return;
     try {
-      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      if (!AudioContextClass) return;
-
-      this.ctx = new AudioContextClass();
+      // PF9: share the page's single AudioContext with the music player
+      this.ctx = getSharedAudioContext();
+      if (!this.ctx) return;
       this.masterGain = this.ctx.createGain();
       this.masterGain.gain.setValueAtTime(this.muted ? 0 : this.volume, this.ctx.currentTime);
       this.masterGain.connect(this.ctx.destination);
@@ -116,59 +117,17 @@ class ProceduralAudioEngine {
     return this.tickVolume;
   }
 
+  private recipeSettings(): recipes.RecipeSettings {
+    return { tickVolume: this.tickVolume };
+  }
+
   /**
    * Royal Spin Start: Whoosh + Rising harmonic build-up
    */
   public playSpinStart(): void {
     if (this.muted || !this.spinSoundEnabled) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
-
-    const now = this.ctx.currentTime;
-
-    // Rising sine tone
-    const osc = this.ctx.createOscillator();
-    const oscGain = this.ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(220, now);
-    osc.frequency.exponentialRampToValueAtTime(880, now + 0.6);
-
-    oscGain.gain.setValueAtTime(0, now);
-    oscGain.gain.linearRampToValueAtTime(0.2, now + 0.3);
-    oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
-
-    osc.connect(oscGain);
-    oscGain.connect(this.masterGain);
-    osc.start(now);
-    osc.stop(now + 0.75);
-
-    // Ethereal whoosh noise
-    try {
-      const bufferSize = this.ctx.sampleRate * 0.7;
-      const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * 0.2;
-      }
-      const noise = this.ctx.createBufferSource();
-      noise.buffer = buffer;
-      const filter = this.ctx.createBiquadFilter();
-      filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(400, now);
-      filter.frequency.linearRampToValueAtTime(1200, now + 0.6);
-
-      const noiseGain = this.ctx.createGain();
-      noiseGain.gain.setValueAtTime(0.15, now);
-      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
-
-      noise.connect(filter);
-      filter.connect(noiseGain);
-      noiseGain.connect(this.masterGain);
-
-      noise.start(now);
-      noise.stop(now + 0.7);
-    } catch {
-      // ignore
-    }
+    recipes.playSpinStart(this.ctx, this.masterGain);
   }
 
   /**
@@ -177,25 +136,7 @@ class ProceduralAudioEngine {
   public playSpinTick(speedRatio: number = 1): void {
     if (this.muted || !this.spinSoundEnabled) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
-
-    const now = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-
-    const baseFreq = 480 + speedRatio * 440; // 480Hz to 920Hz
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(baseFreq, now);
-    osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.6, now + 0.035);
-
-    const tickGain = Math.min(1, this.tickVolume * (0.15 + speedRatio * 0.15));
-    gain.gain.setValueAtTime(tickGain, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-
-    osc.connect(gain);
-    gain.connect(this.masterGain);
-
-    osc.start(now);
-    osc.stop(now + 0.045);
+    recipes.playSpinTick(this.ctx, this.masterGain, this.recipeSettings(), speedRatio);
   }
 
   /**
@@ -204,44 +145,7 @@ class ProceduralAudioEngine {
   public playWordLock(): void {
     if (this.muted || !this.spinSoundEnabled) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
-
-    const now = this.ctx.currentTime;
-    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
-
-    // Shimmering chimes
-    notes.forEach((freq, idx) => {
-      if (!this.ctx || !this.masterGain) return;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now + idx * 0.03);
-
-      gain.gain.setValueAtTime(0, now + idx * 0.03);
-      gain.gain.linearRampToValueAtTime(0.22, now + idx * 0.03 + 0.05);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.03 + 1.6);
-
-      osc.connect(gain);
-      gain.connect(this.masterGain);
-
-      osc.start(now + idx * 0.03);
-      osc.stop(now + idx * 0.03 + 1.8);
-    });
-
-    // Soft bass impact
-    const bass = this.ctx.createOscillator();
-    const bassGain = this.ctx.createGain();
-    bass.type = 'sine';
-    bass.frequency.setValueAtTime(130, now);
-    bass.frequency.exponentialRampToValueAtTime(65, now + 0.4);
-
-    bassGain.gain.setValueAtTime(0.25, now);
-    bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-
-    bass.connect(bassGain);
-    bassGain.connect(this.masterGain);
-    bass.start(now);
-    bass.stop(now + 0.55);
+    recipes.playWordLock(this.ctx, this.masterGain);
   }
 
   /**
@@ -318,26 +222,7 @@ class ProceduralAudioEngine {
   public playWaterDrop(): void {
     if (this.muted) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
-
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-
-    const now = this.ctx.currentTime;
-    const startFreq = 800 + Math.random() * 500;
-    const endFreq = startFreq + 400 + Math.random() * 300;
-
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(startFreq, now);
-    osc.frequency.exponentialRampToValueAtTime(endFreq, now + 0.08);
-
-    gain.gain.setValueAtTime(0.3, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-
-    osc.connect(gain);
-    gain.connect(this.masterGain);
-
-    osc.start(now);
-    osc.stop(now + 0.25);
+    recipes.playWaterDrop(this.ctx, this.masterGain);
   }
 
   /**
@@ -346,36 +231,7 @@ class ProceduralAudioEngine {
   public playWindGust(): void {
     if (this.muted) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
-
-    const now = this.ctx.currentTime;
-    const bufferSize = this.ctx.sampleRate * 2.5;
-    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = Math.random() * 2 - 1;
-    }
-
-    const noise = this.ctx.createBufferSource();
-    noise.buffer = buffer;
-
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(320, now);
-    filter.frequency.linearRampToValueAtTime(550, now + 1.2);
-    filter.frequency.linearRampToValueAtTime(260, now + 2.5);
-    filter.Q.setValueAtTime(3.5, now);
-
-    const gain = this.ctx.createGain();
-    gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(0.28, now + 0.9);
-    gain.gain.linearRampToValueAtTime(0, now + 2.5);
-
-    noise.connect(filter);
-    filter.connect(gain);
-    gain.connect(this.masterGain);
-
-    noise.start(now);
-    noise.stop(now + 2.6);
+    recipes.playWindGust(this.ctx, this.masterGain);
   }
 
   /**
@@ -384,32 +240,7 @@ class ProceduralAudioEngine {
   public playLeafRustle(): void {
     if (this.muted) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
-
-    const now = this.ctx.currentTime;
-    const bufferSize = this.ctx.sampleRate * 0.8;
-    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = (Math.random() * 2 - 1) * 0.4;
-    }
-
-    const noise = this.ctx.createBufferSource();
-    noise.buffer = buffer;
-
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = 'highpass';
-    filter.frequency.setValueAtTime(1400, now);
-
-    const gain = this.ctx.createGain();
-    gain.gain.setValueAtTime(0.18, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.75);
-
-    noise.connect(filter);
-    filter.connect(gain);
-    gain.connect(this.masterGain);
-
-    noise.start(now);
-    noise.stop(now + 0.8);
+    recipes.playLeafRustle(this.ctx, this.masterGain);
   }
 
   /**
@@ -418,28 +249,7 @@ class ProceduralAudioEngine {
   public playSkyTransition(): void {
     if (this.muted) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
-
-    const chord = [392.0, 493.88, 587.33, 783.99]; // G4, B4, D5, G5
-    const now = this.ctx.currentTime;
-
-    chord.forEach((freq, idx) => {
-      if (!this.ctx || !this.masterGain) return;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now + idx * 0.05);
-
-      gain.gain.setValueAtTime(0, now + idx * 0.05);
-      gain.gain.linearRampToValueAtTime(0.12, now + idx * 0.05 + 0.2);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 1.8);
-
-      osc.connect(gain);
-      gain.connect(this.masterGain);
-
-      osc.start(now + idx * 0.05);
-      osc.stop(now + idx * 0.05 + 2.0);
-    });
+    recipes.playSkyTransition(this.ctx, this.masterGain);
   }
 
   /**
@@ -448,28 +258,7 @@ class ProceduralAudioEngine {
   public playQuestionReveal(): void {
     if (this.muted) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
-
-    const notes = [523.25, 659.25, 783.99, 987.77, 1046.5]; // C5, E5, G5, B5, C6
-    const now = this.ctx.currentTime;
-
-    notes.forEach((freq, i) => {
-      if (!this.ctx || !this.masterGain) return;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now + i * 0.04);
-
-      gain.gain.setValueAtTime(0, now + i * 0.04);
-      gain.gain.linearRampToValueAtTime(0.18, now + i * 0.04 + 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.04 + 2.5);
-
-      osc.connect(gain);
-      gain.connect(this.masterGain);
-
-      osc.start(now + i * 0.04);
-      osc.stop(now + i * 0.04 + 2.8);
-    });
+    recipes.playQuestionReveal(this.ctx, this.masterGain);
   }
 
   /**
@@ -478,27 +267,7 @@ class ProceduralAudioEngine {
   public playTimerWarning(): void {
     if (!this.warningSoundEnabled || this.muted) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
-
-    const now = this.ctx.currentTime;
-    const freqs = [880, 1174.66]; // A5, D6
-
-    freqs.forEach((f, i) => {
-      if (!this.ctx || !this.masterGain) return;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(f, now + i * 0.1);
-
-      gain.gain.setValueAtTime(0.12, now + i * 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.35);
-
-      osc.connect(gain);
-      gain.connect(this.masterGain);
-
-      osc.start(now + i * 0.1);
-      osc.stop(now + i * 0.1 + 0.4);
-    });
+    recipes.playTimerWarning(this.ctx, this.masterGain);
   }
 
   /**
@@ -507,27 +276,7 @@ class ProceduralAudioEngine {
   public playTimerFinish(): void {
     if (!this.finishSoundEnabled || this.muted) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
-
-    const now = this.ctx.currentTime;
-    const chord = [261.63, 392.00, 523.25]; // C4, G4, C5 royal triad
-
-    chord.forEach((freq, idx) => {
-      if (!this.ctx || !this.masterGain) return;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now + idx * 0.02);
-
-      gain.gain.setValueAtTime(0.28, now + idx * 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.02 + 1.6);
-
-      osc.connect(gain);
-      gain.connect(this.masterGain);
-
-      osc.start(now + idx * 0.02);
-      osc.stop(now + idx * 0.02 + 1.7);
-    });
+    recipes.playTimerFinish(this.ctx, this.masterGain);
   }
 
   /**

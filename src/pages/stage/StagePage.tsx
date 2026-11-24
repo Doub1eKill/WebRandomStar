@@ -155,9 +155,6 @@ export const StagePage: React.FC = () => {
         session={session}
         contestant={activeContestant}
         onStart={() => handleStart()}
-        onNext={handleProceed}
-        onStopSpin={stopWordSpin}
-        onOpenControlDrawer={() => setIsDrawerOpen(true)}
       />
 
       {/* 3. Operator Slide-over Control Drawer (loaded on first open, then kept mounted) */}

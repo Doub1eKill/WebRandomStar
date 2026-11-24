@@ -16,9 +16,6 @@ interface StageOverlayProps {
   session: SessionState;
   contestant?: Contestant;
   onStart: () => void;
-  onNext?: () => void;
-  onStopSpin?: () => void;
-  onOpenControlDrawer?: () => void;
 }
 
 export const StageOverlay: React.FC<StageOverlayProps> = ({

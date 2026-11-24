@@ -6,7 +6,6 @@ interface QuestionCardProps {
   isAnswered?: boolean;
   fontSizeScale?: 'normal' | 'large' | 'huge';
   compact?: boolean;
-  onNext?: () => void;
 }
 
 export const QuestionCard: React.FC<QuestionCardProps> = ({

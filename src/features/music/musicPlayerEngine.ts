@@ -1,4 +1,5 @@
 import { MusicTrack, MusicState, DEFAULT_MUSIC_STATE } from '@/types/music.ts';
+import { getSharedAudioContext } from '@/features/audio/audioContext.ts';
 
 export interface PlayOptions {
   fadeInDuration?: number; // seconds
@@ -120,9 +121,10 @@ export class MusicPlayerEngine {
   private ensureContext(): void {
     if (typeof window === 'undefined') return;
     try {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      if (!this.ctx && AudioCtx) {
-        this.ctx = new AudioCtx();
+      // PF9: share the page's single AudioContext with the procedural sound engine
+      const shared = this.ctx ? null : getSharedAudioContext();
+      if (shared) {
+        this.ctx = shared;
         this.masterGain = this.ctx.createGain();
         this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : this.volume, this.ctx.currentTime);
         this.masterGain.connect(this.ctx.destination);

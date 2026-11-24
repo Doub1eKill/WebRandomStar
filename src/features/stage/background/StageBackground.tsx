@@ -8,25 +8,13 @@ const AeroShards = lazy(() => import('@/features/stage/background/aero-shards/Ae
 
 interface StageBackgroundProps {
   session: SessionState;
-  onLeafLanded?: () => void;
-  onQuestionReady?: () => void;
 }
 
-export const StageBackground: React.FC<StageBackgroundProps> = ({
-  session,
-  onLeafLanded,
-  onQuestionReady
-}) => {
+export const StageBackground: React.FC<StageBackgroundProps> = ({ session }) => {
   const [webGpuFailed, setWebGpuFailed] = useState(false);
   const backgroundMode = session.appearanceSettings?.backgroundMode || 'cosmic-canvas';
 
-  const canvas = (
-    <StageCanvas
-      session={session}
-      onLeafLanded={onLeafLanded}
-      onQuestionReady={onQuestionReady}
-    />
-  );
+  const canvas = <StageCanvas session={session} />;
 
   // If user selected aero-shards and WebGPU is available without error:
   if (backgroundMode === 'aero-shards' && !webGpuFailed) {

@@ -32,10 +32,7 @@ describe('StageOverlay Clean Screen in Word Spin', () => {
     const html = renderToString(
       React.createElement(StageOverlay, {
         session,
-        onStart: () => {},
-        onNext: () => {},
-        onStopSpin: () => {},
-        onOpenControlDrawer: () => {}
+        onStart: () => {}
       })
     );
 
