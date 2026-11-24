@@ -272,10 +272,13 @@ store ◀──────────SNAPSHOT (เมื่อ state เปล
 - [x] เพิ่มเติม (B10): เปลี่ยน `alert()` ที่เหลือใน `QuestionManagerModal` เป็น notice ตอนนี้ไม่มี `alert()` เหลือในโค้ดแล้ว
 
 ### Phase 5: Routing และแยกหน้า (A2 บางส่วน, A3, A4, PF3, S8)
-- [ ] เพิ่ม router (ข้อ Q1) และสร้าง `app/router.tsx` ตามตาราง 3.1 พร้อม redirect `?mode=controller`
-- [ ] แยก `ControlCenter`: header กับ tabs ไปอยู่ `ControlLayout` (A4), แท็บ `stage` ไปเป็น `LivePage` และแต่ละแท็บที่เหลือกลายเป็นหน้าของตัวเอง
-- [ ] A3: การ์ดใน `features/control-sections/` (ContestantRoundCard, StageActionsCard, FlowModeCard, DirectWordPicker, QuickTimerCard, AudioCard, SpinMusicCard) ให้ `ControlDrawer` และ `LivePage` ใช้ร่วมกัน
-- [ ] A3 + S8: `useMusicLibrary` รวม add/delete/play/stop และจัดการ object URL ไว้ที่เดียว
+- [x] เพิ่ม `react-router` v7 (Q1) แบบ `HashRouter` + `<Routes>` + `React.lazy` ใน `app/router.tsx` ตามตาราง 3.1 พร้อม redirect `?mode=controller` → `#/control/live` (ปุ่ม popout ใน drawer ใช้ URL ใหม่แล้ว) **เลือกแบบ declarative แทน `createHashRouter`** เพราะวัดแล้วเล็กกว่าครึ่งหนึ่ง (gzip ~15 KB เทียบกับ ~32 KB)
+- [x] แยก `ControlCenter` (ลบไฟล์แล้ว พร้อม `RemoteController`): header, tabs และแถบสถานะการเชื่อมต่อไปอยู่ `pages/control/ControlLayout.tsx` (A4: tabs สร้างจาก config + `NavLink`) ส่วนแต่ละแท็บเป็นหน้า lazy ของตัวเอง (`LivePage`, `WordsPage`, `QuestionsPage`, `TimerPage`, `MusicPage`, `ContestantsPage`, `HistoryPage`, `AppearancePage`) markup ของ Live กับ Contestants คัดลอกจากไฟล์เดิมด้วยสคริปต์ หน้าตาจึงเหมือนเดิม และรีเฟรชแล้วยังอยู่แท็บเดิม
+- [x] `App.tsx` → `pages/stage/StagePage.tsx` (`git mv`) ส่วน `App.tsx` ใหม่เหลือแค่ router
+- [x] `features/session/SessionProvider.tsx`: `useSession(selector)`, `useSessionActions()`, `usePeerConnected()` (ค้างมาจาก Phase 3) หน้าควบคุมใช้ selector แล้ว เช่น TimerPage render เฉพาะตอน timer เปลี่ยน
+- [x] A3 (ปรับแนวทาง): drawer กับ Live page ใช้**ตรรกะชุดเดียวกัน**ผ่าน `features/control/useStageControls.ts` (spin/stop, สลับโหมด, word lock, รายการคำ) แต่**ยังคง markup ของตัวเอง** เพราะสองหน้าใช้ดีไซน์ต่างกัน (CSS class กับ inline style) ถ้ารวมการ์ดตอนนี้หน้าตาจะเปลี่ยน การรวม UI จึงย้ายไปทำใน Phase 7 ที่สร้าง `shared/ui`
+- [x] A3 + S8: `features/music/useMusicLibrary.ts` เป็นตัวจัดการ add/delete/reset ชุดเดียวสำหรับทั้งสองหน้าต่าง (เวทีใช้ `localMusicControls`, รีโมตใช้ remote proxy) และกระจายข่าวผ่าน BroadcastChannel ให้อีกหน้าต่างโหลดคลังใหม่ โดย object URL จัดการใน `musicStorage` ตั้งแต่ Phase 2
+- [x] JS ที่จอเวทีโหลดตอนเปิด: 416 KB (gzip 126 KB) เพิ่มขึ้น ~15 KB gzip จาก react-router ส่วนหน้าควบคุมแยกเป็น chunk ละ 2–30 KB
 
 ### Phase 6: ย้ายโฟลเดอร์ และแยกไฟล์ใหญ่ (A2, A5, A7, A8, A9, PF9)
 - [ ] A7: ตั้ง alias `@/` แล้วย้ายไฟล์ด้วย `git mv` เพื่อเก็บ history และแก้ import ในเทสต์ (ตอนนี้มีราว 28 path)

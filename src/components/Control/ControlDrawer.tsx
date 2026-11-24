@@ -3,7 +3,8 @@ import { SessionState } from '../../types/session.ts';
 import { Contestant, QuestionCategory } from '../../types/question.ts';
 import { KeywordItem } from '../../types/word.ts';
 import { TimerSoundSettings, StageDisplaySettings, DEFAULT_STAGE_DISPLAY_SETTINGS } from '../../types/timer.ts';
-import { AppearanceSettings, DEFAULT_APPEARANCE_SETTINGS } from '../../types/appearance.ts';
+import { AppearanceSettings } from '../../types/appearance.ts';
+import { stageControls } from '../../features/control/useStageControls.ts';
 import { MusicTrack, MusicState } from '../../types/music.ts';
 
 interface ControlDrawerProps {
@@ -111,13 +112,13 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
   };
 
   const handleOpenRemoteWindow = () => {
-    const url = `${window.location.origin}${window.location.pathname}?mode=controller`;
+    const url = `${window.location.origin}${window.location.pathname}#/control/live`; // Phase 5 route
     window.open(url, 'SeasonQuizController', 'width=960,height=750,menubar=no,toolbar=no');
   };
 
-  const isIdle = session.currentState === 'idle';
-  const isQuestionActive = session.currentState === 'question';
-  const isAnswered = session.currentState === 'answered';
+  // A3: logic shared with the remote Live page
+  const controls = stageControls(session, words, { onStart, onStopSpin, onSkip, onSetAppearanceSettings });
+  const { isIdle, isQuestionActive, isAnswered } = controls;
   const displaySettings = session.stageDisplaySettings || DEFAULT_STAGE_DISPLAY_SETTINGS;
 
   return (
@@ -156,10 +157,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                     borderColor: (session.appearanceSettings?.quizMode !== 'keyword') ? '#6366f1' : 'rgba(255,255,255,0.1)',
                     color: (session.appearanceSettings?.quizMode !== 'keyword') ? '#a5b4fc' : '#cbd5e1'
                   }}
-                  onClick={() => {
-                    const current = session.appearanceSettings || DEFAULT_APPEARANCE_SETTINGS;
-                    onSetAppearanceSettings({ ...current, quizMode: 'question' });
-                  }}
+                  onClick={() => controls.setQuizMode('question')}
                 >
                   <span>📜</span>
                   <span>คลังคำถาม (Question)</span>
@@ -179,10 +177,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                     borderColor: session.appearanceSettings?.quizMode === 'keyword' ? '#c084fc' : 'rgba(255,255,255,0.1)',
                     color: session.appearanceSettings?.quizMode === 'keyword' ? '#d8b4fe' : '#cbd5e1'
                   }}
-                  onClick={() => {
-                    const current = session.appearanceSettings || DEFAULT_APPEARANCE_SETTINGS;
-                    onSetAppearanceSettings({ ...current, quizMode: 'keyword' });
-                  }}
+                  onClick={() => controls.setQuizMode('keyword')}
                 >
                   <span>🏷️</span>
                   <span>คำสำคัญ (Keyword)</span>
@@ -236,11 +231,11 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
           <div className="control-section">
             <label className="section-label">⚡ ควบคุมการหมุนคำและเวที</label>
             <div className="actions-grid">
-              {session.currentState === 'word-spin' ? (
+              {controls.isWordSpinning ? (
                 <button
                   className="btn-primary"
                   style={{ background: 'linear-gradient(135deg, #ef4444, #dc2626)', borderColor: '#f87171' }}
-                  onClick={() => (onStopSpin ? onStopSpin() : onSkip())}
+                  onClick={controls.stopSpin}
                 >
                   🛑 STOP SPIN (หยุดสุ่ม) [Space]
                 </button>
@@ -301,10 +296,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                     borderColor: (session.appearanceSettings?.showWordLockPhase !== false) ? '#6366f1' : 'rgba(255,255,255,0.1)',
                     color: (session.appearanceSettings?.showWordLockPhase !== false) ? '#a5b4fc' : '#cbd5e1'
                   }}
-                  onClick={() => {
-                    const current = session.appearanceSettings || DEFAULT_APPEARANCE_SETTINGS;
-                    onSetAppearanceSettings({ ...current, showWordLockPhase: true });
-                  }}
+                  onClick={() => controls.setShowWordLockPhase(true)}
                 >
                   ✨ แสดงการ์ดคำ (ON)
                 </button>
@@ -317,10 +309,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                     borderColor: session.appearanceSettings?.showWordLockPhase === false ? '#ef4444' : 'rgba(255,255,255,0.1)',
                     color: session.appearanceSettings?.showWordLockPhase === false ? '#fca5a5' : '#cbd5e1'
                   }}
-                  onClick={() => {
-                    const current = session.appearanceSettings || DEFAULT_APPEARANCE_SETTINGS;
-                    onSetAppearanceSettings({ ...current, showWordLockPhase: false });
-                  }}
+                  onClick={() => controls.setShowWordLockPhase(false)}
                 >
                   ⚡ ข้ามไปคำถาม (OFF)
                 </button>
@@ -412,11 +401,11 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
             <div className="control-section">
               <label className="section-label">🎯 สุ่มเจาะจงคำสำคัญ (Direct Word Spin)</label>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                {words.filter(w => w.enabled).map(w => (
+                {controls.enabledWords.map(w => (
                   <button
                     key={w.id}
                     className="cat-btn"
-                    onClick={() => onStart(w.category as QuestionCategory, w)}
+                    onClick={() => controls.startWithWord(w)}
                     style={{ fontSize: '0.75rem', padding: '4px 8px' }}
                   >
                     ✦ {w.word}
