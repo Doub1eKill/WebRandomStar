@@ -15,7 +15,7 @@ export const QuestionBankDashboard: React.FC<QuestionBankDashboardProps> = (prop
   const m = useQuestionBankDashboardModel(props);
   const { questionImport } = m;
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+    <div className="ui-panel-stack">
       {questionImport.dialog}
       <NotificationBanner m={m} />
       <StatsCards m={m} />

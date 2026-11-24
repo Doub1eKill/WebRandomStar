@@ -46,9 +46,9 @@ export const PhaseAssignmentSection: React.FC<{ m: MusicPanelModel }> = ({ m }) 
                 colorScheme: 'dark'
               }}
             >
-              <option value="" style={{ background: '#0f172a', color: '#f8fafc' }}>-- ไม่เปิดเพลง (ปิดเสียง) --</option>
+              <option value="">-- ไม่เปิดเพลง (ปิดเสียง) --</option>
               {tracks.map(t => (
-                <option key={t.id} value={t.id} style={{ background: '#0f172a', color: '#f8fafc' }}>{t.title}</option>
+                <option key={t.id} value={t.id}>{t.title}</option>
               ))}
             </select>
           </div>
@@ -73,9 +73,9 @@ export const PhaseAssignmentSection: React.FC<{ m: MusicPanelModel }> = ({ m }) 
                 colorScheme: 'dark'
               }}
             >
-              <option value="" style={{ background: '#0f172a', color: '#f8fafc' }}>-- ไม่เปิดเพลง (ปิดเสียง) --</option>
+              <option value="">-- ไม่เปิดเพลง (ปิดเสียง) --</option>
               {tracks.map(t => (
-                <option key={t.id} value={t.id} style={{ background: '#0f172a', color: '#f8fafc' }}>{t.title}</option>
+                <option key={t.id} value={t.id}>{t.title}</option>
               ))}
             </select>
           </div>
@@ -100,9 +100,9 @@ export const PhaseAssignmentSection: React.FC<{ m: MusicPanelModel }> = ({ m }) 
                 colorScheme: 'dark'
               }}
             >
-              <option value="" style={{ background: '#0f172a', color: '#f8fafc' }}>-- ไม่เปิดเพลง (ปิดเสียง) --</option>
+              <option value="">-- ไม่เปิดเพลง (ปิดเสียง) --</option>
               {tracks.map(t => (
-                <option key={t.id} value={t.id} style={{ background: '#0f172a', color: '#f8fafc' }}>{t.title}</option>
+                <option key={t.id} value={t.id}>{t.title}</option>
               ))}
             </select>
           </div>
@@ -127,9 +127,9 @@ export const PhaseAssignmentSection: React.FC<{ m: MusicPanelModel }> = ({ m }) 
                 colorScheme: 'dark'
               }}
             >
-              <option value="" style={{ background: '#0f172a', color: '#f8fafc' }}>-- ไม่เปิดเพลง (ปิดเสียง) --</option>
+              <option value="">-- ไม่เปิดเพลง (ปิดเสียง) --</option>
               {tracks.map(t => (
-                <option key={t.id} value={t.id} style={{ background: '#0f172a', color: '#f8fafc' }}>{t.title}</option>
+                <option key={t.id} value={t.id}>{t.title}</option>
               ))}
             </select>
           </div>

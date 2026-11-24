@@ -28,7 +28,7 @@ export const TrackLibrarySection: React.FC<{ m: MusicPanelModel }> = ({ m }) => 
             <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f8fafc' }}>
               คลังเพลงทั้งหมด ({tracks.length} เพลง)
             </div>
-            <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+            <div className="ui-caption">
               อัปโหลดไฟล์เพลงจากเครื่อง หรือใส่ลิงก์ URL บันทึกในเบราว์เซอร์อัตโนมัติ
             </div>
           </div>

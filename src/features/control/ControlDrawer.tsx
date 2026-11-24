@@ -5,6 +5,8 @@ import { KeywordItem } from '@/types/word.ts';
 import { TimerSoundSettings, StageDisplaySettings, DEFAULT_STAGE_DISPLAY_SETTINGS } from '@/types/timer.ts';
 import { AppearanceSettings } from '@/types/appearance.ts';
 import { stageControls } from './useStageControls.ts';
+import { ControlCard } from './ControlCard.tsx';
+import { QuizModeToggle } from './QuizModeToggle.tsx';
 import { MusicTrack, MusicState } from '@/types/music.ts';
 
 interface ControlDrawerProps {
@@ -139,56 +141,13 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
         <div className="drawer-body">
           {/* Section 0: Competition Flow Mode Quick Toggle */}
           {onSetAppearanceSettings && (
-            <div className="control-section">
-              <label className="section-label">🏆 รูปแบบการแข่งขัน (Competition Mode)</label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
-                <button
-                  type="button"
-                  data-testid="drawer-mode-question"
-                  className="btn-secondary"
-                  style={{
-                    padding: '8px',
-                    fontSize: '0.8rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    background: (session.appearanceSettings?.quizMode !== 'keyword') ? 'rgba(99, 102, 241, 0.3)' : 'rgba(255,255,255,0.05)',
-                    borderColor: (session.appearanceSettings?.quizMode !== 'keyword') ? '#6366f1' : 'rgba(255,255,255,0.1)',
-                    color: (session.appearanceSettings?.quizMode !== 'keyword') ? '#a5b4fc' : '#cbd5e1'
-                  }}
-                  onClick={() => controls.setQuizMode('question')}
-                >
-                  <span>📜</span>
-                  <span>คลังคำถาม (Question)</span>
-                </button>
-                <button
-                  type="button"
-                  data-testid="drawer-mode-keyword"
-                  className="btn-secondary"
-                  style={{
-                    padding: '8px',
-                    fontSize: '0.8rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    background: session.appearanceSettings?.quizMode === 'keyword' ? 'rgba(192, 132, 252, 0.3)' : 'rgba(255,255,255,0.05)',
-                    borderColor: session.appearanceSettings?.quizMode === 'keyword' ? '#c084fc' : 'rgba(255,255,255,0.1)',
-                    color: session.appearanceSettings?.quizMode === 'keyword' ? '#d8b4fe' : '#cbd5e1'
-                  }}
-                  onClick={() => controls.setQuizMode('keyword')}
-                >
-                  <span>🏷️</span>
-                  <span>คำสำคัญ (Keyword)</span>
-                </button>
-              </div>
-            </div>
+            <ControlCard variant="drawer" title="🏆 รูปแบบการแข่งขัน (Competition Mode)">
+              <QuizModeToggle variant="drawer" quizMode={session.appearanceSettings?.quizMode} onChange={controls.setQuizMode} />
+            </ControlCard>
           )}
 
           {/* Section 1: Contestant & Round */}
-          <div className="control-section">
-            <label className="section-label">👤 ผู้เข้าแข่งขันปัจจุบัน</label>
+          <ControlCard variant="drawer" title="👤 ผู้เข้าแข่งขันปัจจุบัน">
             <div className="select-row">
               <select
                 className="custom-select"
@@ -210,10 +169,9 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                 👥
               </button>
             </div>
-          </div>
+          </ControlCard>
 
-          <div className="control-section">
-            <label className="section-label">🎯 รอบการแข่งขัน</label>
+          <ControlCard variant="drawer" title="🎯 รอบการแข่งขัน">
             <select
               className="custom-select"
               value={session.selectedRound}
@@ -225,11 +183,10 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
               <option value="scenario">รอบสถานการณ์จำลอง (Scenario)</option>
               <option value="final">รอบชิงชนะเลิศ (Final)</option>
             </select>
-          </div>
+          </ControlCard>
 
           {/* Section 2: Stage Actions */}
-          <div className="control-section">
-            <label className="section-label">⚡ ควบคุมการหมุนคำและเวที</label>
+          <ControlCard variant="drawer" title="⚡ ควบคุมการหมุนคำและเวที">
             <div className="actions-grid">
               {controls.isWordSpinning ? (
                 <button
@@ -280,12 +237,11 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                 🔄 รีเซ็ตเวที (Reset)
               </button>
             </div>
-          </div>
+          </ControlCard>
 
           {/* Section 3: Word Lock Showcase Phase Toggle */}
           {onSetAppearanceSettings && (
-            <div className="control-section">
-              <label className="section-label">🎴 การ์ดคำที่สุ่มได้ (Word Lock Showcase)</label>
+            <ControlCard variant="drawer" title="🎴 การ์ดคำที่สุ่มได้ (Word Lock Showcase)">
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
                 <button
                   className="btn-secondary"
@@ -314,13 +270,12 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                   ⚡ ข้ามไปคำถาม (OFF)
                 </button>
               </div>
-            </div>
+            </ControlCard>
           )}
 
           {/* Section: Word Spin Audio */}
           {tracks && (
-            <div className="control-section">
-              <label className="section-label">🎵 เสียงเพลงช่วงสุ่มคำ (Word Spin Audio)</label>
+            <ControlCard variant="drawer" title="🎵 เสียงเพลงช่วงสุ่มคำ (Word Spin Audio)">
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <select
                   className="custom-select"
@@ -393,13 +348,12 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                   )}
                 </div>
               </div>
-            </div>
+            </ControlCard>
           )}
 
           {/* Section 3: Direct Word Selection */}
           {words.length > 0 && (
-            <div className="control-section">
-              <label className="section-label">🎯 สุ่มเจาะจงคำสำคัญ (Direct Word Spin)</label>
+            <ControlCard variant="drawer" title="🎯 สุ่มเจาะจงคำสำคัญ (Direct Word Spin)">
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                 {controls.enabledWords.map(w => (
                   <button
@@ -412,13 +366,12 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                   </button>
                 ))}
               </div>
-            </div>
+            </ControlCard>
           )}
 
           {/* Section 4: Timer Display Settings & Quick Adjust */}
           {onSetStageDisplaySettings && (
-            <div className="control-section">
-              <label className="section-label">⏱️ รูปแบบการแสดงตัวจับเวลาบนเวที</label>
+            <ControlCard variant="drawer" title="⏱️ รูปแบบการแสดงตัวจับเวลาบนเวที">
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', marginBottom: '8px' }}>
                 <button
                   className="btn-secondary"
@@ -473,12 +426,11 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                   </button>
                 </div>
               )}
-            </div>
+            </ControlCard>
           )}
 
           {/* Section 5: Audio Controls */}
-          <div className="control-section">
-            <label className="section-label">🔊 ระบบเสียงบรรยากาศ & ตัวจับเวลา</label>
+          <ControlCard variant="drawer" title="🔊 ระบบเสียงบรรยากาศ & ตัวจับเวลา">
             <div className="audio-row">
               <button className="btn-secondary" onClick={onToggleMute}>
                 {session.isMuted ? '🔇 ปิดเสียงอยู่' : '🔊 เปิดเสียง'}
@@ -549,11 +501,10 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                 </div>
               </div>
             )}
-          </div>
+          </ControlCard>
 
           {/* Section 6: Question Bank Manager & Multi-display Window */}
-          <div className="control-section">
-            <label className="section-label">📂 การจัดการข้อมูลและการต่อจอ</label>
+          <ControlCard variant="drawer" title="📂 การจัดการข้อมูลและการต่อจอ">
             <div className="drawer-footer-actions">
               <button className="btn-secondary" onClick={onOpenQuestionManager}>
                 📝 คลังคำถาม
@@ -562,7 +513,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                 🖥️ เปิดหน้าต่างแยกจอ (Dual Display)
               </button>
             </div>
-          </div>
+          </ControlCard>
 
           {/* Debug seed info */}
           <div className="drawer-meta-info">

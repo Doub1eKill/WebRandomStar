@@ -19,7 +19,7 @@ export const FilterRow: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          style={{ background: 'rgba(15, 23, 42, 0.8)', color: '#cbd5e1', border: '1px solid rgba(255,255,255,0.1)', padding: '0.35rem 0.6rem', borderRadius: '6px' }}
+          className="ui-select-compact"
         >
           <option value="all">ทุกหมวดหมู่ ({categoriesList.length})</option>
           {categoriesList.map(c => {
@@ -35,7 +35,7 @@ export const FilterRow: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
         <select
           value={selectedRound}
           onChange={(e) => setSelectedRound(e.target.value)}
-          style={{ background: 'rgba(15, 23, 42, 0.8)', color: '#cbd5e1', border: '1px solid rgba(255,255,255,0.1)', padding: '0.35rem 0.6rem', borderRadius: '6px' }}
+          className="ui-select-compact"
         >
           <option value="all">ทุกรอบ</option>
           {roundsList.map(r => <option key={r} value={r}>{r}</option>)}
@@ -44,7 +44,7 @@ export const FilterRow: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
         <select
           value={selectedDifficulty}
           onChange={(e) => setSelectedDifficulty(e.target.value)}
-          style={{ background: 'rgba(15, 23, 42, 0.8)', color: '#cbd5e1', border: '1px solid rgba(255,255,255,0.1)', padding: '0.35rem 0.6rem', borderRadius: '6px' }}
+          className="ui-select-compact"
         >
           <option value="all">ทุกระดับความยาก</option>
           <option value="easy">Easy (ง่าย)</option>
@@ -55,7 +55,7 @@ export const FilterRow: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
         <select
           value={selectedStatus}
           onChange={(e) => setSelectedStatus(e.target.value)}
-          style={{ background: 'rgba(15, 23, 42, 0.8)', color: '#cbd5e1', border: '1px solid rgba(255,255,255,0.1)', padding: '0.35rem 0.6rem', borderRadius: '6px' }}
+          className="ui-select-compact"
         >
           <option value="all">ทุกสถานะ</option>
           <option value="enabled">เปิดใช้งาน (Enabled)</option>

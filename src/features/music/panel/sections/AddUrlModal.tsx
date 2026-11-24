@@ -103,11 +103,11 @@ export const AddUrlModal: React.FC<{ m: MusicPanelModel }> = ({ m }) => {
                   colorScheme: 'dark'
                 }}
               >
-                <option value="none" style={{ background: '#0f172a', color: '#f8fafc' }}>-- ไม่ผูกช่วงเวที (เปิดเล่นเอง) --</option>
-                <option value="ambient" style={{ background: '#0f172a', color: '#f8fafc' }}>🏠 ช่วงพักเวที (Idle / Ambient)</option>
-                <option value="spin" style={{ background: '#0f172a', color: '#f8fafc' }}>⚡ ช่วงหมุนคำสุ่ม (Word Spin)</option>
-                <option value="question" style={{ background: '#0f172a', color: '#f8fafc' }}>💡 ช่วงคิดคำตอบ (Question / Timer)</option>
-                <option value="answered" style={{ background: '#0f172a', color: '#f8fafc' }}>🎉 ช่วงตอบเสร็จสิ้น (Celebration)</option>
+                <option value="none">-- ไม่ผูกช่วงเวที (เปิดเล่นเอง) --</option>
+                <option value="ambient">🏠 ช่วงพักเวที (Idle / Ambient)</option>
+                <option value="spin">⚡ ช่วงหมุนคำสุ่ม (Word Spin)</option>
+                <option value="question">💡 ช่วงคิดคำตอบ (Question / Timer)</option>
+                <option value="answered">🎉 ช่วงตอบเสร็จสิ้น (Celebration)</option>
               </select>
             </div>
 

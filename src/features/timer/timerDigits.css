@@ -1,0 +1,28 @@
+/* Timer digits: tabular numerals and GPU hints. */
+
+/* ==========================================================================
+   Luxury Stage Chronometer Styles (Smooth 60fps & Tabular Numerals)
+   ========================================================================== */
+.stage-timer-digits {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  -webkit-font-feature-settings: "tnum";
+  user-select: none;
+}
+
+.timer-digit-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.stage-timer-center-hero,
+.stage-timer-hud,
+.stage-timer-compact {
+  will-change: transform, box-shadow;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+}

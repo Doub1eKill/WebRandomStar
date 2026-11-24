@@ -2,10 +2,16 @@ import { describe, it, expect } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 
+/** Phase 7: index.css was split; app/styles.css imports the parts in cascade order. */
+const readAppStyles = () => {
+  const manifest = path.resolve(__dirname, '../src/app/styles.css');
+  const imports = [...fs.readFileSync(manifest, 'utf-8').matchAll(/@import '([^']+)';/g)].map(m => m[1]);
+  return imports.map(p => fs.readFileSync(path.resolve(path.dirname(manifest), p), 'utf-8')).join('\n');
+};
+
 describe('Stage Transition CSS & Tokens', () => {
-  it('contains royal cinematic easing tokens and keyframes in index.css', () => {
-    const cssPath = path.resolve(__dirname, '../src/index.css');
-    const css = fs.readFileSync(cssPath, 'utf-8');
+  it('contains royal cinematic easing tokens and keyframes in the app stylesheets', () => {
+    const css = readAppStyles();
 
     expect(css).toContain('--ease-royal-spring');
     expect(css).toContain('stage-card-cinematic-reveal');

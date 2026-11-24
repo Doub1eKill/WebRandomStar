@@ -13,7 +13,7 @@ export type { TimerPanelProps };
 export const TimerPanel: React.FC<TimerPanelProps> = (props) => {
   const m = useTimerPanelModel(props);
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+    <div className="ui-panel-stack">
       <TimerHeroSection m={m} />
       <TimerLayoutSection m={m} />
       <TimerThresholdSection m={m} />

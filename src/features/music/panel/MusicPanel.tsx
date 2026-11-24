@@ -12,7 +12,7 @@ export type { MusicPanelProps };
 export const MusicPanel: React.FC<MusicPanelProps> = (props) => {
   const m = useMusicPanelModel(props);
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+    <div className="ui-panel-stack">
       <MusicMasterSection m={m} />
       <NowPlayingSection m={m} />
       <PhaseAssignmentSection m={m} />

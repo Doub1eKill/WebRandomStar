@@ -42,7 +42,7 @@ export const EditModal: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
             </h3>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>
+              <label className="ui-field-label">
                 รหัสคำถาม (ID)
               </label>
               <input
@@ -56,7 +56,7 @@ export const EditModal: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>
+              <label className="ui-field-label">
                 ข้อความคำถาม
               </label>
               <textarea
@@ -70,7 +70,7 @@ export const EditModal: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>หมวดหมู่</label>
+                <label className="ui-field-label">หมวดหมู่</label>
                 <input
                   type="text"
                   value={editingQuestion.category || ''}
@@ -80,7 +80,7 @@ export const EditModal: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
                 />
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>รอบการแข่งขัน</label>
+                <label className="ui-field-label">รอบการแข่งขัน</label>
                 <input
                   type="text"
                   value={editingQuestion.round || ''}
@@ -93,7 +93,7 @@ export const EditModal: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>ระดับความยาก</label>
+                <label className="ui-field-label">ระดับความยาก</label>
                 <select
                   value={editingQuestion.difficulty || 'medium'}
                   onChange={(e) => setEditingQuestion({ ...editingQuestion, difficulty: e.target.value as QuestionDifficulty })}
@@ -106,7 +106,7 @@ export const EditModal: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>สถานะการเปิดใช้</label>
+                <label className="ui-field-label">สถานะการเปิดใช้</label>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', color: '#f8fafc', cursor: 'pointer' }}>
                   <input
                     type="checkbox"

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+// Last in the cascade, so loading it with the lazy chunks that use it keeps its order.
+import './questionImport.css';
 import { Question } from '@/types/question.ts';
 import { notifyOperator } from '@/shared/notices/operatorNotices.ts';
 import {
@@ -38,9 +40,9 @@ export const QuestionImportDialog: React.FC<DialogProps> = ({ plan, existingCoun
           "แทนที่ทั้งหมด" จะลบคำถามที่ไม่อยู่ในไฟล์ออกจากคลัง ระบบจะสำรองคลังเดิมไว้ก่อน
         </p>
       </div>
-      <div className="modal-footer" style={{ justifyContent: 'flex-end', gap: '0.5rem' }}>
+      <div className="modal-footer question-import-actions">
         <button type="button" className="btn-secondary" onClick={onCancel}>ยกเลิก</button>
-        <button type="button" className="btn-danger-soft" onClick={onReplace}>แทนที่ทั้งหมด</button>
+        <button type="button" className="btn-secondary btn-danger-soft" onClick={onReplace}>แทนที่ทั้งหมด</button>
         <button type="button" className="btn-primary" onClick={onMerge} autoFocus>รวมกับคลังเดิม (แนะนำ)</button>
       </div>
     </div>

@@ -4,6 +4,8 @@
  * activeTab state and RemoteController.
  */
 import React, { useEffect, useMemo } from 'react';
+// Last in the cascade, so loading it with this lazy chunk keeps its order (see app/styles.css).
+import './controlLayout.css';
 import { NavLink, Outlet } from 'react-router';
 import { Layers, Key, BookOpen, Clock, Music, Users, History, Palette, Sparkles } from 'lucide-react';
 import { SessionProvider, useSession, usePeerConnected } from '@/features/session/SessionProvider.tsx';
@@ -120,7 +122,7 @@ const ControlShell: React.FC = () => {
               <div style={{ fontSize: '1rem', fontWeight: 700, letterSpacing: '-0.01em' }}>
                 ✦ SCi TECH TINE ✦ CHARM OF TRANSITION (Ambassador 2026)
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+              <div className="ui-caption">
                 สถานะเวที: <strong style={{ color: '#38bdf8', textTransform: 'uppercase' }}>{currentState}</strong> | Session: <span style={{ fontFamily: 'monospace' }}>{sessionId.slice(0, 8)}</span>
               </div>
             </div>

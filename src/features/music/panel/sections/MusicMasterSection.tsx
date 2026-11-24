@@ -47,7 +47,7 @@ export const MusicMasterSection: React.FC<{ m: MusicPanelModel }> = ({ m }) => {
             <div style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f8fafc' }}>
               ระบบควบคุมเพลงประกอบเวที (Stage Music Control)
             </div>
-            <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+            <div className="ui-caption">
               จัดการและเปิด-ปิดเพลง BGM ผูกกับสถานะเวทีอัตโนมัติ หรือเปิดเพลงอิสระ
             </div>
           </div>

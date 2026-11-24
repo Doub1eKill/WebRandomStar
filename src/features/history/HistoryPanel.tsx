@@ -63,11 +63,11 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ history, onClearHist
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+    <div className="ui-panel-stack">
       {/* 1. Stats Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
         <div style={{ background: 'rgba(255, 255, 255, 0.04)', padding: '0.9rem', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-          <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>บันทึกทั้งหมด</div>
+          <div className="ui-caption">บันทึกทั้งหมด</div>
           <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f8fafc' }}>{stats.total}</div>
         </div>
         <div style={{ background: 'rgba(34, 197, 94, 0.06)', padding: '0.9rem', borderRadius: '10px', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
@@ -111,7 +111,7 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ history, onClearHist
           <select
             value={selectedRound}
             onChange={(e) => setSelectedRound(e.target.value)}
-            style={{ background: 'rgba(15, 23, 42, 0.8)', color: '#cbd5e1', border: '1px solid rgba(255,255,255,0.1)', padding: '0.35rem 0.6rem', borderRadius: '6px' }}
+            className="ui-select-compact"
           >
             <option value="all">ทุกรอบ</option>
             {roundsList.map(r => <option key={r} value={r}>{r}</option>)}
@@ -120,7 +120,7 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ history, onClearHist
           <select
             value={selectedResult}
             onChange={(e) => setSelectedResult(e.target.value)}
-            style={{ background: 'rgba(15, 23, 42, 0.8)', color: '#cbd5e1', border: '1px solid rgba(255,255,255,0.1)', padding: '0.35rem 0.6rem', borderRadius: '6px' }}
+            className="ui-select-compact"
           >
             <option value="all">ทุกผลลัพธ์</option>
             <option value="completed">ตอบสำเร็จ</option>

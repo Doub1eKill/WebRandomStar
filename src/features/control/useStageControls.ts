@@ -1,6 +1,7 @@
 /**
  * A3: control logic shared by the stage drawer and the remote "Live" page. Both used to
- * re-implement these handlers; the two keep their own markup until Phase 7 unifies the UI.
+ * re-implement these handlers. Phase 7: both also render through ControlCard and
+ * QuizModeToggle (variant "drawer" or "live"), so each keeps its own look.
  */
 import { SessionState } from '@/types/session.ts';
 import { QuestionCategory } from '@/types/question.ts';
