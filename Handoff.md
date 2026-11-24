@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Generated: 2026-11-24 (อัปเดตหลังจบ Phase 6)
+> Generated: 2026-11-25 (อัปเดตหลังจบ Phase 7)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -16,7 +16,6 @@
 - **กติกาที่ผู้ใช้สั่งไว้:**
   - ทำทีละ Phase แล้ว **หยุดรออนุมัติทุก Phase**
   - **ทุก Phase ต้องอัปเดต Handoff.md, commit และ push**
-  - ล่าสุดผู้ใช้สั่งว่า "เสร็จตรงนี้แล้วพักไว้ก่อน" จึง**ยังไม่ต้องเริ่ม Phase 6 จนกว่าผู้ใช้จะสั่ง**
 
 ## 2. [Completed Milestones]
 
@@ -34,10 +33,12 @@
 | fix CI | `4cae1fe` | snapshot ปัดทศนิยม 10 หลัก เพราะ CI ใช้ Node 22 แต่เครื่อง dev ใช้ Node 24 |
 | 6 | `b11c62b` → `1eef097` (4 commits) | ย้าย 68 ไฟล์ไปโครงสร้างตามฟีเจอร์ + alias `@/` (build ได้ไฟล์เหมือนเดิมทุกไบต์), แยก AeroShards (1,785 → 730 บรรทัด), StageCanvas ใช้ตาราง (A8), AudioContext ตัวเดียว + `recipes.ts` (PF9), แยก 4 panel ใหญ่เป็น model + sections (snapshot ตรงกัน 12 สถานะ), ไม่มี `any` เหลือ (A5), ลบ props ที่ไม่ได้ใช้ (A9) |
 
-| B16 (แทรกก่อน Phase 7) | (ดู git log) | แก้เสียงค้าง: เพลง preset ที่เคยลากโน้ตตัวเดียวยาวตลอด phase เปลี่ยนเป็น arpeggio เบา ๆ (`features/music/presetArpeggio.ts`) ทุกโน้ตมีเวลา stop และเมื่อเลิก mute หรือ volume กลับจาก 0 เพลงจะเล่นต่อ ยืนยันในเบราว์เซอร์แล้วว่าหลัง stop ไม่มีโน้ตใหม่และไม่มี oscillator ค้าง |
+| B16 (แทรกก่อน Phase 7) | `a279717` | แก้เสียงค้าง: เพลง preset ที่เคยลากโน้ตตัวเดียวยาวตลอด phase เปลี่ยนเป็น arpeggio เบา ๆ (`features/music/presetArpeggio.ts`) ทุกโน้ตมีเวลา stop และเมื่อเลิก mute หรือ volume กลับจาก 0 เพลงจะเล่นต่อ ยืนยันในเบราว์เซอร์แล้วว่าหลัง stop ไม่มีโน้ตใหม่และไม่มี oscillator ค้าง |
+| 7 | (ดู git log) | ขอบเขต Targeted: แยก `index.css` เป็น 15 ไฟล์ตามลำดับ cascade (`app/styles.css`) และ CSS ที่ build ออกมาเหมือนเดิมทุกไบต์ (A6), token สี `--ui-*` + `shared/ui` (`SettingGroup`, `ModeCard`, `ui.css`) ทำให้ inline style ลดจาก 574 เหลือ 445 จุด (PF11), drawer กับหน้า Live ใช้ `ControlCard` + `QuizModeToggle` ร่วมกันแต่มี variant แยกหน้าตาของแต่ละฝั่ง (`LivePage` 466 → 182 บรรทัด), ปุ่มหน้าตรวจสอบการนำเข้าไม่เบียดกันบนจอแคบแล้ว เช็กด้วย computed-style ทุก property ใน 8 หน้าควบคุม, เวที และ drawer/Live หลายสถานะ ผลคือเหมือนเดิม |
 
 **ตัวเลขล่าสุด:**
 - เทสต์ผ่าน **277/277** (43 ไฟล์), **lint 0 errors / 0 warnings**
+- inline style **445** จุด (เดิม 574), CSS หลัก 63.9 KB (gzip 12.8 KB) ส่วน CSS ของหน้าควบคุมบางส่วนโหลดพร้อม lazy chunk
 - JS ที่จอเวทีโหลดตอนเปิด **416 KB (gzip 126 KB)** เทียบกับ baseline 751 KB (gzip 208 KB)
 - Draft PR: [Doub1eKill/WebRandomStar#1](https://github.com/Doub1eKill/WebRandomStar/pull/1) เปิด Auto-fix ไว้แล้ว
 
@@ -49,25 +50,24 @@
 
 ## 3. [Current Task & Blockers]
 
-- **สถานะ:** Phase 6 เสร็จ และแก้ B16 (เสียงค้าง) แล้ว **ผู้ใช้อนุมัติ Phase 7 แล้ว** ขอบเขต = "Targeted" และให้คงหน้าตาทั้ง drawer และหน้า Live ไว้ (ใช้ component เดียวกันแต่มี variant ของแต่ละแบบ)
-- **Phase ถัดไป (7): Styles (A6, PF11)**
-  - แยก `src/index.css` (~3,400 บรรทัด) เป็น `shared/styles/tokens.css`, `base.css`, `components.css` และ CSS ข้างคอมโพเนนต์
-  - สร้าง `shared/ui/*` (Button, Toggle, Slider, Tabs, Card, Modal, …) แล้วแทน inline style ราว 560 จุด
-  - **รวม UI ของ `ControlDrawer` กับ `LivePage` ให้ใช้การ์ดชุดเดียวกัน** (ค้างจาก A3 ใน Phase 5)
-  - แก้ปุ่มในหน้าตรวจสอบการนำเข้าที่เบียดกันเมื่อจอแคบ
-  - เทียบหน้าตาก่อน/หลังทุกหน้า: ใช้ `tests/panels.visual.test.tsx` และ `spinViews.visual.test.tsx` เป็นตาข่าย แต่ Phase 7 **ตั้งใจ**เปลี่ยน markup (class แทน inline style) จึงต้องอัปเดต snapshot พร้อมเทียบ screenshot ในเบราว์เซอร์จริง
+- **สถานะ:** Phase 7 เสร็จ commit และ push แล้ว **รอผู้ใช้อนุมัติก่อนเริ่ม Phase 8**
+- **Phase ถัดไป (8): Assets, ฟอนต์ และการใช้งานแบบออฟไลน์ (B12, PF10, S5)**
+  - สร้าง `public/` + `leaf.svg` (favicon ตอนนี้ 404)
+  - self-host Cinzel/Outfit/Prompt (woff2) + preload + `font-display: swap` แล้วเอาลิงก์ Google Fonts ออก
+  - B12: ใส่ฟอนต์ Amoria/Verve หรือเอา preset ออก (**ต้องได้คำตอบ Q4 ก่อน**)
+  - meta CSP และทดสอบแบบออฟไลน์ทุกหน้า
 - **ไฟล์ที่ยังใหญ่ (ตั้งใจเหลือไว้):**
   - `AeroShards.tsx` 730: effect WebGPU ก้อนเดียวที่แชร์ state ผ่าน closure
   - `shaders.ts` 666: WGSL
-  - `ControlDrawer` 577 และ `LivePage` 466: รอ Phase 7
-  - `musicPlayerEngine` 535
+  - `musicPlayerEngine` ~540 และ `ControlDrawer` 528
   - `LeafSystem` 420: dead code ลบใน Phase 9
 - **คำถามที่ยังค้าง:**
-  - **Q3** ลบ dead code (D1–D4) ทิ้งเลยหรือเก็บไว้ ต้องได้คำตอบก่อน Phase 9
+  - **Q3** ลบ dead code (D1–D4) ทิ้งเลยหรือเก็บไว้ ต้องได้คำตอบก่อน Phase 9 (รวม `pages/control/legacyRemote.css` ที่ไม่มีใครใช้แล้ว)
   - **Q4** มีไฟล์ฟอนต์ Amoria/Verve ไหม ต้องได้คำตอบก่อน Phase 8
 - **ข้อควรรู้:**
-  - Drawer (CSS class) กับหน้า Live (inline style) ยังคงมี markup แยกกัน การรวม UI เลื่อนไปทำใน Phase 7 (`shared/ui`)
-  - ปุ่มในหน้าตรวจสอบการนำเข้าเบียดกันเมื่อจอแคบ แก้ใน Phase 7
+  - **ลำดับ CSS สำคัญ:** `src/app/styles.css` เป็นรายการ `@import` ตามลำดับ cascade เดิม ห้ามสลับลำดับโดยไม่เช็ก computed style ไฟล์ที่ import จากคอมโพเนนต์ (lazy chunk) จะโหลดหลัง CSS หลักเสมอ จึงใช้ได้เฉพาะกับ CSS ที่ควรอยู่ท้าย cascade
+  - เครื่องมือเช็กหน้าตา: `.claude/fp.js` (ไม่ได้ commit) ใช้ใน dev server ด้วย `await import('/.claude/fp.js')` แล้วเรียก `save(name, selector)` หรือ `compare(name, selector)` เพื่อบันทึก computed style ทุก property ลง IndexedDB แล้วเทียบ ตัวเครื่องมือจะทำ transition ให้จบก่อนวัด และ rewind keyframe animation ไปที่ t=0 ข้อควรระวัง: แท็บต้องอยู่หน้า (rAF ไม่ทำงานในแท็บพื้นหลัง)
+  - การ์ดของ drawer กับหน้า Live ใช้ `ControlCard`/`QuizModeToggle` ร่วมกันแล้ว แต่ข้อความปุ่ม, icon และเงื่อนไข disabled ของ pause/skip ต่างกันมาแต่เดิม จึงยังไม่ได้รวม เพราะถ้ารวมพฤติกรรมของหน้าใดหน้าหนึ่งจะเปลี่ยน
   - เบราว์เซอร์จะหน่วง timer ในแท็บที่ถูกซ่อน จึงควรเปิดหน้าเวทีไว้ในหน้าต่างที่มองเห็นได้ ปุ่ม popout เปิดรีโมตเป็นหน้าต่างแยกอยู่แล้ว และระบบเตือนผู้ควบคุมเมื่อหน้าเวทีถูกซ่อน
   - `features/session/useStageSync.ts` (wrapper) และ `storage/storageApi.ts` (facade ชื่อฟังก์ชันเดิม) ยังใช้อยู่ ลบใน Phase 9
   - `npm install` เตือนเรื่อง install scripts (`esbuild`, `webgpu`, `@vgpu/adapter-node`) และ `npm audit` ยังเจอช่องโหว่ ซึ่งจะแก้ใน Phase 10
@@ -93,7 +93,7 @@ dev server อยู่ที่พอร์ต 3000 และมี config ข�
 
 ```text
 src/
-├── app/                            # main.tsx (index.html ชี้มาที่นี่), App.tsx (HashRouter), router.tsx
+├── app/                            # main.tsx (index.html ชี้มาที่นี่), App.tsx (HashRouter), router.tsx, styles.css (ลำดับ cascade)
 ├── pages/
 │   ├── stage/StagePage.tsx         # จอเวที + session host (useStageSync('stage'))
 │   └── control/                    # ControlLayout (SessionProvider controller) + 8 หน้า + controlMusic.ts
@@ -109,13 +109,14 @@ src/
 │   ├── questions/                  # questionSelector, importQuestions, QuestionImportDialog, QuestionManagerModal, bank/
 │   ├── words/  contestants/  history/
 │   ├── appearance/                 # typography, panel/ (model + sections)
-│   └── control/                    # ControlDrawer, useStageControls
+│   └── control/                    # ControlDrawer, ControlCard + QuizModeToggle (variant drawer/live), useStageControls
 ├── shared/
 │   ├── lib/                        # createRepository, csv, prng, useLazyRef, useHasBeenTrue
-│   └── notices/                    # operatorNotices, OperatorToasts
+│   ├── notices/                    # operatorNotices, OperatorToasts
+│   ├── styles/                     # tokens (CSS variables), base, modals, dashboard, toggle
+│   └── ui/                         # ui.css, SettingGroup, ModeCard
 ├── storage/                        # repositories (STORAGE_KEYS), useRepository, storageApi (facade ชื่อเดิม ลบใน Phase 9)
 ├── data/  types/
-└── index.css                       # ยังเป็นไฟล์เดียว แยกใน Phase 7
 ```
 
 **ค่าที่ห้ามเปลี่ยน (ข้อมูลเดิมต้องใช้ได้):**
@@ -156,16 +157,15 @@ export const STORAGE_KEYS = {
 (push ไปที่ origin = github.com/Doub1eKill/WebRandomStar, มี draft PR #1 ที่เปิด Auto-fix ไว้)
 อ่านไฟล์เหล่านี้ก่อนเริ่ม:
 1) Handoff.md
-2) docs/superpowers/plans/2026-11-24-architecture-refactor.md (Phase 0–6 ติ๊กครบแล้ว)
+2) docs/superpowers/plans/2026-11-24-architecture-refactor.md (Phase 0–7 ติ๊กครบแล้ว)
 3) docs/superpowers/plans/2026-11-24-baseline.md
 
-สถานะ: Phase 6 และ B16 (เสียงค้าง) เสร็จแล้ว ผู้ใช้อนุมัติ Phase 7 แล้ว
-ให้ทำ Phase 7 (Styles: A6, PF11 และรวม UI ของ ControlDrawer กับ LivePage) ตามแผน
-ขอบเขต "Targeted": แยก index.css ตามลำดับ cascade, ใช้ CSS variables กับสีที่ซ้ำกัน, สร้าง shared/ui สำหรับ pattern ที่ซ้ำ,
-การ์ดของ drawer กับหน้า Live ใช้ component เดียวกันแต่มี variant ที่คงหน้าตาเดิมของแต่ละฝั่ง และแก้ปุ่มที่เบียดกันในหน้าตรวจสอบการนำเข้า
+สถานะ: Phase 7 เสร็จแล้ว รอผู้ใช้อนุมัติ ห้ามเริ่ม Phase 8 เอง ให้ถามผู้ใช้ก่อน และต้องได้คำตอบ Q4 (มีไฟล์ฟอนต์ Amoria/Verve ไหม) ก่อน
+
+เมื่อผู้ใช้สั่งให้ทำต่อ ให้ทำ Phase 8 (Assets, ฟอนต์ และออฟไลน์: B12, PF10, S5) ตามแผน
 กติกา:
 - ทำทีละ Phase และหยุดรออนุมัติ
-- หน้าตาต้องเหมือนเดิม: เทียบ screenshot ก่อน/หลังในเบราว์เซอร์จริงทุกหน้า (เวทีทุก state + #/control ทุกหน้า)
+- หน้าตาต้องเหมือนเดิม: เทียบ computed style ก่อน/หลังด้วย .claude/fp.js (หรือ screenshot) ทุกหน้า (เวทีทุก state + #/control ทุกหน้า)
 - ห้ามเปลี่ยน STORAGE_KEYS หรือชื่อ BroadcastChannel; ย้ายไฟล์ด้วย git mv; import ใช้ @/
 - จบ Phase ด้วย npm run lint (0 errors, 0 warnings), npm test, npm run build ที่ผ่านทั้งหมด
 - ติ๊ก checklist ในแผน อัปเดต Handoff.md แล้ว commit (อ้างรหัสรายการใน message) และ git push origin refactor/architecture
