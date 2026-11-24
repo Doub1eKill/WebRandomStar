@@ -133,6 +133,8 @@ export const STORAGE_KEYS = {
 - `tests/helpers/render.tsx` มี `mount()` (นับ commit ผ่าน `<Profiler>` และมี `container`) และ `renderHook()`
 - `tsconfig.json` รวมโฟลเดอร์ `tests` ไว้ด้วย และเปิด `noUnusedLocals` ถ้ามี import ที่ไม่ได้ใช้ `npm run build` จะพัง
 - ไฟล์เดิมหลายไฟล์ใช้ CRLF ถ้าแก้ด้วยสคริปต์ต้องระวัง (Edit tool จัดการให้ได้)
+- **CI ใช้ Node 22 แต่เครื่อง dev ใช้ Node 24:** ผล `Math.pow` ต่างกันที่ทศนิยมหลักสุดท้าย snapshot ที่มีตัวเลขทศนิยมจึงต้องปัดก่อน (ดู `normalizeNumbers` ใน `tests/spinViews.visual.test.tsx`)
+- **PR:** [Doub1eKill/WebRandomStar#1](https://github.com/Doub1eKill/WebRandomStar/pull/1) (draft, `refactor/architecture` → `main`) เปิด Auto-fix ไว้แล้ว เมื่อ CI ล้มเหลว session จะถูกปลุกให้แก้
 
 ## 5. [Prompt for the Next AI]
 
