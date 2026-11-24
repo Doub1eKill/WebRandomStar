@@ -16,6 +16,14 @@ const reel = DEFAULT_WORDS.slice(0, 12);
 const views = { vertical: VerticalSpinView, '3d': Perspective3DSpinView, orbital: OrbitalSpinView, ribbon: RibbonSpinView };
 const offsets = [0, 0.3, 2.49, 2.51, 7.75, 35.2];
 
+/**
+ * Round every decimal number to 10 significant digits. Math.pow can differ in the last bit
+ * between V8 versions (e.g. Node 22 on CI vs Node 24 locally: 0.6446169896096 vs
+ * 0.6446169896096001), which is irrelevant to the markup this test guards.
+ */
+const normalizeNumbers = (html: string) =>
+  html.replace(/-?\d+\.\d+(?:e-?\d+)?/g, n => String(Number(Number(n).toPrecision(10))));
+
 describe('spin views render identically for a given offset', () => {
   for (const [mode, View] of Object.entries(views)) {
     for (const displayType of ['keyword', 'question'] as const) {
@@ -31,7 +39,7 @@ describe('spin views render identically for a given offset', () => {
           };
           return `@${offset}\n${renderToString(<View {...props} />)}`;
         });
-        expect(html.join('\n')).toMatchSnapshot();
+        expect(normalizeNumbers(html.join('\n'))).toMatchSnapshot();
       });
     }
   }
