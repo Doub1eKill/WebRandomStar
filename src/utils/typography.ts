@@ -54,9 +54,19 @@ export const FONT_PRESETS: Record<Exclude<FontPresetId, 'custom'>, FontPresetOpt
   }
 };
 
+/**
+ * S6: a custom font name ends up in a CSS custom property. Keep only characters that belong in
+ * a font-family list (letters incl. Thai, digits, spaces, quotes, comma, hyphen) so it cannot
+ * close the value or inject url(), braces or semicolons.
+ */
+export function sanitizeFontFamily(input: string): string {
+  return input.replace(/[^\p{L}\p{M}\p{N}\s,'"-]/gu, '').replace(/\s+/g, ' ').trim().slice(0, 200);
+}
+
 export function resolveFontFamily(preset?: FontPresetId, custom?: CustomFontConfig): string {
-  if (preset === 'custom' && custom?.fontFamily) {
-    return `${custom.fontFamily}, 'Prompt', sans-serif`;
+  const customFamily = custom?.fontFamily ? sanitizeFontFamily(custom.fontFamily) : '';
+  if (preset === 'custom' && customFamily) {
+    return `${customFamily}, 'Prompt', sans-serif`;
   }
   if (preset && preset in FONT_PRESETS) {
     return FONT_PRESETS[preset as Exclude<FontPresetId, 'custom'>].fontFamily;

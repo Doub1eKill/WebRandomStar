@@ -2,13 +2,8 @@ import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useStageSync } from './hooks/useStageSync.ts';
 import { useMusicStageRouter } from './hooks/useMusicStageRouter.ts';
 import { applyTypography } from './utils/typography.ts';
-import {
-  loadQuestions,
-  saveQuestions,
-  loadContestants,
-  saveContestants,
-  loadWords
-} from './utils/storage.ts';
+import { saveQuestions, saveContestants } from './utils/storage.ts';
+import { useQuestions, useContestants, useWords } from './hooks/useRepository.ts';
 import { Question, Contestant, QuestionCategory } from './types/question.ts';
 import { KeywordItem } from './types/word.ts';
 import { MusicTrack, PRESET_MUSIC_TRACKS } from './types/music.ts';
@@ -101,9 +96,10 @@ const StageApp: React.FC = () => {
     applyTypography(session.appearanceSettings);
   }, [session.appearanceSettings?.fontPreset, session.appearanceSettings?.customFont]);
 
-  const [questions, setQuestions] = useState<Question[]>(() => loadQuestions());
-  const [contestants, setContestants] = useState<Contestant[]>(() => loadContestants());
-  const [words] = useState<KeywordItem[]>(() => loadWords());
+  // B8: live data, updated when the remote window edits it.
+  const questions = useQuestions();
+  const contestants = useContestants();
+  const words = useWords();
 
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -113,13 +109,12 @@ const StageApp: React.FC = () => {
   const questionModalLoaded = useHasBeenTrue(isQuestionModalOpen);
   const contestantModalLoaded = useHasBeenTrue(isContestantModalOpen);
 
+  // Saving notifies the hooks above (and the other window), so no local copy is needed.
   const handleSaveQuestions = (updated: Question[]) => {
-    setQuestions(updated);
     saveQuestions(updated);
   };
 
   const handleSaveContestants = (updated: Contestant[]) => {
-    setContestants(updated);
     saveContestants(updated);
   };
 

@@ -1,21 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useStageSync } from '../../hooks/useStageSync.ts';
 import { ControlCenter } from './ControlCenter.tsx';
 import { OperatorToasts } from './OperatorToasts.tsx';
 import { applyTypography } from '../../utils/typography.ts';
-import {
-  loadQuestions,
-  saveQuestions,
-  loadContestants,
-  saveContestants,
-  loadWords,
-  saveWords,
-  loadHistory,
-  clearHistory
-} from '../../utils/storage.ts';
+import { saveQuestions, saveContestants, saveWords, clearHistory } from '../../utils/storage.ts';
+import { useQuestions, useContestants, useWords, useHistory } from '../../hooks/useRepository.ts';
 import { Question, Contestant, QuestionCategory } from '../../types/question.ts';
 import { KeywordItem } from '../../types/word.ts';
-import { HistoryRecord } from '../../types/history.ts';
 
 export const RemoteController: React.FC = () => {
   const {
@@ -48,48 +39,40 @@ export const RemoteController: React.FC = () => {
     applyTypography(session.appearanceSettings);
   }, [session.appearanceSettings?.fontPreset, session.appearanceSettings?.customFont]);
 
-  const [questions, setQuestions] = useState<Question[]>(() => loadQuestions());
-  const [contestants, setContestants] = useState<Contestant[]>(() => loadContestants());
-  const [words, setWords] = useState<KeywordItem[]>(() => loadWords());
-  const [history, setHistory] = useState<HistoryRecord[]>(() => loadHistory());
+  // B8: live data. History in particular is written by the stage window, so it now appears
+  // here as soon as an answer is recorded instead of only after a reload.
+  const questions = useQuestions();
+  const contestants = useContestants();
+  const words = useWords();
+  const history = useHistory();
 
   const handleSaveQuestions = (updated: Question[]) => {
-    setQuestions(updated);
     saveQuestions(updated);
   };
 
   const handleSaveContestants = (updated: Contestant[]) => {
-    setContestants(updated);
     saveContestants(updated);
   };
 
   const handleSaveWord = (word: KeywordItem) => {
     const exists = words.some(w => w.id === word.id);
-    const updated = exists ? words.map(w => (w.id === word.id ? word : w)) : [...words, word];
-    setWords(updated);
-    saveWords(updated);
+    saveWords(exists ? words.map(w => (w.id === word.id ? word : w)) : [...words, word]);
   };
 
   const handleDeleteWord = (id: string) => {
-    const updated = words.filter(w => w.id !== id);
-    setWords(updated);
-    saveWords(updated);
+    saveWords(words.filter(w => w.id !== id));
   };
 
   const handleToggleWord = (id: string) => {
-    const updated = words.map(w => (w.id === id ? { ...w, enabled: !w.enabled } : w));
-    setWords(updated);
-    saveWords(updated);
+    saveWords(words.map(w => (w.id === id ? { ...w, enabled: !w.enabled } : w)));
   };
 
   const handleResetWords = (defaultWords: KeywordItem[]) => {
-    setWords(defaultWords);
     saveWords(defaultWords);
   };
 
   const handleClearHistory = () => {
     clearHistory();
-    setHistory([]);
   };
 
   const handleStart = (cat?: QuestionCategory, forceWord?: KeywordItem) => {

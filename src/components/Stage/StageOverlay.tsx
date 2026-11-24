@@ -10,7 +10,7 @@ import { WordCarousel } from './WordSpin/WordCarousel.tsx';
 import { WordLockEffect } from './WordSpin/WordLockEffect.tsx';
 import { TimerDisplay } from './TimerDisplay.tsx';
 
-import { loadQuestions, loadWords } from '../../utils/storage.ts';
+import { useQuestions, useWords } from '../../hooks/useRepository.ts';
 
 interface StageOverlayProps {
   session: SessionState;
@@ -41,15 +41,19 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
   const isCenterTimer = displaySettings.timerDisplayMode === 'center';
   const isKeywordMode = session.appearanceSettings?.quizMode === 'keyword';
 
+  // B8/PF12: live, cached data (was parsed from storage once and never refreshed).
+  const questionBank = useQuestions();
+  const wordBank = useWords();
+
   const allQuestions = React.useMemo(() => {
-    const questions = loadQuestions().filter(q => q.enabled !== false);
+    const questions = questionBank.filter(q => q.enabled !== false);
     const roundQuestions = questions.filter(q => q.round === session.selectedRound);
     return roundQuestions.length > 0 ? roundQuestions : questions;
-  }, [session.selectedRound]);
+  }, [questionBank, session.selectedRound]);
 
   const allWords = React.useMemo(() => {
-    return loadWords().filter(w => w.enabled !== false);
-  }, []);
+    return wordBank.filter(w => w.enabled !== false);
+  }, [wordBank]);
 
   return (
     <div className="stage-overlay">

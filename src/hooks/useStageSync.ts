@@ -19,8 +19,8 @@ export function useStageSync(role: 'stage' | 'controller') {
     return () => runtime.stop();
   }, [runtime]);
 
-  const session = useSyncExternalStore(runtime.store.subscribe, runtime.store.getState);
-  const isPeerConnected = useSyncExternalStore(runtime.peerConnected.subscribe, runtime.peerConnected.getState);
+  const session = useSyncExternalStore(runtime.store.subscribe, runtime.store.getState, runtime.store.getState);
+  const isPeerConnected = useSyncExternalStore(runtime.peerConnected.subscribe, runtime.peerConnected.getState, runtime.peerConnected.getState);
 
   const actions = useMemo(() => {
     const d = runtime.dispatch;

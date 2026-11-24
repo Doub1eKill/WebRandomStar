@@ -259,15 +259,17 @@ store ◀──────────SNAPSHOT (เมื่อ state เปล
 - [x] notice (B10) ซ่อนบนจอโปรเจกเตอร์เมื่อมีรีโมตเชื่อมต่ออยู่ และเตือนผู้ควบคุมเมื่อหน้าเวทีถูกซ่อนอยู่ในแท็บพื้นหลัง เพราะเบราว์เซอร์จะหน่วง timer ของ host
 
 ### Phase 4: Data repositories และความปลอดภัยของข้อมูล (B7, B8, PF12, S1–S4, S6)
-- [ ] `shared/lib/createRepository<T>({ key, defaults, schemaVersion, validate, migrate })` → `load/save/subscribe` พร้อม cache ในหน่วยความจำ และรับ `storage` event จากหน้าต่างอื่น
-- [ ] repository ของ questions, words, contestants, history และ settings ทั้ง 3 ตัว **โดยใช้ key ใน `STORAGE_KEYS` เดิมทุกตัว** และย้าย migration ของ key เก่ามาไว้ใน `migrate`
-- [ ] B7: แยก `null` ออกจาก `[]`
-- [ ] S4: `save()` คืนผลลัพธ์ และถ้าล้มเหลวให้แสดง toast
-- [ ] S1: validator ของคำถาม (หมวดและรอบต้องเป็นค่าที่รู้จัก, id ไม่ซ้ำ, ความยาวข้อความ), จำกัดขนาดไฟล์, หน้าพรีวิวที่เลือกรวมหรือแทนที่ และสำรองอัตโนมัติก่อนแทนที่ (ข้อ Q5)
-- [ ] S2: `toCsvCell()` กัน formula injection พร้อมเทสต์
-- [ ] S6: จำกัดอักขระของชื่อฟอนต์ custom
-- [ ] hooks `useQuestions()`, `useWords()`, `useContestants()`, `useHistory()` แทน `loadX()` ทุกจุด (B8, PF12)
-- [ ] คง `utils/storage.ts` ไว้เป็น re-export ชั่วคราว
+- [x] `shared/lib/createRepository<T>({ key, label, defaults, schemaVersion, validate, migrate, legacyKeys })` → `load/save/subscribe` พร้อม cache (แยกตาม raw string จึงไม่ต้อง parse ซ้ำ) และรับ `storage` event จากหน้าต่างอื่น **schema version เก็บแยกไว้ที่ key `season_transition_schema_versions`** ส่วนข้อมูลยังเก็บรูปแบบเดิมที่ key เดิม (ย้อนกลับไปใช้เวอร์ชันเก่าก็อ่านได้)
+- [x] repository ของ questions, words, contestants, history, appearance และ settings (timer sound + display ใช้ object เดียวกันตามเดิม) **ใช้ key ใน `STORAGE_KEYS` เดิมทุกตัว** ส่วน key เก่าของคำถามและผู้เข้าแข่งขันอ่านผ่าน `legacyKeys`
+- [x] B7: แยก "ยังไม่เคยบันทึก" ออกจาก "บันทึกเป็นรายการว่าง"
+- [x] S3: validate ทุกครั้งที่โหลด ตัดรายการที่เสียทิ้ง และถ้าอ่านไม่ได้ทั้งก้อนจะใช้ค่าเริ่มต้นพร้อมแจ้งผู้ควบคุม (ไม่ลบข้อมูลเดิม)
+- [x] S4: `save()` คืน `SaveResult` และถ้าล้มเหลวจะแจ้งผู้ควบคุม
+- [x] S1: validator ของคำถาม (หมวด/รอบ/ระดับความยากต้องเป็นค่าที่รู้จัก, id ไม่ซ้ำ, ความยาวข้อความ), จำกัดขนาดไฟล์ 2 MB, หน้าพรีวิว "รวมกับคลังเดิม (แนะนำ)" / "แทนที่ทั้งหมด" และสำรองอัตโนมัติก่อนแทนที่ ใช้ทั้งใน `QuestionBankDashboard` และ `QuestionManagerModal` (Q5: ไม่ต้องตัดสินใจล่วงหน้า เพราะผู้ควบคุมเลือกได้ทุกครั้ง)
+- [x] S2: `toCsvCell()` กัน formula injection ใช้ทั้ง `exportHistoryToCSV` (ที่หน้าประวัติใช้จริง) และ `exportHistoryAsCSV`
+- [x] S6: `sanitizeFontFamily()` จำกัดอักขระของชื่อฟอนต์ custom
+- [x] hooks `useQuestions()`, `useWords()`, `useContestants()`, `useHistory()` แทน `loadX()` ใน `App`, `StageOverlay` และ `RemoteController` (B8, PF12) ส่วน history บนรีโมตจะอัปเดตทันทีที่จอเวทีบันทึก
+- [x] คง `utils/storage.ts` ไว้เป็น facade ที่ใช้ชื่อฟังก์ชันเดิม
+- [x] เพิ่มเติม (B10): เปลี่ยน `alert()` ที่เหลือใน `QuestionManagerModal` เป็น notice ตอนนี้ไม่มี `alert()` เหลือในโค้ดแล้ว
 
 ### Phase 5: Routing และแยกหน้า (A2 บางส่วน, A3, A4, PF3, S8)
 - [ ] เพิ่ม router (ข้อ Q1) และสร้าง `app/router.tsx` ตามตาราง 3.1 พร้อม redirect `?mode=controller`

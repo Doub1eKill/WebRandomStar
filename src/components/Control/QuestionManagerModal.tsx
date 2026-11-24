@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Question, QuestionCategory, CATEGORY_CONFIGS } from '../../types/question.ts';
-import { exportQuestionsAsJSON, parseImportedQuestions } from '../../utils/storage.ts';
+import { exportQuestionsAsJSON } from '../../utils/storage.ts';
+import { useQuestionImport } from '../../features/questions/QuestionImportDialog.tsx';
 import { DEFAULT_QUESTIONS } from '../../data/defaultQuestions.ts';
 
 interface QuestionManagerModalProps {
@@ -26,6 +27,10 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
   const [newDifficulty, setNewDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
   const [newRound, setNewRound] = useState<'intro' | 'general' | 'attitude' | 'scenario' | 'final'>('attitude');
   const [newTags, setNewTags] = useState('');
+
+  // S1 + B10: validate, preview, then merge (default) or replace with a backup; no alert().
+  // Declared before the early return below (rules of hooks).
+  const questionImport = useQuestionImport(questions, onSaveQuestions);
 
   if (!isOpen) return null;
 
@@ -80,20 +85,8 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
 
   const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const content = event.target?.result as string;
-      const result = parseImportedQuestions(content);
-      if (result.success && result.data) {
-        onSaveQuestions(result.data);
-        alert(`นำเข้าคำถามสำเร็จทั้งหมด ${result.data.length} ข้อ`);
-      } else {
-        alert(`เกิดข้อผิดพลาดในการนำเข้า: ${result.error}`);
-      }
-    };
-    reader.readAsText(file);
+    if (file) questionImport.openFile(file);
+    e.target.value = '';
   };
 
   const handleResetDefaults = () => {
@@ -103,6 +96,8 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
   };
 
   return (
+    <>
+    {questionImport.dialog}
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-container glass-panel" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
@@ -289,5 +284,6 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
         </div>
       </div>
     </div>
+    </>
   );
 };

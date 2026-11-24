@@ -1,6 +1,7 @@
 import { HistoryRecord, HistoryResult } from '../types/history.ts';
 import { Question } from '../types/question.ts';
 import { Contestant } from '../types/question.ts';
+import { toCsvCell } from '../shared/lib/csv.ts';
 
 export interface CreateRecordParams {
   sessionId: string;
@@ -67,11 +68,8 @@ export function exportHistoryToCSV(records: HistoryRecord[]): string {
     'Result'
   ];
 
-  const escapeCSV = (str: string | number | undefined): string => {
-    if (str === undefined || str === null) return '""';
-    const s = String(str).replace(/"/g, '""');
-    return `"${s}"`;
-  };
+  // S2: quote every text cell and neutralise spreadsheet formulas.
+  const escapeCSV = (value: string | number | undefined): string => toCsvCell(value);
 
   const rows = records.map(r => {
     const dateTime = new Date(r.timestamp).toLocaleString('th-TH');

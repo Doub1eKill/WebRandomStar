@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { Question, QuestionCategory, QuestionDifficulty, CATEGORY_CONFIGS } from '../../types/question.ts';
-import { exportQuestionsAsJSON, parseImportedQuestions } from '../../utils/storage.ts';
+import { exportQuestionsAsJSON } from '../../utils/storage.ts';
+import { useQuestionImport } from '../../features/questions/QuestionImportDialog.tsx';
 import {
   Search,
   Filter,
@@ -167,27 +168,18 @@ export const QuestionBankDashboard: React.FC<QuestionBankDashboardProps> = ({
     showNotification('success', 'ส่งออกข้อมูลคำถามเป็น JSON สำเร็จ');
   };
 
+  // S1: validate, preview, then merge (default) or replace with a backup.
+  const questionImport = useQuestionImport(questions, onSaveQuestions);
+
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const content = event.target?.result as string;
-      const result = parseImportedQuestions(content);
-      if (result.success && result.data) {
-        onSaveQuestions(result.data);
-        showNotification('success', `นำเข้าข้อมูลคำถามสำเร็จ ${result.data.length} ข้อ`);
-      } else {
-        showNotification('error', `การนำเข้าล้มเหลว: ${result.error || 'ไฟล์ไม่ถูกต้อง'}`);
-      }
-    };
-    reader.readAsText(file);
+    if (file) questionImport.openFile(file);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      {questionImport.dialog}
       {/* Notification Banner */}
       {notification && (
         <div
