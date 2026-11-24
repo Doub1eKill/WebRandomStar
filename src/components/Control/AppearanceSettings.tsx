@@ -535,7 +535,7 @@ export const AppearanceSettingsPanel: React.FC<AppearanceSettingsProps> = ({
                   style={{ padding: '8px 14px', fontSize: '0.82rem' }}
                   onClick={() => {
                     if (isPlayingSelected) {
-                      onStopMusic && onStopMusic();
+                      onStopMusic?.();
                     } else if (onPlayTrack && selectedSpinTrack) {
                       onPlayTrack(selectedSpinTrack);
                     }

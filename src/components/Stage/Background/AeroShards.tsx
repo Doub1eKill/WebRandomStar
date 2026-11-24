@@ -1181,6 +1181,8 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
     let timeoutId = 0;
     let unsubscribeResize: (() => void) | undefined;
     let unsubscribeGpuError: (() => void) | undefined;
+    // Assigned later in this effect but read by cleanup closures declared above that point.
+    // eslint-disable-next-line prefer-const
     let visibilityObserver: IntersectionObserver | undefined;
     let resizeObserver: ResizeObserver | undefined;
     let visible = true;

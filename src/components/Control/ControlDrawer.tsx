@@ -355,7 +355,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                       style={{ flex: 1, padding: '6px', fontSize: '0.75rem' }}
                       onClick={() => {
                         if (isPlayingSelected) {
-                          onStopMusic && onStopMusic();
+                          onStopMusic?.();
                         } else if (onPlayTrack && selectedSpinTrack) {
                           onPlayTrack(selectedSpinTrack);
                         }

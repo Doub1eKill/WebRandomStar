@@ -18,11 +18,11 @@
 
 | # | ปัญหา | ตำแหน่ง | วิธีแก้ | Phase |
 |---|---|---|---|---|
-| B1 ⚠️ | ทุกหน้าต่างรันตัวเลื่อน state และตัวนับเวลาของตัวเอง และหน้าต่างรีโมตเรียก `useStageSync('controller')` ซ้ำ 2 ครั้ง ทำให้เสียงหมดเวลาน่าจะดังซ้ำ 2–3 ครั้ง (`:156` เล่นซ้ำทุกครั้งที่ได้ `TIMER_FINISH`) และการเลื่อน state อาจกระตุก | `App.tsx:48`, `RemoteController.tsx:42`, `useStageSync.ts:156,181-279` | ให้จอเวทีเป็น host ตัวเดียว ส่วนรีโมตส่งได้แค่คำสั่ง (ข้อ 3.3) | 3 |
-| B2 ⚠️ | **เพลงที่อัปโหลดเองน่าจะเล่นไม่ได้หลังรีโหลด** เพราะ blob URL (`blob:...`) ถูกบันทึกลง IndexedDB และ localStorage ไปด้วย ตอนโหลดกลับ เงื่อนไข `t.blob && !t.url` จึงเป็นเท็จ ระบบเลยไม่สร้าง URL ใหม่ แล้วไปใช้ URL ที่ตายแล้ว ผลคือเกิด `error` แล้วสลับไปเล่นแบบ simulated (ไม่มีเสียง) | `musicStorage.ts:103-105,136-138,154,170` | ไม่บันทึก `url` ลง storage และสร้าง URL ใหม่จาก blob ทุกครั้งที่โหลด แล้วเพิ่มเทสต์จำลองรอบ save → reload | 2 |
-| B3 ⚠️ | เปลี่ยนเพลงเร็วกว่าเวลา fade (เช่น `pre-spin` 800ms แต่ fade 1s) แล้ว `playTrack` ไปเรียก `cancelAllFades()` ซึ่งหยุด interval ของ fade-out ก่อนที่จะสั่ง `pause()` เพลงเก่าจึงค้างเล่นซ้อนกับเพลงใหม่ | `musicPlayerEngine.ts:211,232-234,306-331` | ใช้ fade แยกต่อ slot และเมื่อยกเลิก fade ต้อง pause slot ที่กำลังออกเสมอ (หรือย้ายไปใช้ `GainNode.linearRampToValueAtTime`) | 2 |
+| B1 ✅ (ยืนยันด้วยเทสต์ Phase 0) | ทุกหน้าต่างรันตัวเลื่อน state และตัวนับเวลาของตัวเอง และหน้าต่างรีโมตเรียก `useStageSync('controller')` ซ้ำ 2 ครั้ง ทำให้เสียงหมดเวลาน่าจะดังซ้ำ 2–3 ครั้ง (`:156` เล่นซ้ำทุกครั้งที่ได้ `TIMER_FINISH`) และการเลื่อน state อาจกระตุก | `App.tsx:48`, `RemoteController.tsx:42`, `useStageSync.ts:156,181-279` | ให้จอเวทีเป็น host ตัวเดียว ส่วนรีโมตส่งได้แค่คำสั่ง (ข้อ 3.3) | 3 |
+| B2 ✅ (ยืนยันด้วยเทสต์ Phase 0) | **เพลงที่อัปโหลดเองน่าจะเล่นไม่ได้หลังรีโหลด** เพราะ blob URL (`blob:...`) ถูกบันทึกลง IndexedDB และ localStorage ไปด้วย ตอนโหลดกลับ เงื่อนไข `t.blob && !t.url` จึงเป็นเท็จ ระบบเลยไม่สร้าง URL ใหม่ แล้วไปใช้ URL ที่ตายแล้ว ผลคือเกิด `error` แล้วสลับไปเล่นแบบ simulated (ไม่มีเสียง) | `musicStorage.ts:103-105,136-138,154,170` | ไม่บันทึก `url` ลง storage และสร้าง URL ใหม่จาก blob ทุกครั้งที่โหลด แล้วเพิ่มเทสต์จำลองรอบ save → reload | 2 |
+| B3 ✅ (ยืนยันด้วยเทสต์ Phase 0) | เปลี่ยนเพลงเร็วกว่าเวลา fade (เช่น `pre-spin` 800ms แต่ fade 1s) แล้ว `playTrack` ไปเรียก `cancelAllFades()` ซึ่งหยุด interval ของ fade-out ก่อนที่จะสั่ง `pause()` เพลงเก่าจึงค้างเล่นซ้อนกับเพลงใหม่ | `musicPlayerEngine.ts:211,232-234,306-331` | ใช้ fade แยกต่อ slot และเมื่อยกเลิก fade ต้อง pause slot ที่กำลังออกเสมอ (หรือย้ายไปใช้ `GainNode.linearRampToValueAtTime`) | 2 |
 | B4 ✅ | `playTrack` เช็ก "เพลงเดิมกำลังเล่น" **หลัง**จากหยุด synth และยกเลิก fade ไปแล้ว ถ้าสั่งเล่นเพลง preset เดิมซ้ำจะเงียบ และ fade-in ที่ค้างครึ่งทางจะทำให้เสียงเบาค้าง | `musicPlayerEngine.ts:208-220` | ย้ายการเช็กขึ้นไปบรรทัดแรกของฟังก์ชัน | 2 |
-| B5 ⚠️ | ทั้งสอง audio slot ผูก `error` → `startSimulatedPlayback()` ไว้ ถ้า slot ที่ไม่ได้ใช้เกิด error ก็จะไปเริ่มนับเวลาจำลองซ้อนกับเพลงจริง | `musicPlayerEngine.ts:75-78` | รับเฉพาะ error จาก slot ที่ active | 2 |
+| B5 ✅ (ยืนยันด้วยเทสต์ Phase 0) | ทั้งสอง audio slot ผูก `error` → `startSimulatedPlayback()` ไว้ ถ้า slot ที่ไม่ได้ใช้เกิด error ก็จะไปเริ่มนับเวลาจำลองซ้อนกับเพลงจริง | `musicPlayerEngine.ts:75-78` | รับเฉพาะ error จาก slot ที่ active | 2 |
 | B6 ✅ | ระดับเสียงไม่สม่ำเสมอ: fade-in ใช้ `defaultVolume × volume` แต่ `setMasterVolume`/`setMuted` ตั้ง `audio.volume = volume` โดยไม่คูณ `defaultVolume` พอปรับ volume แล้วเพลงจึงดังขึ้นทันที | `musicPlayerEngine.ts:136-143,160-169,250` | คำนวณ volume ผ่านฟังก์ชันเดียว `effectiveVolume(track)` | 2 |
 | B7 ✅ | ลบผู้เข้าแข่งขัน คำถาม หรือคำ จนหมดแล้วรีโหลด ระบบจะเอาข้อมูลตัวอย่างกลับมา เพราะเช็ก `parsed.length > 0` | `storage.ts:29,52,103` | แยกกรณี "ยังไม่เคยบันทึก" (`null`) ออกจาก "บันทึกเป็นรายการว่าง" และถ้าคลังว่างให้แสดงคำเตือนแทน | 4 |
 | B8 ✅ | แก้ข้อมูลจากรีโมตแล้วจอเวทีไม่อัปเดต: `App` เก็บ `contestants`/`words` ไว้ใน state ครั้งเดียว และ `StageOverlay` memo `loadWords()` ด้วย `[]` ทำให้ป้ายชื่อและวงล้อแสดงข้อมูลเก่า | `App.tsx:68-70`, `StageOverlay.tsx:44-52` | ใช้ repository ที่ subscribe `storage` event (ข้อ 4) | 4 |
@@ -213,13 +213,13 @@ store ◀──────────SNAPSHOT (เมื่อ state เปล
 แต่ละ Phase จบได้ด้วยตัวเอง (1 Phase = 1 PR) และระบบต้องใช้งานได้ทุกครั้งที่จบ Phase
 
 ### Phase 0: ตาข่ายนิรภัย, tooling และค่า baseline
-- [ ] สร้าง branch `refactor/architecture`
-- [ ] A10: เพิ่ม ESLint (typescript-eslint + `eslint-plugin-react-hooks`) และ script `npm run lint` โดยตั้งกฎใหม่เป็น warn ก่อน จะได้ไม่ block งาน
-- [ ] A10: เพิ่ม GitHub Actions ที่รัน `lint`, `test` และ `build` (ข้อ Q6)
-- [ ] D6: เอา `tsconfig.tsbuildinfo` ออกจาก git แล้วเพิ่มลง `.gitignore`
-- [ ] เพิ่ม characterization tests ให้ `useStageSync` ตามรูปแบบใน `tests/*.test.tsx` ที่มีอยู่ ครอบคลุม: start → question → answered (ทั้งโหมด question และ keyword), manual spin stop, `showWordLockPhase=false`, pause/resume/adjust timer, `autoStartTimerOnReveal`, การรีโหลดกลางแอนิเมชัน, การบันทึก history (รวม `timerUsedMs`)
-- [ ] เขียนเทสต์ที่ fail ไว้ก่อนสำหรับรายการ ⚠️ (B1, B2, B3, B5) เพื่อยืนยันว่าบั๊กมีอยู่จริง ข้อไหนเทสต์ผ่านตั้งแต่แรกให้ลดเป็น "ไม่ใช่บั๊ก" แล้วจดไว้
-- [ ] บันทึก baseline: ขนาด chunk, จำนวน commit ต่อวินาทีจาก React Profiler ระหว่างจับเวลาและระหว่างวงล้อหมุน และ FPS
+- [x] สร้าง branch `refactor/architecture`
+- [x] A10: เพิ่ม ESLint (typescript-eslint + `eslint-plugin-react-hooks`) และ script `npm run lint` โดยตั้งกฎใหม่เป็น warn ก่อน จะได้ไม่ block งาน
+- [x] A10: เพิ่ม GitHub Actions ที่รัน `lint`, `test` และ `build` (ข้อ Q6)
+- [x] D6: เอา `tsconfig.tsbuildinfo` ออกจาก git แล้วเพิ่มลง `.gitignore`
+- [x] เพิ่ม characterization tests ให้ `useStageSync` ตามรูปแบบใน `tests/*.test.tsx` ที่มีอยู่ ครอบคลุม: start → question → answered (ทั้งโหมด question และ keyword), manual spin stop, `showWordLockPhase=false`, pause/resume/adjust timer, `autoStartTimerOnReveal`, การรีโหลดกลางแอนิเมชัน, การบันทึก history (รวม `timerUsedMs`)
+- [x] เขียนเทสต์ที่ fail ไว้ก่อนสำหรับรายการ ⚠️ (B1, B2, B3, B5) เพื่อยืนยันว่าบั๊กมีอยู่จริง ข้อไหนเทสต์ผ่านตั้งแต่แรกให้ลดเป็น "ไม่ใช่บั๊ก" แล้วจดไว้
+- [x] บันทึก baseline: ขนาด chunk, จำนวน commit ต่อวินาทีจาก React Profiler ระหว่างจับเวลาและระหว่างวงล้อหมุน และ FPS
 
 ### Phase 1: Performance quick wins (พฤติกรรมเหมือนเดิม)
 - [ ] PF2: `useLazyRef` แทน `useRef(new X())`
