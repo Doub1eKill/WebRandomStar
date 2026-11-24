@@ -1,10 +1,10 @@
 import { act } from 'react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook } from './helpers/render.tsx';
-import { MusicPlayerEngine } from '../src/engine/musicPlayerEngine.ts';
-import { MusicTrack, DEFAULT_MUSIC_STATE } from '../src/types/music.ts';
-import { hydratePlayerFromStorage, startMusicHost, useRemoteMusic } from '../src/features/music/musicRemote.ts';
-import { loadMusicStateFromStorage, saveMusicStateToStorage } from '../src/storage/musicStorage.ts';
+import { MusicPlayerEngine } from '@/features/music/musicPlayerEngine.ts';
+import { MusicTrack, DEFAULT_MUSIC_STATE } from '@/types/music.ts';
+import { hydratePlayerFromStorage, startMusicHost, useRemoteMusic } from '@/features/music/musicRemote.ts';
+import { loadMusicStateFromStorage, saveMusicStateToStorage } from '@/features/music/musicStorage.ts';
 
 class FakeAudio {
   src = ''; currentTime = 0; duration = 0; loop = false; muted = false; volume = 1; preload = ''; paused = true;

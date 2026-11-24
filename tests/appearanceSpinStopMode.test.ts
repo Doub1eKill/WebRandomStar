@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { DEFAULT_APPEARANCE_SETTINGS, WordSpinStopMode } from '../src/types/appearance.ts';
-import { loadAppearanceSettings, saveAppearanceSettings } from '../src/utils/storage.ts';
+import { DEFAULT_APPEARANCE_SETTINGS, WordSpinStopMode } from '@/types/appearance.ts';
+import { loadAppearanceSettings, saveAppearanceSettings } from '@/storage/storageApi.ts';
 
 describe('Appearance Spin Stop Mode Data Model', () => {
   beforeEach(() => {

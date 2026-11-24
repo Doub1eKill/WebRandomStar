@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { LeafSystem } from '../src/components/Stage/canvas/LeafSystem.ts';
+import { LeafSystem } from '@/features/stage/background/canvas/LeafSystem.ts';
 
 describe('LeafSystem Lifecycle', () => {
   it('should spawn hero leaf with target coordinates', () => {

@@ -2,7 +2,7 @@ import { act } from 'react';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { MemoryRouter, useLocation } from 'react-router';
 import { mount, Mounted } from './helpers/render.tsx';
-import { AppRoutes, redirectLegacyControllerUrl, CONTROL_PAGES } from '../src/app/router.tsx';
+import { AppRoutes, redirectLegacyControllerUrl, CONTROL_PAGES } from '@/app/router.tsx';
 
 async function settle() {
   await act(async () => {

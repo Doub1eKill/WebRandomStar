@@ -6,12 +6,12 @@
 import React, { useEffect, useMemo } from 'react';
 import { NavLink, Outlet } from 'react-router';
 import { Layers, Key, BookOpen, Clock, Music, Users, History, Palette, Sparkles } from 'lucide-react';
-import { SessionProvider, useSession, usePeerConnected } from '../../features/session/SessionProvider.tsx';
-import { useRemoteMusic } from '../../features/music/musicRemote.ts';
-import { useMusicLibrary } from '../../features/music/useMusicLibrary.ts';
-import { useContestants, useHistory, useQuestions, useWords } from '../../hooks/useRepository.ts';
-import { applyTypography } from '../../utils/typography.ts';
-import { OperatorToasts } from '../../components/Control/OperatorToasts.tsx';
+import { SessionProvider, useSession, usePeerConnected } from '@/features/session/SessionProvider.tsx';
+import { useRemoteMusic } from '@/features/music/musicRemote.ts';
+import { useMusicLibrary } from '@/features/music/useMusicLibrary.ts';
+import { useContestants, useHistory, useQuestions, useWords } from '@/storage/useRepository.ts';
+import { applyTypography } from '@/features/appearance/typography.ts';
+import { OperatorToasts } from '@/shared/notices/OperatorToasts.tsx';
 import { ControlMusicContext } from './controlMusic.ts';
 
 export const ControlLayout: React.FC = () => (

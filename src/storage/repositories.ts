@@ -2,14 +2,14 @@
  * Phase 4: repositories for every localStorage collection. Keys are unchanged
  * (STORAGE_KEYS), so data saved by earlier versions loads as before.
  */
-import { Question, Contestant } from '../types/question.ts';
-import { KeywordItem } from '../types/word.ts';
-import { HistoryRecord } from '../types/history.ts';
-import { AppearanceSettings, DEFAULT_APPEARANCE_SETTINGS } from '../types/appearance.ts';
-import { DEFAULT_QUESTIONS } from '../data/defaultQuestions.ts';
-import { DEFAULT_CONTESTANTS } from '../data/defaultContestants.ts';
-import { DEFAULT_WORDS } from '../data/defaultWords.ts';
-import { createRepository } from '../shared/lib/createRepository.ts';
+import { Question, Contestant } from '@/types/question.ts';
+import { KeywordItem } from '@/types/word.ts';
+import { HistoryRecord } from '@/types/history.ts';
+import { AppearanceSettings, DEFAULT_APPEARANCE_SETTINGS } from '@/types/appearance.ts';
+import { DEFAULT_QUESTIONS } from '@/data/defaultQuestions.ts';
+import { DEFAULT_CONTESTANTS } from '@/data/defaultContestants.ts';
+import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
+import { createRepository } from '@/shared/lib/createRepository.ts';
 
 export const STORAGE_KEYS = {
   QUESTIONS: 'season_transition_questions',

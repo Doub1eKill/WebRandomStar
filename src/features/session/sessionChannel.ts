@@ -2,7 +2,7 @@
  * Typed BroadcastChannel protocol between the stage (host) and controller windows (Phase 3).
  * Replaces the old `SyncMessage { payload?: any }` (D5) and validates everything it receives (S7).
  */
-import { SessionState } from '../../types/session.ts';
+import { SessionState } from '@/types/session.ts';
 import { SessionCommand, REMOTE_COMMAND_TYPES } from './commands.ts';
 
 // Bumped from v2: the message format changed, old tabs must not talk to new ones.

@@ -1,12 +1,12 @@
 import { act } from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mount, renderHook } from './helpers/render.tsx';
-import { selectNextQuestion } from '../src/engine/questionSelector.ts';
-import { notifyOperator, subscribeOperatorNotices, OperatorNotice } from '../src/engine/operatorNotices.ts';
-import { OperatorToasts } from '../src/components/Control/OperatorToasts.tsx';
-import { useStageSync } from '../src/hooks/useStageSync.ts';
-import { saveQuestions } from '../src/utils/storage.ts';
-import { Question } from '../src/types/question.ts';
+import { selectNextQuestion } from '@/features/questions/questionSelector.ts';
+import { notifyOperator, subscribeOperatorNotices, OperatorNotice } from '@/shared/notices/operatorNotices.ts';
+import { OperatorToasts } from '@/shared/notices/OperatorToasts.tsx';
+import { useStageSync } from '@/features/session/useStageSync.ts';
+import { saveQuestions } from '@/storage/storageApi.ts';
+import { Question } from '@/types/question.ts';
 
 const q = (id: string, round: string, category: string, enabled = true): Question => ({
   id, text: id, round, category: category as Question['category'], difficulty: 'medium', enabled

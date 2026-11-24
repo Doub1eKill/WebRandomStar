@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Question } from '../../types/question.ts';
-import { notifyOperator } from '../../engine/operatorNotices.ts';
+import { Question } from '@/types/question.ts';
+import { notifyOperator } from '@/shared/notices/operatorNotices.ts';
 import {
   MAX_IMPORT_BYTES,
   ImportPlan,

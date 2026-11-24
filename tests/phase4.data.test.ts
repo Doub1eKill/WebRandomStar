@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { createRepository, SCHEMA_VERSIONS_KEY } from '../src/shared/lib/createRepository.ts';
-import { subscribeOperatorNotices, OperatorNotice } from '../src/engine/operatorNotices.ts';
-import { loadContestants, saveContestants, loadQuestions, saveQuestions, exportHistoryAsCSV, STORAGE_KEYS } from '../src/utils/storage.ts';
-import { exportHistoryToCSV } from '../src/engine/historyManager.ts';
-import { toCsvCell } from '../src/shared/lib/csv.ts';
-import { sanitizeFontFamily, resolveFontFamily } from '../src/utils/typography.ts';
-import { parseImportedQuestions, mergeQuestions, planImport, backupQuestions, loadQuestionsBackup } from '../src/features/questions/importQuestions.ts';
-import { Question } from '../src/types/question.ts';
-import { HistoryRecord } from '../src/types/history.ts';
+import { createRepository, SCHEMA_VERSIONS_KEY } from '@/shared/lib/createRepository.ts';
+import { subscribeOperatorNotices, OperatorNotice } from '@/shared/notices/operatorNotices.ts';
+import { loadContestants, saveContestants, loadQuestions, saveQuestions, exportHistoryAsCSV, STORAGE_KEYS } from '@/storage/storageApi.ts';
+import { exportHistoryToCSV } from '@/features/history/historyManager.ts';
+import { toCsvCell } from '@/shared/lib/csv.ts';
+import { sanitizeFontFamily, resolveFontFamily } from '@/features/appearance/typography.ts';
+import { parseImportedQuestions, mergeQuestions, planImport, backupQuestions, loadQuestionsBackup } from '@/features/questions/importQuestions.ts';
+import { Question } from '@/types/question.ts';
+import { HistoryRecord } from '@/types/history.ts';
 
 const q = (id: string, text = id): Question => ({ id, text, category: 'rain', difficulty: 'medium', round: 'intro', enabled: true });
 

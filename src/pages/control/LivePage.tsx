@@ -3,12 +3,12 @@
  * Contest flow, contestant/round selection, stage actions and the live question monitor.
  */
 import React, { useState } from 'react';
-import { CATEGORY_CONFIGS } from '../../types/question.ts';
-import { useSession, useSessionActions } from '../../features/session/SessionProvider.tsx';
-import { stageControls } from '../../features/control/useStageControls.ts';
-import { useContestants, useWords } from '../../hooks/useRepository.ts';
-import { saveContestants } from '../../utils/storage.ts';
-import { ContestantManagerModal } from '../../components/Control/ContestantManagerModal.tsx';
+import { CATEGORY_CONFIGS } from '@/types/question.ts';
+import { useSession, useSessionActions } from '@/features/session/SessionProvider.tsx';
+import { stageControls } from '@/features/control/useStageControls.ts';
+import { useContestants, useWords } from '@/storage/useRepository.ts';
+import { saveContestants } from '@/storage/storageApi.ts';
+import { ContestantManagerModal } from '@/features/contestants/ContestantManagerModal.tsx';
 import {
   Play,
   Pause,

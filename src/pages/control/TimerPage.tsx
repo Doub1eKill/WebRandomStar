@@ -1,6 +1,6 @@
 import React from 'react';
-import { useSession, useSessionActions } from '../../features/session/SessionProvider.tsx';
-import { TimerPanel } from '../../components/Control/TimerPanel.tsx';
+import { useSession, useSessionActions } from '@/features/session/SessionProvider.tsx';
+import { TimerPanel } from '@/features/timer/panel/TimerPanel.tsx';
 
 /** Remote "Timer" page (Phase 5). Re-renders only on timer/sound/display changes. */
 export const TimerPage: React.FC = () => {

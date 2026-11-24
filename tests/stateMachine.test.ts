@@ -4,8 +4,8 @@ import {
   isValidTransition,
   STAGE_SEQUENCE,
   STAGE_DURATION
-} from '../src/engine/stateMachine.ts';
-import { AppState } from '../src/types/session.ts';
+} from '@/features/session/stateMachine.ts';
+import { AppState } from '@/types/session.ts';
 
 describe('Version 3.0 Stage State Machine (Royal Word Spin)', () => {
   it('should have exact 8 states in Royal Word Spin sequence', () => {

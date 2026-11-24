@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { audioEngine } from '../src/engine/audioEngine.ts';
+import { audioEngine } from '@/features/audio/audioEngine.ts';
 
 describe('Procedural Web Audio Engine (V3 - Royal Word Spin)', () => {
   beforeEach(() => {

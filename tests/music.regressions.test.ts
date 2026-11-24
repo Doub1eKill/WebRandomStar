@@ -5,8 +5,8 @@
 import 'fake-indexeddb/auto';
 import { Blob as NodeBlob } from 'node:buffer';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { MusicPlayerEngine } from '../src/engine/musicPlayerEngine.ts';
-import { MusicTrack } from '../src/types/music.ts';
+import { MusicPlayerEngine } from '@/features/music/musicPlayerEngine.ts';
+import { MusicTrack } from '@/types/music.ts';
 
 /** Minimal HTMLAudioElement stand-in: tracks paused state, volume and listeners. */
 class FakeAudio {
@@ -159,7 +159,7 @@ describe('musicStorage', () => {
 
   it('B2: an uploaded track gets a fresh blob URL after a reload', async () => {
     vi.resetModules();
-    const firstPage = await import('../src/storage/musicStorage.ts');
+    const firstPage = await import('@/features/music/musicStorage.ts');
     const saved = await firstPage.saveTrackToStorage(upload(), audioBlob());
     const urlFromFirstPage = saved.url!;
     expect(urlFromFirstPage.startsWith('blob:')).toBe(true);
@@ -167,7 +167,7 @@ describe('musicStorage', () => {
     // Simulate a page reload: blob URLs die with the page and module state starts fresh.
     URL.revokeObjectURL(urlFromFirstPage);
     vi.resetModules();
-    const secondPage = await import('../src/storage/musicStorage.ts');
+    const secondPage = await import('@/features/music/musicStorage.ts');
     const reloaded = (await secondPage.getAllTracksFromStorage()).find(t => t.id === 'custom-b2');
 
     expect(reloaded?.blob).toBeDefined();
@@ -177,7 +177,7 @@ describe('musicStorage', () => {
 
   it('S8: loading the library repeatedly in one page reuses one URL per track', async () => {
     vi.resetModules();
-    const storage = await import('../src/storage/musicStorage.ts');
+    const storage = await import('@/features/music/musicStorage.ts');
     const create = vi.spyOn(URL, 'createObjectURL');
     await storage.saveTrackToStorage(upload(), audioBlob());
     const urls = new Set<string | undefined>();
@@ -191,7 +191,7 @@ describe('musicStorage', () => {
 
   it('B2: blob URLs are never written to the localStorage fallback', async () => {
     vi.resetModules();
-    const storage = await import('../src/storage/musicStorage.ts');
+    const storage = await import('@/features/music/musicStorage.ts');
     await storage.saveTrackToStorage(upload(), audioBlob());
     const fallback = localStorage.getItem('stage_quiz_music_fallback_tracks_v1') || '';
     expect(fallback).toContain('custom-b2');
@@ -200,7 +200,7 @@ describe('musicStorage', () => {
 
   it('deleting a track revokes its URL', async () => {
     vi.resetModules();
-    const storage = await import('../src/storage/musicStorage.ts');
+    const storage = await import('@/features/music/musicStorage.ts');
     const saved = await storage.saveTrackToStorage(upload(), audioBlob());
     const revoke = vi.spyOn(URL, 'revokeObjectURL');
     await storage.deleteTrackFromStorage('custom-b2');
@@ -210,7 +210,7 @@ describe('musicStorage', () => {
 
   it('B2 migration: records saved by the old version with a dead blob URL get a fresh one', async () => {
     vi.resetModules();
-    const storage = await import('../src/storage/musicStorage.ts');
+    const storage = await import('@/features/music/musicStorage.ts');
     const db = await storage.openMusicDB();
     await new Promise<void>((resolve, reject) => {
       const tx = db.transaction('tracks', 'readwrite');

@@ -5,14 +5,14 @@
 import { act, useReducer } from 'react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mount } from './helpers/render.tsx';
-import { WordCarousel } from '../src/components/Stage/WordSpin/WordCarousel.tsx';
-import { VerticalSpinView } from '../src/components/Stage/WordSpin/VerticalSpinView.tsx';
-import { Perspective3DSpinView } from '../src/components/Stage/WordSpin/Perspective3DSpinView.tsx';
-import { OrbitalSpinView } from '../src/components/Stage/WordSpin/OrbitalSpinView.tsx';
-import { RibbonSpinView } from '../src/components/Stage/WordSpin/RibbonSpinView.tsx';
-import { ApplyOffset } from '../src/components/Stage/WordSpin/spinDom.ts';
-import { DEFAULT_WORDS } from '../src/data/defaultWords.ts';
-import { useLazyRef } from '../src/hooks/useLazyRef.ts';
+import { WordCarousel } from '@/features/stage/word-spin/WordCarousel.tsx';
+import { VerticalSpinView } from '@/features/stage/word-spin/VerticalSpinView.tsx';
+import { Perspective3DSpinView } from '@/features/stage/word-spin/Perspective3DSpinView.tsx';
+import { OrbitalSpinView } from '@/features/stage/word-spin/OrbitalSpinView.tsx';
+import { RibbonSpinView } from '@/features/stage/word-spin/RibbonSpinView.tsx';
+import { ApplyOffset } from '@/features/stage/word-spin/spinDom.ts';
+import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
+import { useLazyRef } from '@/shared/lib/useLazyRef.ts';
 
 describe('PF4: word carousel', () => {
   beforeEach(() => {

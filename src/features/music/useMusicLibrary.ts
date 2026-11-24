@@ -4,15 +4,15 @@
  * the other windows to reload it, so the stage and the remote always list the same tracks.
  */
 import { useCallback, useEffect, useState } from 'react';
-import { MusicTrack, PRESET_MUSIC_TRACKS } from '../../types/music.ts';
-import { MusicPlayerEngine } from '../../engine/musicPlayerEngine.ts';
+import { MusicTrack, PRESET_MUSIC_TRACKS } from '@/types/music.ts';
+import { MusicPlayerEngine } from './musicPlayerEngine.ts';
 import {
   getAllTracksFromStorage,
   saveTrackToStorage,
   deleteTrackFromStorage,
   loadMusicStateFromStorage,
   resetTracksToDefault
-} from '../../storage/musicStorage.ts';
+} from './musicStorage.ts';
 import { MusicRemote } from './musicRemote.ts';
 
 const LIBRARY_CHANNEL_NAME = 'season_transition_music_library_v1';

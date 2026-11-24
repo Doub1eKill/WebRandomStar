@@ -2,10 +2,10 @@
  * A3: control logic shared by the stage drawer and the remote "Live" page. Both used to
  * re-implement these handlers; the two keep their own markup until Phase 7 unifies the UI.
  */
-import { SessionState } from '../../types/session.ts';
-import { QuestionCategory } from '../../types/question.ts';
-import { KeywordItem } from '../../types/word.ts';
-import { AppearanceSettings, DEFAULT_APPEARANCE_SETTINGS } from '../../types/appearance.ts';
+import { SessionState } from '@/types/session.ts';
+import { QuestionCategory } from '@/types/question.ts';
+import { KeywordItem } from '@/types/word.ts';
+import { AppearanceSettings, DEFAULT_APPEARANCE_SETTINGS } from '@/types/appearance.ts';
 
 export const ROUND_OPTIONS = [
   { id: 'intro', label: 'รอบแนะนำตัว (Intro)' },

@@ -1,7 +1,7 @@
 import React from 'react';
-import { useSessionActions } from '../../features/session/SessionProvider.tsx';
-import { useRemoteMusic } from '../../features/music/musicRemote.ts';
-import { MusicPanel } from '../../components/Control/MusicPanel.tsx';
+import { useSessionActions } from '@/features/session/SessionProvider.tsx';
+import { useRemoteMusic } from '@/features/music/musicRemote.ts';
+import { MusicPanel } from '@/features/music/panel/MusicPanel.tsx';
 import { useControlMusic } from './controlMusic.ts';
 
 /** Remote "Music" page (Phase 5). Plays on the stage window (B14). */

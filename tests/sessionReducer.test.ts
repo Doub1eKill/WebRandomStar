@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { sessionReducer, ReducerContext } from '../src/features/session/sessionReducer.ts';
-import { parseChannelMessage } from '../src/features/session/sessionChannel.ts';
-import { createInitialSession } from '../src/features/session/persistence.ts';
-import { DEFAULT_TIMER_SOUND_SETTINGS, DEFAULT_STAGE_DISPLAY_SETTINGS } from '../src/types/timer.ts';
-import { Question } from '../src/types/question.ts';
-import { KeywordItem } from '../src/types/word.ts';
+import { sessionReducer, ReducerContext } from '@/features/session/sessionReducer.ts';
+import { parseChannelMessage } from '@/features/session/sessionChannel.ts';
+import { createInitialSession } from '@/features/session/persistence.ts';
+import { DEFAULT_TIMER_SOUND_SETTINGS, DEFAULT_STAGE_DISPLAY_SETTINGS } from '@/types/timer.ts';
+import { Question } from '@/types/question.ts';
+import { KeywordItem } from '@/types/word.ts';
 
 const question: Question = { id: 'q1', text: 'Q', round: 'intro', category: 'rain', difficulty: 'medium', enabled: true };
 const word: KeywordItem = { id: 'w1', word: 'ฝน', category: 'rain', enabled: true } as KeywordItem;

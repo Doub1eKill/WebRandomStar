@@ -1,8 +1,8 @@
-import { AppState } from '../../types/session.ts';
-import { QuestionCategory } from '../../types/question.ts';
-import { KeywordItem } from '../../types/word.ts';
-import { TimerSoundSettings, StageDisplaySettings } from '../../types/timer.ts';
-import { AppearanceSettings } from '../../types/appearance.ts';
+import { AppState } from '@/types/session.ts';
+import { QuestionCategory } from '@/types/question.ts';
+import { KeywordItem } from '@/types/word.ts';
+import { TimerSoundSettings, StageDisplaySettings } from '@/types/timer.ts';
+import { AppearanceSettings } from '@/types/appearance.ts';
 
 /** Commands any window may send to the stage host (A1/B1). */
 export type SessionCommand =

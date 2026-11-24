@@ -3,23 +3,23 @@
  * here line for line. Side effects (storage writes, history, sounds, operator notices) are
  * returned as data and executed by the stage host, so this module never touches the outside world.
  */
-import { SessionState } from '../../types/session.ts';
-import { Question, QuestionCategory, Contestant, CATEGORY_CONFIGS } from '../../types/question.ts';
-import { KeywordItem } from '../../types/word.ts';
-import { TimerSoundSettings, StageDisplaySettings } from '../../types/timer.ts';
-import { AppearanceSettings } from '../../types/appearance.ts';
-import { selectNextQuestion, SelectionFallbackReason } from '../../engine/questionSelector.ts';
-import { selectTargetWord } from '../../engine/wordSelector.ts';
-import { getNextState } from '../../engine/stateMachine.ts';
+import { SessionState } from '@/types/session.ts';
+import { Question, QuestionCategory, Contestant, CATEGORY_CONFIGS } from '@/types/question.ts';
+import { KeywordItem } from '@/types/word.ts';
+import { TimerSoundSettings, StageDisplaySettings } from '@/types/timer.ts';
+import { AppearanceSettings } from '@/types/appearance.ts';
+import { selectNextQuestion, SelectionFallbackReason } from '@/features/questions/questionSelector.ts';
+import { selectTargetWord } from '@/features/words/wordSelector.ts';
+import { getNextState } from './stateMachine.ts';
 import {
   createInitialTimerState,
   calculateRemainingMs,
   calculateTimeUsedMs,
   getLiveRemainingMs,
   DEFAULT_TIMER_DURATION_MS
-} from '../../engine/timerEngine.ts';
-import { CreateRecordParams } from '../../engine/historyManager.ts';
-import { NoticeLevel } from '../../engine/operatorNotices.ts';
+} from '@/features/timer/timerEngine.ts';
+import { CreateRecordParams } from '@/features/history/historyManager.ts';
+import { NoticeLevel } from '@/shared/notices/operatorNotices.ts';
 import { AnyCommand } from './commands.ts';
 
 export type SessionEffect =

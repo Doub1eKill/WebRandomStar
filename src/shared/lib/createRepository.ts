@@ -9,7 +9,7 @@
  * - B8/PF12: parsed values are cached per raw string, and `subscribe` also fires when another
  *   window changes the key, so every window shows the same data without re-parsing JSON.
  */
-import { notifyOperator } from '../../engine/operatorNotices.ts';
+import { notifyOperator } from '@/shared/notices/operatorNotices.ts';
 
 export const SCHEMA_VERSIONS_KEY = 'season_transition_schema_versions';
 

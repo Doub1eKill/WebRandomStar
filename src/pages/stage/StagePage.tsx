@@ -2,27 +2,27 @@
  * Stage page (route "#/"): the projector screen and session host. Moved from App.tsx in Phase 5.
  */
 import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { useStageSync } from '../../hooks/useStageSync.ts';
-import { useMusicStageRouter } from '../../hooks/useMusicStageRouter.ts';
-import { applyTypography } from '../../utils/typography.ts';
-import { saveQuestions, saveContestants } from '../../utils/storage.ts';
-import { useQuestions, useContestants, useWords } from '../../hooks/useRepository.ts';
-import { Question, Contestant, QuestionCategory } from '../../types/question.ts';
-import { KeywordItem } from '../../types/word.ts';
-import { musicPlayer } from '../../engine/musicPlayerEngine.ts';
-import { useMusicPlayerState } from '../../hooks/useMusicPlayerState.ts';
-import { hydratePlayerFromStorage, startMusicHost } from '../../features/music/musicRemote.ts';
-import { localMusicControls, useMusicLibrary } from '../../features/music/useMusicLibrary.ts';
-import { StageBackground } from '../../components/Stage/StageBackground.tsx';
-import { StageOverlay } from '../../components/Stage/StageOverlay.tsx';
-import { KeyboardController } from '../../components/Control/KeyboardController.tsx';
-import { OperatorToasts } from '../../components/Control/OperatorToasts.tsx';
-import { useHasBeenTrue } from '../../hooks/useHasBeenTrue.ts';
+import { useStageSync } from '@/features/session/useStageSync.ts';
+import { useMusicStageRouter } from '@/features/music/useMusicStageRouter.ts';
+import { applyTypography } from '@/features/appearance/typography.ts';
+import { saveQuestions, saveContestants } from '@/storage/storageApi.ts';
+import { useQuestions, useContestants, useWords } from '@/storage/useRepository.ts';
+import { Question, Contestant, QuestionCategory } from '@/types/question.ts';
+import { KeywordItem } from '@/types/word.ts';
+import { musicPlayer } from '@/features/music/musicPlayerEngine.ts';
+import { useMusicPlayerState } from '@/features/music/useMusicPlayerState.ts';
+import { hydratePlayerFromStorage, startMusicHost } from '@/features/music/musicRemote.ts';
+import { localMusicControls, useMusicLibrary } from '@/features/music/useMusicLibrary.ts';
+import { StageBackground } from '@/features/stage/background/StageBackground.tsx';
+import { StageOverlay } from '@/features/stage/overlay/StageOverlay.tsx';
+import { KeyboardController } from '@/features/stage/KeyboardController.tsx';
+import { OperatorToasts } from '@/shared/notices/OperatorToasts.tsx';
+import { useHasBeenTrue } from '@/shared/lib/useHasBeenTrue.ts';
 
 // PF3: operator-only UI is split into separate chunks; the drawer/modals load on first open.
-const ControlDrawer = lazy(() => import('../../components/Control/ControlDrawer.tsx').then(m => ({ default: m.ControlDrawer })));
-const QuestionManagerModal = lazy(() => import('../../components/Control/QuestionManagerModal.tsx').then(m => ({ default: m.QuestionManagerModal })));
-const ContestantManagerModal = lazy(() => import('../../components/Control/ContestantManagerModal.tsx').then(m => ({ default: m.ContestantManagerModal })));
+const ControlDrawer = lazy(() => import('@/features/control/ControlDrawer.tsx').then(m => ({ default: m.ControlDrawer })));
+const QuestionManagerModal = lazy(() => import('@/features/questions/QuestionManagerModal.tsx').then(m => ({ default: m.QuestionManagerModal })));
+const ContestantManagerModal = lazy(() => import('@/features/contestants/ContestantManagerModal.tsx').then(m => ({ default: m.ContestantManagerModal })));
 
 const stageMusicControls = localMusicControls(musicPlayer);
 

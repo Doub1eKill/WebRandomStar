@@ -3,7 +3,7 @@
  * rejects duplicate ids, limits the file size, and lets the operator merge into the bank
  * (default) or replace it after an automatic backup.
  */
-import { Question, CATEGORY_CONFIGS } from '../../types/question.ts';
+import { Question, CATEGORY_CONFIGS } from '@/types/question.ts';
 
 export const MAX_IMPORT_BYTES = 2 * 1024 * 1024;
 export const QUESTION_ROUNDS = ['intro', 'general', 'attitude', 'scenario', 'final'] as const;

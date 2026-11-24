@@ -4,8 +4,8 @@ import {
   exportHistoryToJSON,
   exportHistoryToCSV,
   filterHistory
-} from '../src/engine/historyManager.ts';
-import { Question, Contestant } from '../src/types/question.ts';
+} from '@/features/history/historyManager.ts';
+import { Question, Contestant } from '@/types/question.ts';
 
 const mockQuestion: Question = {
   id: 'q1',

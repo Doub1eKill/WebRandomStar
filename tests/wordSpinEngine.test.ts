@@ -6,8 +6,8 @@ import {
   calculateContinuousDecelTarget,
   getWordAtProgress,
   getDisplayText
-} from '../src/engine/wordSpinEngine.ts';
-import { DEFAULT_WORDS } from '../src/data/defaultWords.ts';
+} from '@/features/stage/word-spin/wordSpinEngine.ts';
+import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
 
 describe('Word Spin Engine', () => {
   it('should generate a reel with the target word at the very end', () => {

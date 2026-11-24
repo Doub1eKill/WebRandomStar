@@ -5,12 +5,12 @@
  */
 import { describe, it, expect } from 'vitest';
 import { renderToString } from 'react-dom/server';
-import { DEFAULT_WORDS } from '../src/data/defaultWords.ts';
-import { VerticalSpinView } from '../src/components/Stage/WordSpin/VerticalSpinView.tsx';
-import { Perspective3DSpinView } from '../src/components/Stage/WordSpin/Perspective3DSpinView.tsx';
-import { OrbitalSpinView } from '../src/components/Stage/WordSpin/OrbitalSpinView.tsx';
-import { RibbonSpinView } from '../src/components/Stage/WordSpin/RibbonSpinView.tsx';
-import { SpinViewProps } from '../src/components/Stage/WordSpin/types.ts';
+import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
+import { VerticalSpinView } from '@/features/stage/word-spin/VerticalSpinView.tsx';
+import { Perspective3DSpinView } from '@/features/stage/word-spin/Perspective3DSpinView.tsx';
+import { OrbitalSpinView } from '@/features/stage/word-spin/OrbitalSpinView.tsx';
+import { RibbonSpinView } from '@/features/stage/word-spin/RibbonSpinView.tsx';
+import { SpinViewProps } from '@/features/stage/word-spin/types.ts';
 
 const reel = DEFAULT_WORDS.slice(0, 12);
 const views = { vertical: VerticalSpinView, '3d': Perspective3DSpinView, orbital: OrbitalSpinView, ribbon: RibbonSpinView };

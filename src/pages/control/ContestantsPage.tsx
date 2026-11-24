@@ -2,10 +2,10 @@
  * Remote "Contestants" page (Phase 5): the former ControlCenter "contestants" tab, unchanged markup.
  */
 import React, { useState } from 'react';
-import { useSession, useSessionActions } from '../../features/session/SessionProvider.tsx';
-import { useContestants } from '../../hooks/useRepository.ts';
-import { saveContestants } from '../../utils/storage.ts';
-import { ContestantManagerModal } from '../../components/Control/ContestantManagerModal.tsx';
+import { useSession, useSessionActions } from '@/features/session/SessionProvider.tsx';
+import { useContestants } from '@/storage/useRepository.ts';
+import { saveContestants } from '@/storage/storageApi.ts';
+import { ContestantManagerModal } from '@/features/contestants/ContestantManagerModal.tsx';
 
 export const ContestantsPage: React.FC = () => {
   const selectedContestantId = useSession(s => s.selectedContestantId);

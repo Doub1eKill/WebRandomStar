@@ -8,14 +8,14 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { act } from 'react';
 import { renderHook, mount, HookResult } from './helpers/render.tsx';
-import { useStageSync } from '../src/hooks/useStageSync.ts';
-import { getLiveRemainingMs } from '../src/engine/timerEngine.ts';
-import { TimerDisplay } from '../src/components/Stage/TimerDisplay.tsx';
-import { STORAGE_KEYS, loadHistory } from '../src/utils/storage.ts';
-import { DEFAULT_APPEARANCE_SETTINGS, AppearanceSettings } from '../src/types/appearance.ts';
-import { AppState } from '../src/types/session.ts';
-import { audioEngine } from '../src/engine/audioEngine.ts';
-import { musicPlayer } from '../src/engine/musicPlayerEngine.ts';
+import { useStageSync } from '@/features/session/useStageSync.ts';
+import { getLiveRemainingMs } from '@/features/timer/timerEngine.ts';
+import { TimerDisplay } from '@/features/timer/TimerDisplay.tsx';
+import { STORAGE_KEYS, loadHistory } from '@/storage/storageApi.ts';
+import { DEFAULT_APPEARANCE_SETTINGS, AppearanceSettings } from '@/types/appearance.ts';
+import { AppState } from '@/types/session.ts';
+import { audioEngine } from '@/features/audio/audioEngine.ts';
+import { musicPlayer } from '@/features/music/musicPlayerEngine.ts';
 
 type Sync = ReturnType<typeof useStageSync>;
 const mounted: HookResult<Sync>[] = [];

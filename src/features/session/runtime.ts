@@ -9,7 +9,7 @@
  * Only the stage host runs timers, plays sounds and writes the session to storage, so every
  * event happens exactly once no matter how many controller windows are open.
  */
-import { SessionState } from '../../types/session.ts';
+import { SessionState } from '@/types/session.ts';
 import {
   loadQuestions,
   loadWords,
@@ -21,13 +21,13 @@ import {
   saveStageDisplaySettings,
   appendHistoryRecord,
   STORAGE_KEYS
-} from '../../utils/storage.ts';
-import { STAGE_DURATION } from '../../engine/stateMachine.ts';
-import { calculateRemainingMs } from '../../engine/timerEngine.ts';
-import { createHistoryRecord } from '../../engine/historyManager.ts';
-import { notifyOperator } from '../../engine/operatorNotices.ts';
-import { audioEngine } from '../../engine/audioEngine.ts';
-import { musicPlayer } from '../../engine/musicPlayerEngine.ts';
+} from '@/storage/storageApi.ts';
+import { STAGE_DURATION } from './stateMachine.ts';
+import { calculateRemainingMs } from '@/features/timer/timerEngine.ts';
+import { createHistoryRecord } from '@/features/history/historyManager.ts';
+import { notifyOperator } from '@/shared/notices/operatorNotices.ts';
+import { audioEngine } from '@/features/audio/audioEngine.ts';
+import { musicPlayer } from '@/features/music/musicPlayerEngine.ts';
 import { AnyCommand, SessionCommand } from './commands.ts';
 import { sessionReducer, SessionEffect, ReducerContext } from './sessionReducer.ts';
 import { createStore, Store } from './sessionStore.ts';

@@ -1,7 +1,7 @@
 import React from 'react';
-import { DEFAULT_APPEARANCE_SETTINGS } from '../../types/appearance.ts';
-import { useSession, useSessionActions } from '../../features/session/SessionProvider.tsx';
-import { AppearanceSettingsPanel } from '../../components/Control/AppearanceSettings.tsx';
+import { DEFAULT_APPEARANCE_SETTINGS } from '@/types/appearance.ts';
+import { useSession, useSessionActions } from '@/features/session/SessionProvider.tsx';
+import { AppearanceSettingsPanel } from '@/features/appearance/panel/AppearanceSettings.tsx';
 import { useControlMusic } from './controlMusic.ts';
 
 /** Remote "Appearance" page (Phase 5). */

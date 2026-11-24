@@ -20,7 +20,7 @@ describe('QuestionCard Transitions', () => {
   it('renders with cinematic reveal animation and clean centered typography', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { QuestionCard } = await import('../src/components/Stage/QuestionCard.tsx');
+    const { QuestionCard } = await import('@/features/stage/overlay/QuestionCard.tsx');
 
     const html = renderToString(
       React.createElement(QuestionCard, {
@@ -44,7 +44,7 @@ describe('QuestionCard Transitions', () => {
   it('applies answered celebration settle styling when isAnswered is true', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { QuestionCard } = await import('../src/components/Stage/QuestionCard.tsx');
+    const { QuestionCard } = await import('@/features/stage/overlay/QuestionCard.tsx');
 
     const html = renderToString(
       React.createElement(QuestionCard, {
@@ -69,7 +69,7 @@ describe('WordLockEffect Transitions', () => {
   it('renders word lock container with royal bloom aura and crown seal', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { WordLockEffect } = await import('../src/components/Stage/WordSpin/WordLockEffect.tsx');
+    const { WordLockEffect } = await import('@/features/stage/word-spin/WordLockEffect.tsx');
 
     const html = renderToString(
       React.createElement(WordLockEffect, {
@@ -87,7 +87,7 @@ describe('WordLockEffect Transitions', () => {
   it('renders question lock container with question title and SELECTED QUESTION seal when quizMode is question', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { WordLockEffect } = await import('../src/components/Stage/WordSpin/WordLockEffect.tsx');
+    const { WordLockEffect } = await import('@/features/stage/word-spin/WordLockEffect.tsx');
 
     const html = renderToString(
       React.createElement(WordLockEffect, {
@@ -107,7 +107,7 @@ describe('ContestantBadge & Timer Transitions', () => {
   it('renders contestant badge with slide-in animation and crystal shimmer sweep', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { ContestantBadge } = await import('../src/components/Stage/ContestantBadge.tsx');
+    const { ContestantBadge } = await import('@/features/stage/overlay/ContestantBadge.tsx');
 
     const html = renderToString(
       React.createElement(ContestantBadge, {
@@ -123,7 +123,7 @@ describe('ContestantBadge & Timer Transitions', () => {
   it('renders timer with cinematic float animation', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { TimerDisplay } = await import('../src/components/Stage/TimerDisplay.tsx');
+    const { TimerDisplay } = await import('@/features/timer/TimerDisplay.tsx');
 
     const html = renderToString(
       React.createElement(TimerDisplay, {
@@ -139,7 +139,7 @@ describe('ContestantBadge & Timer Transitions', () => {
   it('renders KeywordShowcaseCard for Competition Flow Mode (keyword mode)', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { KeywordShowcaseCard } = await import('../src/components/Stage/KeywordShowcaseCard.tsx');
+    const { KeywordShowcaseCard } = await import('@/features/stage/overlay/KeywordShowcaseCard.tsx');
 
     const html = renderToString(
       React.createElement(KeywordShowcaseCard, {

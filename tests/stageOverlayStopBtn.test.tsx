@@ -1,9 +1,9 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { renderToString } from 'react-dom/server';
-import { StageOverlay } from '../src/components/Stage/StageOverlay.tsx';
-import { SessionState } from '../src/types/session.ts';
-import { DEFAULT_APPEARANCE_SETTINGS } from '../src/types/appearance.ts';
+import { StageOverlay } from '@/features/stage/overlay/StageOverlay.tsx';
+import { SessionState } from '@/types/session.ts';
+import { DEFAULT_APPEARANCE_SETTINGS } from '@/types/appearance.ts';
 
 const createMockSession = (overrides: Partial<SessionState>): SessionState => ({
   sessionId: 'test-session',

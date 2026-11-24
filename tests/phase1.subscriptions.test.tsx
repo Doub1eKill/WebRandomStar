@@ -1,10 +1,10 @@
 import { act, useReducer } from 'react';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { mount } from './helpers/render.tsx';
-import { useMusicPlayerState, differsOnlyInProgress } from '../src/hooks/useMusicPlayerState.ts';
-import { MusicPlayerEngine } from '../src/engine/musicPlayerEngine.ts';
-import { DEFAULT_MUSIC_STATE, MusicState } from '../src/types/music.ts';
-import { KeyboardController } from '../src/components/Control/KeyboardController.tsx';
+import { useMusicPlayerState, differsOnlyInProgress } from '@/features/music/useMusicPlayerState.ts';
+import { MusicPlayerEngine } from '@/features/music/musicPlayerEngine.ts';
+import { DEFAULT_MUSIC_STATE, MusicState } from '@/types/music.ts';
+import { KeyboardController } from '@/features/stage/KeyboardController.tsx';
 
 /** Stand-in player that lets the test push notifications. */
 function fakePlayer() {

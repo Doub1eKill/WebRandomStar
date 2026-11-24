@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { FONT_PRESETS, resolveFontFamily, applyTypography } from '../src/utils/typography.ts';
+import { FONT_PRESETS, resolveFontFamily, applyTypography } from '@/features/appearance/typography.ts';
 
 describe('Typography Engine', () => {
   beforeEach(() => {
@@ -82,7 +82,7 @@ describe('Typography Engine', () => {
   });
 
   it('should validate Google Fonts URLs correctly', async () => {
-    const { isValidGoogleFontUrl } = await import('../src/utils/typography.ts');
+    const { isValidGoogleFontUrl } = await import('@/features/appearance/typography.ts');
     expect(isValidGoogleFontUrl('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap')).toBe(true);
     expect(isValidGoogleFontUrl('https://fonts.googleapis.com/css?family=Open+Sans')).toBe(true);
     

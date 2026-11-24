@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { KeywordItem } from '../src/types/word.ts';
+import { KeywordItem } from '@/types/word.ts';
 
 export const mockWords: KeywordItem[] = [
   { id: 'w1', word: 'ความฝัน', category: 'moon', enabled: true },
@@ -11,7 +11,7 @@ export const mockWords: KeywordItem[] = [
 
 describe('Word Spin View Types & Definitions', () => {
   it('exports valid SpinViewProps contract', async () => {
-    const types = await import('../src/components/Stage/WordSpin/types.ts');
+    const types = await import('@/features/stage/word-spin/types.ts');
     expect(types).toBeDefined();
   });
 });
@@ -20,7 +20,7 @@ describe('VerticalSpinView (Mode 1: Royal Vertical Spin)', () => {
   it('renders vertical track with visible items and center highlight', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { VerticalSpinView } = await import('../src/components/Stage/WordSpin/VerticalSpinView.tsx');
+    const { VerticalSpinView } = await import('@/features/stage/word-spin/VerticalSpinView.tsx');
 
     const html = renderToString(
       React.createElement(VerticalSpinView, {
@@ -43,7 +43,7 @@ describe('Perspective3DSpinView (Mode 2: 3D Perspective Spin)', () => {
   it('renders 3d perspective cylinder drum with depth blur and center item', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { Perspective3DSpinView } = await import('../src/components/Stage/WordSpin/Perspective3DSpinView.tsx');
+    const { Perspective3DSpinView } = await import('@/features/stage/word-spin/Perspective3DSpinView.tsx');
 
     const html = renderToString(
       React.createElement(Perspective3DSpinView, {
@@ -67,7 +67,7 @@ describe('OrbitalSpinView (Mode 3: Circular Orbital Words)', () => {
   it('renders circular orbit container with core tiara and orbiting words', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { OrbitalSpinView } = await import('../src/components/Stage/WordSpin/OrbitalSpinView.tsx');
+    const { OrbitalSpinView } = await import('@/features/stage/word-spin/OrbitalSpinView.tsx');
 
     const html = renderToString(
       React.createElement(OrbitalSpinView, {
@@ -90,7 +90,7 @@ describe('RibbonSpinView (Mode 4: Royal Ribbon Spin)', () => {
   it('renders horizontal glass ribbon stream with brackets and shimmer', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { RibbonSpinView } = await import('../src/components/Stage/WordSpin/RibbonSpinView.tsx');
+    const { RibbonSpinView } = await import('@/features/stage/word-spin/RibbonSpinView.tsx');
 
     const html = renderToString(
       React.createElement(RibbonSpinView, {
@@ -113,7 +113,7 @@ describe('WordCarousel Orchestrator Mode Switching', () => {
   it('renders vertical view by default or when mode="vertical"', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { WordCarousel } = await import('../src/components/Stage/WordSpin/WordCarousel.tsx');
+    const { WordCarousel } = await import('@/features/stage/word-spin/WordCarousel.tsx');
 
     const html = renderToString(
       React.createElement(WordCarousel, {
@@ -130,7 +130,7 @@ describe('WordCarousel Orchestrator Mode Switching', () => {
   it('renders 3D perspective view when mode="3d"', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { WordCarousel } = await import('../src/components/Stage/WordSpin/WordCarousel.tsx');
+    const { WordCarousel } = await import('@/features/stage/word-spin/WordCarousel.tsx');
 
     const html = renderToString(
       React.createElement(WordCarousel, {
@@ -147,7 +147,7 @@ describe('WordCarousel Orchestrator Mode Switching', () => {
   it('renders orbital view when mode="orbital"', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { WordCarousel } = await import('../src/components/Stage/WordSpin/WordCarousel.tsx');
+    const { WordCarousel } = await import('@/features/stage/word-spin/WordCarousel.tsx');
 
     const html = renderToString(
       React.createElement(WordCarousel, {
@@ -164,7 +164,7 @@ describe('WordCarousel Orchestrator Mode Switching', () => {
   it('renders ribbon view when mode="ribbon"', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { WordCarousel } = await import('../src/components/Stage/WordSpin/WordCarousel.tsx');
+    const { WordCarousel } = await import('@/features/stage/word-spin/WordCarousel.tsx');
 
     const html = renderToString(
       React.createElement(WordCarousel, {
@@ -181,7 +181,7 @@ describe('WordCarousel Orchestrator Mode Switching', () => {
   it('renders question text and is-question class when provided Question objects and displayType="question"', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { WordCarousel } = await import('../src/components/Stage/WordSpin/WordCarousel.tsx');
+    const { WordCarousel } = await import('@/features/stage/word-spin/WordCarousel.tsx');
 
     const sampleQuestions = [
       { id: 'q1', text: 'ในยุคดิจิทัล ทักษะใดสำคัญที่สุดสำหรับผู้นำ?', category: 'general', enabled: true },

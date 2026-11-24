@@ -8,7 +8,7 @@ import {
   isLast3Seconds,
   getTimerPhase,
   createInitialTimerState
-} from '../src/engine/timerEngine.ts';
+} from '@/features/timer/timerEngine.ts';
 
 describe('Timer Engine Pure Calculations', () => {
   it('should calculate remaining time correctly based on startTimestamp', () => {

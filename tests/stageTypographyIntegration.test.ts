@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { applyTypography } from '../src/utils/typography.ts';
+import { applyTypography } from '@/features/appearance/typography.ts';
 
 describe('Stage Typography Integration', () => {
   beforeEach(() => {

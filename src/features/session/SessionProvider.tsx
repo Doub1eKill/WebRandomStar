@@ -4,7 +4,7 @@
  * does not re-render the word bank, and so on.
  */
 import React, { createContext, useContext, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
-import { SessionState } from '../../types/session.ts';
+import { SessionState } from '@/types/session.ts';
 import { createStageHost, createControllerMirror, SessionRuntime } from './runtime.ts';
 import { createSessionActions, SessionActions } from './actions.ts';
 

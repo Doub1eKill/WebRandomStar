@@ -1,8 +1,8 @@
 import React from 'react';
-import { KeywordItem } from '../../types/word.ts';
-import { useQuestions, useWords } from '../../hooks/useRepository.ts';
-import { saveWords } from '../../utils/storage.ts';
-import { WordBankDashboard } from '../../components/Control/WordBankDashboard.tsx';
+import { KeywordItem } from '@/types/word.ts';
+import { useQuestions, useWords } from '@/storage/useRepository.ts';
+import { saveWords } from '@/storage/storageApi.ts';
+import { WordBankDashboard } from '@/features/words/WordBankDashboard.tsx';
 
 /** Remote "Word bank" page (Phase 5). */
 export const WordsPage: React.FC = () => {

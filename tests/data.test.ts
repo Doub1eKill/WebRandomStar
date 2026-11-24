@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { DEFAULT_QUESTIONS } from '../src/data/defaultQuestions.ts';
-import { DEFAULT_CONTESTANTS } from '../src/data/defaultContestants.ts';
-import { DEFAULT_WORDS } from '../src/data/defaultWords.ts';
-import { DEFAULT_APPEARANCE_SETTINGS } from '../src/types/appearance.ts';
-import { QuestionCategory } from '../src/types/question.ts';
+import { DEFAULT_QUESTIONS } from '@/data/defaultQuestions.ts';
+import { DEFAULT_CONTESTANTS } from '@/data/defaultContestants.ts';
+import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
+import { DEFAULT_APPEARANCE_SETTINGS } from '@/types/appearance.ts';
+import { QuestionCategory } from '@/types/question.ts';
 
 describe('Question, Contestant and Word Bank Data Integrity', () => {
   it('should have at least 35 default questions', () => {

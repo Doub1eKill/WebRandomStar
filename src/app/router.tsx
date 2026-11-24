@@ -11,17 +11,17 @@
  */
 import React, { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
-import { StagePage } from '../pages/stage/StagePage.tsx';
+import { StagePage } from '@/pages/stage/StagePage.tsx';
 
-const ControlLayout = lazy(() => import('../pages/control/ControlLayout.tsx'));
-const LivePage = lazy(() => import('../pages/control/LivePage.tsx'));
-const WordsPage = lazy(() => import('../pages/control/WordsPage.tsx'));
-const QuestionsPage = lazy(() => import('../pages/control/QuestionsPage.tsx'));
-const TimerPage = lazy(() => import('../pages/control/TimerPage.tsx'));
-const MusicPage = lazy(() => import('../pages/control/MusicPage.tsx'));
-const ContestantsPage = lazy(() => import('../pages/control/ContestantsPage.tsx'));
-const HistoryPage = lazy(() => import('../pages/control/HistoryPage.tsx'));
-const AppearancePage = lazy(() => import('../pages/control/AppearancePage.tsx'));
+const ControlLayout = lazy(() => import('@/pages/control/ControlLayout.tsx'));
+const LivePage = lazy(() => import('@/pages/control/LivePage.tsx'));
+const WordsPage = lazy(() => import('@/pages/control/WordsPage.tsx'));
+const QuestionsPage = lazy(() => import('@/pages/control/QuestionsPage.tsx'));
+const TimerPage = lazy(() => import('@/pages/control/TimerPage.tsx'));
+const MusicPage = lazy(() => import('@/pages/control/MusicPage.tsx'));
+const ContestantsPage = lazy(() => import('@/pages/control/ContestantsPage.tsx'));
+const HistoryPage = lazy(() => import('@/pages/control/HistoryPage.tsx'));
+const AppearancePage = lazy(() => import('@/pages/control/AppearancePage.tsx'));
 
 export const CONTROL_PAGES = ['live', 'words', 'questions', 'timer', 'music', 'contestants', 'history', 'appearance'] as const;
 

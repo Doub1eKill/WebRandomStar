@@ -1,7 +1,7 @@
-import { QuestionCategory } from '../../types/question.ts';
-import { KeywordItem } from '../../types/word.ts';
-import { TimerSoundSettings, StageDisplaySettings } from '../../types/timer.ts';
-import { AppearanceSettings } from '../../types/appearance.ts';
+import { QuestionCategory } from '@/types/question.ts';
+import { KeywordItem } from '@/types/word.ts';
+import { TimerSoundSettings, StageDisplaySettings } from '@/types/timer.ts';
+import { AppearanceSettings } from '@/types/appearance.ts';
 import { SessionCommand } from './commands.ts';
 
 /** Named action functions over `dispatch` (same API the old useStageSync exposed). */

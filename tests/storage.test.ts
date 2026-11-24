@@ -18,15 +18,15 @@ import {
   saveTimerSoundSettings,
   loadStageDisplaySettings,
   saveStageDisplaySettings
-} from '../src/utils/storage.ts';
-import { DEFAULT_QUESTIONS } from '../src/data/defaultQuestions.ts';
-import { DEFAULT_CONTESTANTS } from '../src/data/defaultContestants.ts';
-import { DEFAULT_WORDS } from '../src/data/defaultWords.ts';
-import { DEFAULT_TIMER_SOUND_SETTINGS } from '../src/types/timer.ts';
-import { DEFAULT_APPEARANCE_SETTINGS } from '../src/types/appearance.ts';
-import { Question } from '../src/types/question.ts';
-import { KeywordItem } from '../src/types/word.ts';
-import { HistoryRecord } from '../src/types/history.ts';
+} from '@/storage/storageApi.ts';
+import { DEFAULT_QUESTIONS } from '@/data/defaultQuestions.ts';
+import { DEFAULT_CONTESTANTS } from '@/data/defaultContestants.ts';
+import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
+import { DEFAULT_TIMER_SOUND_SETTINGS } from '@/types/timer.ts';
+import { DEFAULT_APPEARANCE_SETTINGS } from '@/types/appearance.ts';
+import { Question } from '@/types/question.ts';
+import { KeywordItem } from '@/types/word.ts';
+import { HistoryRecord } from '@/types/history.ts';
 
 describe('Storage Utilities & Multi-Namespace Persistence', () => {
   beforeEach(() => {
@@ -248,7 +248,7 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
   });
 
   it('should export history records as valid CSV string', async () => {
-    const { exportHistoryAsCSV } = await import('../src/utils/storage.ts');
+    const { exportHistoryAsCSV } = await import('@/storage/storageApi.ts');
     const records: HistoryRecord[] = [
       {
         id: 'rec_1',

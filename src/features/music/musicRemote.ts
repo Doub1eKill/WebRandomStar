@@ -7,10 +7,10 @@
  * the mapping, and broadcasts its player state so the remote shows what is really playing.
  */
 import { useEffect, useState } from 'react';
-import { MusicState, MusicTrack, PhaseTrackMapping, DEFAULT_MUSIC_STATE } from '../../types/music.ts';
-import { MusicPlayerEngine } from '../../engine/musicPlayerEngine.ts';
-import { loadMusicStateFromStorage, saveMusicStateToStorage } from '../../storage/musicStorage.ts';
-import { differsOnlyInProgress } from '../../hooks/useMusicPlayerState.ts';
+import { MusicState, MusicTrack, PhaseTrackMapping, DEFAULT_MUSIC_STATE } from '@/types/music.ts';
+import { MusicPlayerEngine } from './musicPlayerEngine.ts';
+import { loadMusicStateFromStorage, saveMusicStateToStorage } from './musicStorage.ts';
+import { differsOnlyInProgress } from './useMusicPlayerState.ts';
 
 export const MUSIC_CHANNEL_NAME = 'season_transition_music_v1';
 

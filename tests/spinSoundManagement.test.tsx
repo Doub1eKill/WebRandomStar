@@ -1,11 +1,11 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { renderToString } from 'react-dom/server';
-import { AppearanceSettingsPanel } from '../src/components/Control/AppearanceSettings.tsx';
-import { DEFAULT_APPEARANCE_SETTINGS } from '../src/types/appearance.ts';
-import { DEFAULT_MUSIC_STATE, PRESET_MUSIC_TRACKS } from '../src/types/music.ts';
+import { AppearanceSettingsPanel } from '@/features/appearance/panel/AppearanceSettings.tsx';
+import { DEFAULT_APPEARANCE_SETTINGS } from '@/types/appearance.ts';
+import { DEFAULT_MUSIC_STATE, PRESET_MUSIC_TRACKS } from '@/types/music.ts';
 
-import { ControlDrawer } from '../src/components/Control/ControlDrawer.tsx';
+import { ControlDrawer } from '@/features/control/ControlDrawer.tsx';
 
 describe('Spin Sound Management in AppearanceSettingsPanel', () => {
   it('renders spin audio selector and upload button', () => {

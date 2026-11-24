@@ -1,11 +1,11 @@
-import { SessionState } from '../../types/session.ts';
+import { SessionState } from '@/types/session.ts';
 import {
   STORAGE_KEYS,
   loadAppearanceSettings,
   loadTimerSoundSettings,
   loadStageDisplaySettings
-} from '../../utils/storage.ts';
-import { createInitialTimerState, DEFAULT_TIMER_DURATION_MS } from '../../engine/timerEngine.ts';
+} from '@/storage/storageApi.ts';
+import { createInitialTimerState, DEFAULT_TIMER_DURATION_MS } from '@/features/timer/timerEngine.ts';
 
 export function createInitialSession(): SessionState {
   return {
