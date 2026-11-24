@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStageSync } from '../../hooks/useStageSync.ts';
 import { ControlCenter } from './ControlCenter.tsx';
+import { OperatorToasts } from './OperatorToasts.tsx';
 import { applyTypography } from '../../utils/typography.ts';
 import {
   loadQuestions,
@@ -96,6 +97,7 @@ export const RemoteController: React.FC = () => {
 
   return (
     <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
+      <OperatorToasts />
       <ControlCenter
         session={session}
         questions={questions}

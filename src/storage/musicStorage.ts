@@ -9,6 +9,62 @@ const FALLBACK_TRACKS_KEY = 'stage_quiz_music_fallback_tracks_v1';
 // In-memory fallback if IndexedDB is unavailable
 let inMemoryTracks: MusicTrack[] = [...PRESET_MUSIC_TRACKS];
 
+/**
+ * B2 / S8: object URLs (`blob:…`) only live as long as the page. They are never written to
+ * storage; instead each track's URL is created once per page from its stored Blob and reused
+ * on every later load, then revoked when the track is deleted or the library is reset.
+ */
+const runtimeUrls = new Map<string, string>();
+
+function isBlobUrl(url?: string): url is string {
+  return typeof url === 'string' && url.startsWith('blob:');
+}
+
+function urlForBlob(id: string, blob: Blob): string | undefined {
+  const existing = runtimeUrls.get(id);
+  if (existing) return existing;
+  try {
+    const url = URL.createObjectURL(blob);
+    runtimeUrls.set(id, url);
+    return url;
+  } catch {
+    return undefined;
+  }
+}
+
+function adoptRuntimeUrl(id: string, url: string): void {
+  const existing = runtimeUrls.get(id);
+  if (existing && existing !== url) {
+    try { URL.revokeObjectURL(existing); } catch { /* ignore */ }
+  }
+  runtimeUrls.set(id, url);
+}
+
+function forgetRuntimeUrl(id: string): void {
+  const url = runtimeUrls.get(id);
+  if (url) {
+    try { URL.revokeObjectURL(url); } catch { /* ignore */ }
+    runtimeUrls.delete(id);
+  }
+}
+
+/** Drop page-scoped blob URLs before persisting. */
+function toPersisted<T extends { url?: string }>(track: T): T {
+  if (!isBlobUrl(track.url)) return track;
+  const { url: _url, ...rest } = track;
+  return rest as T;
+}
+
+/** Give a loaded track a URL that works in this page (or none if its audio data is gone). */
+function hydrate(track: MusicTrack): MusicTrack {
+  if (track.blob) {
+    return { ...track, url: urlForBlob(track.id, track.blob) };
+  }
+  const live = runtimeUrls.get(track.id);
+  if (live) return { ...track, url: live };
+  return isBlobUrl(track.url) ? toPersisted(track) : track;
+}
+
 function hasIndexedDB(): boolean {
   return typeof window !== 'undefined' && 'indexedDB' in window && window.indexedDB !== null;
 }
@@ -78,7 +134,7 @@ export async function getAllTracksFromStorage(): Promise<MusicTrack[]> {
         if (raw) {
           const parsed: MusicTrack[] = JSON.parse(raw);
           // Merge presets and custom tracks without duplicates
-          const custom = parsed.filter(t => !PRESET_MUSIC_TRACKS.some(p => p.id === t.id));
+          const custom = parsed.filter(t => !PRESET_MUSIC_TRACKS.some(p => p.id === t.id)).map(hydrate);
           return [...PRESET_MUSIC_TRACKS, ...custom];
         }
       }
@@ -97,18 +153,9 @@ export async function getAllTracksFromStorage(): Promise<MusicTrack[]> {
 
       req.onsuccess = () => {
         const savedTracks: MusicTrack[] = req.result || [];
-        
-        // Hydrate Blob Object URLs if blob exists
-        const hydrated = savedTracks.map(t => {
-          if (t.blob && !t.url) {
-            try {
-              t.url = URL.createObjectURL(t.blob);
-            } catch {
-              // ignore
-            }
-          }
-          return t;
-        });
+
+        // B2: always derive the URL from the stored Blob; a stored blob: URL is from a dead page.
+        const hydrated = savedTracks.map(hydrate);
 
         // Ensure all presets exist
         const customTracks = hydrated.filter(t => !PRESET_MUSIC_TRACKS.some(p => p.id === t.id));
@@ -133,11 +180,13 @@ export async function saveTrackToStorage(track: MusicTrack, fileBlob?: Blob): Pr
     blob: fileBlob || track.blob
   };
 
-  if (trackToSave.blob && typeof URL !== 'undefined' && !trackToSave.url) {
-    try {
-      trackToSave.url = URL.createObjectURL(trackToSave.blob);
-    } catch {
-      // ignore
+  if (trackToSave.blob && typeof URL !== 'undefined') {
+    if (isBlobUrl(trackToSave.url)) {
+      // The caller already made a URL for this blob (e.g. to read the duration): reuse it.
+      adoptRuntimeUrl(trackToSave.id, trackToSave.url);
+    } else if (!trackToSave.url) {
+      if (fileBlob) forgetRuntimeUrl(trackToSave.id); // new audio data replaces the old URL
+      trackToSave.url = urlForBlob(trackToSave.id, trackToSave.blob);
     }
   }
 
@@ -151,7 +200,7 @@ export async function saveTrackToStorage(track: MusicTrack, fileBlob?: Blob): Pr
 
   try {
     if (typeof localStorage !== 'undefined') {
-      const serializable = inMemoryTracks.map(({ blob: _blob, ...rest }) => rest);
+      const serializable = inMemoryTracks.map(({ blob: _blob, ...rest }) => toPersisted(rest));
       localStorage.setItem(FALLBACK_TRACKS_KEY, JSON.stringify(serializable));
     }
   } catch {
@@ -167,7 +216,7 @@ export async function saveTrackToStorage(track: MusicTrack, fileBlob?: Blob): Pr
     return new Promise((resolve, reject) => {
       const tx = db.transaction(TRACK_STORE, 'readwrite');
       const store = tx.objectStore(TRACK_STORE);
-      const req = store.put(trackToSave);
+      const req = store.put(toPersisted(trackToSave));
 
       req.onsuccess = () => resolve(trackToSave);
       req.onerror = () => reject(req.error);
@@ -182,19 +231,20 @@ export async function saveTrackToStorage(track: MusicTrack, fileBlob?: Blob): Pr
  */
 export async function deleteTrackFromStorage(id: string): Promise<void> {
   const existingTrack = inMemoryTracks.find(t => t.id === id);
-  if (existingTrack?.url && typeof URL !== 'undefined' && existingTrack.url.startsWith('blob:')) {
+  if (isBlobUrl(existingTrack?.url) && existingTrack.url !== runtimeUrls.get(id) && typeof URL !== 'undefined') {
     try {
       URL.revokeObjectURL(existingTrack.url);
     } catch {
       // ignore
     }
   }
+  forgetRuntimeUrl(id);
 
   inMemoryTracks = inMemoryTracks.filter(t => t.id !== id);
 
   try {
     if (typeof localStorage !== 'undefined') {
-      const serializable = inMemoryTracks.map(({ blob: _blob, ...rest }) => rest);
+      const serializable = inMemoryTracks.map(({ blob: _blob, ...rest }) => toPersisted(rest));
       localStorage.setItem(FALLBACK_TRACKS_KEY, JSON.stringify(serializable));
 
       // Clean up any phase mappings pointing to this track
@@ -254,6 +304,7 @@ export async function resetTracksToDefault(): Promise<MusicTrack[]> {
   });
 
   inMemoryTracks = [...PRESET_MUSIC_TRACKS];
+  Array.from(runtimeUrls.keys()).forEach(forgetRuntimeUrl);
 
   try {
     if (typeof localStorage !== 'undefined') {

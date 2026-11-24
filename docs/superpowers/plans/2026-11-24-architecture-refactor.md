@@ -26,7 +26,7 @@
 | B6 ✅ | ระดับเสียงไม่สม่ำเสมอ: fade-in ใช้ `defaultVolume × volume` แต่ `setMasterVolume`/`setMuted` ตั้ง `audio.volume = volume` โดยไม่คูณ `defaultVolume` พอปรับ volume แล้วเพลงจึงดังขึ้นทันที | `musicPlayerEngine.ts:136-143,160-169,250` | คำนวณ volume ผ่านฟังก์ชันเดียว `effectiveVolume(track)` | 2 |
 | B7 ✅ | ลบผู้เข้าแข่งขัน คำถาม หรือคำ จนหมดแล้วรีโหลด ระบบจะเอาข้อมูลตัวอย่างกลับมา เพราะเช็ก `parsed.length > 0` | `storage.ts:29,52,103` | แยกกรณี "ยังไม่เคยบันทึก" (`null`) ออกจาก "บันทึกเป็นรายการว่าง" และถ้าคลังว่างให้แสดงคำเตือนแทน | 4 |
 | B8 ✅ | แก้ข้อมูลจากรีโมตแล้วจอเวทีไม่อัปเดต: `App` เก็บ `contestants`/`words` ไว้ใน state ครั้งเดียว และ `StageOverlay` memo `loadWords()` ด้วย `[]` ทำให้ป้ายชื่อและวงล้อแสดงข้อมูลเก่า | `App.tsx:68-70`, `StageOverlay.tsx:44-52` | ใช้ repository ที่ subscribe `storage` event (ข้อ 4) | 4 |
-| B9 ✅ | คีย์ลัดยิงซ้อนกับปุ่ม: ถ้าปุ่มใน drawer ถูก focus อยู่แล้วกด Space/Enter ปุ่มจะทำงานพร้อมคีย์ลัด (เช่น เริ่มแล้วหยุดทันที) และการกดค้างก็ยิงซ้ำ เพราะไม่เช็ก `e.repeat` | `KeyboardController.tsx:21-35` | ข้าม event เมื่อ `e.repeat` เป็นจริง, เมื่อ target เป็น `button`/`[contenteditable]`/`[role=button]` หรืออยู่ใน drawer/modal | 2 |
+| B9 ⚠️→ บางส่วน | ~~คีย์ลัดยิงซ้อนกับปุ่ม~~ **ทดสอบใน Chrome แล้ว ไม่จริง:** `preventDefault()` ตอน keydown กันไม่ให้ปุ่มที่ focus อยู่ทำงาน คีย์ลัดจึงชนะเสมอ ส่วนที่จริงคือ **การกดค้างยิงซ้ำ** เพราะไม่เช็ก `e.repeat` (กด Space ค้างราวครึ่งวินาทีจะเริ่มแล้วหยุด/ตอบ/รีเซ็ตทันที) | `KeyboardController.tsx:21-35` | ข้าม event เมื่อ `e.repeat` เป็นจริง และข้าม contenteditable ส่วนการให้คีย์ลัดชนะปุ่มที่ focus อยู่ยังคงไว้ เพราะปลอดภัยกว่าตอนใช้งานบนเวที | 2 |
 | B10 ✅ | `alert()` โผล่บนจอโปรเจกเตอร์ตอนไม่มีคำถามเหลือ | `useStageSync.ts:305` | ใช้ toast ที่แสดงเฉพาะฝั่งผู้ควบคุม | 2 |
 | B11 ✅ | ตัวสุ่มเปลี่ยนไปหยิบรอบหรือหมวดอื่นแทนโดยไม่บอก และเมื่อคำถามหมดคลังก็วนกลับมาใช้ซ้ำแบบเงียบ ๆ | `questionSelector.ts:45-74` | คืนค่า `fallbackReason` แล้วแสดงคำเตือนให้ผู้ควบคุม โดยตรรกะการเลือกยังเหมือนเดิม | 2 |
 | B12 ✅ | ไม่มีโฟลเดอร์ `public/` ทำให้ favicon `/leaf.svg` เป็น 404 และฟอนต์ Amoria/Verve ไม่มีไฟล์ | `index.html:5`, `index.css` (`/fonts/*`) | เพิ่ม `public/` พร้อม favicon และฟอนต์ หรือเอา preset ออก (ข้อ Q4) | 8 |
@@ -235,15 +235,15 @@ store ◀──────────SNAPSHOT (เมื่อ state เปล
 - [x] วัดผลเทียบกับ baseline (ดู `2026-11-24-baseline.md` หัวข้อ "หลัง Phase 1")
 
 ### Phase 2: แก้บั๊กที่แยกทำได้ (ไม่ต้องรอโครงสร้างใหม่)
-- [ ] B2: ไม่บันทึก blob URL ลง storage และสร้างใหม่ตอนโหลดทุกครั้ง (มีเทสต์ save → reload → URL ใหม่)
-- [ ] B3: fade แยกต่อ slot และการยกเลิก fade ต้อง pause slot ที่กำลังออก (มีเทสต์: เปลี่ยนเพลง 2 ครั้งภายใน 500ms แล้วต้องเหลือเล่นอยู่ slot เดียว)
-- [ ] B4: ย้ายการเช็กเพลงเดิมขึ้นบรรทัดแรก
-- [ ] B5: รับ error เฉพาะ slot ที่ active
-- [ ] B6: `effectiveVolume(track)` ใช้ที่เดียวทั้ง fade, volume และ mute
-- [ ] B9: คีย์ลัดข้าม `e.repeat` และข้าม button/contenteditable/drawer/modal
-- [ ] B10: toast ฝั่งผู้ควบคุมแทน `alert()` (ทำ `shared/ui/Toast` ขั้นต่ำก่อน)
-- [ ] B11: `fallbackReason` + คำเตือนให้ผู้ควบคุม
-- [ ] S8 (ส่วนแรก): revoke object URL ที่สร้างไว้อ่านความยาวเพลง
+- [x] B2: ไม่บันทึก blob URL ลง storage และสร้างใหม่ตอนโหลดทุกครั้ง (มีเทสต์ save → reload → URL ใหม่ และเทสต์ migration ของข้อมูลเดิมที่บันทึก URL ตายไว้แล้ว)
+- [x] B3: fade แยกต่อ slot, การยกเลิก fade-out จะ pause slot นั้น และ `setMuted()` ไม่ยกเลิก fade อีกแล้ว (มีเทสต์: เปลี่ยนเพลง 3 ครั้งติดกันแล้วเหลือเล่นอยู่ slot เดียว)
+- [x] B4: ย้ายการเช็กเพลงเดิมขึ้นบรรทัดแรก
+- [x] B5: รับ error เฉพาะ slot ที่ active (error บน slot ที่เล่นอยู่ยังสลับไปเล่นแบบจำลองเหมือนเดิม)
+- [x] B6: `targetVolume()` ใช้ที่เดียวทั้ง fade, volume และ mute
+- [x] B9: คีย์ลัดข้าม `e.repeat` และ contenteditable ส่วนการข้าม button/drawer/modal **ไม่ได้ทำ** เพราะทดสอบใน Chrome แล้ว `preventDefault()` กันปุ่มไว้อยู่แล้ว (ดูแถว B9 ในข้อ 1.1)
+- [x] B10: notice มุมจอแทน `alert()` (`engine/operatorNotices.ts` + `OperatorToasts`) ส่งถึงทุกหน้าต่างผ่าน BroadcastChannel ตอนนี้ยังขึ้นบนจอเวทีด้วย (ขนาดเล็ก ไม่บล็อก) ส่วนการซ่อนบนจอเวทีเมื่อมีรีโมตเชื่อมต่ออยู่ ย้ายไปทำใน Phase 3
+- [x] B11: `fallbackReasons` + คำเตือนให้ผู้ควบคุม (ด้วยข้อมูลตัวอย่าง คำเตือน category-empty จะขึ้นบ่อย เพราะหลายรอบไม่มีคำถามครบทุกหมวดของคำ)
+- [x] S8 (ส่วนแรก): registry ของ object URL ต่อเพลงใน `musicStorage` ใช้ URL ที่สร้างไว้อ่านความยาวเพลงเป็น URL ของเพลงเลย, โหลดซ้ำในหน้าเดิมไม่สร้างใหม่ และ revoke ตอนลบ/รีเซ็ต
 
 ### Phase 3: Session core (B1, A1, A5, S7, D5)
 - [ ] ย้ายตรรกะของ 20 action ใน `useStageSync` มาเป็น `sessionReducer` + `commands.ts` แบบบรรทัดต่อบรรทัด แล้วเทสต์ทุก command

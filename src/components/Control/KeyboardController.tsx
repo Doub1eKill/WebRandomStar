@@ -16,9 +16,16 @@ export const KeyboardController: React.FC<KeyboardControllerProps> = (props) => 
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger shortcuts if typing inside an input or textarea
+      // Don't trigger shortcuts if typing inside an input, textarea or editable element
       const target = e.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable) {
+        return;
+      }
+
+      // B9: holding a key auto-repeats keydown. Without this, holding Space for ~0.5s starts
+      // the spin and then immediately stops it / answers / resets.
+      if (e.repeat) {
+        if (e.code === 'Space' || e.code === 'Enter') e.preventDefault(); // keep a focused button from activating
         return;
       }
 

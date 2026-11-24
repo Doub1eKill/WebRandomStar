@@ -17,7 +17,9 @@ import {
   saveStageDisplaySettings,
   STORAGE_KEYS
 } from '../utils/storage.ts';
-import { selectNextQuestion } from '../engine/questionSelector.ts';
+import { selectNextQuestion, SelectionFallbackReason } from '../engine/questionSelector.ts';
+import { notifyOperator } from '../engine/operatorNotices.ts';
+import { CATEGORY_CONFIGS } from '../types/question.ts';
 import { selectTargetWord } from '../engine/wordSelector.ts';
 import { STAGE_DURATION, getNextState } from '../engine/stateMachine.ts';
 import { createInitialTimerState, calculateRemainingMs, calculateTimeUsedMs, getLiveRemainingMs, DEFAULT_TIMER_DURATION_MS } from '../engine/timerEngine.ts';
@@ -26,6 +28,23 @@ import { audioEngine } from '../engine/audioEngine.ts';
 import { musicPlayer } from '../engine/musicPlayerEngine.ts';
 
 const CHANNEL_NAME = 'season_transition_quiz_sync_v2';
+
+/** Operator-facing explanation of a selector fallback (B11). */
+function describeFallback(reason: SelectionFallbackReason, round: string, category?: string): string {
+  const categoryName = category ? (CATEGORY_CONFIGS[category]?.name || category) : '';
+  switch (reason) {
+    case 'round-empty':
+      return `ไม่มีคำถามในรอบ "${round}" จึงสุ่มจากทุกรอบแทน`;
+    case 'category-empty':
+      return `ไม่มีคำถามหมวด "${categoryName}" ในรอบ "${round}" จึงสุ่มจากหมวดอื่นแทน`;
+    case 'difficulty-empty':
+      return 'ไม่มีคำถามตามระดับความยากที่เลือก จึงสุ่มจากทุกระดับแทน';
+    case 'subset-exhausted':
+      return 'คำถามในรอบ/หมวดที่เลือกถูกใช้ครบแล้ว จึงสุ่มจากคำถามที่ยังไม่ถูกใช้นอกรอบ/หมวดนี้';
+    case 'bank-exhausted':
+      return 'คำถามทั้งคลังถูกใช้ครบแล้ว ระบบเริ่มวนใช้คำถามซ้ำ';
+  }
+}
 
 const initialSessionState: SessionState = {
   sessionId: 'session-' + Date.now(),
@@ -294,9 +313,15 @@ export function useStageSync(role: 'stage' | 'controller') {
     });
 
     if (!selection) {
-      alert('ไม่มีคำถามที่พร้อมใช้งานในหมวด/รอบที่เลือก');
+      // B10: a notice for the operator instead of alert(), which blocked the projector screen.
+      notifyOperator('error', 'ไม่มีคำถามที่พร้อมใช้งานในหมวด/รอบที่เลือก');
       return;
     }
+
+    // B11: tell the operator when the question did not come from the requested round/category.
+    selection.fallbackReasons.forEach(reason => {
+      notifyOperator('warning', describeFallback(reason, session.selectedRound, categoryToUse));
+    });
 
     const safeDuration = session.timerState.durationMs || DEFAULT_TIMER_DURATION_MS;
 

@@ -18,6 +18,7 @@ import { getAllTracksFromStorage, loadMusicStateFromStorage, saveTrackToStorage,
 import { StageBackground } from './components/Stage/StageBackground.tsx';
 import { StageOverlay } from './components/Stage/StageOverlay.tsx';
 import { KeyboardController } from './components/Control/KeyboardController.tsx';
+import { OperatorToasts } from './components/Control/OperatorToasts.tsx';
 import { useHasBeenTrue } from './hooks/useHasBeenTrue.ts';
 
 // PF3: operator-only UI is split into separate chunks. The stage never downloads the remote
@@ -209,6 +210,9 @@ export const App: React.FC = () => {
           />
         </Suspense>
       )}
+
+      {/* Operator notices (replaces alert(), B10/B11) */}
+      <OperatorToasts />
 
       {/* 4. Global Keyboard Navigation */}
       <KeyboardController

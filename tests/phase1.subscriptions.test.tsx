@@ -83,4 +83,33 @@ describe('PF6: KeyboardController', () => {
     expect(calls).toEqual([2]); // handler from the latest render
     view.unmount();
   });
+
+  it('B9: ignores auto-repeated keydown events from a held key', () => {
+    const onStartOrPause = vi.fn();
+    const onProceed = vi.fn();
+    const view = mount(
+      <KeyboardController onStartOrPause={onStartOrPause} onProceed={onProceed} onToggleDrawer={() => {}} onToggleMute={() => {}} />
+    );
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space' }));
+    for (let i = 0; i < 5; i++) window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', repeat: true }));
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Enter', repeat: true }));
+    expect(onStartOrPause).toHaveBeenCalledTimes(1);
+    expect(onProceed).not.toHaveBeenCalled();
+    view.unmount();
+  });
+
+  it('shortcuts still win over a focused button (verified in Chrome: preventDefault blocks the button)', () => {
+    const onStartOrPause = vi.fn();
+    const view = mount(
+      <KeyboardController onStartOrPause={onStartOrPause} onProceed={() => {}} onToggleDrawer={() => {}} onToggleMute={() => {}} />
+    );
+    const button = document.createElement('button');
+    document.body.appendChild(button);
+    const event = new KeyboardEvent('keydown', { code: 'Space', bubbles: true, cancelable: true });
+    button.dispatchEvent(event);
+    expect(onStartOrPause).toHaveBeenCalledTimes(1);
+    expect(event.defaultPrevented).toBe(true);
+    button.remove();
+    view.unmount();
+  });
 });

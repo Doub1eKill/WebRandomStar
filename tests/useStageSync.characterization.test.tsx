@@ -371,13 +371,13 @@ describe('useStageSync: multi-window (stage + remote controller window)', () => 
     expect(finish.mock.calls.length).toBe(3); // Phase 3 must change this to exactly 1
   });
 
-  it('[known bug B3 trigger → Phase 3] every snapshot received by the stage re-applies mute on the music player', async () => {
+  it('[redundant → Phase 3] every snapshot received by the stage re-applies mute on the music player', async () => {
     const { stage, controllerPanel } = openStageAndController();
     const setMuted = vi.spyOn(musicPlayer, 'setMuted');
     act(() => controllerPanel.result.current.setRound('final'));
     await flushChannel();
     expect(state(stage).selectedRound).toBe('final');
-    // setMuted() cancels every running fade (see musicPlayer.test B3); a round change should not touch audio.
+    // Since Phase 2 (B3) setMuted() no longer cancels fades, so this is harmless; Phase 3 removes the redundant calls.
     expect(setMuted).toHaveBeenCalled();
   });
 });

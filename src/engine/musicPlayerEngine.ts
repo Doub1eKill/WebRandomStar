@@ -36,15 +36,44 @@ export class MusicPlayerEngine {
   private synthInterval: any = null;
   private listeners: Set<MusicStateListener> = new Set();
   private timeUpdateInterval: any = null;
-  private activeFadeTimers: Set<any> = new Set();
+  /** B3: one fade per slot, so cancelling can finish a fade-out instead of orphaning it. */
+  private fades = new Map<HTMLAudioElement, { timer: ReturnType<typeof setInterval>; kind: 'in' | 'out' }>();
 
   constructor() {
     this.initAudioElements();
   }
 
+  private activeAudio(): HTMLAudioElement | null {
+    return this.activeSlot === 'A' ? this.audioSlotA : this.audioSlotB;
+  }
+
+  /** B6: the single source of truth for how loud the current track should be. */
+  private targetVolume(): number {
+    if (this.isMuted) return 0;
+    return Math.min(1, Math.max(0, (this.currentTrack?.defaultVolume ?? 1) * this.volume));
+  }
+
+  /**
+   * Stop the fade running on `audio`. A cancelled fade-out is completed immediately (the slot
+   * is paused) so an outgoing track can never keep playing on its own (B3).
+   */
+  private cancelFade(audio: HTMLAudioElement): void {
+    const fade = this.fades.get(audio);
+    if (!fade) return;
+    clearInterval(fade.timer);
+    this.fades.delete(audio);
+    if (fade.kind === 'out') {
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+      } catch {
+        // ignore
+      }
+    }
+  }
+
   private cancelAllFades(): void {
-    this.activeFadeTimers.forEach(timer => clearInterval(timer));
-    this.activeFadeTimers.clear();
+    Array.from(this.fades.keys()).forEach(audio => this.cancelFade(audio));
   }
 
   private initAudioElements(): void {
@@ -73,6 +102,9 @@ export class MusicPlayerEngine {
         });
 
         audio.addEventListener('error', () => {
+          // B5: only the slot that is actually playing may fall back to simulated playback;
+          // an error on the idle slot says nothing about what the audience hears.
+          if (audio !== this.activeAudio() || !this.isPlaying) return;
           // Fallback to simulated playback on decode error
           this.startSimulatedPlayback();
         });
@@ -133,13 +165,14 @@ export class MusicPlayerEngine {
     this.volume = Math.max(0, Math.min(1, vol));
     const effectiveVol = this.isMuted ? 0 : this.volume;
 
-    if (this.audioSlotA) {
-      this.audioSlotA.volume = effectiveVol;
-      this.audioSlotA.muted = this.isMuted || effectiveVol === 0;
-    }
-    if (this.audioSlotB) {
-      this.audioSlotB.volume = effectiveVol;
-      this.audioSlotB.muted = this.isMuted || effectiveVol === 0;
+    // B6: apply the track's own default volume too. Only the active slot is touched: a slot that
+    // is fading out keeps fading (B3), and a fade-in picks up the new target on its next step.
+    const active = this.activeAudio();
+    if (active) {
+      active.muted = this.isMuted || effectiveVol === 0;
+      if (this.fades.get(active)?.kind !== 'in') {
+        active.volume = this.targetVolume();
+      }
     }
 
     if (this.ctx && this.masterGain) {
@@ -155,17 +188,17 @@ export class MusicPlayerEngine {
 
   public setMuted(muted: boolean): void {
     this.isMuted = muted;
-    this.cancelAllFades();
+    // B3: muting must not cancel fades. Cancelling used to orphan a fading-out slot, and
+    // resetting both slots' volume made the outgoing track fully audible again.
 
     const effectiveVol = muted ? 0 : this.volume;
 
-    if (this.audioSlotA) {
-      this.audioSlotA.muted = muted;
-      this.audioSlotA.volume = effectiveVol;
-    }
-    if (this.audioSlotB) {
-      this.audioSlotB.muted = muted;
-      this.audioSlotB.volume = effectiveVol;
+    if (this.audioSlotA) this.audioSlotA.muted = muted;
+    if (this.audioSlotB) this.audioSlotB.muted = muted;
+
+    const active = this.activeAudio();
+    if (active && this.fades.get(active)?.kind !== 'in') {
+      active.volume = this.targetVolume();
     }
 
     if (this.ctx && this.masterGain) {
@@ -205,6 +238,12 @@ export class MusicPlayerEngine {
   }
 
   public async playTrack(track: MusicTrack, options?: PlayOptions): Promise<void> {
+    // B4: same track already playing? Leave it untouched. This check used to run after the
+    // synth and fades were stopped, which silenced presets and froze a fade-in half way.
+    if (this.currentTrack?.id === track.id && this.isPlaying) {
+      return;
+    }
+
     this.ensureContext();
     this.stopSynthesis(true);
     this.stopSimulatedPlayback();
@@ -213,11 +252,6 @@ export class MusicPlayerEngine {
     const fadeIn = options?.fadeInDuration ?? 1.0;
     const startSec = options?.startTime ?? 0;
     const isLoop = options?.loop ?? track.loop;
-
-    // Same track already playing? Resume
-    if (this.currentTrack?.id === track.id && this.isPlaying) {
-      return;
-    }
 
     this.currentTrack = track;
     this.duration = track.duration;
@@ -247,7 +281,7 @@ export class MusicPlayerEngine {
         if (playPromise) {
           playPromise
             .then(() => {
-              this.fadeInSlot(incomingAudio, fadeIn, (track.defaultVolume ?? 1) * (this.isMuted ? 0 : this.volume));
+              this.fadeInSlot(incomingAudio, fadeIn);
             })
             .catch(() => {
               // Autoplay policy or media decode error -> start simulated
@@ -265,7 +299,9 @@ export class MusicPlayerEngine {
     this.notifyState();
   }
 
-  private fadeInSlot(audio: HTMLAudioElement, duration: number, targetVol: number): void {
+  /** Fade `audio` up to targetVolume(), re-reading the target each step (B6). */
+  private fadeInSlot(audio: HTMLAudioElement, duration: number): void {
+    this.cancelFade(audio);
     if (this.isMuted || this.volume === 0) {
       if (audio) {
         audio.volume = 0;
@@ -285,25 +321,27 @@ export class MusicPlayerEngine {
           audio.muted = true;
         }
         clearInterval(timer);
-        this.activeFadeTimers.delete(timer);
+        this.fades.delete(audio);
         return;
       }
 
       step++;
-      const current = (targetVol * step) / steps;
+      const current = (this.targetVolume() * step) / steps;
       if (audio) {
         audio.volume = Math.min(1, Math.max(0, current));
       }
       if (step >= steps) {
         clearInterval(timer);
-        this.activeFadeTimers.delete(timer);
+        this.fades.delete(audio);
       }
     }, interval);
 
-    this.activeFadeTimers.add(timer);
+    this.fades.set(audio, { timer, kind: 'in' });
   }
 
+  /** Fade `audio` to silence and pause it. Cancelling this fade also pauses it (B3). */
   private fadeOutSlot(audio: HTMLAudioElement, duration: number): void {
+    this.cancelFade(audio);
     const initialVol = audio.volume;
     const steps = 12;
     const interval = Math.max(20, (duration * 1000) / steps);
@@ -317,7 +355,7 @@ export class MusicPlayerEngine {
       }
       if (step >= steps || (audio && audio.volume <= 0)) {
         clearInterval(timer);
-        this.activeFadeTimers.delete(timer);
+        this.fades.delete(audio);
         try {
           audio.pause();
           audio.currentTime = 0;
@@ -327,7 +365,7 @@ export class MusicPlayerEngine {
       }
     }, interval);
 
-    this.activeFadeTimers.add(timer);
+    this.fades.set(audio, { timer, kind: 'out' });
   }
 
   public pause(): void {
@@ -360,7 +398,7 @@ export class MusicPlayerEngine {
       try {
         audio.muted = this.isMuted;
         audio.play().catch(() => {});
-        this.fadeInSlot(audio, options?.fadeIn ?? 0.4, (this.currentTrack.defaultVolume ?? 1) * (this.isMuted ? 0 : this.volume));
+        this.fadeInSlot(audio, options?.fadeIn ?? 0.4);
       } catch {
         this.startSimulatedPlayback();
       }
