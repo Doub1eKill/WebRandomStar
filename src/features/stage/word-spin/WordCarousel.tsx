@@ -43,7 +43,7 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
   // Memoised so the fallback object keeps its identity between renders (the reel below
   // regenerates whenever finalTarget changes identity).
   const finalTarget = useMemo(
-    () => targetItem || targetWord || pool[0] || { id: 'default', word: 'ความฝัน', category: 'moon', enabled: true },
+    () => targetItem || targetWord || pool[0] || { id: 'default', word: 'คุณค่าในตัวเอง', category: 'star', enabled: true },
     [targetItem, targetWord, pool]
   );
   const isQuestion = displayType === 'question';

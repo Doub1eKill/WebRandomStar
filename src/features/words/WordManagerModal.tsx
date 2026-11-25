@@ -129,7 +129,7 @@ export const WordManagerModal: React.FC<WordManagerModalProps> = ({
               className="kw-input"
               value={formData.word || ''}
               onChange={e => setFormData({ ...formData, word: e.target.value })}
-              placeholder="เช่น ความฝัน, ภาวะผู้นำ, ตัวตน"
+              placeholder="เช่น ความมั่นใจ, ความเป็นผู้นำ, ความกล้าหาญ"
               required
               autoFocus
             />
