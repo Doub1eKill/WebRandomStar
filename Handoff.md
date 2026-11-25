@@ -59,7 +59,7 @@
 
 ## 3. [Current Task & Blockers]
 
-- **สถานะ:** แผน refactor ครบทุก Phase และ merge เข้า `main` แล้ว (`da0d00d`) งานล่าสุดคือ **ปรับดีไซน์ฝั่ง Control ทั้งหมด + เปลี่ยน emoji เป็นไอคอน** (ดูแถว "Design: Control" และ "Design: ไอคอนแทน emoji" ด้านบน) อยู่บน branch `design/control-backstage` เปิดเป็น PR แล้วคือ [Doub1eKill/WebRandomStar#2](https://github.com/Doub1eKill/WebRandomStar/pull/2) (ยังไม่ merge, ห้าม merge เองถ้าผู้ใช้ไม่สั่ง)
+- **สถานะ:** แผน refactor ครบทุก Phase และ merge เข้า `main` แล้ว (`da0d00d`) งานล่าสุดคือ **ปรับดีไซน์ฝั่ง Control ทั้งหมด + เปลี่ยน emoji เป็นไอคอน** (ดูแถว "Design: Control" และ "Design: ไอคอนแทน emoji" ด้านบน) อยู่บน branch `design/control-backstage` เปิดเป็น PR แล้วคือ [Doub1eKill/WebRandomStar#2](https://github.com/Doub1eKill/WebRandomStar/pull/2) (ยังไม่ merge, ห้าม merge เองถ้าผู้ใช้ไม่สั่ง; เปิด Auto-fix ไว้แล้ว แอปจะแจ้งเมื่อ CI fail, merge conflict หรือมี review comment)
   - กติกาใหม่จากผู้ใช้: **ห้ามใช้ emoji ใน UI ฝั่ง Control** ให้ใช้ไอคอน lucide-react แทน
 - **ขั้นต่อไป (ให้ผู้ใช้ตัดสินใจ):**
   - ผู้ใช้รีวิว PR #2 แล้ว merge เมื่อพร้อม (ผู้ใช้ตอบว่าไม่ต้องเปลี่ยนลวดลาย ✦ ◆ บนจอเวทีฝั่งผู้ชม)
