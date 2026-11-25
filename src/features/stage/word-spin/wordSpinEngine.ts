@@ -42,8 +42,11 @@ export function generateSpinReel<T extends { id: string; enabled?: boolean }>(
 // the spin speed and only ever slows down: the target is placed where an automatic spin
 // will stop, and the brake curve is matched to the remaining distance.
 
-/** Reel speed while spinning, in items per millisecond. */
-export const SPIN_SPEED_ITEMS_PER_MS = { keyword: 0.013, question: 0.0038 } as const;
+/**
+ * Reel speed while spinning, in items per millisecond. The question reel used to crawl at
+ * 0.0038 (3.8 questions/s); the operator asked for it to spin about as fast as the keyword reel.
+ */
+export const SPIN_SPEED_ITEMS_PER_MS = { keyword: 0.013, question: 0.013 } as const;
 
 /** How long the brake takes: inside the 2,000ms word-decelerate phase, so the reel rests before the lock. */
 export const DECEL_DURATION_MS = 1700;
