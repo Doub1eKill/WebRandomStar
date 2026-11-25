@@ -59,7 +59,7 @@
 
 ## 3. [Current Task & Blockers]
 
-- **สถานะ:** แผน refactor ครบทุก Phase และ merge เข้า `main` แล้ว (`da0d00d`) งานปรับดีไซน์ฝั่ง Control ทั้งหมด + เปลี่ยน emoji เป็นไอคอน (ดูแถว "Design: Control" และ "Design: ไอคอนแทน emoji" ด้านบน) **merge เข้า `main` แล้ว** ผ่าน [Doub1eKill/WebRandomStar#2](https://github.com/Doub1eKill/WebRandomStar/pull/2) (merge commit `d9a0567`, 2026-11-25, ผู้ใช้สั่ง merge; CI `verify` ผ่านบน `cdacb09` ส่วน commit หลังจากนั้นแก้แค่ Handoff.md) ตอนนี้ไม่มีงานค้าง
+- **สถานะ:** แผน refactor ครบทุก Phase และ merge เข้า `main` แล้ว (`da0d00d`) งานปรับดีไซน์ฝั่ง Control ทั้งหมด + เปลี่ยน emoji เป็นไอคอน (ดูแถว "Design: Control" และ "Design: ไอคอนแทน emoji" ด้านบน) **merge เข้า `main` แล้ว** ผ่าน [Doub1eKill/WebRandomStar#2](https://github.com/Doub1eKill/WebRandomStar/pull/2) (merge commit `d9a0567`, 2026-11-25, ผู้ใช้สั่ง merge; CI `verify` ผ่านบน `cdacb09` ส่วน commit หลังจากนั้นแก้แค่ Handoff.md) และลบ branch `design/control-backstage` แล้วทั้งในเครื่องและบน GitHub (ทุก commit อยู่ใน `main` แล้ว) origin เหลือแค่ `main` ตอนนี้ไม่มีงานค้าง
   - กติกาใหม่จากผู้ใช้: **ห้ามใช้ emoji ใน UI ฝั่ง Control** ให้ใช้ไอคอน lucide-react แทน
 - **ขั้นต่อไป (ให้ผู้ใช้ตัดสินใจ):**
   - ถ้าต้องการให้ drawer บนจอเวที (`ControlDrawer`) ใช้ธีมสีเดียวกัน ต้องทำเพิ่ม (รอบนี้เปลี่ยนแค่ emoji เป็นไอคอน)
