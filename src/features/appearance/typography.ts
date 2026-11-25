@@ -22,23 +22,27 @@ export const FONT_PRESETS: Record<Exclude<FontPresetId, 'custom'>, FontPresetOpt
     previewText: 'CHARM OF TRANSITION 2026',
     description: 'ฟอนต์โรมันคลาสสิก ลายเส้นทรงเกียรติยศ มาตรฐานเวทีประกวดระดับสากล'
   },
+  // B12/Q4: the ids 'amoria' and 'verve' stay (they are stored in saved settings), but the fonts
+  // are now OFL look-alikes bundled with the app. The original Amoria (personal-use demo) and
+  // Verve (no verifiable commercial license) were never shipped, so these presets used to fall
+  // back to Cinzel.
   amoria: {
     id: 'amoria',
-    name: 'Amoria',
+    name: 'Playfair Display',
     subtitle: 'Modern Luxury Serif',
-    author: 'Fandi Kurniawan',
+    author: 'Claus Eggers Sørensen / Google Fonts',
     styleTag: 'Modern Luxury',
-    fontFamily: "'Amoria', 'Cinzel', 'Prompt', serif",
+    fontFamily: "'Playfair Display', 'Cinzel', 'Prompt', serif",
     previewText: 'CHARM OF TRANSITION 2026',
     description: 'ฟอนต์สไตล์ High-Fashion โมเดิร์นหรูหรา ลายเส้นคมชัด สง่างามเหนือระดับ'
   },
   verve: {
     id: 'verve',
-    name: 'Verve',
+    name: 'Cinzel Decorative',
     subtitle: 'Ornate Heritage Display',
-    author: 'Dieter Steffmann',
+    author: 'Natanael Gama / Google Fonts',
     styleTag: 'Classic Heritage',
-    fontFamily: "'Verve', 'Cinzel', 'Prompt', serif",
+    fontFamily: "'Cinzel Decorative', 'Cinzel', 'Prompt', serif",
     previewText: 'CHARM OF TRANSITION 2026',
     description: 'ฟอนต์คลาสสิกวิจิตร ศิลปะลวดลายโบราณ เอกลักษณ์โดดเด่นสะกดทุกสายตา'
   },

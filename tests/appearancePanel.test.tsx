@@ -14,13 +14,13 @@ describe('AppearanceSettingsPanel Font Selector', () => {
     );
 
     expect(html).toContain('Cinzel');
-    expect(html).toContain('Amoria');
-    expect(html).toContain('Verve');
+    expect(html).toContain('Playfair Display');
+    expect(html).toContain('Cinzel Decorative');
     expect(html).toContain('Outfit');
     expect(html).toContain('Custom WebFont');
 
-    expect(html).toContain('Fandi Kurniawan');
-    expect(html).toContain('Dieter Steffmann');
+    expect(html).toContain('Claus Eggers Sørensen');
+    expect(html).toContain('Natanael Gama');
     expect(html).toContain('Modern Luxury');
     expect(html).toContain('Classic Heritage');
   });

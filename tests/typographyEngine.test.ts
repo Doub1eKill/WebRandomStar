@@ -13,20 +13,20 @@ describe('Typography Engine', () => {
 
   it('should define presets for cinzel, amoria, verve, outfit', () => {
     expect(FONT_PRESETS.cinzel.name).toBe('Cinzel');
-    expect(FONT_PRESETS.amoria.name).toBe('Amoria');
-    expect(FONT_PRESETS.amoria.author).toContain('Fandi Kurniawan');
-    expect(FONT_PRESETS.verve.name).toBe('Verve');
-    expect(FONT_PRESETS.verve.author).toContain('Dieter Steffmann');
+    expect(FONT_PRESETS.amoria.name).toBe('Playfair Display');
+    expect(FONT_PRESETS.amoria.author).toContain('Claus Eggers Sørensen');
+    expect(FONT_PRESETS.verve.name).toBe('Cinzel Decorative');
+    expect(FONT_PRESETS.verve.author).toContain('Natanael Gama');
     expect(FONT_PRESETS.outfit.name).toBe('Outfit');
   });
 
   it('should resolve font-family including Thai fallback Prompt', () => {
     const amoriaFont = resolveFontFamily('amoria');
-    expect(amoriaFont).toContain('Amoria');
+    expect(amoriaFont).toContain('Playfair Display');
     expect(amoriaFont).toContain('Prompt');
 
     const verveFont = resolveFontFamily('verve');
-    expect(verveFont).toContain('Verve');
+    expect(verveFont).toContain('Cinzel Decorative');
     expect(verveFont).toContain('Prompt');
 
     const cinzelFont = resolveFontFamily('cinzel');
@@ -46,9 +46,9 @@ describe('Typography Engine', () => {
   it('should apply CSS custom variables on root element', () => {
     applyTypography({ fontPreset: 'amoria' });
     const appliedDisplay = document.documentElement.style.getPropertyValue('--font-display');
-    expect(appliedDisplay).toContain('Amoria');
+    expect(appliedDisplay).toContain('Playfair Display');
     const appliedSerif = document.documentElement.style.getPropertyValue('--font-serif');
-    expect(appliedSerif).toContain('Amoria');
+    expect(appliedSerif).toContain('Playfair Display');
   });
 
   it('should inject Google Fonts link tag when custom font has URL', () => {
