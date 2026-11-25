@@ -2,11 +2,16 @@ import { describe, it, expect } from 'vitest';
 import {
   generateSpinReel,
   calculateDecelerationEasing,
-  calculateQuinticDecel,
-  calculateContinuousDecelTarget,
   getWordAtProgress,
-  getDisplayText
+  getDisplayText,
+  SPIN_SPEED_ITEMS_PER_MS,
+  DECEL_DURATION_MS,
+  plannedTargetIndex,
+  brakePosition,
+  chooseStopSlot,
+  spinViewLookahead
 } from '@/features/stage/word-spin/wordSpinEngine.ts';
+import { STAGE_DURATION } from '@/features/session/stateMachine.ts';
 import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
 
 describe('Word Spin Engine', () => {
@@ -25,31 +30,11 @@ describe('Word Spin Engine', () => {
     expect(calculateDecelerationEasing(0.5)).toBeGreaterThan(0.7);
   });
 
-  it('should calculate continuous deceleration target with forward landing and target index alignment', () => {
-    const reelLength = 36;
-    const targetIndex = 35;
-
-    // Case 1: Start at 0
-    const target1 = calculateContinuousDecelTarget(0, reelLength, targetIndex, 12);
-    expect(target1).toBeGreaterThanOrEqual(12);
-    expect(target1 % reelLength).toBe(targetIndex);
-
-    // Case 2: Start mid-spin at 45.3
-    const target2 = calculateContinuousDecelTarget(45.3, reelLength, targetIndex, 14);
-    expect(target2).toBeGreaterThanOrEqual(45.3 + 14);
-    expect(target2 % reelLength).toBe(targetIndex);
-
-    // Case 3: High offset at 180.7
-    const target3 = calculateContinuousDecelTarget(180.7, reelLength, targetIndex, 12);
-    expect(target3).toBeGreaterThanOrEqual(180.7 + 12);
-    expect(target3 % reelLength).toBe(targetIndex);
-  });
-
-  it('should compute quintic deceleration easing with smooth start and finish', () => {
-    expect(calculateQuinticDecel(0)).toBe(0);
-    expect(calculateQuinticDecel(1)).toBe(1);
-    expect(calculateQuinticDecel(0.5)).toBeCloseTo(0.9375, 4);
-    expect(calculateQuinticDecel(0.8)).toBeGreaterThan(0.99);
+  it('places the target at the requested slot', () => {
+    const targetWord = DEFAULT_WORDS[3];
+    const reel = generateSpinReel(DEFAULT_WORDS, targetWord, 50, 'seed_slot', 42);
+    expect(reel.length).toBe(50);
+    expect(reel[42]).toEqual(targetWord);
   });
 
   it('should retrieve word at progress correctly', () => {
@@ -82,6 +67,51 @@ describe('Word Spin Engine', () => {
     expect(getDisplayText({ displayText: 'ข้อความกำหนดเอง' })).toBe('ข้อความกำหนดเอง');
     expect(getDisplayText('ข้อความตรง')).toBe('ข้อความตรง');
     expect(getDisplayText(null)).toBe('');
+  });
+});
+
+describe('Constant-speed spin: the brake never speeds the reel up', () => {
+  const speedAt = (t: number, distance: number, speed: number) => {
+    const h = 1e-4;
+    return (brakePosition(t + h, distance, speed) - brakePosition(t - h, distance, speed)) / (2 * h * DECEL_DURATION_MS);
+  };
+
+  it.each([
+    ['keyword', SPIN_SPEED_ITEMS_PER_MS.keyword],
+    ['question', SPIN_SPEED_ITEMS_PER_MS.question]
+  ])('an automatic %s spin brakes onto the planned slot, leaving at spin speed and only slowing down', (_mode, speed) => {
+    const target = plannedTargetIndex(speed, STAGE_DURATION['word-spin']);
+    const reel = Array.from({ length: target + 10 }, (_, i) => ({ id: i === target ? 'T' : `x${i}` }));
+
+    // The brake starts when the 2,500ms spin ends, give or take a frame or two of timing.
+    for (const lateMs of [-40, 0, 40]) {
+      const position = speed * (STAGE_DURATION['word-spin'] + lateMs);
+      const { stop, rewriteIndex } = chooseStopSlot(reel, 'T', position, speed, spinViewLookahead('orbital', 'question'));
+      expect(rewriteIndex).toBeNull();
+      expect(stop).toBe(target);
+
+      const distance = stop - position;
+      expect(brakePosition(1, distance, speed)).toBeCloseTo(distance, 9);
+      expect(speedAt(0.0002, distance, speed)).toBeCloseTo(speed, 4);
+      let previous = Infinity;
+      for (let t = 0.01; t < 1; t += 0.01) {
+        const v = speedAt(t, distance, speed);
+        expect(v).toBeLessThanOrEqual(speed * 1.1); // at most a 10% swell, never a jump
+        expect(v).toBeGreaterThanOrEqual(0);
+        previous = v;
+      }
+      expect(previous).toBeLessThan(speed * 0.1);
+    }
+  });
+
+  it('a stop the plan did not expect rewrites one slot past the visible window', () => {
+    const speed = SPIN_SPEED_ITEMS_PER_MS.question;
+    const reel = Array.from({ length: 40 }, (_, i) => ({ id: i === 13 ? 'T' : `x${i}` }));
+    const lookahead = spinViewLookahead('vertical', 'question');
+    const position = 20.3; // e.g. a manual stop long after the planned slot went by
+    const { stop, rewriteIndex } = chooseStopSlot(reel, 'T', position, speed, lookahead);
+    expect(stop - position).toBeGreaterThanOrEqual(lookahead);
+    expect(rewriteIndex).toBe(stop % reel.length);
   });
 });
 

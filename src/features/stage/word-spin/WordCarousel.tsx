@@ -2,10 +2,15 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState, useMe
 import { SpinItem } from './types.ts';
 import {
   generateSpinReel,
-  calculateContinuousDecelTarget,
-  calculateQuinticDecel
+  SPIN_SPEED_ITEMS_PER_MS,
+  DECEL_DURATION_MS,
+  plannedTargetIndex,
+  brakePosition,
+  chooseStopSlot,
+  spinViewLookahead
 } from './wordSpinEngine.ts';
 import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
+import { STAGE_DURATION } from '@/features/session/stateMachine.ts';
 import { VerticalSpinView } from './VerticalSpinView.tsx';
 import { Perspective3DSpinView } from './Perspective3DSpinView.tsx';
 import { OrbitalSpinView } from './OrbitalSpinView.tsx';
@@ -41,11 +46,27 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
     () => targetItem || targetWord || pool[0] || { id: 'default', word: 'ความฝัน', category: 'moon', enabled: true },
     [targetItem, targetWord, pool]
   );
-  const reel = useMemo(
-    () => generateSpinReel(pool, finalTarget, 36, `carousel_${Date.now()}`),
-    // Re-generate only when pool or finalTarget changes
-    [pool, finalTarget]
-  );
+  const isQuestion = displayType === 'question';
+  const spinSpeed = isQuestion ? SPIN_SPEED_ITEMS_PER_MS.question : SPIN_SPEED_ITEMS_PER_MS.keyword;
+
+  // The target sits where an automatic spin (STAGE_DURATION['word-spin']) brakes at spin speed.
+  const baseReel = useMemo(() => {
+    const targetIndex = plannedTargetIndex(spinSpeed, STAGE_DURATION['word-spin']);
+    return generateSpinReel(pool, finalTarget, Math.max(36, targetIndex + 10), `carousel_${Date.now()}`, targetIndex);
+  }, [pool, finalTarget, spinSpeed]);
+
+  // When a spin is stopped elsewhere (manual stop, pause), one off-screen slot becomes the target.
+  const [rewrite, setRewrite] = useState<{ base: SpinItem[]; index: number } | null>(null);
+  const reel = useMemo(() => {
+    if (!rewrite || rewrite.base !== baseReel) return baseReel;
+    const patched = baseReel.slice();
+    patched[rewrite.index] = finalTarget;
+    return patched;
+  }, [baseReel, rewrite, finalTarget]);
+  const reelRef = useRef(reel);
+  reelRef.current = reel;
+  const lookaheadRef = useRef(spinViewLookahead(mode, displayType));
+  lookaheadRef.current = spinViewLookahead(mode, displayType);
 
   // PF4: `floatOffset` is the reel position React last rendered. It only changes when the
   // centred slot moves to another integer; frames in between go through `applyRef`, which
@@ -78,23 +99,18 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
   useEffect(() => {
     let animId: number;
     const startTime = performance.now();
-    const targetIdx = reel.length - 1;
 
     if (phase === 'pre-spin') {
       moveTo(0, true);
       return;
     }
 
-    const isQuestion = displayType === 'question';
-    const runway = isQuestion ? 8 : 14;
-    const spinSpeed = isQuestion ? 0.0038 : 0.013; // items per ms
-    const decelDuration = isQuestion ? 2500 : 2100; // ms
-
     if (phase === 'word-decelerate') {
       const startPos = currentPosRef.current;
-      const endPos = calculateContinuousDecelTarget(startPos, reel.length, targetIdx, runway);
+      const { stop, rewriteIndex } = chooseStopSlot(reelRef.current, finalTarget.id, startPos, spinSpeed, lookaheadRef.current);
+      if (rewriteIndex !== null) setRewrite({ base: baseReel, index: rewriteIndex });
       decelStartRef.current = startPos;
-      decelEndRef.current = endPos;
+      decelEndRef.current = stop;
     }
 
     const animate = (now: number) => {
@@ -104,13 +120,12 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
         moveTo(elapsed * spinSpeed);
         animId = requestAnimationFrame(animate);
       } else if (phase === 'word-decelerate') {
-        const progress = Math.min(1, elapsed / decelDuration);
-        const eased = calculateQuinticDecel(progress);
+        const progress = Math.min(1, elapsed / DECEL_DURATION_MS);
         const start = decelStartRef.current;
         const end = decelEndRef.current;
 
         if (progress < 1) {
-          moveTo(start + (end - start) * eased);
+          moveTo(start + brakePosition(progress, end - start, spinSpeed));
           animId = requestAnimationFrame(animate);
         } else {
           moveTo(end, true); // settle: React state ends exactly on the target, as before
@@ -123,7 +138,8 @@ export const WordCarousel: React.FC<WordCarouselProps> = ({
 
     animId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animId);
-  }, [phase, reel, displayType, onSpinComplete, moveTo]);
+    // Not on `reel`: rewriting one off-screen slot must not restart the brake.
+  }, [phase, baseReel, finalTarget, spinSpeed, onSpinComplete, moveTo]);
 
   const currentIndex = ((Math.round(floatOffset) % reel.length) + reel.length) % reel.length;
 

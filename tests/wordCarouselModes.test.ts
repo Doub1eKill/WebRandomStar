@@ -200,6 +200,7 @@ describe('WordCarousel Orchestrator Mode Switching', () => {
 
     expect(html).toContain('ribbon-spin-view');
     expect(html).toContain('is-question');
-    expect(html).toContain('ในยุคดิจิทัล ทักษะใดสำคัญที่สุดสำหรับผู้นำ?');
+    // The reel shows random questions from the pool until it brakes onto the target.
+    expect(html).toMatch(/ในยุคดิจิทัล ทักษะใดสำคัญที่สุดสำหรับผู้นำ\?|แนวคิดการพัฒนาที่ยั่งยืนคืออะไร\?/);
   });
 });
