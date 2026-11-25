@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Check, Sparkles, X } from 'lucide-react';
+import { Check, Pencil, Plus, X } from 'lucide-react';
 import { KeywordItem } from '@/types/word.ts';
 import { CATEGORY_CONFIGS } from '@/types/question.ts';
+import { CategoryIcon } from '@/shared/ui/icons.tsx';
+// Loaded with the word bank chunk, after the main stylesheet.
+import './wordManagerModal.css';
 
 interface WordManagerModalProps {
   isOpen: boolean;
@@ -43,6 +46,16 @@ export const WordManagerModal: React.FC<WordManagerModalProps> = ({
     }
   }, [word, isOpen]);
 
+  // Esc closes the dialog, like the close button.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleCategoryChange = (catId: string) => {
@@ -73,23 +86,47 @@ export const WordManagerModal: React.FC<WordManagerModalProps> = ({
     onClose();
   };
 
+  const category = formData.category || 'moon';
+  const previewColor = formData.color || CATEGORY_CONFIGS[category.toLowerCase()]?.color || '#e2e8f0';
+  const enabled = formData.enabled ?? true;
+
   return (
     <div className="modal-backdrop">
-      <div className="modal-panel glassmorphism">
-        <div className="modal-header">
-          <div className="modal-title-wrap">
-            <span className="modal-icon" aria-hidden="true"><Sparkles size={22} aria-hidden="true" /></span>
-            <h3 className="modal-title">{word ? 'แก้ไขคำสำคัญ (Edit Keyword)' : 'เพิ่มคำสำคัญใหม่ (New Keyword)'}</h3>
+      <div className="kw-modal" role="dialog" aria-modal="true" aria-labelledby="kw-modal-title">
+        <div className="kw-modal-header">
+          <span className="modal-icon" aria-hidden="true">
+            {word ? <Pencil size={20} aria-hidden="true" /> : <Plus size={22} aria-hidden="true" />}
+          </span>
+          <div className="kw-modal-heading">
+            <h3 id="kw-modal-title" className="kw-modal-title">
+              {word ? 'แก้ไขคำสำคัญ (Edit Keyword)' : 'เพิ่มคำสำคัญใหม่ (New Keyword)'}
+            </h3>
+            <p className="kw-modal-sub">คำนี้จะอยู่ในวงล้อสุ่มคำบนเวที</p>
           </div>
-          <button className="btn-close-modal" onClick={onClose} aria-label="ปิด"><X size={18} aria-hidden="true" /></button>
+          <button type="button" className="btn-close-modal" onClick={onClose} aria-label="ปิด" title="ปิด (Esc)">
+            <X size={18} aria-hidden="true" />
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="modal-body">
-          <div className="form-group">
-            <label className="form-label">คำสำคัญภาษาไทย (Keyword)*</label>
+        <form onSubmit={handleSubmit} className="kw-form">
+          {/* Live preview: the keyword in its colour with its category icon */}
+          <div className="kw-preview" style={{ borderColor: `${previewColor}55`, background: `${previewColor}12` }}>
+            <span className="kw-preview-label">ตัวอย่าง</span>
+            <span className="kw-preview-word" style={{ color: previewColor }}>
+              <CategoryIcon category={category} size={18} />
+              {formData.word?.trim() || 'คำสำคัญ'}
+            </span>
+            <span className="kw-preview-theme">{formData.englishTheme || 'English Subtitle'}</span>
+          </div>
+
+          <div className="kw-field">
+            <label className="kw-label" htmlFor="kw-word">
+              คำสำคัญภาษาไทย (Keyword) <span className="kw-required" aria-hidden="true">*</span>
+            </label>
             <input
+              id="kw-word"
               type="text"
-              className="form-input"
+              className="kw-input"
               value={formData.word || ''}
               onChange={e => setFormData({ ...formData, word: e.target.value })}
               placeholder="เช่น ความฝัน, ภาวะผู้นำ, ตัวตน"
@@ -98,36 +135,42 @@ export const WordManagerModal: React.FC<WordManagerModalProps> = ({
             />
           </div>
 
-          <div className="form-group">
-            <label className="form-label">หมวดหมู่ประจำคำ (Category)</label>
-            <select
-              className="form-select"
-              value={formData.category || 'moon'}
-              onChange={e => handleCategoryChange(e.target.value)}
-            >
-              {Object.values(CATEGORY_CONFIGS).map(cat => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name} ({cat.subtitle})
-                </option>
-              ))}
-            </select>
+          <div className="kw-grid">
+            <div className="kw-field">
+              <label className="kw-label" htmlFor="kw-category">หมวดหมู่ประจำคำ (Category)</label>
+              <select
+                id="kw-category"
+                className="kw-input"
+                value={category}
+                onChange={e => handleCategoryChange(e.target.value)}
+              >
+                {Object.values(CATEGORY_CONFIGS).map(cat => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name} ({cat.subtitle})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="kw-field">
+              <label className="kw-label" htmlFor="kw-theme">ธีมภาษาอังกฤษ (English Subtitle)</label>
+              <input
+                id="kw-theme"
+                type="text"
+                className="kw-input"
+                value={formData.englishTheme || ''}
+                onChange={e => setFormData({ ...formData, englishTheme: e.target.value })}
+                placeholder="เช่น Authenticity & Empathy"
+              />
+              <span className="kw-hint">เติมให้อัตโนมัติเมื่อเปลี่ยนหมวดหมู่</span>
+            </div>
           </div>
 
-          <div className="form-group">
-            <label className="form-label">ธีมภาษาอังกฤษ (English Subtitle)</label>
-            <input
-              type="text"
-              className="form-input"
-              value={formData.englishTheme || ''}
-              onChange={e => setFormData({ ...formData, englishTheme: e.target.value })}
-              placeholder="เช่น Authenticity & Empathy"
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">คำอธิบายและแนวคำถาม (Description)</label>
+          <div className="kw-field">
+            <label className="kw-label" htmlFor="kw-desc">คำอธิบายและแนวคำถาม (Description)</label>
             <textarea
-              className="form-textarea"
+              id="kw-desc"
+              className="kw-input kw-textarea"
               rows={3}
               value={formData.description || ''}
               onChange={e => setFormData({ ...formData, description: e.target.value })}
@@ -135,20 +178,30 @@ export const WordManagerModal: React.FC<WordManagerModalProps> = ({
             />
           </div>
 
-          <div className="form-row">
-            <label className="checkbox-label">
+          <label className={enabled ? 'kw-switch-card is-on' : 'kw-switch-card'}>
+            <span className="toggle-switch-mini">
               <input
                 type="checkbox"
-                checked={formData.enabled ?? true}
+                checked={enabled}
                 onChange={e => setFormData({ ...formData, enabled: e.target.checked })}
               />
-              <span>เปิดใช้งานในการหมุนสุ่ม (Enabled in Word Spin)</span>
-            </label>
-          </div>
+              <span className="toggle-slider-mini" />
+            </span>
+            <span className="kw-switch-text">
+              <span className="kw-switch-title">เปิดใช้งานในการหมุนสุ่ม (Enabled in Word Spin)</span>
+              <span className="kw-hint">
+                {enabled ? 'คำนี้ถูกสุ่มบนเวทีได้' : 'ปิดไว้ คำนี้จะไม่ถูกสุ่มจนกว่าจะเปิดอีกครั้ง'}
+              </span>
+            </span>
+          </label>
 
-          <div className="modal-footer">
-            <button type="button" className="btn-secondary" onClick={onClose}>ยกเลิก</button>
-            <button type="submit" className="btn-primary"><Check size={16} aria-hidden="true" /> บันทึกคำสำคัญ</button>
+          <div className="kw-footer">
+            <button type="button" className="btn-secondary-ghost" onClick={onClose}>
+              ยกเลิก
+            </button>
+            <button type="submit" className="btn-primary-glow">
+              <Check size={16} aria-hidden="true" /> บันทึกคำสำคัญ
+            </button>
           </div>
         </form>
       </div>
