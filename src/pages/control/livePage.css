@@ -1,0 +1,261 @@
+/* Live page (remote control). These classes replace its former inline styles one to one.
+   Loaded with the page's lazy chunk, after the main stylesheet. */
+
+.live-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.live-card {
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.live-card--wide {
+  grid-column: 1 / -1;
+}
+
+.live-card-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #e2e8f0;
+}
+
+.live-card--wide .live-card-title {
+  margin-bottom: 0.75rem;
+}
+
+/* Fields */
+.live-field {
+  margin-bottom: 1rem;
+}
+
+.live-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.live-select-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.live-select {
+  padding: 0.6rem;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.live-select--grow {
+  flex: 1;
+}
+
+.live-select--full {
+  width: 100%;
+}
+
+.live-icon-btn {
+  padding: 0.6rem 0.8rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* Selected contestant */
+.live-contestant {
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 8px;
+  padding: 0.85rem;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.live-contestant-number {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #6366f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.live-contestant-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.live-contestant-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Stage actions */
+.live-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.live-spin-btn {
+  grid-column: span 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.live-spin-btn--start {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 35%, #4f46e5 70%, #d97706 100%);
+  border: 1px solid rgba(245, 217, 138, 0.6);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.4);
+}
+
+/* Disabled exactly when the stage is not idle */
+.live-spin-btn--start:disabled {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #64748b;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.live-spin-btn--stop {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
+  border: 1px solid rgba(254, 202, 202, 0.6);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.5);
+}
+
+.live-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.65rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.live-btn--paused {
+  background: #d97706;
+}
+
+.live-btn--done {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #34d399;
+}
+
+.live-btn--reset {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+/* Direct word chips (border and text colour come from each word, so they stay inline) */
+.live-chips {
+  margin-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.85rem;
+}
+
+.live-chips-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.live-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.live-chip {
+  padding: 0.35rem 0.65rem;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+/* Stage monitor */
+.live-monitor-question {
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 8px;
+  padding: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.live-monitor-tags {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.live-tag {
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+.live-tag--category {
+  font-weight: 600;
+  background: rgba(99, 102, 241, 0.2);
+  color: #818cf8;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.live-tag--word {
+  font-weight: 700;
+  background: rgba(245, 217, 138, 0.15);
+  color: #f5d98a;
+  border: 1px solid rgba(245, 217, 138, 0.4);
+}
+
+.live-monitor-id {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.live-monitor-text {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: var(--ui-text-strong);
+}
+
+.live-monitor-empty {
+  padding: 1.5rem;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.9rem;
+}

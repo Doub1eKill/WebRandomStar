@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { selectNextQuestion } from '../src/engine/questionSelector.ts';
-import { Question } from '../src/types/question.ts';
-import { DEFAULT_QUESTIONS } from '../src/data/defaultQuestions.ts';
+import { selectNextQuestion } from '@/features/questions/questionSelector.ts';
+import { Question } from '@/types/question.ts';
+import { DEFAULT_QUESTIONS } from '@/data/defaultQuestions.ts';
 
 const mockQuestions: Question[] = [
   { id: 'q1', text: 'Q1', category: 'Rain', difficulty: 'easy', round: 'intro', enabled: true, used: false },

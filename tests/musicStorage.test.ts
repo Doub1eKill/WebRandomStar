@@ -5,8 +5,8 @@ import {
   deleteTrackFromStorage,
   saveMusicStateToStorage,
   loadMusicStateFromStorage
-} from '../src/storage/musicStorage.ts';
-import { MusicTrack, DEFAULT_MUSIC_STATE } from '../src/types/music.ts';
+} from '@/features/music/musicStorage.ts';
+import { MusicTrack, DEFAULT_MUSIC_STATE } from '@/types/music.ts';
 
 describe('IndexedDB & LocalStorage Music Storage', () => {
   beforeEach(() => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createPRNG, randomRange, randomChoice, hashString } from '../src/engine/prng.ts';
+import { createPRNG, randomRange, randomChoice, hashString } from '@/shared/lib/prng.ts';
 
 describe('Seeded PRNG (Mulberry32)', () => {
   it('should produce identical float sequences from the same seed string', () => {

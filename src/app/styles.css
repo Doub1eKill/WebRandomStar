@@ -1,0 +1,23 @@
+/*
+ * Every stylesheet of the app, in cascade order. These files used to be one index.css;
+ * the order below is the original order, and later rules win over earlier ones with the
+ * same specificity, so do not reorder these imports without checking the computed styles.
+ */
+@import '../shared/styles/fonts.css';
+@import '../shared/styles/tokens.css';
+@import '../shared/styles/base.css';
+@import '../features/stage/overlay/stageOverlay.css';
+@import '../features/control/controlDrawer.css';
+@import '../shared/styles/modals.css';
+@import '../features/stage/overlay/cinematic.css';
+@import '../features/timer/timer.css';
+@import '../features/stage/word-spin/wordSpin.css';
+@import '../features/timer/timerDigits.css';
+@import '../shared/styles/dashboard.css';
+@import '../shared/styles/toggle.css';
+@import '../features/appearance/appearance.css';
+@import '../shared/notices/operatorNotices.css';
+@import '../shared/ui/ui.css';
+/* Loaded with their lazy chunks instead (still last in the cascade):
+ *   pages/control/controlLayout.css       (ControlLayout.tsx)
+ *   features/questions/questionImport.css (QuestionImportDialog.tsx) */

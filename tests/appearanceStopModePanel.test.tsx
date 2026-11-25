@@ -1,8 +1,8 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { renderToString } from 'react-dom/server';
-import { AppearanceSettingsPanel } from '../src/components/Control/AppearanceSettings.tsx';
-import { DEFAULT_APPEARANCE_SETTINGS } from '../src/types/appearance.ts';
+import { AppearanceSettingsPanel } from '@/features/appearance/panel/AppearanceSettings.tsx';
+import { DEFAULT_APPEARANCE_SETTINGS } from '@/types/appearance.ts';
 
 describe('AppearanceSettingsPanel Spin Stop Mode', () => {
   it('renders Auto-Stop and Manual-Stop options with descriptions', () => {

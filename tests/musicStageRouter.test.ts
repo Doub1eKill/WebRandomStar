@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { getTargetTrackForStagePhase } from '../src/hooks/useMusicStageRouter.ts';
-import { DEFAULT_MUSIC_STATE, PRESET_MUSIC_TRACKS } from '../src/types/music.ts';
+import { getTargetTrackForStagePhase } from '@/features/music/useMusicStageRouter.ts';
+import { DEFAULT_MUSIC_STATE, PRESET_MUSIC_TRACKS } from '@/types/music.ts';
 
 describe('Music Stage Router', () => {
   it('resolves ambient track for idle state', () => {

@@ -1,0 +1,37 @@
+import React from 'react';
+
+import type { AppearanceSettingsModel } from '../useAppearanceSettingsModel.tsx';
+import { SettingGroup } from '@/shared/ui/SettingGroup.tsx';
+import { ModeCard, ModeGrid } from '@/shared/ui/ModeCard.tsx';
+
+export const BackgroundModeSection: React.FC<{ m: AppearanceSettingsModel }> = ({ m }) => {
+  const { current, updateSetting } = m;
+  return (
+    <SettingGroup
+      icon="🖼️"
+      title="รูปแบบพื้นหลังเวทีหลัก (Stage Background Mode)"
+      hint="เลือกสลับระหว่างพื้นหลังเนบิวลาคริสตัลปัจจุบัน และพื้นหลังประติมากรรมแก้ว 3D AeroShards (สลับได้ทันทีแบบ Real-time)"
+    >
+      <ModeGrid>
+        <ModeCard
+          active={!current.backgroundMode || current.backgroundMode === 'cosmic-canvas'}
+          onSelect={() => updateSetting('backgroundMode', 'cosmic-canvas')}
+          icon="🌌"
+          name="Cosmic Canvas Stage"
+          badge="มาตรฐาน"
+          tone="sky"
+          description="ฟ้าราตรีเนบิวลา ออโรร่าระยิบระยับ ละอองคริสตัล และมงกุฎแสง (Canvas 2D นิ่งเสถียร 60fps)"
+        />
+        <ModeCard
+          active={current.backgroundMode === 'aero-shards'}
+          onSelect={() => updateSetting('backgroundMode', 'aero-shards')}
+          icon="💎"
+          name="AeroShards Glass Sculpture"
+          badge="ใหม่ 3D"
+          tone="violet"
+          description="ประติมากรรมเศษแก้วคริสตัล 3D สไตล์ React Bits AeroShards ในโทนสีม่วงคริสตัล-ฟ้าสว่าง คุมธีม 100%"
+        />
+      </ModeGrid>
+    </SettingGroup>
+  );
+};

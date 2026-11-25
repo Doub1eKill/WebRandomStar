@@ -1,4 +1,4 @@
-import { Contestant } from '../types/question.ts';
+import { Contestant } from '@/types/question.ts';
 
 export const DEFAULT_CONTESTANTS: Contestant[] = [
   {

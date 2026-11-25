@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MusicPlayerEngine } from '../src/engine/musicPlayerEngine.ts';
-import { PRESET_MUSIC_TRACKS } from '../src/types/music.ts';
+import { MusicPlayerEngine } from '@/features/music/musicPlayerEngine.ts';
+import { PRESET_MUSIC_TRACKS } from '@/types/music.ts';
 
 describe('MusicPlayerEngine Dual-Slot Crossfade', () => {
   let engine: MusicPlayerEngine;

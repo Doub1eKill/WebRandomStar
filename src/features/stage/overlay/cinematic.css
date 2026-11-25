@@ -1,0 +1,119 @@
+/* Cinematic stage transition animations. */
+
+/* ==========================================================================
+   Royal Cinematic Stage Transition Animation System
+   ========================================================================== */
+
+/* 1. Staggered Card Cinematic Reveal */
+@keyframes stage-card-cinematic-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.94);
+    filter: blur(10px);
+  }
+  50% {
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+/* 2. Hero Dissolve Out */
+@keyframes stage-hero-dissolve-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-16px) scale(1.04);
+    filter: blur(8px);
+  }
+}
+
+/* 3. Contestant Badge Slide In */
+@keyframes contestant-badge-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-18px) scale(0.92);
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+/* 4. Timer Cinematic Float */
+@keyframes timer-cinematic-float {
+  0% {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.92);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+/* 5. Badge Shimmer Sweep */
+@keyframes badge-shimmer-sweep {
+  0% {
+    transform: translateX(-160%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(260%) skewX(-20deg);
+  }
+}
+
+/* 6. Word Carousel Cinematic Entrance */
+@keyframes carousel-cinematic-entrance {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.92);
+    filter: blur(12px);
+  }
+  50% {
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+/* Animation Utility Classes */
+.animate-stage-card-reveal {
+  animation: stage-card-cinematic-reveal 0.55s var(--ease-royal-spring) forwards;
+  will-change: transform, opacity, filter;
+}
+
+.animate-hero-dissolve {
+  animation: stage-hero-dissolve-out 0.45s var(--ease-soft-out) forwards;
+  will-change: transform, opacity, filter;
+}
+
+.animate-badge-slide-in {
+  animation: contestant-badge-slide-in 0.5s var(--ease-royal-spring) forwards;
+  will-change: transform, opacity, filter;
+}
+
+.animate-timer-float-in {
+  animation: timer-cinematic-float 0.5s var(--ease-royal-spring) forwards;
+  will-change: transform, opacity, filter;
+}
+
+.animate-carousel-entrance {
+  animation: carousel-cinematic-entrance 0.65s var(--ease-royal-spring) forwards;
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}

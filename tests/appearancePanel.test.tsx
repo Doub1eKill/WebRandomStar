@@ -1,8 +1,8 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { renderToString } from 'react-dom/server';
-import { AppearanceSettingsPanel } from '../src/components/Control/AppearanceSettings.tsx';
-import { DEFAULT_APPEARANCE_SETTINGS } from '../src/types/appearance.ts';
+import { AppearanceSettingsPanel } from '@/features/appearance/panel/AppearanceSettings.tsx';
+import { DEFAULT_APPEARANCE_SETTINGS } from '@/types/appearance.ts';
 
 describe('AppearanceSettingsPanel Font Selector', () => {
   it('renders all font preset cards with authors and style badges', () => {
@@ -14,13 +14,13 @@ describe('AppearanceSettingsPanel Font Selector', () => {
     );
 
     expect(html).toContain('Cinzel');
-    expect(html).toContain('Amoria');
-    expect(html).toContain('Verve');
+    expect(html).toContain('Playfair Display');
+    expect(html).toContain('Cinzel Decorative');
     expect(html).toContain('Outfit');
     expect(html).toContain('Custom WebFont');
 
-    expect(html).toContain('Fandi Kurniawan');
-    expect(html).toContain('Dieter Steffmann');
+    expect(html).toContain('Claus Eggers Sørensen');
+    expect(html).toContain('Natanael Gama');
     expect(html).toContain('Modern Luxury');
     expect(html).toContain('Classic Heritage');
   });

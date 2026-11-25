@@ -2,10 +2,16 @@ import { describe, it, expect } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 
+/** Phase 7: index.css was split; app/styles.css imports the parts in cascade order. */
+const readAppStyles = () => {
+  const manifest = path.resolve(__dirname, '../src/app/styles.css');
+  const imports = [...fs.readFileSync(manifest, 'utf-8').matchAll(/@import '([^']+)';/g)].map(m => m[1]);
+  return imports.map(p => fs.readFileSync(path.resolve(path.dirname(manifest), p), 'utf-8')).join('\n');
+};
+
 describe('Stage Transition CSS & Tokens', () => {
-  it('contains royal cinematic easing tokens and keyframes in index.css', () => {
-    const cssPath = path.resolve(__dirname, '../src/index.css');
-    const css = fs.readFileSync(cssPath, 'utf-8');
+  it('contains royal cinematic easing tokens and keyframes in the app stylesheets', () => {
+    const css = readAppStyles();
 
     expect(css).toContain('--ease-royal-spring');
     expect(css).toContain('stage-card-cinematic-reveal');
@@ -20,7 +26,7 @@ describe('QuestionCard Transitions', () => {
   it('renders with cinematic reveal animation and clean centered typography', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { QuestionCard } = await import('../src/components/Stage/QuestionCard.tsx');
+    const { QuestionCard } = await import('@/features/stage/overlay/QuestionCard.tsx');
 
     const html = renderToString(
       React.createElement(QuestionCard, {
@@ -44,7 +50,7 @@ describe('QuestionCard Transitions', () => {
   it('applies answered celebration settle styling when isAnswered is true', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { QuestionCard } = await import('../src/components/Stage/QuestionCard.tsx');
+    const { QuestionCard } = await import('@/features/stage/overlay/QuestionCard.tsx');
 
     const html = renderToString(
       React.createElement(QuestionCard, {
@@ -69,7 +75,7 @@ describe('WordLockEffect Transitions', () => {
   it('renders word lock container with royal bloom aura and crown seal', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { WordLockEffect } = await import('../src/components/Stage/WordSpin/WordLockEffect.tsx');
+    const { WordLockEffect } = await import('@/features/stage/word-spin/WordLockEffect.tsx');
 
     const html = renderToString(
       React.createElement(WordLockEffect, {
@@ -87,7 +93,7 @@ describe('WordLockEffect Transitions', () => {
   it('renders question lock container with question title and SELECTED QUESTION seal when quizMode is question', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { WordLockEffect } = await import('../src/components/Stage/WordSpin/WordLockEffect.tsx');
+    const { WordLockEffect } = await import('@/features/stage/word-spin/WordLockEffect.tsx');
 
     const html = renderToString(
       React.createElement(WordLockEffect, {
@@ -107,7 +113,7 @@ describe('ContestantBadge & Timer Transitions', () => {
   it('renders contestant badge with slide-in animation and crystal shimmer sweep', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { ContestantBadge } = await import('../src/components/Stage/ContestantBadge.tsx');
+    const { ContestantBadge } = await import('@/features/stage/overlay/ContestantBadge.tsx');
 
     const html = renderToString(
       React.createElement(ContestantBadge, {
@@ -123,7 +129,7 @@ describe('ContestantBadge & Timer Transitions', () => {
   it('renders timer with cinematic float animation', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { TimerDisplay } = await import('../src/components/Stage/TimerDisplay.tsx');
+    const { TimerDisplay } = await import('@/features/timer/TimerDisplay.tsx');
 
     const html = renderToString(
       React.createElement(TimerDisplay, {
@@ -139,7 +145,7 @@ describe('ContestantBadge & Timer Transitions', () => {
   it('renders KeywordShowcaseCard for Competition Flow Mode (keyword mode)', async () => {
     const React = (await import('react')).default;
     const { renderToString } = await import('react-dom/server');
-    const { KeywordShowcaseCard } = await import('../src/components/Stage/KeywordShowcaseCard.tsx');
+    const { KeywordShowcaseCard } = await import('@/features/stage/overlay/KeywordShowcaseCard.tsx');
 
     const html = renderToString(
       React.createElement(KeywordShowcaseCard, {

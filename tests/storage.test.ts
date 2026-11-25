@@ -1,32 +1,17 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import {
-  loadQuestions,
-  saveQuestions,
-  loadContestants,
-  saveContestants,
-  loadWords,
-  saveWords,
-  loadAppearanceSettings,
-  saveAppearanceSettings,
-  loadHistory,
-  saveHistory,
-  appendHistoryRecord,
-  clearHistory,
-  exportQuestionsAsJSON,
-  parseImportedQuestions,
-  loadTimerSoundSettings,
-  saveTimerSoundSettings,
-  loadStageDisplaySettings,
-  saveStageDisplaySettings
-} from '../src/utils/storage.ts';
-import { DEFAULT_QUESTIONS } from '../src/data/defaultQuestions.ts';
-import { DEFAULT_CONTESTANTS } from '../src/data/defaultContestants.ts';
-import { DEFAULT_WORDS } from '../src/data/defaultWords.ts';
-import { DEFAULT_TIMER_SOUND_SETTINGS } from '../src/types/timer.ts';
-import { DEFAULT_APPEARANCE_SETTINGS } from '../src/types/appearance.ts';
-import { Question } from '../src/types/question.ts';
-import { KeywordItem } from '../src/types/word.ts';
-import { HistoryRecord } from '../src/types/history.ts';
+import { loadAppearanceSettings, saveAppearanceSettings } from '@/features/appearance/appearanceSettings.ts';
+import { appendHistoryRecord, clearHistory } from '@/features/history/historyManager.ts';
+import { exportQuestionsAsJSON, parseImportedQuestions } from '@/features/questions/importQuestions.ts';
+import { loadTimerSoundSettings, saveTimerSoundSettings, loadStageDisplaySettings, saveStageDisplaySettings } from '@/features/timer/timerSettings.ts';
+import { questionsRepository, contestantsRepository, wordsRepository, historyRepository } from '@/storage/repositories.ts';
+import { DEFAULT_QUESTIONS } from '@/data/defaultQuestions.ts';
+import { DEFAULT_CONTESTANTS } from '@/data/defaultContestants.ts';
+import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
+import { DEFAULT_TIMER_SOUND_SETTINGS } from '@/types/timer.ts';
+import { DEFAULT_APPEARANCE_SETTINGS } from '@/types/appearance.ts';
+import { Question } from '@/types/question.ts';
+import { KeywordItem } from '@/types/word.ts';
+import { HistoryRecord } from '@/types/history.ts';
 
 describe('Storage Utilities & Multi-Namespace Persistence', () => {
   beforeEach(() => {
@@ -34,7 +19,7 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
   });
 
   it('should return default questions when storage is empty', () => {
-    const questions = loadQuestions();
+    const questions = questionsRepository.load();
     expect(questions.length).toBe(DEFAULT_QUESTIONS.length);
   });
 
@@ -50,8 +35,8 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
         tags: ['test']
       }
     ];
-    saveQuestions(custom);
-    const loaded = loadQuestions();
+    questionsRepository.save(custom);
+    const loaded = questionsRepository.load();
     expect(loaded.length).toBe(1);
     expect(loaded[0].id).toBe('CUSTOM_01');
   });
@@ -93,19 +78,19 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
   });
 
   it('should load and save contestants correctly', () => {
-    expect(loadContestants().length).toBe(DEFAULT_CONTESTANTS.length);
-    saveContestants(DEFAULT_CONTESTANTS.slice(0, 2));
-    expect(loadContestants().length).toBe(2);
+    expect(contestantsRepository.load().length).toBe(DEFAULT_CONTESTANTS.length);
+    contestantsRepository.save(DEFAULT_CONTESTANTS.slice(0, 2));
+    expect(contestantsRepository.load().length).toBe(2);
   });
 
   it('should load default words and save modified word bank', () => {
-    expect(loadWords().length).toBe(DEFAULT_WORDS.length);
+    expect(wordsRepository.load().length).toBe(DEFAULT_WORDS.length);
     const customWords: KeywordItem[] = [
       { id: 'w-1', word: 'ความรัก', category: 'moon', enabled: true }
     ];
-    saveWords(customWords);
-    expect(loadWords().length).toBe(1);
-    expect(loadWords()[0].word).toBe('ความรัก');
+    wordsRepository.save(customWords);
+    expect(wordsRepository.load().length).toBe(1);
+    expect(wordsRepository.load()[0].word).toBe('ความรัก');
   });
 
   it('should load default appearance settings and save customized settings', () => {
@@ -126,7 +111,7 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
   });
 
   it('should manage history records lifecycle', () => {
-    expect(loadHistory()).toEqual([]);
+    expect(historyRepository.load()).toEqual([]);
     const record: HistoryRecord = {
       id: 'h1',
       timestamp: Date.now(),
@@ -144,15 +129,15 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
       result: 'completed'
     };
     appendHistoryRecord(record);
-    const loaded = loadHistory();
+    const loaded = historyRepository.load();
     expect(loaded.length).toBe(1);
     expect(loaded[0].id).toBe('h1');
 
-    saveHistory([]);
-    expect(loadHistory().length).toBe(0);
+    historyRepository.save([]);
+    expect(historyRepository.load().length).toBe(0);
 
     clearHistory();
-    expect(loadHistory()).toEqual([]);
+    expect(historyRepository.load()).toEqual([]);
   });
 
   it('should load default timer sound settings when none exist', () => {
@@ -216,7 +201,7 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
         result: 'completed'
       });
     }
-    const history = loadHistory();
+    const history = historyRepository.load();
     expect(history.length).toBe(200);
     expect(history[0].id).toBe('h_249'); // latest record is at the front
   });
@@ -248,7 +233,8 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
   });
 
   it('should export history records as valid CSV string', async () => {
-    const { exportHistoryAsCSV } = await import('../src/utils/storage.ts');
+    // Phase 9: the facade's duplicate CSV export is gone; this is the one the History page uses.
+    const { exportHistoryToCSV } = await import('@/features/history/historyManager.ts');
     const records: HistoryRecord[] = [
       {
         id: 'rec_1',
@@ -269,8 +255,10 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
       }
     ];
 
-    const csv = exportHistoryAsCSV(records);
-    expect(csv).toContain('ID,Timestamp,Round,ContestantNumber,ContestantName,ContestantID,QuestionID,Category,QuestionText,TimerConfiguredSec,TimerUsedSec,IsTimeout');
+    const csv = exportHistoryToCSV(records);
+    const header = csv.split('\n')[0];
+    expect(header).toContain('Contestant Name');
+    expect(header).toContain('Time Used (s)');
     expect(csv).toContain('สมชาย ใจดี');
     expect(csv).toContain('45');
   });

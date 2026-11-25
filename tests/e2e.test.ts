@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { DEFAULT_QUESTIONS } from '../src/data/defaultQuestions.ts';
-import { DEFAULT_WORDS } from '../src/data/defaultWords.ts';
-import { DEFAULT_CONTESTANTS } from '../src/data/defaultContestants.ts';
-import { selectTargetWord } from '../src/engine/wordSelector.ts';
-import { generateSpinReel, calculateDecelerationEasing } from '../src/engine/wordSpinEngine.ts';
-import { selectNextQuestion } from '../src/engine/questionSelector.ts';
-import { STAGE_SEQUENCE, getNextState } from '../src/engine/stateMachine.ts';
-import { calculateRemainingMs, calculateTimeUsedMs } from '../src/engine/timerEngine.ts';
-import { createHistoryRecord } from '../src/engine/historyManager.ts';
+import { DEFAULT_QUESTIONS } from '@/data/defaultQuestions.ts';
+import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
+import { DEFAULT_CONTESTANTS } from '@/data/defaultContestants.ts';
+import { selectTargetWord } from '@/features/words/wordSelector.ts';
+import { generateSpinReel, calculateDecelerationEasing } from '@/features/stage/word-spin/wordSpinEngine.ts';
+import { selectNextQuestion } from '@/features/questions/questionSelector.ts';
+import { STAGE_SEQUENCE, getNextState } from '@/features/session/stateMachine.ts';
+import { calculateRemainingMs, calculateTimeUsedMs } from '@/features/timer/timerEngine.ts';
+import { createHistoryRecord } from '@/features/history/historyManager.ts';
 
 describe('End-to-End Royal Word Spin V3 Journey Simulation', () => {
   it('should successfully simulate the full 8-state Royal Word Spin journey', () => {

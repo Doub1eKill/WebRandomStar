@@ -1,107 +1,88 @@
-# 🍂 รอยต่อฤดู — Season Transition Question (V2.0)
-## เว็บสุ่มคำถามสำหรับกิจกรรมประกวดดาว–เดือน (Vite + React 19 + TypeScript)
+# 👑 รอยต่อฤดู — Royal Word Spin (V3.0)
+## ระบบสุ่มคำถามบนเวทีประกวด ✦ SCi TECH TINE ✦ CHARM OF TRANSITION AMBASSADOR 2026
 
-> ระบบสุ่มคำถามสำหรับเวทีกิจกรรมดาว–เดือน ภายใต้แนวคิด **“การเปลี่ยนผ่านจากปลายฝนสู่ต้นหนาว”** (Version 2.0 — No Constellation / No Meteor)  
-> โดยใช้เหตุการณ์ธรรมชาติจริงเป็นทั้งธีม เนื้อเรื่อง และกลไกการสุ่ม (ไร้สล็อต ไร้วงล้อ ไร้กล่องสุ่ม) พร้อมศูนย์ควบคุม **Competition Control Center**, **Timer Engine** ระบบจับเวลาความแม่นยำสูง และ **History Audit Log**
+> เว็บสำหรับจอโปรเจกเตอร์บนเวทีประกวดดาว–เดือน: หมุน **"คำสำคัญ"** บนวงล้อ แล้วเปิดคำถามในหมวดเดียวกัน พร้อมตัวจับเวลา เพลงประกอบ ประวัติการตอบ และหน้าควบคุมระยะไกลในอีกหน้าต่าง
+> React 19 + TypeScript + Vite ไม่มี backend และ**ใช้งานแบบออฟไลน์ได้** (ฟอนต์ เสียง และข้อมูลทั้งหมดอยู่ในเครื่อง)
 
----
-
-## 🌟 ฟีเจอร์เด่น (Key Features - V2.0)
-
-1. **Natural Transition Lifecycle (No Constellation / No Meteor)**:
-   - ลำดับธรรมชาติ 9 ขั้นตอน: `ฝนสุดท้าย (Rain) → หยดน้ำ (Water Drop) → หมอก (Mist) → ลมหนาว (Wind) → ใบไม้ร่วง (Leaf) → ฟ้าเปิด (Sky Clear) → เปิดเผยคำถาม (Question Reveal) → แสดงคำถาม (Question) → ตอบเสร็จสิ้น (Answered)`
-   - การสุ่มคำถามแยกเป็น Pure Logic อิสระจาก Canvas
-
-2. **Competition Control Center (ศูนย์ควบคุมหลังเวที)**:
-   - **Question Bank Dashboard**: สรุปสถิติคำถาม (Total, Enabled, Disabled, Used, Remaining), ตารางค้นหา/ฟิลเตอร์, CRUD, Duplicate, นำเข้า/ส่งออก JSON พร้อม Data Validation
-   - **Timer Control Panel**: ตัวจับเวลาพร้อม Presets (30s, 60s, 90s, 120s, Custom), สัญญาณเตือน Warning ที่ ≤30s และเสียงหมดเวลา
-   - **History Audit Panel**: บันทึกประวัติการสุ่ม, ผู้เข้าแข่งขัน, คำถาม, เวลาที่ใช้จริง และส่งออก JSON / CSV
-   - **Contestant Manager**: จัดการรายชื่อผู้เข้าแข่งขัน คณะ และหมายเลข
-
-3. **Timestamp-based Timer Synchronization**:
-   - ซิงก์เวลาระหว่าง Stage และ Controller ผ่าน `BroadcastChannel API` โดยใช้ `startTimestamp` และ `durationMs` เพื่อความแม่นยำสูงสุดและลด Traffic
-
-4. **Seeded PRNG (Mulberry32)**:
-   - ผลการสุ่มสามารถ **Replay ผลเดิมได้ 100%** ด้วย Seed เดิม
-   - มีระบบป้องกันคำถามซ้ำใน Session เดียวกัน
-
-5. **Procedural Web Audio API Soundscapes**:
-   - เสียงสังเคราะห์ออฟไลน์ 100% (เสียงฝนซา, หยดน้ำ, ลมหนาว, ใบไม้เสียดสี, เสียงฟ้าเปิด, เสียงเปิดเผยคำถาม, เสียงเตือนตัวจับเวลา และเสียงจบเวลา)
+รายละเอียดเชิงเทคนิค (สถาปัตยกรรม, state, ข้อมูลที่เก็บ) อยู่ใน [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)
 
 ---
 
-## ⌨️ คีย์ลัดบนเวที (Keyboard Shortcuts)
+## 🌟 ฟีเจอร์หลัก
 
-- `Space` : เริ่มสุ่มคำถาม (Start) / หยุดชั่วคราว (Pause & Resume)
-- `Enter` : ดำเนินการต่อ (Next) / เสร็จสิ้นคำถาม (Done)
-- `Key T` : เริ่ม / หยุดตัวจับเวลา (Start / Pause Timer)
-- `Esc` : เปิด/ปิด แผงควบคุมผู้ดำเนินรายการ (Toggle Control Drawer)
-- `Key M` : เปิด/ปิดเสียง (Mute/Unmute)
-- `Key F` : เข้า/ออกจากโหมดเต็มหน้าจอ (Toggle Fullscreen)
+- **Royal Word Spin:** วงล้อคำสำคัญ 4 แบบ (แนวตั้ง, ทรงกระบอก 3D, วงโคจร, ริบบิ้น) ผลการสุ่มคำนวณล่วงหน้าด้วย seed (Mulberry32) แล้วค่อยชะลอวงล้อให้หยุดที่คำนั้นพอดี หยุดได้ทั้งแบบอัตโนมัติ (4.5 วินาที) และกดหยุดเอง
+- **สองโหมดการแข่งขัน:** สุ่มจากคลังคำถาม (เปิดการ์ดคำถาม) หรือสุ่มเฉพาะคำสำคัญ (แสดงการ์ดคำแล้วเริ่มจับเวลาตอบสด)
+- **ตัวจับเวลา:** อิงเวลาจริง (`startTimestamp`) จึงตรงกันทุกหน้าต่าง มี preset, ช่วงเตือนและวิกฤต, เสียง tick/เตือน/หมดเวลา และแสดงได้ 3 แบบ (กลางจอ, มุมขวาบน, แบบย่อ)
+- **หน้าควบคุม 8 หน้า:** ควบคุมเวที, คลังคำสำคัญ, คลังคำถาม (นำเข้า JSON ได้ทั้งแบบ "รวม" และ "แทนที่" มีหน้าตรวจสอบก่อนนำเข้าและสำรองอัตโนมัติ), ตัวจับเวลา, เพลงประกอบ, ผู้เข้าแข่งขัน, ประวัติ (ส่งออก CSV/JSON) และปรับแต่งหน้าตา
+- **พื้นหลังเวที 2 แบบ:** Cosmic Canvas (Canvas 2D) และ AeroShards (WebGPU โหลดเฉพาะตอนเลือก)
+- **เสียง:** เสียงประกอบสังเคราะห์สดด้วย Web Audio API และเพลงประกอบแต่ละช่วงของเวที (อัปโหลดไฟล์เองหรือใช้ preset ที่เป็น arpeggio สังเคราะห์)
+- **ฟอนต์:** Cinzel, Outfit, Prompt (ไทย), Playfair Display และ Cinzel Decorative ฝังมากับแอป (OFL-1.1 ผ่าน `@fontsource`) หรือใส่ฟอนต์ Google ของตัวเองก็ได้
 
 ---
 
-## 🚀 การติดตั้งและรันโปรเจกต์ (Getting Started)
+## 🖥️ การใช้งานบนเวที (สองหน้าต่าง)
+
+1. เปิด `http://localhost:3000/` (หรือไฟล์ที่ build แล้ว) บนจอโปรเจกเตอร์ **หน้านี้เป็นตัวหลัก (host)** ที่เก็บสถานะการแข่งขัน
+2. กด `Esc` เพื่อเปิดแผงควบคุมบนเวที แล้วกด **"🖥️ เปิดหน้าต่างแยกจอ (Dual Display)"** หรือเปิด `#/control/live` เองในอีกหน้าต่างของเบราว์เซอร์เดียวกัน
+3. หน้าควบคุมจะส่งคำสั่งไปที่จอเวทีผ่าน `BroadcastChannel` ถ้าจอเวทีปิดอยู่จะมีแถบเตือนด้านบน
+
+ข้อควรรู้:
+- ทั้งสองหน้าต่างต้องเปิดใน**เบราว์เซอร์และโปรไฟล์เดียวกัน** และ origin เดียวกัน
+- ให้หน้าจอเวทีแสดงอยู่ตลอด (ไม่ย่อหรือซ่อนแท็บ) เพราะเบราว์เซอร์จะหน่วง timer ของแท็บที่ถูกซ่อน
+- ลิงก์เก่า `?mode=controller` จะพาไปที่ `#/control/live` ให้อัตโนมัติ
+
+---
+
+## ⌨️ คีย์ลัดบนจอเวที
+
+| ปุ่ม | การทำงาน |
+|---|---|
+| `Space` | ว่าง → เริ่มหมุน · กำลังหมุน → หยุดหมุน · แสดงคำถาม → ตอบแล้ว · ตอบแล้ว → รีเซ็ต · ช่วงอื่น → หยุดชั่วคราว/เล่นต่อ |
+| `Enter` | เหมือน `Space` แต่ช่วงอื่นจะ**ข้ามไปที่คำถาม**แทนการหยุดชั่วคราว |
+| `T` | เริ่ม / หยุด / เล่นต่อ ตัวจับเวลา |
+| `Esc` | เปิด/ปิดแผงควบคุมบนเวที |
+| `M` | ปิด/เปิดเสียง |
+| `F` | เข้า/ออกโหมดเต็มจอ |
+
+กดค้างจะไม่ยิงซ้ำ และคีย์ลัดจะไม่ทำงานขณะพิมพ์ในช่องกรอกข้อความ
+
+---
+
+## 🚀 การติดตั้งและคำสั่ง
+
+ต้องใช้ Node.js 22 ขึ้นไป
 
 ```bash
-# ติดตั้ง dependencies
-npm install
-
-# รันโหมดทดสอบในเครื่อง (Development)
-npm run dev
-
-# รันชุดการทดสอบทั้งหมด (Vitest: 49/49 tests pass)
-npm run test
-
-# สั่ง Build สำหรับใช้งานจริง (Production Build)
-npm run build
+npm install          # ติดตั้ง dependencies
+npm run dev          # dev server ที่ http://localhost:3000
+npm test             # Vitest (277 เทสต์)
+npm run lint         # ESLint (ทุกกฎเป็น error)
+npm run build        # type-check + build ลง dist/
+npm run preview      # เปิด build จริงเพื่อทดสอบ (มี Content-Security-Policy)
 ```
+
+- CI (GitHub Actions, Node 22) รัน `lint`, `test` และ `build` ทุกครั้งที่ push
+- CSP ใส่ให้เฉพาะตอน build (ดู `vite.config.ts`) เพราะ dev server ต้องใช้ inline script ถ้าเพิ่มฟีเจอร์ที่โหลดของจาก host อื่น ให้ทดสอบด้วย `npm run build && npm run preview`
 
 ---
 
-## 📁 โครงสร้างโปรเจกต์ (Project Structure)
+## 📁 โครงสร้างโดยย่อ
 
 ```text
 src/
-├── components/
-│   ├── Stage/                     # องค์ประกอบบนเวที (Canvas 2D, Overlay, QuestionCard, Badges, Timer)
-│   │   ├── canvas/                # ระบบฟิสิกส์อนุภาคและแสงธรรมชาติ
-│   │   │   ├── RainSystem.ts
-│   │   │   ├── WaterDropSystem.ts
-│   │   │   ├── MistSystem.ts
-│   │   │   ├── LeafSystem.ts
-│   │   │   ├── SkySystem.ts
-│   │   │   └── TransitionLightingSystem.ts
-│   │   ├── StageCanvas.tsx
-│   │   ├── StageOverlay.tsx
-│   │   ├── QuestionCard.tsx
-│   │   ├── StageHeader.tsx
-│   │   ├── ContestantBadge.tsx
-│   │   ├── TimerDisplay.tsx
-│   │   ├── SeasonJourneyBreadcrumb.tsx
-│   │   └── CinematicNarrator.tsx
-│   └── Control/                   # Competition Control Center & Panels
-│       ├── ControlCenter.tsx
-│       ├── QuestionBankDashboard.tsx
-│       ├── TimerPanel.tsx
-│       ├── HistoryPanel.tsx
-│       ├── ControlDrawer.tsx
-│       ├── RemoteController.tsx
-│       ├── KeyboardController.tsx
-│       ├── QuestionManagerModal.tsx
-│       └── ContestantManagerModal.tsx
-├── engine/                        # Core Pure Engines
-│   ├── prng.ts                    # Mulberry32 PRNG
-│   ├── questionSelector.ts        # Decoupled Question Selector
-│   ├── stateMachine.ts            # State Machine 10 ลำดับ
-│   ├── timerEngine.ts             # Pure Timer Calculations
-│   ├── historyManager.ts          # History Logger & CSV/JSON Export
-│   └── audioEngine.ts             # Web Audio API Procedural Synthesizer
-├── hooks/
-│   ├── useStageSync.ts            # BroadcastChannel Two-Way Sync
-│   └── useTimer.ts                # Synchronized Timer Hook
-├── types/                         # TypeScript Type Definitions
-├── data/                          # ฐานข้อมูลคำถาม 42 ข้อ และรายชื่อผู้เข้าแข่งขันเริ่มต้น
-└── utils/                         # Multi-Namespace LocalStorage & JSON Schema Validation
+├── app/        # main.tsx, App (HashRouter), router (#/ = เวที, #/control/<หน้า>), styles.css (ลำดับ CSS)
+├── pages/      # stage/StagePage (host) และ control/* (8 หน้า + ControlLayout)
+├── features/   # session, stage, timer, music, audio, questions, words, contestants, history, appearance, control
+├── shared/     # lib (createRepository, csv, prng, …), notices, styles (tokens, base, fonts, …), ui
+├── storage/    # repositories (STORAGE_KEYS) และ useRepository
+├── data/       # คำถาม 42 ข้อ, คำสำคัญ 10 คำ, ผู้เข้าแข่งขัน 10 คน (ค่าเริ่มต้น)
+└── types/
+tests/          # Vitest + happy-dom
+public/         # leaf.svg (favicon)
 ```
-"# WebRandomStar" 
+
+---
+
+## 📜 เครดิตฟอนต์
+
+Cinzel, Cinzel Decorative (Natanael Gama), Outfit, Prompt (Cadson Demak) และ Playfair Display (Claus Eggers Sørensen) ใช้สัญญาอนุญาต SIL Open Font License 1.1 ติดตั้งผ่านแพ็กเกจ `@fontsource/*`

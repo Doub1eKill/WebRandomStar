@@ -1,4 +1,4 @@
-import { KeywordItem } from '../types/word.ts';
+import { KeywordItem } from '@/types/word.ts';
 
 export const DEFAULT_WORDS: KeywordItem[] = [
   {

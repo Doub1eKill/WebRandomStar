@@ -1,0 +1,43 @@
+/* Question import preview (Phase 4, S1). */
+.question-import-summary {
+  padding: 1rem 1.25rem;
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.question-import-summary ul {
+  margin: 0.5rem 0;
+  padding-left: 1.25rem;
+}
+
+.question-import-note {
+  margin-top: 0.75rem;
+  color: #fcd34d;
+  font-size: 0.8rem;
+}
+
+/* Phase 7: the three actions used to squeeze into one row on narrow screens (one button
+   shrank to a few characters wide). Keep each button at its natural size and wrap instead;
+   on phones stack them full width with the recommended action on top. */
+.question-import-actions {
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.question-import-actions > button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .question-import-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .question-import-actions > button {
+    width: 100%;
+  }
+}

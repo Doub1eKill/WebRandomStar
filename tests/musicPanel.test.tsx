@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { MusicPanel } from '../src/components/Control/MusicPanel.tsx';
-import { DEFAULT_MUSIC_STATE, PRESET_MUSIC_TRACKS } from '../src/types/music.ts';
+import { MusicPanel } from '@/features/music/panel/MusicPanel.tsx';
+import { DEFAULT_MUSIC_STATE, PRESET_MUSIC_TRACKS } from '@/types/music.ts';
 
 describe('MusicPanel Backstage Component', () => {
   it('renders master control banner, now playing deck, and track library', () => {

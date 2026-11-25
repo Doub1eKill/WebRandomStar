@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { applyTypography } from '../src/utils/typography.ts';
+import { applyTypography } from '@/features/appearance/typography.ts';
 
 describe('Stage Typography Integration', () => {
   beforeEach(() => {
@@ -9,12 +9,12 @@ describe('Stage Typography Integration', () => {
 
   it('should update CSS custom property on document element when appearance updates', () => {
     applyTypography({ fontPreset: 'verve' });
-    expect(document.documentElement.style.getPropertyValue('--font-display')).toContain('Verve');
-    expect(document.documentElement.style.getPropertyValue('--font-serif')).toContain('Verve');
+    expect(document.documentElement.style.getPropertyValue('--font-display')).toContain('Cinzel Decorative');
+    expect(document.documentElement.style.getPropertyValue('--font-serif')).toContain('Cinzel Decorative');
 
     applyTypography({ fontPreset: 'amoria' });
-    expect(document.documentElement.style.getPropertyValue('--font-display')).toContain('Amoria');
-    expect(document.documentElement.style.getPropertyValue('--font-serif')).toContain('Amoria');
+    expect(document.documentElement.style.getPropertyValue('--font-display')).toContain('Playfair Display');
+    expect(document.documentElement.style.getPropertyValue('--font-serif')).toContain('Playfair Display');
 
     applyTypography({ fontPreset: 'cinzel' });
     expect(document.documentElement.style.getPropertyValue('--font-display')).toContain('Cinzel');

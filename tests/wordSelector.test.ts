@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { filterWords, selectTargetWord } from '../src/engine/wordSelector.ts';
-import { DEFAULT_WORDS } from '../src/data/defaultWords.ts';
+import { filterWords, selectTargetWord } from '@/features/words/wordSelector.ts';
+import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
 
 describe('Word Selector Engine', () => {
   it('should filter enabled words', () => {
