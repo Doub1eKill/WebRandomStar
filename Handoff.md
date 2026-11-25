@@ -44,7 +44,7 @@
 - inline style **445** จุด (เดิม 574), CSS หลัก 87.0 KB (gzip 14.4 KB รวม `@font-face` ของฟอนต์ที่ self-host) ส่วน CSS ของหน้าควบคุมบางส่วนโหลดพร้อม lazy chunk
 - ไม่มี request ออกไปภายนอกตอนใช้งานปกติ (ยกเว้นตอนผู้ใช้ตั้งฟอนต์ custom ของ Google หรือเพิ่มเพลงจาก URL)
 - JS ที่จอเวทีโหลดตอนเปิด **403 KB (gzip 123 KB)** เทียบกับ baseline 751 KB (gzip 208 KB)
-- PR: [Doub1eKill/WebRandomStar#1](https://github.com/Doub1eKill/WebRandomStar/pull/1) ready for review (Auto-fix ปิดอยู่)
+- PR: [Doub1eKill/WebRandomStar#1](https://github.com/Doub1eKill/WebRandomStar/pull/1) ready for review และเปิด Auto-fix ไว้แล้ว
 
 **การตัดสินใจของผู้ใช้:**
 - Q1 = react-router
@@ -156,7 +156,7 @@ export const STORAGE_KEYS = {
 - `tsconfig.json` รวมโฟลเดอร์ `tests` ไว้ด้วย และเปิด `noUnusedLocals` ถ้ามี import ที่ไม่ได้ใช้ `npm run build` จะพัง
 - ไฟล์เดิมหลายไฟล์ใช้ CRLF ถ้าแก้ด้วยสคริปต์ต้องระวัง (Edit tool จัดการให้ได้)
 - **CI ใช้ Node 22 แต่เครื่อง dev ใช้ Node 24:** ผล `Math.pow` ต่างกันที่ทศนิยมหลักสุดท้าย snapshot ที่มีตัวเลขทศนิยมจึงต้องปัดก่อน (ดู `normalizeNumbers` ใน `tests/spinViews.visual.test.tsx`)
-- **PR:** [Doub1eKill/WebRandomStar#1](https://github.com/Doub1eKill/WebRandomStar/pull/1) (ready for review, `refactor/architecture` → `main`) ตอนนี้ Auto-fix ปิดอยู่ ถ้าอยากให้แก้ CI ที่ล้มเหลวอัตโนมัติ ต้องเปิดใหม่
+- **PR:** [Doub1eKill/WebRandomStar#1](https://github.com/Doub1eKill/WebRandomStar/pull/1) (ready for review, `refactor/architecture` → `main`) เปิด Auto-fix ไว้แล้ว เมื่อ CI ล้มเหลว, merge conflict หรือมี review comment session จะถูกปลุกให้แก้
 
 ## 5. [Prompt for the Next AI]
 
