@@ -1,4 +1,5 @@
 import React from 'react';
+import { Gem, Image, Orbit } from 'lucide-react';
 
 import type { AppearanceSettingsModel } from '../useAppearanceSettingsModel.tsx';
 import { SettingGroup } from '@/shared/ui/SettingGroup.tsx';
@@ -8,7 +9,7 @@ export const BackgroundModeSection: React.FC<{ m: AppearanceSettingsModel }> = (
   const { current, updateSetting } = m;
   return (
     <SettingGroup
-      icon="🖼️"
+      icon={<Image size={18} aria-hidden="true" />}
       title="รูปแบบพื้นหลังเวทีหลัก (Stage Background Mode)"
       hint="เลือกสลับระหว่างพื้นหลังเนบิวลาคริสตัลปัจจุบัน และพื้นหลังประติมากรรมแก้ว 3D AeroShards (สลับได้ทันทีแบบ Real-time)"
     >
@@ -16,7 +17,7 @@ export const BackgroundModeSection: React.FC<{ m: AppearanceSettingsModel }> = (
         <ModeCard
           active={!current.backgroundMode || current.backgroundMode === 'cosmic-canvas'}
           onSelect={() => updateSetting('backgroundMode', 'cosmic-canvas')}
-          icon="🌌"
+          icon={<Orbit size={22} aria-hidden="true" />}
           name="Cosmic Canvas Stage"
           badge="มาตรฐาน"
           tone="sky"
@@ -25,7 +26,7 @@ export const BackgroundModeSection: React.FC<{ m: AppearanceSettingsModel }> = (
         <ModeCard
           active={current.backgroundMode === 'aero-shards'}
           onSelect={() => updateSetting('backgroundMode', 'aero-shards')}
-          icon="💎"
+          icon={<Gem size={22} aria-hidden="true" />}
           name="AeroShards Glass Sculpture"
           badge="ใหม่ 3D"
           tone="violet"

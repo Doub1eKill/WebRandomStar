@@ -13,7 +13,7 @@ export const TimerPresetsSection: React.FC<{ m: TimerPanelModel }> = ({ m }) => 
   return (
     <>
       {/* 5. Timer Presets */}
-      <div style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '1.25rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+      <div style={{ background: 'rgba(14, 18, 44, 0.5)', padding: '1.25rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
         <h4 style={{ margin: '0 0 0.75rem 0', color: '#f8fafc', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           <Zap size={16} color="#eab308" /> ค่าเวลามาตรฐาน (Presets)
         </h4>
@@ -27,10 +27,10 @@ export const TimerPresetsSection: React.FC<{ m: TimerPanelModel }> = ({ m }) => 
                 onClick={() => onSetDuration(p.durationMs)}
                 style={{
                   padding: '0.75rem 0.6rem',
-                  background: isSelected ? 'rgba(99, 102, 241, 0.2)' : 'rgba(255, 255, 255, 0.03)',
-                  border: `1px solid ${isSelected ? '#6366f1' : 'rgba(255, 255, 255, 0.08)'}`,
+                  background: isSelected ? 'rgba(124, 58, 237, 0.2)' : 'rgba(255, 255, 255, 0.03)',
+                  border: `1px solid ${isSelected ? 'var(--ctl-accent)' : 'rgba(255, 255, 255, 0.08)'}`,
                   borderRadius: '8px',
-                  color: isSelected ? '#a5b4fc' : '#cbd5e1',
+                  color: isSelected ? 'var(--ctl-accent-pale)' : '#cbd5e1',
                   cursor: 'pointer',
                   textAlign: 'center',
                   transition: 'all 0.2s'

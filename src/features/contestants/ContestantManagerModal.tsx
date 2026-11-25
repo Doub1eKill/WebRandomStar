@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { RotateCcw, Trash2, UserPlus, Users, X } from 'lucide-react';
 import { Contestant } from '@/types/question.ts';
 import { DEFAULT_CONTESTANTS } from '@/data/defaultContestants.ts';
 
@@ -59,21 +60,21 @@ export const ContestantManagerModal: React.FC<ContestantManagerModalProps> = ({
       <div className="modal-container modal-sm glass-panel" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <div className="modal-title-wrap">
-            <span className="modal-icon">👥</span>
+            <span className="modal-icon" aria-hidden="true"><Users size={22} aria-hidden="true" /></span>
             <div>
               <h2 className="modal-title">จัดการผู้เข้าแข่งขัน (Contestants)</h2>
               <p className="modal-sub">มีทั้งหมด {contestants.length} คน</p>
             </div>
           </div>
-          <button className="btn-close-modal" onClick={onClose}>✕</button>
+          <button className="btn-close-modal" onClick={onClose} aria-label="ปิด"><X size={18} aria-hidden="true" /></button>
         </div>
 
         <div className="modal-toolbar">
           <button className="btn-primary btn-sm" onClick={() => setIsAdding(!isAdding)}>
-            {isAdding ? 'ยกเลิก' : '+ เพิ่มผู้เข้าแข่งขัน'}
+            {isAdding ? 'ยกเลิก' : <><UserPlus size={14} aria-hidden="true" /> เพิ่มผู้เข้าแข่งขัน</>}
           </button>
           <button className="btn-secondary btn-sm btn-danger-soft" onClick={handleResetDefaults}>
-            ↺ คืนค่าเริ่มต้น 10 ท่าน
+            <RotateCcw size={14} aria-hidden="true" /> คืนค่าเริ่มต้น 10 ท่าน
           </button>
         </div>
 
@@ -147,7 +148,7 @@ export const ContestantManagerModal: React.FC<ContestantManagerModalProps> = ({
                 <div className="item-name">{c.name}</div>
                 <div className="item-faculty">{c.faculty}</div>
               </div>
-              <button className="btn-table-delete" onClick={() => handleDelete(c.id)}>🗑️</button>
+              <button className="btn-table-delete" onClick={() => handleDelete(c.id)} aria-label={`ลบ ${c.name}`} title="ลบ"><Trash2 size={16} aria-hidden="true" /></button>
             </div>
           ))}
         </div>

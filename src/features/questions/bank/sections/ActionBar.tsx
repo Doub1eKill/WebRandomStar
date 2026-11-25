@@ -25,7 +25,7 @@ export const ActionBar: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
             style={{
               width: '100%',
               padding: '0.55rem 0.75rem 0.55rem 2.25rem',
-              background: 'rgba(15, 23, 42, 0.6)',
+              background: 'rgba(14, 18, 44, 0.6)',
               border: '1px solid rgba(255, 255, 255, 0.12)',
               borderRadius: '8px',
               color: '#f8fafc',
@@ -53,7 +53,7 @@ export const ActionBar: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
               alignItems: 'center',
               gap: '0.35rem',
               padding: '0.55rem 0.9rem',
-              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+              background: 'linear-gradient(135deg, var(--ctl-accent), var(--ctl-accent-2))',
               border: 'none',
               borderRadius: '8px',
               color: '#fff',

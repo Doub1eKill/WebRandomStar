@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  Layout,
-  Sparkles,
-  Type
-} from 'lucide-react';
+import { Layout, PanelTop, Pin, Sparkles, Type } from 'lucide-react';
 
 import type { TimerPanelModel } from '../useTimerPanelModel.tsx';
 
@@ -15,14 +11,14 @@ export const TimerLayoutSection: React.FC<{ m: TimerPanelModel }> = ({ m }) => {
       {onSetStageDisplaySettings && (
         <div
           style={{
-            background: 'rgba(15, 23, 42, 0.65)',
+            background: 'rgba(14, 18, 44, 0.65)',
             padding: '1.25rem',
             borderRadius: '14px',
-            border: '1px solid rgba(99, 102, 241, 0.25)'
+            border: '1px solid rgba(124, 58, 237, 0.25)'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-            <Layout size={18} color="#818cf8" />
+            <Layout size={18} color="#a78bfa" />
             <div>
               <div style={{ color: '#f8fafc', fontSize: '0.95rem', fontWeight: 600 }}>
                 รูปแบบการแสดงผลบนเวที (Stage Display Mode)
@@ -39,8 +35,8 @@ export const TimerLayoutSection: React.FC<{ m: TimerPanelModel }> = ({ m }) => {
               onClick={() => onSetStageDisplaySettings({ timerDisplayMode: 'center' })}
               style={{
                 padding: '0.75rem 0.6rem',
-                background: stageDisplaySettings.timerDisplayMode === 'center' ? 'rgba(99, 102, 241, 0.25)' : 'rgba(255, 255, 255, 0.04)',
-                border: `1.5px solid ${stageDisplaySettings.timerDisplayMode === 'center' ? '#6366f1' : 'rgba(255, 255, 255, 0.1)'}`,
+                background: stageDisplaySettings.timerDisplayMode === 'center' ? 'rgba(124, 58, 237, 0.25)' : 'rgba(255, 255, 255, 0.04)',
+                border: `1.5px solid ${stageDisplaySettings.timerDisplayMode === 'center' ? 'var(--ctl-accent)' : 'rgba(255, 255, 255, 0.1)'}`,
                 borderRadius: '10px',
                 color: stageDisplaySettings.timerDisplayMode === 'center' ? '#c7d2fe' : '#94a3b8',
                 cursor: 'pointer',
@@ -67,7 +63,7 @@ export const TimerLayoutSection: React.FC<{ m: TimerPanelModel }> = ({ m }) => {
                 textAlign: 'left'
               }}
             >
-              <div style={{ fontWeight: 700, fontSize: '0.88rem' }}>📌 มุมขวาบน</div>
+              <div className="ui-ico-label" style={{ fontWeight: 700, fontSize: '0.88rem' }}><Pin size={14} aria-hidden="true" />มุมขวาบน</div>
               <div style={{ fontSize: '0.7rem', marginTop: '0.2rem', color: '#94a3b8' }}>
                 Corner HUD คลาสสิก
               </div>
@@ -85,7 +81,7 @@ export const TimerLayoutSection: React.FC<{ m: TimerPanelModel }> = ({ m }) => {
                 textAlign: 'left'
               }}
             >
-              <div style={{ fontWeight: 700, fontSize: '0.88rem' }}>🔹 แถบกะทัดรัด</div>
+              <div className="ui-ico-label" style={{ fontWeight: 700, fontSize: '0.88rem' }}><PanelTop size={14} aria-hidden="true" />แถบกะทัดรัด</div>
               <div style={{ fontSize: '0.7rem', marginTop: '0.2rem', color: '#94a3b8' }}>
                 Floating Capsule HUD
               </div>

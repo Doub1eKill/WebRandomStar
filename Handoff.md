@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Generated: 2026-11-25 (อัปเดตหลัง merge PR #1 เข้า `main` — ครบทุก Phase ของแผนแล้ว)
+> Generated: 2026-11-25 (อัปเดตหลังปรับดีไซน์ฝั่ง Control ทั้งหมด บน branch `design/control-backstage`)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -39,6 +39,8 @@
 | 9 | `dc1ed4c` | Q3: ลบ dead code D1–D4 (3 คอมโพเนนต์เล่าเรื่อง + `storytelling.css`, `useTimer`, `selectQuestionFlow`, state เก่า 6 ตัว, ระบบฝน/หยดน้ำ/ใบไม้และเสียงของมัน) และ PF8, D7, ลบ wrapper `useStageSync` (StagePage ใช้ `SessionProvider` โดยตรง) และ facade `storageApi` (ย้ายตรรกะไปไว้กับฟีเจอร์), ESLint ทุกกฎเป็น error, README + PROJECT_SUMMARY เขียนใหม่ให้ตรงกับ v3 |
 | 10 | `0bb5808` | S9: vite 6.4.3 → 6.4.6, vitest 3 → **4.1.12** (เลิกใช้ tinypool), happy-dom 20 → **21.0.4**, `overrides` บังคับ `@modelcontextprotocol/server` เป็น `^2.4.0` (`vgpu` 0.5.0 และ 0.6.0 ล็อก 2.0.0 ไว้ จึงไม่อัปเกรด vgpu), zod และ source-map-js อัปเดตใน lockfile, `allowScripts` อนุญาตแค่ `esbuild` (deny `webgpu`, `@vgpu/adapter-node`), `npm audit` จาก 9 รายการ (critical 2, high 6) เหลือ **0** ส่วน bundle เหมือนเดิม (`index-B-H4j1M7.js` 403 KB) |
 | 11 | `f72b909` | ตรวจรับ: รายงานที่ `docs/superpowers/plans/2026-11-25-acceptance.md` ตัวชี้วัดผ่าน 7 จาก 9 ข้อ (JS ตอนเปิด 123 KB gzip เกินเป้า ~110 เพราะ react-router และ `AeroShards.tsx` 737 บรรทัด), ทดสอบสองหน้าต่างบน `vite preview` ผ่านครบ 10 รายการ (gong ดัง 1 ครั้ง, เพลงที่อัปโหลดเล่นได้หลังรีโหลด, เพลงไม่ซ้อน ฯลฯ), Master Fix List แก้ครบ ยกเว้น A2/PF11 ที่ทำบางส่วนพร้อมเหตุผล, เพิ่ม `tests/assets.test.ts` (B12), README/PROJECT_SUMMARY อัปเดตเป็น 277 เทสต์ และ Vitest 4 |
+| Design: Control | branch `design/control-backstage` | ผู้ใช้สั่ง "ปรับ Desire (= Design) ของฝั่ง Control ทั้งหมด": ธีม **Backstage Console** ใช้กับหน้ารีโมต `#/control/*` ทั้ง 8 หน้า (เวทีกับ drawer ไม่เปลี่ยน) — token `--ctl-*` ใน `tokens.css` (สี nebula-violet `#7c3aed` / diamond-cyan `#38bdf8` ของเวทีแทน indigo `#6366f1`, พื้นกรมท่าเข้ม, ฟอนต์ Prompt แทน system-ui), `controlLayout.css` เป็นธีมทั้งหน้าต่าง scope ใต้ `.control-app` (ปรับ class ร่วมของ dashboard/appearance/modals ด้วย specificity ไม่ต้องแก้ไฟล์ร่วม), header ใหม่มี pill สถานะเชื่อมต่อจอเวที/สถานะเวที/session, แท็บแบบ pill พร้อม badge จำนวน, focus ring สีฟ้า (WCAG 2.4.7), prefers-reduced-motion, ปุ่มเล็กในตารางคำถามใหญ่ขึ้น, หน้า Live เป็น 2 คอลัมน์สมดุล, หน้าผู้เข้าแข่งขันใช้ class แทน inline (`aria-pressed`) ส่วน inline style ใน panel ที่ใช้สี indigo/slate เปลี่ยนเป็น `var(--ctl-*)` / สีโทนเดียวกัน ตรรกะไม่เปลี่ยน |
+| Design: ไอคอนแทน emoji | branch `design/control-backstage` | ผู้ใช้สั่ง "ปรับ UX UI ให้ใช้งานสะดวกและสวย เปลี่ยน Emoji เป็น Icon ทั้งหมด ห้ามใช้ Emoji": emoji/สัญลักษณ์ (เช่น ✦ ↺ ● ✕ ✓) ในหน้า `#/control/*` ทุกหน้า, modal จัดการคำถาม/คำสำคัญ/ผู้เข้าแข่งขัน และ `ControlDrawer` บนเวที เปลี่ยนเป็นไอคอน lucide-react (มีอยู่แล้ว ไม่เพิ่ม dependency) — `shared/ui/icons.tsx` (`CategoryIcon` ตามหมวด, `MusicPhaseIcon`), `SettingGroup`/`ModeCard` รับ `icon: ReactNode`, `ControlCard` มี prop `icon`, ไอคอนหัวข้อเป็น tile สีม่วงใน `ui.css` (`.ui-ico-label` จัดไอคอน+ข้อความ), ใน `<option>` ใส่ svg ไม่ได้จึงตัดสัญลักษณ์ออก, ปุ่มไอคอนอย่างเดียวมี `aria-label`, หน้า Live มีไอคอนตามหมวดบนชิปคำและ empty state ของมอนิเตอร์ ข้อมูล `CATEGORY_CONFIGS.icon` ยังอยู่ (UI แค่ไม่แสดงแล้ว) ส่วนลวดลาย ✦/◆ บนจอเวทีฝั่งผู้ชมไม่ได้แตะ ตรรกะไม่เปลี่ยน |
 
 **ตัวเลขล่าสุด:**
 - เทสต์ผ่าน **277/277** (43 ไฟล์), **lint 0 ปัญหา ทุกกฎเป็น error**, `npm audit` **0**
@@ -57,8 +59,12 @@
 
 ## 3. [Current Task & Blockers]
 
-- **สถานะ:** แผน refactor **ครบทุก Phase** และ PR #1 merge เข้า `main` แล้ว (`da0d00d`) ตอนนี้ไม่มีงานค้าง
+- **สถานะ:** แผน refactor ครบทุก Phase และ merge เข้า `main` แล้ว (`da0d00d`) งานล่าสุดคือ **ปรับดีไซน์ฝั่ง Control ทั้งหมด + เปลี่ยน emoji เป็นไอคอน** (ดูแถว "Design: Control" และ "Design: ไอคอนแทน emoji" ด้านบน) อยู่บน branch `design/control-backstage` เปิดเป็น PR แล้วคือ [Doub1eKill/WebRandomStar#2](https://github.com/Doub1eKill/WebRandomStar/pull/2) (ยังไม่ merge, ห้าม merge เองถ้าผู้ใช้ไม่สั่ง; เปิด Auto-fix ไว้แล้ว แอปจะแจ้งเมื่อ CI fail, merge conflict หรือมี review comment)
+  - กติกาใหม่จากผู้ใช้: **ห้ามใช้ emoji ใน UI ฝั่ง Control** ให้ใช้ไอคอน lucide-react แทน
 - **ขั้นต่อไป (ให้ผู้ใช้ตัดสินใจ):**
+  - ผู้ใช้รีวิว PR #2 แล้ว merge เมื่อพร้อม (ผู้ใช้ตอบว่าไม่ต้องเปลี่ยนลวดลาย ✦ ◆ บนจอเวทีฝั่งผู้ชม)
+  - ถ้าต้องการให้ drawer บนจอเวที (`ControlDrawer`) ใช้ธีมสีเดียวกัน ต้องทำเพิ่ม (รอบนี้เปลี่ยนแค่ emoji เป็นไอคอน)
+  - ลวดลาย ✦ ✧ ◆ ◇ บนจอเวทีฝั่งผู้ชม (หัวเวที, การ์ดคำ, วงล้อ) คงไว้เป็นตัวอักษรตามที่ผู้ใช้ตัดสินใจ (2026-11-25) (มีเทสต์ `tests/setup.test.ts` ตรวจข้อความ `✦ SCI TECH TINE ✦` อยู่)
   - ก่อนวันงาน: วัด FPS/React Profiler บนเครื่องหน้างานจริง และลองเปิดเวทีตอนตัดเน็ต (ดูข้อ 5 ในรายงานตรวจรับ)
   - งานที่เลือกทำต่อได้ (ไม่อยู่ในแผน): แยก `AeroShards.tsx` / `ControlDrawer.tsx` / `musicPlayerEngine.ts` ให้ต่ำกว่า ~400 บรรทัด (A2), ย้าย inline style ที่เหลือ (PF11)
 - **ไฟล์ที่ยังใหญ่ (ตั้งใจเหลือไว้):**
@@ -77,6 +83,8 @@
   - **install scripts:** `package.json` → `allowScripts` อนุมัติ `esbuild@0.25.12` แบบระบุเวอร์ชัน ถ้า esbuild เปลี่ยนเวอร์ชัน (เช่นตอนอัปเดต vite) ต้องรัน `npm install-scripts approve esbuild` ใหม่ ส่วน `webgpu` และ `@vgpu/adapter-node` ถูก deny เพราะเป็น native adapter ของ Node ที่เว็บไม่ได้ใช้ (CI ใช้ npm 10 ซึ่งไม่รู้จัก `allowScripts` จึงรัน script ทั้งหมดเหมือนเดิม)
   - **`overrides` ของ `@modelcontextprotocol/server`:** ถ้า `vgpu` ออกเวอร์ชันที่ไม่ล็อก 2.0.0 แล้ว ให้ลบ override ออก
   - **Vitest 4:** ถ้ามี `console.*` (เช่นคำเตือน act ของ React) ที่ยังส่งไม่เสร็จตอน worker ปิด จะนับเป็น error (`EnvironmentTeardownError ... onUserConsoleLog`) เทสต์ที่ mount หน้าควบคุมต้องรอ async (IndexedDB ของคลังเพลง) ให้เสร็จใน `act()` ก่อน unmount (ดู `afterEach` ใน `tests/routing.test.tsx`)
+  - **ธีมหน้ารีโมต (Backstage Console):** ปรับสีทั้งหน้าต่างได้จาก token `--ctl-*` ใน `src/shared/styles/tokens.css` ส่วน rule อยู่ใน `src/pages/control/controlLayout.css` (ทุก rule ขึ้นต้นด้วย `.control-app` จึงไม่กระทบเวที) ถ้าเพิ่ม class ใหม่ในหน้า control ให้ใช้ token เหล่านี้ ไม่ใช้สี indigo `#6366f1` อีก
+  - **ถ่าย screenshot หน้า control ความละเอียดเต็ม:** pane ของแอปแคบ (~464px) ใช้ Edge headless แทนได้ เช่น `msedge --headless=new --hide-scrollbars --window-size=1366,900 --screenshot=out.png "http://localhost:3000/#/control/live"` (profile ใหม่จึงไม่มีจอเวทีเปิด แถบเตือน "ไม่พบหน้าจอเวที" จะขึ้น และ headless กว้างได้ไม่ต่ำกว่า ~500px)
   - **happy-dom 21** ไม่โหลด stylesheet ภายนอกเป็นค่าเริ่มต้น (เทสต์จึงไม่ออกเน็ต) และ `vite.config.ts` → `test.environmentOptions` ตั้ง `handleDisabledFileLoadingAsSuccess` ไว้ เพื่อไม่ให้พิมพ์ DOMException
 
 ## 4. [Key Context & Code Snippets]

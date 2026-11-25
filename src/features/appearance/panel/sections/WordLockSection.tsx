@@ -1,4 +1,5 @@
 import React from 'react';
+import { GalleryVerticalEnd, Sparkles, Zap } from 'lucide-react';
 
 import type { AppearanceSettingsModel } from '../useAppearanceSettingsModel.tsx';
 import { SettingGroup } from '@/shared/ui/SettingGroup.tsx';
@@ -8,16 +9,16 @@ export const WordLockSection: React.FC<{ m: AppearanceSettingsModel }> = ({ m })
   const { current, updateSetting } = m;
   return (
     <SettingGroup
-      icon="🎴"
+      icon={<GalleryVerticalEnd size={18} aria-hidden="true" />}
       title="ช่วงแสดงการ์ดคำที่สุ่มได้ (Selected Keyword Showcase)"
-      hint="เลือกว่าจะแสดงหน้าต่างการ์ดสรุปคำสำคัญที่สุ่มได้ (✦ SELECTED KEYWORD ✦) คั่นกลางก่อนเปิดการ์ดคำถามหรือไม่"
+      hint="เลือกว่าจะแสดงหน้าต่างการ์ดสรุปคำสำคัญที่สุ่มได้ (SELECTED KEYWORD) คั่นกลางก่อนเปิดการ์ดคำถามหรือไม่"
     >
       <ModeGrid>
         <ModeCard
           testId="word-lock-card-on"
           active={current.showWordLockPhase !== false}
           onSelect={() => updateSetting('showWordLockPhase', true)}
-          icon="✨"
+          icon={<Sparkles size={22} aria-hidden="true" />}
           name="เปิดใช้งาน (ON)"
           badge="ค่าเริ่มต้น"
           tone="sky"
@@ -27,7 +28,7 @@ export const WordLockSection: React.FC<{ m: AppearanceSettingsModel }> = ({ m })
           testId="word-lock-card-off"
           active={current.showWordLockPhase === false}
           onSelect={() => updateSetting('showWordLockPhase', false)}
-          icon="⚡"
+          icon={<Zap size={22} aria-hidden="true" />}
           name="ข้ามช่วงนี้ (OFF)"
           badge="สตรีมกระชับ"
           tone="red"

@@ -11,7 +11,7 @@ export const ModeGrid: React.FC<{ children: React.ReactNode }> = ({ children }) 
 export const ModeCard: React.FC<{
   active: boolean;
   onSelect: () => void;
-  icon: string;
+  icon: React.ReactNode;
   name: string;
   badge: string;
   tone: BadgeTone;
@@ -19,7 +19,7 @@ export const ModeCard: React.FC<{
   testId?: string;
 }> = ({ active, onSelect, icon, name, badge, tone, description, testId }) => (
   <button type="button" data-testid={testId} className={`mode-card ${active ? 'active' : ''}`} onClick={onSelect}>
-    <span className="mode-icon">{icon}</span>
+    <span className="mode-icon" aria-hidden="true">{icon}</span>
     <div className="mode-info">
       <div className="ui-mode-head">
         <span className="mode-name ui-mode-name">{name}</span>

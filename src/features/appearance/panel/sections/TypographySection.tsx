@@ -1,4 +1,5 @@
 import React from 'react';
+import { Check, Save, Settings, Type } from 'lucide-react';
 import { FONT_PRESETS } from '@/features/appearance/typography.ts';
 
 import type { AppearanceSettingsModel } from '../useAppearanceSettingsModel.tsx';
@@ -7,7 +8,7 @@ import { SettingGroup } from '@/shared/ui/SettingGroup.tsx';
 export const TypographySection: React.FC<{ m: AppearanceSettingsModel }> = ({ m }) => {
   const { current, customName, setCustomName, customFamily, setCustomFamily, customUrl, setCustomUrl, isCustomSaved, updateSetting, handleSaveCustomFont } = m;
   return (
-    <SettingGroup icon="🔤" title="รูปแบบตัวอักษรและฟอนต์ (Typography & Font Selection)" hint="เลือกฟอนต์หลักของเวทีสำหรับหัวข้อ คำสำคัญ และการ์ดคำถาม (ภาษาไทยจะจับคู่กับ Prompt เสมอเพื่อความคมชัด)">
+    <SettingGroup icon={<Type size={18} aria-hidden="true" />} title="รูปแบบตัวอักษรและฟอนต์ (Typography & Font Selection)" hint="เลือกฟอนต์หลักของเวทีสำหรับหัวข้อ คำสำคัญ และการ์ดคำถาม (ภาษาไทยจะจับคู่กับ Prompt เสมอเพื่อความคมชัด)">
 
       <div className="font-preset-grid">
         {/* Cinzel */}
@@ -112,7 +113,7 @@ export const TypographySection: React.FC<{ m: AppearanceSettingsModel }> = ({ m 
       {(current.fontPreset === 'custom' || customFamily) && (
         <form onSubmit={handleSaveCustomFont} className="custom-font-drawer" style={{ marginTop: '16px' }}>
           <h4 style={{ fontSize: '0.88rem', fontWeight: 600, color: '#c084fc', marginBottom: '10px' }}>
-            ⚙️ ตั้งค่าฟอนต์กำหนดเอง (Custom Font Settings)
+            <span className="ui-ico-label"><Settings size={15} aria-hidden="true" />ตั้งค่าฟอนต์กำหนดเอง (Custom Font Settings)</span>
           </h4>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px', marginBottom: '12px' }}>
             <div>
@@ -122,7 +123,7 @@ export const TypographySection: React.FC<{ m: AppearanceSettingsModel }> = ({ m 
               <input
                 type="text"
                 className="control-input"
-                style={{ width: '100%', padding: '8px 12px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(192, 132, 252, 0.3)', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                style={{ width: '100%', padding: '8px 12px', background: 'rgba(14, 18, 44, 0.7)', border: '1px solid rgba(192, 132, 252, 0.3)', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
                 placeholder="เช่น Playfair Display"
                 value={customName}
                 onChange={e => setCustomName(e.target.value)}
@@ -137,7 +138,7 @@ export const TypographySection: React.FC<{ m: AppearanceSettingsModel }> = ({ m 
                 type="text"
                 required
                 className="control-input"
-                style={{ width: '100%', padding: '8px 12px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(192, 132, 252, 0.3)', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                style={{ width: '100%', padding: '8px 12px', background: 'rgba(14, 18, 44, 0.7)', border: '1px solid rgba(192, 132, 252, 0.3)', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
                 placeholder="เช่น 'Playfair Display', serif"
                 value={customFamily}
                 onChange={e => setCustomFamily(e.target.value)}
@@ -151,7 +152,7 @@ export const TypographySection: React.FC<{ m: AppearanceSettingsModel }> = ({ m 
               <input
                 type="url"
                 className="control-input"
-                style={{ width: '100%', padding: '8px 12px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(192, 132, 252, 0.3)', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                style={{ width: '100%', padding: '8px 12px', background: 'rgba(14, 18, 44, 0.7)', border: '1px solid rgba(192, 132, 252, 0.3)', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
                 placeholder="https://fonts.googleapis.com/..."
                 value={customUrl}
                 onChange={e => setCustomUrl(e.target.value)}
@@ -165,11 +166,11 @@ export const TypographySection: React.FC<{ m: AppearanceSettingsModel }> = ({ m 
               className="btn-primary"
               style={{ padding: '8px 18px', fontSize: '0.85rem' }}
             >
-              💾 บันทึกฟอนต์กำหนดเอง
+              <Save size={15} aria-hidden="true" /> บันทึกฟอนต์กำหนดเอง
             </button>
             {isCustomSaved && (
               <span style={{ fontSize: '0.8rem', color: '#4ade80' }}>
-                ✓ บันทึกฟอนต์และปรับใช้บนเวทีเรียบร้อยแล้ว
+                <span className="ui-ico-label"><Check size={14} aria-hidden="true" />บันทึกฟอนต์และปรับใช้บนเวทีเรียบร้อยแล้ว</span>
               </span>
             )}
           </div>

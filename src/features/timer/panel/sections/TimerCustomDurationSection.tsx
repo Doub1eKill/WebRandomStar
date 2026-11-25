@@ -13,7 +13,7 @@ export const TimerCustomDurationSection: React.FC<{ m: TimerPanelModel }> = ({ m
       <form
         onSubmit={handleApplyCustom}
         style={{
-          background: 'rgba(15, 23, 42, 0.5)',
+          background: 'rgba(14, 18, 44, 0.5)',
           padding: '1.25rem',
           borderRadius: '12px',
           border: '1px solid rgba(255, 255, 255, 0.08)',

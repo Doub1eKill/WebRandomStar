@@ -1,4 +1,5 @@
 import React from 'react';
+import { MusicPhaseIcon } from '@/shared/ui/icons.tsx';
 import {
   Sparkles,
 } from 'lucide-react';
@@ -12,7 +13,7 @@ export const PhaseAssignmentSection: React.FC<{ m: MusicPanelModel }> = ({ m }) 
       {/* 3. Stage Phase Music Assignment Grid */}
       <div
         style={{
-          background: 'rgba(15, 23, 42, 0.6)',
+          background: 'rgba(14, 18, 44, 0.6)',
           border: '1px solid rgba(255, 255, 255, 0.08)',
           borderRadius: '16px',
           padding: '1.25rem'
@@ -29,7 +30,7 @@ export const PhaseAssignmentSection: React.FC<{ m: MusicPanelModel }> = ({ m }) 
           {/* Phase 1: Ambient / Idle */}
           <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '0.9rem', borderRadius: '10px', border: '1px solid rgba(56, 189, 248, 0.2)' }}>
             <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#38bdf8', marginBottom: '0.4rem' }}>
-              🏠 1. ช่วงพักเวที (Idle / Ambient)
+              <span className="ui-ico-label"><MusicPhaseIcon phase="ambient" />1. ช่วงพักเวที (Idle / Ambient)</span>
             </div>
             <select
               value={musicState.phaseTrackMapping.ambient || ''}
@@ -56,7 +57,7 @@ export const PhaseAssignmentSection: React.FC<{ m: MusicPanelModel }> = ({ m }) 
           {/* Phase 2: Word Spin */}
           <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '0.9rem', borderRadius: '10px', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
             <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f59e0b', marginBottom: '0.4rem' }}>
-              ⚡ 2. ช่วงหมุนคำสุ่ม (Word Spin)
+              <span className="ui-ico-label"><MusicPhaseIcon phase="spin" />2. ช่วงหมุนคำสุ่ม (Word Spin)</span>
             </div>
             <select
               value={musicState.phaseTrackMapping.spin || ''}
@@ -81,9 +82,9 @@ export const PhaseAssignmentSection: React.FC<{ m: MusicPanelModel }> = ({ m }) 
           </div>
 
           {/* Phase 3: Question Thinking */}
-          <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '0.9rem', borderRadius: '10px', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
-            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#818cf8', marginBottom: '0.4rem' }}>
-              💡 3. ช่วงคิดคำตอบ (Question / Timer)
+          <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '0.9rem', borderRadius: '10px', border: '1px solid rgba(124, 58, 237, 0.2)' }}>
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--ctl-accent-soft)', marginBottom: '0.4rem' }}>
+              <span className="ui-ico-label"><MusicPhaseIcon phase="question" />3. ช่วงคิดคำตอบ (Question / Timer)</span>
             </div>
             <select
               value={musicState.phaseTrackMapping.question || ''}
@@ -92,7 +93,7 @@ export const PhaseAssignmentSection: React.FC<{ m: MusicPanelModel }> = ({ m }) 
                 width: '100%',
                 padding: '0.55rem',
                 background: '#0f172a',
-                border: '1px solid rgba(99, 102, 241, 0.3)',
+                border: '1px solid rgba(124, 58, 237, 0.3)',
                 borderRadius: '8px',
                 color: '#f8fafc',
                 fontSize: '0.85rem',
@@ -110,7 +111,7 @@ export const PhaseAssignmentSection: React.FC<{ m: MusicPanelModel }> = ({ m }) 
           {/* Phase 4: Answered Fanfare */}
           <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '0.9rem', borderRadius: '10px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
             <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f87171', marginBottom: '0.4rem' }}>
-              🎉 4. ช่วงตอบเสร็จสิ้น (Celebration)
+              <span className="ui-ico-label"><MusicPhaseIcon phase="answered" />4. ช่วงตอบเสร็จสิ้น (Celebration)</span>
             </div>
             <select
               value={musicState.phaseTrackMapping.answered || ''}

@@ -16,7 +16,7 @@ export const MusicMasterSection: React.FC<{ m: MusicPanelModel }> = ({ m }) => {
       {/* 1. Master Control & Stage Auto-Sync Banner */}
       <div
         style={{
-          background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.85))',
+          background: 'linear-gradient(135deg, rgba(28, 32, 70, 0.7), rgba(14, 18, 44, 0.85))',
           border: '1px solid rgba(255, 255, 255, 0.1)',
           borderRadius: '16px',
           padding: '1.25rem',
@@ -33,12 +33,12 @@ export const MusicMasterSection: React.FC<{ m: MusicPanelModel }> = ({ m }) => {
               width: '42px',
               height: '42px',
               borderRadius: '10px',
-              background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+              background: 'linear-gradient(135deg, var(--ctl-accent), #a855f7)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: '#fff',
-              boxShadow: '0 4px 16px rgba(99, 102, 241, 0.35)'
+              boxShadow: '0 4px 16px rgba(124, 58, 237, 0.35)'
             }}
           >
             <Music size={22} />

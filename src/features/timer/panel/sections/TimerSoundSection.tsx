@@ -16,7 +16,7 @@ export const TimerSoundSection: React.FC<{ m: TimerPanelModel }> = ({ m }) => {
       {/* 4. Timer Sound Effects & Audio Toggles */}
       <div
         style={{
-          background: 'rgba(15, 23, 42, 0.65)',
+          background: 'rgba(14, 18, 44, 0.65)',
           padding: '1.25rem',
           borderRadius: '14px',
           border: '1px solid rgba(255, 255, 255, 0.09)'

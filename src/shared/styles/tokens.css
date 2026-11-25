@@ -64,4 +64,35 @@
   --ui-violet-tint: rgba(192, 132, 252, 0.25);
   --ui-red-soft: #fca5a5;
   --ui-red-tint: rgba(239, 68, 68, 0.25);
+
+  /* Control window theme ("Backstage Console", 2026-11-25). The control pages use the stage's
+     own nebula-violet / diamond-cyan identity on a deep navy base, instead of a generic indigo
+     on slate. Inline styles in the control panels reference these, so the whole control side
+     can be re-tuned from here. */
+  --ctl-font: 'Prompt', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ctl-font-mono: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --ctl-bg: #070a1a;
+  --ctl-bg-glow: radial-gradient(1200px 520px at 12% -10%, rgba(124, 58, 237, 0.16), transparent 60%),
+    radial-gradient(900px 480px at 100% 0%, rgba(56, 189, 248, 0.08), transparent 55%);
+  --ctl-surface: rgba(18, 22, 50, 0.72);
+  --ctl-surface-raised: rgba(28, 32, 70, 0.72);
+  --ctl-surface-sunken: rgba(8, 11, 30, 0.72);
+  --ctl-border: rgba(167, 139, 250, 0.14);
+  --ctl-border-strong: rgba(167, 139, 250, 0.32);
+  --ctl-text: #f5f3ff;
+  --ctl-text-2: #cbd5e1;
+  --ctl-text-3: #94a3b8;
+  --ctl-accent: #7c3aed;
+  --ctl-accent-2: #9333ea;
+  --ctl-accent-strong: #6d28d9;
+  --ctl-accent-soft: #a78bfa;
+  --ctl-accent-pale: #c4b5fd;
+  --ctl-accent-tint: rgba(124, 58, 237, 0.18);
+  --ctl-info: #38bdf8;
+  --ctl-focus: #67e8f9;
+  --ctl-gradient: linear-gradient(135deg, #7c3aed 0%, #9333ea 100%);
+  --ctl-brand-gradient: linear-gradient(135deg, #7c3aed 0%, #38bdf8 100%);
+  --ctl-radius: 14px;
+  --ctl-radius-sm: 10px;
+  --ctl-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 12px 32px -12px rgba(0, 0, 0, 0.7);
 }

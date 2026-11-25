@@ -1,4 +1,5 @@
 import React from 'react';
+import { Hourglass, OctagonX, Timer } from 'lucide-react';
 
 import type { AppearanceSettingsModel } from '../useAppearanceSettingsModel.tsx';
 import { SettingGroup } from '@/shared/ui/SettingGroup.tsx';
@@ -8,7 +9,7 @@ export const SpinStopModeSection: React.FC<{ m: AppearanceSettingsModel }> = ({ 
   const { current, updateSetting } = m;
   return (
     <SettingGroup
-      icon="⏱️"
+      icon={<Timer size={18} aria-hidden="true" />}
       title="รูปแบบการหยุดสุ่มคำ (Word Spin Stop Mode)"
       hint="เลือกระหว่างการสุ่มและหยุดล็อกคำอัตโนมัติ หรือสุ่มต่อเนื่องจนกว่าจะกดปุ่มหยุด"
     >
@@ -17,7 +18,7 @@ export const SpinStopModeSection: React.FC<{ m: AppearanceSettingsModel }> = ({ 
           testId="spin-stop-card-auto"
           active={!current.spinStopMode || current.spinStopMode === 'auto'}
           onSelect={() => updateSetting('spinStopMode', 'auto')}
-          icon="⏳"
+          icon={<Hourglass size={22} aria-hidden="true" />}
           name="หยุดอัตโนมัติ (Auto-Stop)"
           badge="ค่าเริ่มต้น"
           tone="sky"
@@ -27,7 +28,7 @@ export const SpinStopModeSection: React.FC<{ m: AppearanceSettingsModel }> = ({ 
           testId="spin-stop-card-manual"
           active={current.spinStopMode === 'manual'}
           onSelect={() => updateSetting('spinStopMode', 'manual')}
-          icon="🛑"
+          icon={<OctagonX size={22} aria-hidden="true" />}
           name="หยุดด้วยตนเอง (Manual Stop)"
           badge="ควบคุมสด"
           tone="red"

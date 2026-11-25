@@ -1,4 +1,5 @@
 import React from 'react';
+import { CategoryIcon } from '@/shared/ui/icons.tsx';
 import { CATEGORY_CONFIGS } from '@/types/question.ts';
 import {
   Edit2,
@@ -16,13 +17,13 @@ export const QuestionTable: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }
   return (
     <>
       {/* 3. Question Table */}
-      <div style={{ overflowX: 'auto', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', background: 'rgba(15, 23, 42, 0.4)' }}>
+      <div style={{ overflowX: 'auto', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', background: 'rgba(14, 18, 44, 0.4)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)', background: 'rgba(255, 255, 255, 0.02)', color: '#94a3b8' }}>
               <th style={{ padding: '0.75rem 1rem', width: '90px' }}>ID</th>
               <th style={{ padding: '0.75rem 1rem' }}>ข้อความคำถาม</th>
-              <th style={{ padding: '0.75rem 1rem', width: '100px' }}>หมวดหมู่</th>
+              <th style={{ padding: '0.75rem 1rem', width: '190px' }}>หมวดหมู่</th>
               <th style={{ padding: '0.75rem 1rem', width: '80px' }}>ระดับ</th>
               <th style={{ padding: '0.75rem 1rem', width: '90px' }}>รอบ</th>
               <th style={{ padding: '0.75rem 1rem', width: '90px', textAlign: 'center' }}>สถานะ</th>
@@ -74,10 +75,11 @@ export const QuestionTable: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }
                               border: `1px solid ${cfg ? `${cfg.color}40` : 'rgba(255, 255, 255, 0.1)'}`,
                               color: cfg ? cfg.color : '#cbd5e1',
                               fontSize: '0.75rem',
-                              fontWeight: 600
+                              fontWeight: 600,
+                              whiteSpace: 'nowrap'
                             }}
                           >
-                            <span>{cfg?.icon || '✨'}</span>
+                            <CategoryIcon category={q.category} size={13} />
                             <span>{cfg?.name || q.category}</span>
                           </span>
                         );
@@ -108,11 +110,11 @@ export const QuestionTable: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }
                       </button>
                     </td>
                     <td style={{ padding: '0.75rem 1rem', textAlign: 'right' }}>
-                      <div style={{ display: 'inline-flex', gap: '0.35rem' }}>
+                      <div style={{ display: 'inline-flex', gap: '0.15rem' }}>
                         <button
                           title="ดูตัวอย่าง (เฉพาะหลังเวที)"
                           onClick={() => setPreviewQuestion(q)}
-                          style={{ background: 'none', border: 'none', color: '#38bdf8', cursor: 'pointer', padding: '0.2rem' }}
+                          style={{ background: 'none', border: 'none', color: '#38bdf8', cursor: 'pointer', padding: '0.45rem', borderRadius: '8px', display: 'inline-flex' }}
                         >
                           <Eye size={15} />
                         </button>
@@ -122,21 +124,21 @@ export const QuestionTable: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }
                             setIsAdding(false);
                             setEditingQuestion(q);
                           }}
-                          style={{ background: 'none', border: 'none', color: '#a855f7', cursor: 'pointer', padding: '0.2rem' }}
+                          style={{ background: 'none', border: 'none', color: '#a855f7', cursor: 'pointer', padding: '0.45rem', borderRadius: '8px', display: 'inline-flex' }}
                         >
                           <Edit2 size={15} />
                         </button>
                         <button
                           title="คัดลอก"
                           onClick={() => handleDuplicate(q)}
-                          style={{ background: 'none', border: 'none', color: '#cbd5e1', cursor: 'pointer', padding: '0.2rem' }}
+                          style={{ background: 'none', border: 'none', color: '#cbd5e1', cursor: 'pointer', padding: '0.45rem', borderRadius: '8px', display: 'inline-flex' }}
                         >
                           <Copy size={15} />
                         </button>
                         <button
                           title="ลบ"
                           onClick={() => handleDelete(q.id)}
-                          style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.2rem' }}
+                          style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.45rem', borderRadius: '8px', display: 'inline-flex' }}
                         >
                           <Trash2 size={15} />
                         </button>

@@ -13,7 +13,7 @@ export const TimerThresholdSection: React.FC<{ m: TimerPanelModel }> = ({ m }) =
       {onSetStageDisplaySettings && (
         <div
           style={{
-            background: 'rgba(15, 23, 42, 0.55)',
+            background: 'rgba(14, 18, 44, 0.55)',
             padding: '1.25rem',
             borderRadius: '14px',
             border: '1px solid rgba(255, 255, 255, 0.08)'

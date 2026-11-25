@@ -9,18 +9,26 @@ export type ControlVariant = 'drawer' | 'live';
 export const ControlCard: React.FC<{
   variant: ControlVariant;
   title: React.ReactNode;
+  /** Icon shown before the title (lucide-react element). */
+  icon?: React.ReactNode;
   /** Live only: span the whole grid row (the stage monitor). */
   wide?: boolean;
   children: React.ReactNode;
-}> = ({ variant, title, wide, children }) =>
+}> = ({ variant, title, icon, wide, children }) =>
   variant === 'drawer' ? (
     <div className="control-section">
-      <label className="section-label">{title}</label>
+      <label className="section-label">
+        {icon && <span className="card-title-icon" aria-hidden="true">{icon}</span>}
+        {title}
+      </label>
       {children}
     </div>
   ) : (
     <div className={wide ? 'live-card live-card--wide' : 'live-card'}>
-      <div className="live-card-title">{title}</div>
+      <div className="live-card-title">
+        {icon && <span className="card-title-icon" aria-hidden="true">{icon}</span>}
+        <span>{title}</span>
+      </div>
       {children}
     </div>
   );

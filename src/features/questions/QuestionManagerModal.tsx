@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Download, Library, Plus, RotateCcw, Trash2, Upload, X } from 'lucide-react';
 import { Question, QuestionCategory, CATEGORY_CONFIGS } from '@/types/question.ts';
 import { exportQuestionsAsJSON } from '@/features/questions/importQuestions.ts';
 import { useQuestionImport } from './QuestionImportDialog.tsx';
@@ -103,13 +104,13 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
       <div className="modal-container glass-panel" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <div className="modal-title-wrap">
-            <span className="modal-icon">📚</span>
+            <span className="modal-icon" aria-hidden="true"><Library size={22} aria-hidden="true" /></span>
             <div>
               <h2 className="modal-title">คลังคำถาม (Question Bank Manager)</h2>
               <p className="modal-sub">มีคำถามทั้งหมด {questions.length} ข้อ ({questions.filter(q => q.enabled).length} เปิดใช้งาน)</p>
             </div>
           </div>
-          <button className="btn-close-modal" onClick={onClose}>✕</button>
+          <button className="btn-close-modal" onClick={onClose} aria-label="ปิด"><X size={18} aria-hidden="true" /></button>
         </div>
 
         {/* Toolbar */}
@@ -117,7 +118,7 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
           <input
             type="text"
             className="input-search"
-            placeholder="🔍 ค้นหาตามข้อความ หรือ ID..."
+            placeholder="ค้นหาตามข้อความ หรือ ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -130,13 +131,13 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
             <option value="all">ทุกหมวดธรรมชาติ (All Categories)</option>
             {Object.values(CATEGORY_CONFIGS).map((cat) => (
               <option key={cat.id} value={cat.id}>
-                {cat.icon} {cat.name} ({cat.englishName})
+                {cat.name} ({cat.englishName})
               </option>
             ))}
           </select>
 
           <button className="btn-primary btn-sm" onClick={() => setIsAdding(!isAdding)}>
-            {isAdding ? 'ยกเลิก' : '+ เพิ่มคำถามใหม่'}
+            {isAdding ? 'ยกเลิก' : <><Plus size={14} aria-hidden="true" /> เพิ่มคำถามใหม่</>}
           </button>
         </div>
 
@@ -162,7 +163,7 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
                 >
                   {Object.values(CATEGORY_CONFIGS).map((cat) => (
                     <option key={cat.id} value={cat.id}>
-                      {cat.icon} {cat.name} ({cat.englishName})
+                      {cat.name} ({cat.englishName})
                     </option>
                   ))}
                 </select>
@@ -255,8 +256,8 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
                     <span className="round-table-badge">{q.round}</span>
                   </td>
                   <td>
-                    <button className="btn-table-delete" onClick={() => handleDelete(q.id)} title="ลบคำถาม">
-                      🗑️
+                    <button className="btn-table-delete" onClick={() => handleDelete(q.id)} title="ลบคำถาม" aria-label="ลบคำถาม">
+                      <Trash2 size={16} aria-hidden="true" />
                     </button>
                   </td>
                 </tr>
@@ -269,14 +270,14 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
         <div className="modal-footer">
           <div className="footer-left">
             <button className="btn-secondary btn-sm" onClick={handleExport}>
-              📥 ส่งออก JSON
+              <Download size={14} aria-hidden="true" /> ส่งออก JSON
             </button>
             <label className="btn-secondary btn-sm btn-file-label">
-              📤 นำเข้า JSON
+              <Upload size={14} aria-hidden="true" /> นำเข้า JSON
               <input type="file" accept=".json" onChange={handleImportFile} style={{ display: 'none' }} />
             </label>
             <button className="btn-secondary btn-sm btn-danger-soft" onClick={handleResetDefaults}>
-              ↺ คืนค่ามาตรฐาน 42 ข้อ
+              <RotateCcw size={14} aria-hidden="true" /> คืนค่ามาตรฐาน 42 ข้อ
             </button>
           </div>
           <button className="btn-primary btn-sm" onClick={onClose}>

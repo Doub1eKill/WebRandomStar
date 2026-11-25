@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  Play,
-  Pause,
-  RotateCcw,
-} from 'lucide-react';
+import { AudioLines, CirclePause, Folder, Link, Pause, Play, RotateCcw, Sparkles } from 'lucide-react';
 
 import type { MusicPanelModel } from '../useMusicPanelModel.tsx';
 import { formatTime } from '../useMusicPanelModel.tsx';
@@ -15,8 +11,8 @@ export const NowPlayingSection: React.FC<{ m: MusicPanelModel }> = ({ m }) => {
       {/* 2. Now Playing Deck */}
       <div
         style={{
-          background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(15, 23, 42, 0.85))',
-          border: '1.5px solid rgba(99, 102, 241, 0.35)',
+          background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(14, 18, 44, 0.85))',
+          border: '1.5px solid rgba(124, 58, 237, 0.35)',
           borderRadius: '16px',
           padding: '1.25rem',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.35)'
@@ -36,7 +32,7 @@ export const NowPlayingSection: React.FC<{ m: MusicPanelModel }> = ({ m }) => {
                 border: `1px solid ${musicState.isPlaying ? 'rgba(34, 197, 94, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`
               }}
             >
-              {musicState.isPlaying ? '● กำลังเล่น (Now Playing)' : '○ พักชั่วคราว (Paused / Idle)'}
+              {musicState.isPlaying ? <><AudioLines size={13} aria-hidden="true" /> กำลังเล่น (Now Playing)</> : <><CirclePause size={13} aria-hidden="true" /> พักชั่วคราว (Paused / Idle)</>}
             </span>
             {currentTrack && (
               <span
@@ -56,9 +52,9 @@ export const NowPlayingSection: React.FC<{ m: MusicPanelModel }> = ({ m }) => {
                     : '#fde68a'
                 }}
               >
-                {currentTrack.sourceType === 'local_blob' && '📁 ไฟล์ในเครื่อง'}
-                {currentTrack.sourceType === 'url' && '🔗 ลิงก์ออนไลน์'}
-                {currentTrack.sourceType === 'preset' && '✨ เพลงระบบ'}
+                {currentTrack.sourceType === 'local_blob' && <span className="ui-ico-label"><Folder size={12} aria-hidden="true" />ไฟล์ในเครื่อง</span>}
+                {currentTrack.sourceType === 'url' && <span className="ui-ico-label"><Link size={12} aria-hidden="true" />ลิงก์ออนไลน์</span>}
+                {currentTrack.sourceType === 'preset' && <span className="ui-ico-label"><Sparkles size={12} aria-hidden="true" />เพลงระบบ</span>}
               </span>
             )}
           </div>
@@ -99,7 +95,7 @@ export const NowPlayingSection: React.FC<{ m: MusicPanelModel }> = ({ m }) => {
             style={{
               width: `${progressPercent}%`,
               height: '100%',
-              background: 'linear-gradient(90deg, #6366f1, #38bdf8)',
+              background: 'linear-gradient(90deg, var(--ctl-accent), #38bdf8)',
               borderRadius: '9999px',
               transition: 'width 0.15s linear'
             }}

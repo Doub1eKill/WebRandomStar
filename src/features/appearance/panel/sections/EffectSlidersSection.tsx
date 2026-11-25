@@ -1,4 +1,5 @@
 import React from 'react';
+import { RotateCcw, SlidersHorizontal } from 'lucide-react';
 import { DEFAULT_APPEARANCE_SETTINGS } from '@/types/appearance.ts';
 
 import type { AppearanceSettingsModel } from '../useAppearanceSettingsModel.tsx';
@@ -7,7 +8,7 @@ import { SettingGroup } from '@/shared/ui/SettingGroup.tsx';
 export const EffectSlidersSection: React.FC<{ m: AppearanceSettingsModel }> = ({ m }) => {
   const { onChange, current, updateSetting } = m;
   return (
-    <SettingGroup icon="🎚️" title="ความเข้มของแสงและอนุภาค (Density & Glow Intensity)">
+    <SettingGroup icon={<SlidersHorizontal size={18} aria-hidden="true" />} title="ความเข้มของแสงและอนุภาค (Density & Glow Intensity)">
 
       <div className="sliders-panel">
         <div className="slider-row">
@@ -49,7 +50,7 @@ export const EffectSlidersSection: React.FC<{ m: AppearanceSettingsModel }> = ({
           className="btn-secondary"
           onClick={() => onChange(DEFAULT_APPEARANCE_SETTINGS)}
         >
-          ↺ รีเซ็ตค่าการแสดงผลเริ่มต้น
+          <RotateCcw size={14} aria-hidden="true" /> รีเซ็ตค่าการแสดงผลเริ่มต้น
         </button>
       </div>
     </SettingGroup>
