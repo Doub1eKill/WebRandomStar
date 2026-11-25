@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Generated: 2026-11-25 (อัปเดตหลังจบ Phase 10)
+> Generated: 2026-11-25 (อัปเดตหลังจบ Phase 11 — ครบทุก Phase ของแผนแล้ว)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -37,9 +37,10 @@
 | 8 | `75f2eb2` | ฟอนต์ self-host ผ่าน `@fontsource` (OFL) ใช้น้ำหนักเดียวกับ Google Fonts เดิม และเอาลิงก์ Google ออก (PF10), preset `amoria`/`verve` ใช้ Playfair Display / Cinzel Decorative แทน ส่วน id เหมือนเดิม (B12, Q4), `public/leaf.svg` (favicon), CSP ใส่ตอน build ผ่าน plugin ใน `vite.config.ts` (S5) ทดสอบบน `vite preview` แล้ว: ทุก request ไปแค่ localhost และไม่มี CSP violation |
 | 9 | `dc1ed4c` | Q3: ลบ dead code D1–D4 (3 คอมโพเนนต์เล่าเรื่อง + `storytelling.css`, `useTimer`, `selectQuestionFlow`, state เก่า 6 ตัว, ระบบฝน/หยดน้ำ/ใบไม้และเสียงของมัน) และ PF8, D7, ลบ wrapper `useStageSync` (StagePage ใช้ `SessionProvider` โดยตรง) และ facade `storageApi` (ย้ายตรรกะไปไว้กับฟีเจอร์), ESLint ทุกกฎเป็น error, README + PROJECT_SUMMARY เขียนใหม่ให้ตรงกับ v3 |
 | 10 | `0bb5808` | S9: vite 6.4.3 → 6.4.6, vitest 3 → **4.1.12** (เลิกใช้ tinypool), happy-dom 20 → **21.0.4**, `overrides` บังคับ `@modelcontextprotocol/server` เป็น `^2.4.0` (`vgpu` 0.5.0 และ 0.6.0 ล็อก 2.0.0 ไว้ จึงไม่อัปเกรด vgpu), zod และ source-map-js อัปเดตใน lockfile, `allowScripts` อนุญาตแค่ `esbuild` (deny `webgpu`, `@vgpu/adapter-node`), `npm audit` จาก 9 รายการ (critical 2, high 6) เหลือ **0** ส่วน bundle เหมือนเดิม (`index-B-H4j1M7.js` 403 KB) |
+| 11 | `f72b909` | ตรวจรับ: รายงานที่ `docs/superpowers/plans/2026-11-25-acceptance.md` ตัวชี้วัดผ่าน 7 จาก 9 ข้อ (JS ตอนเปิด 123 KB gzip เกินเป้า ~110 เพราะ react-router และ `AeroShards.tsx` 737 บรรทัด), ทดสอบสองหน้าต่างบน `vite preview` ผ่านครบ 10 รายการ (gong ดัง 1 ครั้ง, เพลงที่อัปโหลดเล่นได้หลังรีโหลด, เพลงไม่ซ้อน ฯลฯ), Master Fix List แก้ครบ ยกเว้น A2/PF11 ที่ทำบางส่วนพร้อมเหตุผล, เพิ่ม `tests/assets.test.ts` (B12), README/PROJECT_SUMMARY อัปเดตเป็น 277 เทสต์ และ Vitest 4 |
 
 **ตัวเลขล่าสุด:**
-- เทสต์ผ่าน **273/273** (42 ไฟล์ เพราะลบเทสต์ LeafSystem), **lint 0 ปัญหา ทุกกฎเป็น error**
+- เทสต์ผ่าน **277/277** (43 ไฟล์), **lint 0 ปัญหา ทุกกฎเป็น error**, `npm audit` **0**
 - inline style **445** จุด (เดิม 574), CSS หลัก 87.0 KB (gzip 14.4 KB รวม `@font-face` ของฟอนต์ที่ self-host) ส่วน CSS ของหน้าควบคุมบางส่วนโหลดพร้อม lazy chunk
 - ไม่มี request ออกไปภายนอกตอนใช้งานปกติ (ยกเว้นตอนผู้ใช้ตั้งฟอนต์ custom ของ Google หรือเพิ่มเพลงจาก URL)
 - JS ที่จอเวทีโหลดตอนเปิด **403 KB (gzip 123 KB)** เทียบกับ baseline 751 KB (gzip 208 KB)
@@ -55,12 +56,12 @@
 
 ## 3. [Current Task & Blockers]
 
-- **สถานะ:** Phase 10 เสร็จ commit และ push แล้ว **รอผู้ใช้อนุมัติก่อนเริ่ม Phase 11**
-- **Phase ถัดไป (11): ตรวจรับ** (Phase สุดท้าย)
-  - `npm run lint`, `npm test` และ `npm run build` ต้องผ่าน
-  - เทียบตัวชี้วัดในข้อ 2 ของแผนกับ baseline (`docs/superpowers/plans/2026-11-24-baseline.md`)
-  - ทดสอบจริงแบบเปิดสองหน้าต่าง (เวที + `#/control`): สุ่มครบรอบทั้งสองโหมด, จับเวลาจนหมด (เสียงดังครั้งเดียว), แก้รายชื่อจากรีโมตแล้วเวทีเปลี่ยนตาม, อัปโหลดเพลงแล้วรีโหลดแล้วยังเล่นได้, เปลี่ยน phase เร็ว ๆ แล้วเพลงไม่ซ้อน, รีโหลดกลางแอนิเมชัน, สลับพื้นหลัง WebGPU ↔ Canvas, นำเข้า JSON ที่ผิดรูปแบบ, ใช้งานแบบออฟไลน์
-  - ไล่เช็กทุกรายการใน Master Fix List (ข้อ 1) ว่าแก้แล้ว หรือระบุเหตุผลที่ไม่แก้
+- **สถานะ:** Phase 11 (ตรวจรับ) เสร็จ commit และ push แล้ว **ครบทุก Phase ของแผน** รอผู้ใช้ตัดสินใจเรื่อง PR
+- **ขั้นต่อไป (ให้ผู้ใช้ตัดสินใจ):**
+  - อัปเดตชื่อและคำอธิบายของ PR #1 (ชื่อตอนนี้ยังเป็น "Phases 0–6") แล้วเปลี่ยนจาก draft เป็น ready for review
+  - การ merge เข้า `main` เป็นการตัดสินใจของผู้ใช้ ห้าม merge เอง
+  - ก่อนวันงาน: วัด FPS/React Profiler บนเครื่องหน้างานจริง และลองเปิดเวทีตอนตัดเน็ต (ดูข้อ 5 ในรายงานตรวจรับ)
+  - งานที่เลือกทำต่อได้ (ไม่อยู่ในแผน): แยก `AeroShards.tsx` / `ControlDrawer.tsx` / `musicPlayerEngine.ts` ให้ต่ำกว่า ~400 บรรทัด (A2), ย้าย inline style ที่เหลือ (PF11)
 - **ไฟล์ที่ยังใหญ่ (ตั้งใจเหลือไว้):**
   - `AeroShards.tsx` 730: effect WebGPU ก้อนเดียวที่แชร์ state ผ่าน closure
   - `shaders.ts` 666: WGSL
@@ -165,15 +166,14 @@ export const STORAGE_KEYS = {
 (push ไปที่ origin = github.com/Doub1eKill/WebRandomStar, มี draft PR #1 ที่เปิด Auto-fix ไว้)
 อ่านไฟล์เหล่านี้ก่อนเริ่ม:
 1) Handoff.md (ฉบับล่าสุดเสมอ; สำเนาตามวันที่อยู่ใน docs/handoff-summary-*.md)
-2) docs/superpowers/plans/2026-11-24-architecture-refactor.md (Phase 0–10 ติ๊กครบแล้ว)
-3) docs/superpowers/plans/2026-11-24-baseline.md
+2) docs/superpowers/plans/2026-11-24-architecture-refactor.md (Phase 0–11 ติ๊กครบแล้ว)
+3) docs/superpowers/plans/2026-11-25-acceptance.md (ผลตรวจรับ) และ 2026-11-24-baseline.md
 
-สถานะ: Phase 10 เสร็จแล้ว รอผู้ใช้อนุมัติ ห้ามเริ่ม Phase 11 เอง ให้ถามผู้ใช้ก่อน
-
-เมื่อผู้ใช้สั่งให้ทำต่อ ให้ทำ Phase 11 (ตรวจรับ) ตามแผน: เทียบตัวชี้วัดกับ baseline, ทดสอบสองหน้าต่างตามรายการ
-และไล่เช็ก Master Fix List ทุกข้อ
+สถานะ: แผน refactor ครบทุก Phase แล้ว ห้ามเริ่มงานใหม่เอง ให้ถามผู้ใช้ก่อน
+ตัวเลือกถัดไป: อัปเดตชื่อ/คำอธิบาย PR #1 แล้วเปลี่ยนเป็น ready for review (ห้าม merge เอง),
+หรือทำงานเสริมนอกแผน (A2 แยกไฟล์ใหญ่, PF11 inline style) ถ้าผู้ใช้สั่ง
 กติกา:
-- ทำทีละ Phase และหยุดรออนุมัติ
+- ทำทีละขั้นและหยุดรออนุมัติ
 - หน้าตาต้องเหมือนเดิม: เทียบ computed style ก่อน/หลังด้วย .claude/fp.js (หรือ screenshot) ทุกหน้า (เวทีทุก state + #/control ทุกหน้า)
 - ห้ามเปลี่ยน STORAGE_KEYS หรือชื่อ BroadcastChannel; ย้ายไฟล์ด้วย git mv; import ใช้ @/
 - จบ Phase ด้วย npm run lint (0 errors, 0 warnings), npm test, npm run build ที่ผ่านทั้งหมด
