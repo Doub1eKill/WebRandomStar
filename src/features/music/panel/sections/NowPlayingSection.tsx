@@ -15,8 +15,8 @@ export const NowPlayingSection: React.FC<{ m: MusicPanelModel }> = ({ m }) => {
       {/* 2. Now Playing Deck */}
       <div
         style={{
-          background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(15, 23, 42, 0.85))',
-          border: '1.5px solid rgba(99, 102, 241, 0.35)',
+          background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(14, 18, 44, 0.85))',
+          border: '1.5px solid rgba(124, 58, 237, 0.35)',
           borderRadius: '16px',
           padding: '1.25rem',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.35)'
@@ -99,7 +99,7 @@ export const NowPlayingSection: React.FC<{ m: MusicPanelModel }> = ({ m }) => {
             style={{
               width: `${progressPercent}%`,
               height: '100%',
-              background: 'linear-gradient(90deg, #6366f1, #38bdf8)',
+              background: 'linear-gradient(90deg, var(--ctl-accent), #38bdf8)',
               borderRadius: '9999px',
               transition: 'width 0.15s linear'
             }}

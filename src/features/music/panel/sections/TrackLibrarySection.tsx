@@ -17,7 +17,7 @@ export const TrackLibrarySection: React.FC<{ m: MusicPanelModel }> = ({ m }) => 
       {/* 4. Track Library & File Management */}
       <div
         style={{
-          background: 'rgba(15, 23, 42, 0.6)',
+          background: 'rgba(14, 18, 44, 0.6)',
           border: '1px solid rgba(255, 255, 255, 0.08)',
           borderRadius: '16px',
           padding: '1.25rem'
@@ -49,14 +49,14 @@ export const TrackLibrarySection: React.FC<{ m: MusicPanelModel }> = ({ m }) => 
                 alignItems: 'center',
                 gap: '0.35rem',
                 padding: '0.55rem 0.95rem',
-                background: 'linear-gradient(135deg, #4f46e5, #6366f1)',
+                background: 'linear-gradient(135deg, var(--ctl-accent-strong), var(--ctl-accent))',
                 border: 'none',
                 borderRadius: '8px',
                 color: '#fff',
                 fontSize: '0.82rem',
                 fontWeight: 600,
                 cursor: 'pointer',
-                boxShadow: '0 2px 10px rgba(99, 102, 241, 0.3)'
+                boxShadow: '0 2px 10px rgba(124, 58, 237, 0.3)'
               }}
             >
               <Upload size={15} /> + อัปโหลดไฟล์เพลง (MP3/WAV)
@@ -114,17 +114,17 @@ export const TrackLibrarySection: React.FC<{ m: MusicPanelModel }> = ({ m }) => 
           }}
           onClick={() => fileInputRef.current?.click()}
           style={{
-            border: `2px dashed ${isDragging ? '#6366f1' : 'rgba(255, 255, 255, 0.15)'}`,
+            border: `2px dashed ${isDragging ? 'var(--ctl-accent)' : 'rgba(255, 255, 255, 0.15)'}`,
             borderRadius: '12px',
             padding: '1.25rem',
             textAlign: 'center',
-            background: isDragging ? 'rgba(99, 102, 241, 0.1)' : 'rgba(0, 0, 0, 0.2)',
+            background: isDragging ? 'rgba(124, 58, 237, 0.1)' : 'rgba(0, 0, 0, 0.2)',
             cursor: 'pointer',
             marginBottom: '1rem',
             transition: 'all 0.2s ease'
           }}
         >
-          <Upload size={24} color={isDragging ? '#818cf8' : '#64748b'} style={{ margin: '0 auto 0.4rem auto' }} />
+          <Upload size={24} color={isDragging ? '#a78bfa' : '#64748b'} style={{ margin: '0 auto 0.4rem auto' }} />
           <div style={{ fontSize: '0.85rem', color: '#e2e8f0', fontWeight: 600 }}>
             ลากและวางไฟล์เพลง (.mp3, .wav, .ogg) ที่นี่ หรือคลิกเพื่อเลือกไฟล์
           </div>
@@ -145,8 +145,8 @@ export const TrackLibrarySection: React.FC<{ m: MusicPanelModel }> = ({ m }) => 
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   padding: '0.75rem 1rem',
-                  background: isThisPlaying ? 'rgba(99, 102, 241, 0.18)' : 'rgba(30, 41, 59, 0.4)',
-                  border: `1px solid ${isThisPlaying ? '#6366f1' : 'rgba(255, 255, 255, 0.06)'}`,
+                  background: isThisPlaying ? 'rgba(124, 58, 237, 0.18)' : 'rgba(28, 32, 70, 0.4)',
+                  border: `1px solid ${isThisPlaying ? 'var(--ctl-accent)' : 'rgba(255, 255, 255, 0.06)'}`,
                   borderRadius: '10px',
                   gap: '0.75rem',
                   flexWrap: 'wrap'
@@ -159,7 +159,7 @@ export const TrackLibrarySection: React.FC<{ m: MusicPanelModel }> = ({ m }) => 
                       width: '34px',
                       height: '34px',
                       borderRadius: '50%',
-                      background: isThisPlaying ? '#6366f1' : 'rgba(255, 255, 255, 0.1)',
+                      background: isThisPlaying ? 'var(--ctl-accent)' : 'rgba(255, 255, 255, 0.1)',
                       border: 'none',
                       color: '#fff',
                       display: 'flex',
@@ -173,7 +173,7 @@ export const TrackLibrarySection: React.FC<{ m: MusicPanelModel }> = ({ m }) => 
                   </button>
 
                   <div>
-                    <div style={{ fontSize: '0.9rem', fontWeight: 600, color: isThisPlaying ? '#a5b4fc' : '#f8fafc' }}>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 600, color: isThisPlaying ? 'var(--ctl-accent-pale)' : '#f8fafc' }}>
                       {track.title}
                     </div>
                     <div style={{ fontSize: '0.72rem', color: '#94a3b8', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
@@ -194,7 +194,7 @@ export const TrackLibrarySection: React.FC<{ m: MusicPanelModel }> = ({ m }) => 
                     onClick={() => onPlayTrack(track)}
                     style={{
                       padding: '0.35rem 0.75rem',
-                      background: isThisPlaying ? '#4f46e5' : 'rgba(255, 255, 255, 0.08)',
+                      background: isThisPlaying ? 'var(--ctl-accent-strong)' : 'rgba(255, 255, 255, 0.08)',
                       border: 'none',
                       borderRadius: '6px',
                       color: '#fff',

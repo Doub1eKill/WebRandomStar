@@ -5,6 +5,7 @@
  */
 import React, { useEffect, useMemo } from 'react';
 // Last in the cascade, so loading it with this lazy chunk keeps its order (see app/styles.css).
+// It holds the control window's theme, scoped under .control-app.
 import './controlLayout.css';
 import { NavLink, Outlet } from 'react-router';
 import { Layers, Key, BookOpen, Clock, Music, Users, History, Palette, Sparkles } from 'lucide-react';
@@ -21,23 +22,6 @@ export const ControlLayout: React.FC = () => (
     <ControlShell />
   </SessionProvider>
 );
-
-/** A4: tab buttons come from one config instead of eight copy-pasted blocks. */
-const tabStyle = (isActive: boolean): React.CSSProperties => ({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '0.5rem',
-  padding: '0.75rem 1rem',
-  background: 'none',
-  border: 'none',
-  borderBottom: isActive ? '2px solid #6366f1' : '2px solid transparent',
-  color: isActive ? '#fff' : '#94a3b8',
-  fontSize: '0.875rem',
-  fontWeight: isActive ? 600 : 400,
-  cursor: 'pointer',
-  textDecoration: 'none',
-  whiteSpace: 'nowrap'
-});
 
 const ControlShell: React.FC = () => {
   const currentState = useSession(s => s.currentState);
@@ -60,99 +44,70 @@ const ControlShell: React.FC = () => {
     applyTypography(appearanceSettings);
   }, [appearanceSettings]);
 
-  const tabs = [
+  // A4: tab buttons come from one config instead of eight copy-pasted blocks.
+  const tabs: { to: string; icon: React.ReactNode; label: string; count?: number }[] = [
     { to: 'live', icon: <Layers size={16} />, label: 'ควบคุมเวที (Stage)' },
-    { to: 'words', icon: <Key size={16} />, label: `คลังคำสำคัญ (${words.length})` },
-    { to: 'questions', icon: <BookOpen size={16} />, label: `คลังคำถาม (${questions.length})` },
+    { to: 'words', icon: <Key size={16} />, label: 'คลังคำสำคัญ', count: words.length },
+    { to: 'questions', icon: <BookOpen size={16} />, label: 'คลังคำถาม', count: questions.length },
     { to: 'timer', icon: <Clock size={16} />, label: 'ตัวจับเวลา (Timer)' },
-    { to: 'music', icon: <Music size={16} />, label: `เพลงประกอบ (${library.tracks.length})` },
-    { to: 'contestants', icon: <Users size={16} />, label: `ผู้เข้าแข่งขัน (${contestants.length})` },
-    { to: 'history', icon: <History size={16} />, label: `ประวัติ (${history.length})` },
+    { to: 'music', icon: <Music size={16} />, label: 'เพลงประกอบ', count: library.tracks.length },
+    { to: 'contestants', icon: <Users size={16} />, label: 'ผู้เข้าแข่งขัน', count: contestants.length },
+    { to: 'history', icon: <History size={16} />, label: 'ประวัติ', count: history.length },
     { to: 'appearance', icon: <Palette size={16} />, label: 'ปรับแต่งหน้าตา (Appearance)' }
   ];
 
   return (
-    <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
+    <div className="control-app">
       <OperatorToasts />
-      {/* Q2: the stage window is the only host; without it commands have no effect. */}
-      {!isStageConnected && (
-        <div className="stage-disconnected-banner" role="alert">
-          ⚠ ไม่พบหน้าจอเวทีที่เปิดอยู่ — คำสั่งจะไม่มีผลจนกว่าจะเปิดหน้าเวที (หน้าเว็บหลัก) ในเบราว์เซอร์เดียวกัน
-        </div>
-      )}
-      <div
-        className="competition-control-center"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-          background: '#090d16',
-          color: '#f8fafc',
-          fontFamily: 'system-ui, -apple-system, sans-serif'
-        }}
-      >
-        {/* Header Bar */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '0.85rem 1.25rem',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-            background: 'rgba(15, 23, 42, 0.8)',
-            backdropFilter: 'blur(12px)'
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '8px',
-                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff'
-              }}
-            >
+      <div className="competition-control-center">
+        {/* Q2: the stage window is the only host; without it commands have no effect. */}
+        {!isStageConnected && (
+          <div className="stage-disconnected-banner" role="alert">
+            ⚠ ไม่พบหน้าจอเวทีที่เปิดอยู่ — คำสั่งจะไม่มีผลจนกว่าจะเปิดหน้าเวที (หน้าเว็บหลัก) ในเบราว์เซอร์เดียวกัน
+          </div>
+        )}
+
+        <header className="ctl-header">
+          <div className="ctl-brand">
+            <div className="ctl-brand-mark" aria-hidden="true">
               <Sparkles size={18} />
             </div>
-            <div>
-              <div style={{ fontSize: '1rem', fontWeight: 700, letterSpacing: '-0.01em' }}>
-                ✦ SCi TECH TINE ✦ CHARM OF TRANSITION (Ambassador 2026)
-              </div>
-              <div className="ui-caption">
-                สถานะเวที: <strong style={{ color: '#38bdf8', textTransform: 'uppercase' }}>{currentState}</strong> | Session: <span style={{ fontFamily: 'monospace' }}>{sessionId.slice(0, 8)}</span>
-              </div>
+            <div className="ctl-brand-text">
+              <div className="ctl-brand-eyebrow">Backstage Control</div>
+              <h1 className="ctl-brand-title">✦ SCi TECH TINE ✦ CHARM OF TRANSITION (Ambassador 2026)</h1>
             </div>
           </div>
-        </div>
+          <div className="ctl-status" aria-live="polite">
+            <span className={`ctl-pill ${isStageConnected ? 'ctl-pill--ok' : 'ctl-pill--bad'}`}>
+              <span className="ctl-dot" aria-hidden="true" />
+              {isStageConnected ? 'เชื่อมต่อจอเวทีแล้ว' : 'ไม่พบจอเวที'}
+            </span>
+            <span className="ctl-pill">
+              สถานะเวที: <strong className="ctl-pill-state">{currentState}</strong>
+            </span>
+            <span className="ctl-pill ctl-pill--muted" title={sessionId}>
+              Session: <span className="ctl-mono">{sessionId.slice(0, 8)}</span>
+            </span>
+          </div>
+        </header>
 
-        {/* Tab Navigation */}
-        <nav
-          style={{
-            display: 'flex',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-            background: 'rgba(15, 23, 42, 0.5)',
-            padding: '0 0.75rem',
-            overflowX: 'auto'
-          }}
-        >
+        <nav className="ctl-tabs" aria-label="หน้าควบคุม">
           {tabs.map(tab => (
-            <NavLink key={tab.to} to={tab.to} style={({ isActive }) => tabStyle(isActive)}>
+            <NavLink key={tab.to} to={tab.to} className={({ isActive }) => (isActive ? 'ctl-tab active' : 'ctl-tab')}>
               {tab.icon}
-              {tab.label}
+              <span>{tab.label}</span>
+              {tab.count !== undefined && <span className="ctl-tab-count">{tab.count}</span>}
             </NavLink>
           ))}
         </nav>
 
-        {/* Tab Contents */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '1.25rem' }}>
-          <ControlMusicContext.Provider value={music}>
-            <Outlet />
-          </ControlMusicContext.Provider>
-        </div>
+        <main className="ctl-main">
+          <div className="ctl-content">
+            <ControlMusicContext.Provider value={music}>
+              <Outlet />
+            </ControlMusicContext.Provider>
+          </div>
+        </main>
       </div>
     </div>
   );

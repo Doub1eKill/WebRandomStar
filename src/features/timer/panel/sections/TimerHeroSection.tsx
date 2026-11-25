@@ -20,14 +20,14 @@ export const TimerHeroSection: React.FC<{ m: TimerPanelModel }> = ({ m }) => {
       <div
         style={{
           background: isFinished
-            ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(15, 23, 42, 0.75))'
+            ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(14, 18, 44, 0.75))'
             : isLast3s
-            ? 'linear-gradient(135deg, rgba(255, 34, 34, 0.25), rgba(15, 23, 42, 0.75))'
+            ? 'linear-gradient(135deg, rgba(255, 34, 34, 0.25), rgba(14, 18, 44, 0.75))'
             : isCritical
-            ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(15, 23, 42, 0.75))'
+            ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(14, 18, 44, 0.75))'
             : isWarning
-            ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(15, 23, 42, 0.75))'
-            : 'linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(15, 23, 42, 0.75))',
+            ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(14, 18, 44, 0.75))'
+            : 'linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(14, 18, 44, 0.75))',
           border: `1.5px solid ${
             isFinished
               ? 'rgba(239, 68, 68, 0.6)'

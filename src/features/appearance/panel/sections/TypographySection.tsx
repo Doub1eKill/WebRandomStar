@@ -122,7 +122,7 @@ export const TypographySection: React.FC<{ m: AppearanceSettingsModel }> = ({ m 
               <input
                 type="text"
                 className="control-input"
-                style={{ width: '100%', padding: '8px 12px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(192, 132, 252, 0.3)', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                style={{ width: '100%', padding: '8px 12px', background: 'rgba(14, 18, 44, 0.7)', border: '1px solid rgba(192, 132, 252, 0.3)', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
                 placeholder="เช่น Playfair Display"
                 value={customName}
                 onChange={e => setCustomName(e.target.value)}
@@ -137,7 +137,7 @@ export const TypographySection: React.FC<{ m: AppearanceSettingsModel }> = ({ m 
                 type="text"
                 required
                 className="control-input"
-                style={{ width: '100%', padding: '8px 12px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(192, 132, 252, 0.3)', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                style={{ width: '100%', padding: '8px 12px', background: 'rgba(14, 18, 44, 0.7)', border: '1px solid rgba(192, 132, 252, 0.3)', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
                 placeholder="เช่น 'Playfair Display', serif"
                 value={customFamily}
                 onChange={e => setCustomFamily(e.target.value)}
@@ -151,7 +151,7 @@ export const TypographySection: React.FC<{ m: AppearanceSettingsModel }> = ({ m 
               <input
                 type="url"
                 className="control-input"
-                style={{ width: '100%', padding: '8px 12px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(192, 132, 252, 0.3)', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                style={{ width: '100%', padding: '8px 12px', background: 'rgba(14, 18, 44, 0.7)', border: '1px solid rgba(192, 132, 252, 0.3)', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
                 placeholder="https://fonts.googleapis.com/..."
                 value={customUrl}
                 onChange={e => setCustomUrl(e.target.value)}

@@ -131,7 +131,7 @@ export const EditModal: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
               </button>
               <button
                 type="submit"
-                style={{ padding: '0.55rem 1.25rem', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
+                style={{ padding: '0.55rem 1.25rem', background: 'linear-gradient(135deg, var(--ctl-accent), var(--ctl-accent-2))', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
               >
                 บันทึก
               </button>

@@ -96,7 +96,7 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ history, onClearHist
             style={{
               width: '100%',
               padding: '0.55rem 0.75rem 0.55rem 2.25rem',
-              background: 'rgba(15, 23, 42, 0.6)',
+              background: 'rgba(14, 18, 44, 0.6)',
               border: '1px solid rgba(255, 255, 255, 0.12)',
               borderRadius: '8px',
               color: '#f8fafc',
@@ -151,7 +151,7 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ history, onClearHist
       </div>
 
       {/* 3. History Table */}
-      <div style={{ overflowX: 'auto', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', background: 'rgba(15, 23, 42, 0.4)' }}>
+      <div style={{ overflowX: 'auto', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', background: 'rgba(14, 18, 44, 0.4)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)', background: 'rgba(255, 255, 255, 0.02)', color: '#94a3b8' }}>

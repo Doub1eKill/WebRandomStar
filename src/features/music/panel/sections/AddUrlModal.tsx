@@ -29,7 +29,7 @@ export const AddUrlModal: React.FC<{ m: MusicPanelModel }> = ({ m }) => {
             onSubmit={handleAddUrlTrack}
             style={{
               background: '#0f172a',
-              border: '1px solid rgba(99, 102, 241, 0.3)',
+              border: '1px solid rgba(124, 58, 237, 0.3)',
               borderRadius: '16px',
               padding: '1.5rem',
               width: '100%',
@@ -38,7 +38,7 @@ export const AddUrlModal: React.FC<{ m: MusicPanelModel }> = ({ m }) => {
             }}
           >
             <h3 style={{ margin: '0 0 1rem 0', color: '#f8fafc', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <LinkIcon size={18} color="#818cf8" /> เพิ่มเพลงจากลิงก์ URL
+              <LinkIcon size={18} color="#a78bfa" /> เพิ่มเพลงจากลิงก์ URL
             </h3>
 
             <div style={{ marginBottom: '0.85rem' }}>
@@ -130,7 +130,7 @@ export const AddUrlModal: React.FC<{ m: MusicPanelModel }> = ({ m }) => {
                 type="submit"
                 style={{
                   padding: '0.55rem 1.25rem',
-                  background: 'linear-gradient(135deg, #4f46e5, #6366f1)',
+                  background: 'linear-gradient(135deg, var(--ctl-accent-strong), var(--ctl-accent))',
                   border: 'none',
                   borderRadius: '8px',
                   color: '#fff',

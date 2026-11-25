@@ -12,7 +12,7 @@ export const PhaseAssignmentSection: React.FC<{ m: MusicPanelModel }> = ({ m }) 
       {/* 3. Stage Phase Music Assignment Grid */}
       <div
         style={{
-          background: 'rgba(15, 23, 42, 0.6)',
+          background: 'rgba(14, 18, 44, 0.6)',
           border: '1px solid rgba(255, 255, 255, 0.08)',
           borderRadius: '16px',
           padding: '1.25rem'
@@ -81,8 +81,8 @@ export const PhaseAssignmentSection: React.FC<{ m: MusicPanelModel }> = ({ m }) 
           </div>
 
           {/* Phase 3: Question Thinking */}
-          <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '0.9rem', borderRadius: '10px', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
-            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#818cf8', marginBottom: '0.4rem' }}>
+          <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '0.9rem', borderRadius: '10px', border: '1px solid rgba(124, 58, 237, 0.2)' }}>
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--ctl-accent-soft)', marginBottom: '0.4rem' }}>
               💡 3. ช่วงคิดคำตอบ (Question / Timer)
             </div>
             <select
@@ -92,7 +92,7 @@ export const PhaseAssignmentSection: React.FC<{ m: MusicPanelModel }> = ({ m }) 
                 width: '100%',
                 padding: '0.55rem',
                 background: '#0f172a',
-                border: '1px solid rgba(99, 102, 241, 0.3)',
+                border: '1px solid rgba(124, 58, 237, 0.3)',
                 borderRadius: '8px',
                 color: '#f8fafc',
                 fontSize: '0.85rem',

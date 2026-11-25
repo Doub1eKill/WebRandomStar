@@ -147,7 +147,7 @@ export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
               <tr>
                 <td colSpan={6} style={{ textAlign: 'center', padding: '48px', color: '#94a3b8' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                    <Sparkles size={28} color="#6366f1" />
+                    <Sparkles size={28} color="#7c3aed" />
                     <span style={{ fontSize: '1rem', fontWeight: 500 }}>ไม่พบคำสำคัญที่ตรงกับเงื่อนไขการค้นหา</span>
                   </div>
                 </td>

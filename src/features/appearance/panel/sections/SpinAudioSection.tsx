@@ -8,7 +8,7 @@ export const SpinAudioSection: React.FC<{ m: AppearanceSettingsModel }> = ({ m }
   return (
     <SettingGroup icon="🎵" title="เพลง/เสียงประกอบช่วงสุ่มคำ (Word Spin Audio Track)" hint="เลือกเพลงหรือเสียงระทึกช่วงสุ่มคำ สามารถอัปโหลดไฟล์เสียงใหม่ (MP3/WAV) หรือทดลองฟังเสียงได้ทันที">
 
-      <div style={{ background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(245, 158, 11, 0.25)', borderRadius: '12px', padding: '14px' }}>
+      <div style={{ background: 'rgba(14, 18, 44, 0.7)', border: '1px solid rgba(245, 158, 11, 0.25)', borderRadius: '12px', padding: '14px' }}>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '8px' }}>
           <div style={{ flex: 1, minWidth: '220px' }}>
             <label style={{ display: 'block', fontSize: '0.75rem', color: '#cbd5e1', marginBottom: '4px' }}>
