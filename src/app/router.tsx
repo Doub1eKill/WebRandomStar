@@ -23,7 +23,7 @@ const ContestantsPage = lazy(() => import('@/pages/control/ContestantsPage.tsx')
 const HistoryPage = lazy(() => import('@/pages/control/HistoryPage.tsx'));
 const AppearancePage = lazy(() => import('@/pages/control/AppearancePage.tsx'));
 
-export const CONTROL_PAGES = ['live', 'words', 'questions', 'timer', 'music', 'contestants', 'history', 'appearance'] as const;
+export const CONTROL_PAGES = ['live', 'timer', 'music', 'words', 'questions', 'contestants', 'history', 'appearance'] as const;
 
 const page = (Component: React.ComponentType) => (
   <Suspense fallback={null}>

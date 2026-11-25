@@ -47,10 +47,10 @@ const ControlShell: React.FC = () => {
   // A4: tab buttons come from one config instead of eight copy-pasted blocks.
   const tabs: { to: string; icon: React.ReactNode; label: string; count?: number }[] = [
     { to: 'live', icon: <Layers size={16} />, label: 'ควบคุมเวที (Stage)' },
-    { to: 'words', icon: <Key size={16} />, label: 'คลังคำสำคัญ', count: words.length },
-    { to: 'questions', icon: <BookOpen size={16} />, label: 'คลังคำถาม', count: questions.length },
     { to: 'timer', icon: <Clock size={16} />, label: 'ตัวจับเวลา (Timer)' },
     { to: 'music', icon: <Music size={16} />, label: 'เพลงประกอบ', count: library.tracks.length },
+    { to: 'words', icon: <Key size={16} />, label: 'คลังคำสำคัญ', count: words.length },
+    { to: 'questions', icon: <BookOpen size={16} />, label: 'คลังคำถาม', count: questions.length },
     { to: 'contestants', icon: <Users size={16} />, label: 'ผู้เข้าแข่งขัน', count: contestants.length },
     { to: 'history', icon: <History size={16} />, label: 'ประวัติ', count: history.length },
     { to: 'appearance', icon: <Palette size={16} />, label: 'ปรับแต่งหน้าตา (Appearance)' }
