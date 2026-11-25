@@ -10,21 +10,12 @@
  * event happens exactly once no matter how many controller windows are open.
  */
 import { SessionState } from '@/types/session.ts';
-import {
-  loadQuestions,
-  loadWords,
-  loadContestants,
-  loadTimerSoundSettings,
-  loadStageDisplaySettings,
-  saveAppearanceSettings,
-  saveTimerSoundSettings,
-  saveStageDisplaySettings,
-  appendHistoryRecord,
-  STORAGE_KEYS
-} from '@/storage/storageApi.ts';
+import { loadTimerSoundSettings, loadStageDisplaySettings, saveTimerSoundSettings, saveStageDisplaySettings } from '@/features/timer/timerSettings.ts';
+import { saveAppearanceSettings } from '@/features/appearance/appearanceSettings.ts';
+import { appendHistoryRecord, createHistoryRecord } from '@/features/history/historyManager.ts';
+import { STORAGE_KEYS, questionsRepository, wordsRepository, contestantsRepository } from '@/storage/repositories.ts';
 import { STAGE_DURATION } from './stateMachine.ts';
 import { calculateRemainingMs } from '@/features/timer/timerEngine.ts';
-import { createHistoryRecord } from '@/features/history/historyManager.ts';
 import { notifyOperator } from '@/shared/notices/operatorNotices.ts';
 import { audioEngine } from '@/features/audio/audioEngine.ts';
 import { musicPlayer } from '@/features/music/musicPlayerEngine.ts';
@@ -57,9 +48,9 @@ const newId = (role: PeerRole) => `${role}-${Date.now().toString(36)}-${Math.ran
 function reducerContext(): ReducerContext {
   return {
     now: Date.now(),
-    loadQuestions,
-    loadWords,
-    loadContestants,
+    loadQuestions: questionsRepository.load,
+    loadWords: wordsRepository.load,
+    loadContestants: contestantsRepository.load,
     loadTimerSoundSettings,
     loadStageDisplaySettings
   };

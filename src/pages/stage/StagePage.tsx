@@ -2,10 +2,10 @@
  * Stage page (route "#/"): the projector screen and session host. Moved from App.tsx in Phase 5.
  */
 import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { useStageSync } from '@/features/session/useStageSync.ts';
+import { SessionProvider, useSession, useSessionActions, usePeerConnected } from '@/features/session/SessionProvider.tsx';
 import { useMusicStageRouter } from '@/features/music/useMusicStageRouter.ts';
 import { applyTypography } from '@/features/appearance/typography.ts';
-import { saveQuestions, saveContestants } from '@/storage/storageApi.ts';
+import { questionsRepository, contestantsRepository } from '@/storage/repositories.ts';
 import { useQuestions, useContestants, useWords } from '@/storage/useRepository.ts';
 import { Question, Contestant, QuestionCategory } from '@/types/question.ts';
 import { KeywordItem } from '@/types/word.ts';
@@ -26,10 +26,18 @@ const ContestantManagerModal = lazy(() => import('@/features/contestants/Contest
 
 const stageMusicControls = localMusicControls(musicPlayer);
 
-export const StagePage: React.FC = () => {
+/** The stage window hosts the session (Q2); everything below reads it through the provider. */
+export const StagePage: React.FC = () => (
+  <SessionProvider role="stage">
+    <StageScreen />
+  </SessionProvider>
+);
+
+const StageScreen: React.FC = () => {
+  // The stage re-renders on every session change, as it did with the old useStageSync hook.
+  const session = useSession(s => s);
+  const isRemoteConnected = usePeerConnected();
   const {
-    session,
-    isPeerConnected: isRemoteConnected,
     startJourney,
     stopWordSpin,
     pauseJourney,
@@ -47,7 +55,7 @@ export const StagePage: React.FC = () => {
     adjustTimer,
     setTimerSoundSettings,
     setStageDisplaySettings
-  } = useStageSync('stage');
+  } = useSessionActions();
 
   // B15: restore the saved phase mapping / auto-sync into the player once, before anything plays.
   useState(() => {
@@ -97,11 +105,11 @@ export const StagePage: React.FC = () => {
 
   // Saving notifies the hooks above (and the other window), so no local copy is needed.
   const handleSaveQuestions = (updated: Question[]) => {
-    saveQuestions(updated);
+    questionsRepository.save(updated);
   };
 
   const handleSaveContestants = (updated: Contestant[]) => {
-    saveContestants(updated);
+    contestantsRepository.save(updated);
   };
 
   const activeContestant = contestants.find(c => c.id === session.selectedContestantId);

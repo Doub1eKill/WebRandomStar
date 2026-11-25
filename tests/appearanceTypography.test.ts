@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { DEFAULT_APPEARANCE_SETTINGS, FontPresetId } from '@/types/appearance.ts';
-import { loadAppearanceSettings, saveAppearanceSettings } from '@/storage/storageApi.ts';
+import { loadAppearanceSettings, saveAppearanceSettings } from '@/features/appearance/appearanceSettings.ts';
 
 describe('Appearance Typography Data Model', () => {
   beforeEach(() => {

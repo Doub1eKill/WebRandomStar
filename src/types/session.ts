@@ -12,14 +12,7 @@ export type AppState =
   | 'word-lock'
   | 'question-reveal'
   | 'question'
-  | 'answered'
-  // Legacy aliases for backward compatibility if needed
-  | 'rain'
-  | 'water-drop'
-  | 'mist'
-  | 'wind'
-  | 'leaf'
-  | 'sky-clear';
+  | 'answered';
 
 export interface SessionState {
   sessionId: string;

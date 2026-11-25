@@ -9,8 +9,6 @@
 @import '../features/stage/overlay/stageOverlay.css';
 @import '../features/control/controlDrawer.css';
 @import '../shared/styles/modals.css';
-@import '../pages/control/legacyRemote.css';
-@import '../features/stage/overlay/storytelling.css';
 @import '../features/stage/overlay/cinematic.css';
 @import '../features/timer/timer.css';
 @import '../features/stage/word-spin/wordSpin.css';

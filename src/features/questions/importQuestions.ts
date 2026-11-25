@@ -139,3 +139,8 @@ export function loadQuestionsBackup(): { savedAt: string; questions: Question[] 
     return null;
   }
 }
+
+/** Pretty-printed JSON, the same format parseImportedQuestions accepts. */
+export function exportQuestionsAsJSON(questions: Question[]): string {
+  return JSON.stringify(questions, null, 2);
+}

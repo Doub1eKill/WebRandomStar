@@ -11,7 +11,7 @@ import { stageControls, ROUND_OPTIONS } from '@/features/control/useStageControl
 import { ControlCard } from '@/features/control/ControlCard.tsx';
 import { QuizModeToggle } from '@/features/control/QuizModeToggle.tsx';
 import { useContestants, useWords } from '@/storage/useRepository.ts';
-import { saveContestants } from '@/storage/storageApi.ts';
+import { contestantsRepository } from '@/storage/repositories.ts';
 import { ContestantManagerModal } from '@/features/contestants/ContestantManagerModal.tsx';
 import {
   Play,
@@ -173,7 +173,7 @@ export const LivePage: React.FC = () => {
         isOpen={isContestantModalOpen}
         contestants={contestants}
         onClose={() => setIsContestantModalOpen(false)}
-        onSaveContestants={saveContestants}
+        onSaveContestants={contestantsRepository.save}
       />
     </>
   );

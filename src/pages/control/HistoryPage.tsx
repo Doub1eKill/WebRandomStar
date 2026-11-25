@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from '@/storage/useRepository.ts';
-import { clearHistory } from '@/storage/storageApi.ts';
+import { clearHistory } from '@/features/history/historyManager.ts';
 import { HistoryPanel } from '@/features/history/HistoryPanel.tsx';
 
 /** Remote "History" page (Phase 5). Updates live as the stage records answers (B8). */

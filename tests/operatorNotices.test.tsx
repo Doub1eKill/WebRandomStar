@@ -1,11 +1,11 @@
 import { act } from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { mount, renderHook } from './helpers/render.tsx';
+import { mount } from './helpers/render.tsx';
 import { selectNextQuestion } from '@/features/questions/questionSelector.ts';
 import { notifyOperator, subscribeOperatorNotices, OperatorNotice } from '@/shared/notices/operatorNotices.ts';
 import { OperatorToasts } from '@/shared/notices/OperatorToasts.tsx';
-import { useStageSync } from '@/features/session/useStageSync.ts';
-import { saveQuestions } from '@/storage/storageApi.ts';
+import { renderSession } from './helpers/session.tsx';
+import { questionsRepository } from '@/storage/repositories.ts';
 import { Question } from '@/types/question.ts';
 
 const q = (id: string, round: string, category: string, enabled = true): Question => ({
@@ -55,11 +55,11 @@ describe('B10: operator notices', () => {
   it('startJourney with no usable questions raises an error notice instead of alert()', () => {
     const alertSpy = vi.fn();
     vi.stubGlobal('alert', alertSpy);
-    saveQuestions([q('off', 'intro', 'rain', false)]);
+    questionsRepository.save([q('off', 'intro', 'rain', false)]);
     const received: OperatorNotice[] = [];
     const unsubscribe = subscribeOperatorNotices(n => received.push(n));
 
-    const h = renderHook(() => useStageSync('stage'));
+    const h = renderSession();
     act(() => h.result.current.startJourney());
 
     expect(alertSpy).not.toHaveBeenCalled();
@@ -71,11 +71,11 @@ describe('B10: operator notices', () => {
   });
 
   it('startJourney warns when the question comes from outside the requested round', () => {
-    saveQuestions([q('x', 'final', 'rain')]);
+    questionsRepository.save([q('x', 'final', 'rain')]);
     const received: OperatorNotice[] = [];
     const unsubscribe = subscribeOperatorNotices(n => received.push(n));
 
-    const h = renderHook(() => useStageSync('stage'));
+    const h = renderSession();
     act(() => h.result.current.startJourney());
 
     expect(h.result.current.session.currentState).toBe('pre-spin');

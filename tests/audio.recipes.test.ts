@@ -68,15 +68,8 @@ describe('PF9: audio recipes and the shared AudioContext', () => {
       audioEngine.playSpinTick(0.4);
       audioEngine.playWordLock();
       audioEngine.playQuestionReveal();
-      audioEngine.playTimerWarning();
       audioEngine.playTimerFinish();
       for (const s of [12, 10, 5, 3, 2, 1, 0]) audioEngine.playTickSound(s);
-      audioEngine.playWaterDrop();
-      audioEngine.playWindGust();
-      audioEngine.playLeafRustle();
-      audioEngine.playSkyTransition();
-      audioEngine.playRainAmbience(0.1);
-      audioEngine.fadeRainOut(0.1);
     }).not.toThrow();
   });
 

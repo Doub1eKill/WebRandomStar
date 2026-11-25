@@ -33,13 +33,7 @@ describe('Procedural Web Audio Engine (V3 - Royal Word Spin)', () => {
       audioEngine.playSpinTick(0.8);
       audioEngine.playWordLock();
       audioEngine.playQuestionReveal();
-      audioEngine.playTimerWarning();
       audioEngine.playTimerFinish();
-      audioEngine.playWaterDrop();
-      audioEngine.playWindGust();
-      audioEngine.playLeafRustle();
-      audioEngine.playSkyTransition();
-      audioEngine.fadeRainOut(0.5);
     }).not.toThrow();
   });
 
@@ -48,7 +42,6 @@ describe('Procedural Web Audio Engine (V3 - Royal Word Spin)', () => {
     expect(typeof audioEngine.playSpinTick).toBe('function');
     expect(typeof audioEngine.playWordLock).toBe('function');
     expect(typeof audioEngine.playQuestionReveal).toBe('function');
-    expect(typeof audioEngine.playTimerWarning).toBe('function');
     expect(typeof audioEngine.playTimerFinish).toBe('function');
     expect(typeof audioEngine.playTickSound).toBe('function');
   });
@@ -99,12 +92,6 @@ describe('Procedural Web Audio Engine (V3 - Royal Word Spin)', () => {
       audioEngine.playSpinTick(1.0);
       audioEngine.playWordLock();
       audioEngine.playQuestionReveal();
-      audioEngine.playRainAmbience();
-      audioEngine.playWaterDrop();
-      audioEngine.playWindGust();
-      audioEngine.playLeafRustle();
-      audioEngine.playSkyTransition();
-      audioEngine.playTimerWarning();
       audioEngine.playTimerFinish();
       audioEngine.playTickSound(5);
     }).not.toThrow();

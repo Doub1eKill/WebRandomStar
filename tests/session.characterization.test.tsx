@@ -1,5 +1,6 @@
 /**
- * Phase 0 characterization tests for useStageSync.
+ * Phase 0 characterization tests for the session (written against the old useStageSync hook;
+ * since Phase 9 they run on <SessionProvider>, the same runtime the app uses).
  * They pin down CURRENT behaviour so the Phase 3 rewrite (reducer + store + host)
  * can prove it changed nothing by accident. Tests whose name starts with
  * "[known bug]" or "[baseline]" assert today's behaviour on purpose and must be
@@ -7,21 +8,21 @@
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { act } from 'react';
-import { renderHook, mount, HookResult } from './helpers/render.tsx';
-import { useStageSync } from '@/features/session/useStageSync.ts';
+import { mount, HookResult } from './helpers/render.tsx';
+import { renderSession, SessionHarness } from './helpers/session.tsx';
 import { getLiveRemainingMs } from '@/features/timer/timerEngine.ts';
 import { TimerDisplay } from '@/features/timer/TimerDisplay.tsx';
-import { STORAGE_KEYS, loadHistory } from '@/storage/storageApi.ts';
+import { STORAGE_KEYS, historyRepository } from '@/storage/repositories.ts';
 import { DEFAULT_APPEARANCE_SETTINGS, AppearanceSettings } from '@/types/appearance.ts';
 import { AppState } from '@/types/session.ts';
 import { audioEngine } from '@/features/audio/audioEngine.ts';
 import { musicPlayer } from '@/features/music/musicPlayerEngine.ts';
 
-type Sync = ReturnType<typeof useStageSync>;
+type Sync = SessionHarness;
 const mounted: HookResult<Sync>[] = [];
 
 function mountSync(role: 'stage' | 'controller' = 'stage') {
-  const h = renderHook(() => useStageSync(role));
+  const h = renderSession(role);
   mounted.push(h);
   return h;
 }
@@ -73,7 +74,7 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe('useStageSync: stage sequence', () => {
+describe('session: stage sequence', () => {
   it('question mode runs pre-spin → … → question with the configured durations, then waits', () => {
     const h = mountSync();
     setAppearance(h, {});
@@ -190,7 +191,7 @@ describe('useStageSync: stage sequence', () => {
   });
 });
 
-describe('useStageSync: timer', () => {
+describe('session: timer', () => {
   it('start / pause / resume keep remaining time from timestamps', () => {
     const h = mountSync();
     act(() => h.result.current.startTimer(60_000));
@@ -254,7 +255,7 @@ describe('useStageSync: timer', () => {
   });
 });
 
-describe('useStageSync: answering, history and reset', () => {
+describe('session: answering, history and reset', () => {
   function reachQuestion(h: HookResult<Sync>) {
     act(() => h.result.current.startJourney());
     act(() => h.result.current.skipToQuestion());
@@ -272,7 +273,7 @@ describe('useStageSync: answering, history and reset', () => {
     expect(state(h).timerState.status).toBe('idle');
     expect(state(h).usedQuestionIds).toContain(questionId);
 
-    const [record] = loadHistory();
+    const [record] = historyRepository.load();
     expect(record).toMatchObject({
       questionId,
       timerConfiguredMs: 60_000,
@@ -287,7 +288,7 @@ describe('useStageSync: answering, history and reset', () => {
     act(() => h.result.current.startTimer(2_000));
     advance(2_100);
     act(() => h.result.current.markAnswered());
-    expect(loadHistory()[0]).toMatchObject({ isTimeout: true, timerUsedMs: 2_000 });
+    expect(historyRepository.load()[0]).toMatchObject({ isTimeout: true, timerUsedMs: 2_000 });
   });
 
   it('resetStage() returns to idle, clears the selection and keeps the timer duration', () => {
@@ -317,7 +318,7 @@ describe('useStageSync: answering, history and reset', () => {
   });
 });
 
-describe('useStageSync: restore after reload', () => {
+describe('session: restore after reload', () => {
   function saveSession(patch: Record<string, unknown>) {
     const h = mountSync();
     const snapshot = { ...state(h), ...patch };
@@ -342,7 +343,7 @@ describe('useStageSync: restore after reload', () => {
   });
 });
 
-describe('useStageSync: multi-window (stage + remote controller window)', () => {
+describe('session: multi-window (stage + remote controller window)', () => {
   // Before Phase 3 the controller window mounted useStageSync twice; two mirrors must stay harmless.
   function openStageAndController() {
     const stage = mountSync('stage');

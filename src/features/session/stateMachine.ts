@@ -25,15 +25,7 @@ export const STAGE_DURATION: Record<AppState, number> = {
   'word-lock': 1500,
   'question-reveal': 1000,
   'question': 0,   // Waits for presenter/operator
-  'answered': 0,   // Waits for next contestant
-
-  // Legacy fallback mappings
-  'rain': 1200,
-  'water-drop': 1200,
-  'mist': 1300,
-  'wind': 1300,
-  'leaf': 1500,
-  'sky-clear': 1200
+  'answered': 0    // Waits for next contestant
 };
 
 /**

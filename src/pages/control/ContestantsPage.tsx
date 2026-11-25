@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { useSession, useSessionActions } from '@/features/session/SessionProvider.tsx';
 import { useContestants } from '@/storage/useRepository.ts';
-import { saveContestants } from '@/storage/storageApi.ts';
+import { contestantsRepository } from '@/storage/repositories.ts';
 import { ContestantManagerModal } from '@/features/contestants/ContestantManagerModal.tsx';
 
 export const ContestantsPage: React.FC = () => {
@@ -80,7 +80,7 @@ export const ContestantsPage: React.FC = () => {
         isOpen={isContestantModalOpen}
         contestants={contestants}
         onClose={() => setIsContestantModalOpen(false)}
-        onSaveContestants={saveContestants}
+        onSaveContestants={contestantsRepository.save}
       />
     </>
   );

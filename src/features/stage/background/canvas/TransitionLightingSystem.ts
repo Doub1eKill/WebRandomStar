@@ -21,16 +21,11 @@ export class TransitionLightingSystem {
     this.vignetteIntensity = 0;
   }
 
-  public update(dt: number, state: AppState, stageProgress: number = 0, _timerPhase: TimerPhase = 'normal') {
+  // `_stageProgress` only drove the removed v2 'sky-clear' phase (D4).
+  public update(dt: number, state: AppState, _stageProgress: number = 0, _timerPhase: TimerPhase = 'normal') {
     this.timeAccumulator += dt;
 
-    if (state === 'sky-clear') {
-      // Bloom gently increases as the sky clears
-      const targetBloom = Math.sin(stageProgress * Math.PI) * 0.4;
-      this.bloomIntensity += (targetBloom - this.bloomIntensity) * 0.1;
-      this.lightBeamProgress = stageProgress;
-      this.vignetteIntensity += (0 - this.vignetteIntensity) * 0.1;
-    } else if (state === 'question-reveal') {
+    if (state === 'question-reveal') {
       // Quick subtle light sweep
       this.bloomIntensity += (0.65 - this.bloomIntensity) * 0.2;
       this.lightBeamProgress += dt * 1.5;
@@ -67,7 +62,7 @@ export class TransitionLightingSystem {
     }
 
     // 2. Light Sweep during Question Reveal
-    if (state === 'question-reveal' || state === 'sky-clear') {
+    if (state === 'question-reveal') {
       ctx.globalCompositeOperation = 'screen';
       const beamX = (this.lightBeamProgress * this.width * 1.5) - (this.width * 0.25);
       const beamGrad = ctx.createLinearGradient(beamX - 160, 0, beamX + 160, 0);

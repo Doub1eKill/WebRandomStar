@@ -4,13 +4,10 @@ import { AuroraSystem } from './AuroraSystem.ts';
 import { CrystalSystem } from './CrystalSystem.ts';
 import { CrownSystem } from './CrownSystem.ts';
 import { ReflectionSystem } from './ReflectionSystem.ts';
-import { RainSystem } from './RainSystem.ts';
-import { WaterDropSystem } from './WaterDropSystem.ts';
 import { MistSystem } from './MistSystem.ts';
-import { LeafSystem } from './LeafSystem.ts';
 import { SkySystem } from './SkySystem.ts';
 import { TransitionLightingSystem } from './TransitionLightingSystem.ts';
-import { INITIAL_TARGETS, LEGACY_TARGET_PATCHES, STATE_SOUNDS, STATE_TARGETS, LayerTargets } from './stateTargets.ts';
+import { INITIAL_TARGETS, STATE_SOUNDS, STATE_TARGETS, LayerTargets } from './stateTargets.ts';
 import { getLiveRemainingMs } from '@/features/timer/timerEngine.ts';
 import { useLazyRef } from '@/shared/lib/useLazyRef.ts';
 
@@ -27,11 +24,9 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session }) => {
   const crownRef = useLazyRef(() => new CrownSystem());
   const reflectionRef = useLazyRef(() => new ReflectionSystem());
 
-  // Natural layer systems (retained for organic richness)
-  const rainRef = useLazyRef(() => new RainSystem());
-  const dropRef = useLazyRef(() => new WaterDropSystem());
+  // Natural layer systems. D4/PF8: the rain, water-drop and leaf layers were removed. Every v3
+  // phase targets them at 0; only v2 phases used them (rain also faded out over ~1 s on load).
   const mistRef = useLazyRef(() => new MistSystem());
-  const leafRef = useLazyRef(() => new LeafSystem());
   const skyRef = useLazyRef(() => new SkySystem());
   const lightingRef = useLazyRef(() => new TransitionLightingSystem());
 
@@ -48,18 +43,13 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session }) => {
     const currentState = session.currentState;
     const nextTargets = STATE_TARGETS[currentState];
     if (nextTargets) targetsRef.current = { ...nextTargets };
-    const patch = LEGACY_TARGET_PATCHES[currentState];
-    if (patch) Object.assign(targetsRef.current, patch);
 
     if (currentState === 'idle') {
-      leafRef.current.reset();
       lightingRef.current.reset();
-    } else if (currentState === 'question' || currentState === 'answered') {
-      leafRef.current.active = false;
     }
 
     STATE_SOUNDS[currentState]?.();
-  }, [session.currentState, leafRef, lightingRef]); // refs from useLazyRef are stable
+  }, [session.currentState, lightingRef]); // refs from useLazyRef are stable
 
   // Update crystal density only when appearance settings actually change
   useEffect(() => {
@@ -105,10 +95,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session }) => {
       skyGrad.addColorStop(1, '#060919');
 
       crystalRef.current.init(width, height, sessionRef.current.appearanceSettings?.particleDensity || 1.0);
-      rainRef.current.resize(width, height);
-      dropRef.current.resize(width, height);
       mistRef.current.resize(width, height);
-      leafRef.current.resize(width, height);
       skyRef.current.resize(width, height);
       lightingRef.current.resize(width, height);
     };
@@ -143,10 +130,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session }) => {
       const crown = crownRef.current;
       const reflection = reflectionRef.current;
 
-      const rain = rainRef.current;
-      const drop = dropRef.current;
       const mist = mistRef.current;
-      const leaf = leafRef.current;
       const sky = skyRef.current;
       const lighting = lightingRef.current;
       const targets = targetsRef.current;
@@ -173,10 +157,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session }) => {
       curCrown = lerp(curCrown, targets.crownOpacity);
       curReflection = lerp(curReflection, targets.reflectionOpacity);
 
-      rain.intensity = lerp(rain.intensity, targets.rainIntensity);
-      drop.opacity = lerp(drop.opacity, targets.dropOpacity);
       mist.density = lerp(mist.density, targets.mistDensity);
-      leaf.opacity = lerp(leaf.opacity, targets.leafOpacity);
       sky.skyClarity = lerp(sky.skyClarity, targets.skyClarity);
       sky.moonOpacity = lerp(sky.moonOpacity, targets.moonOpacity);
 
@@ -213,22 +194,10 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session }) => {
         reflection.render(ctx, width, height, curReflection);
       }
 
-      // 7. Natural Layer (Rain, Mist, Leaves if active)
-      if (rain.intensity > 0.01) {
-        rain.update();
-        rain.draw(ctx);
-      }
-      if (drop.opacity > 0.01) {
-        drop.update();
-        drop.draw(ctx);
-      }
+      // 7. Natural layer (mist)
       if (mist.density > 0.01) {
         mist.update();
         mist.draw(ctx);
-      }
-      if (leaf.opacity > 0.01) {
-        leaf.update();
-        leaf.draw(ctx);
       }
 
       // 8. Stage Spotlight, Dynamic Vignette & Timer Glow
@@ -244,7 +213,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session }) => {
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', handleResize);
     };
-  }, [auroraRef, crownRef, crystalRef, dropRef, leafRef, lightingRef, mistRef, rainRef, reflectionRef, skyRef]); // stable refs: runs once
+  }, [auroraRef, crownRef, crystalRef, lightingRef, mistRef, reflectionRef, skyRef]); // stable refs: runs once
 
   return (
     <canvas

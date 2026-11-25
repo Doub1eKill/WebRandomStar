@@ -35,12 +35,15 @@ export interface HookResult<T> extends Mounted {
   result: { current: T };
 }
 
-/** Minimal renderHook: re-renders expose the latest hook return value via result.current. */
-export function renderHook<T>(useHook: () => T): HookResult<T> {
+/**
+ * Minimal renderHook: re-renders expose the latest hook return value via result.current.
+ * `wrap` puts the probe inside providers (e.g. <SessionProvider>).
+ */
+export function renderHook<T>(useHook: () => T, wrap?: (probe: React.ReactElement) => React.ReactElement): HookResult<T> {
   const result = { current: undefined as unknown as T };
   function Probe() {
     result.current = useHook();
     return null;
   }
-  return { result, ...mount(<Probe />) };
+  return { result, ...mount(wrap ? wrap(<Probe />) : <Probe />) };
 }

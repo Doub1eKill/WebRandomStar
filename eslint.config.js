@@ -1,6 +1,6 @@
 // Flat ESLint config (Phase 0 / A10).
-// New rules start as "warn" so existing code does not block work;
-// Phase 9 promotes them to "error" once the codebase is clean.
+// Rules started as "warn" so existing code did not block work; Phase 9 promoted them to
+// "error" because the codebase is clean (0 warnings since Phase 6), so CI fails on regressions.
 import js from '@eslint/js';
 import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
@@ -18,10 +18,10 @@ export default tseslint.config(
     plugins: { 'react-hooks': reactHooks },
     rules: {
       'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
-      'no-empty': ['warn', { allowEmptyCatch: true }]
+      'react-hooks/exhaustive-deps': 'error',
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      'no-empty': ['error', { allowEmptyCatch: true }]
     }
   }
 );

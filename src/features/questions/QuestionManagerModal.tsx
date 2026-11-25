@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Question, QuestionCategory, CATEGORY_CONFIGS } from '@/types/question.ts';
-import { exportQuestionsAsJSON } from '@/storage/storageApi.ts';
+import { exportQuestionsAsJSON } from '@/features/questions/importQuestions.ts';
 import { useQuestionImport } from './QuestionImportDialog.tsx';
 import { DEFAULT_QUESTIONS } from '@/data/defaultQuestions.ts';
 
@@ -23,7 +23,8 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
   // New question form state
   const [isAdding, setIsAdding] = useState(false);
   const [newText, setNewText] = useState('');
-  const [newCategory, setNewCategory] = useState<QuestionCategory>('rain');
+  // D7: default to the first category in the dropdown ('rain' today), so the two can't drift apart.
+  const [newCategory, setNewCategory] = useState<QuestionCategory>(() => Object.keys(CATEGORY_CONFIGS)[0]);
   const [newDifficulty, setNewDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
   const [newRound, setNewRound] = useState<'intro' | 'general' | 'attitude' | 'scenario' | 'final'>('attitude');
   const [newTags, setNewTags] = useState('');

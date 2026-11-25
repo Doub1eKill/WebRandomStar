@@ -2,6 +2,8 @@ import { HistoryRecord, HistoryResult } from '@/types/history.ts';
 import { Question } from '@/types/question.ts';
 import { Contestant } from '@/types/question.ts';
 import { toCsvCell } from '@/shared/lib/csv.ts';
+import { historyRepository } from '@/storage/repositories.ts';
+import { SaveResult } from '@/shared/lib/createRepository.ts';
 
 export interface CreateRecordParams {
   sessionId: string;
@@ -113,4 +115,17 @@ export function filterHistory(
     }
     return true;
   });
+}
+
+/** Newest first; keeps at most MAX_HISTORY_RECORDS (moved from storage/storageApi in Phase 9). */
+export const MAX_HISTORY_RECORDS = 200;
+
+export function appendHistoryRecord(record: HistoryRecord): HistoryRecord[] {
+  const updated = [record, ...historyRepository.load()].slice(0, MAX_HISTORY_RECORDS);
+  historyRepository.save(updated);
+  return updated;
+}
+
+export function clearHistory(): SaveResult {
+  return historyRepository.save([]);
 }

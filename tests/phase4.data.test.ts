@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createRepository, SCHEMA_VERSIONS_KEY } from '@/shared/lib/createRepository.ts';
 import { subscribeOperatorNotices, OperatorNotice } from '@/shared/notices/operatorNotices.ts';
-import { loadContestants, saveContestants, loadQuestions, saveQuestions, exportHistoryAsCSV, STORAGE_KEYS } from '@/storage/storageApi.ts';
+import { STORAGE_KEYS, contestantsRepository, questionsRepository } from '@/storage/repositories.ts';
 import { exportHistoryToCSV } from '@/features/history/historyManager.ts';
 import { toCsvCell } from '@/shared/lib/csv.ts';
 import { sanitizeFontFamily, resolveFontFamily } from '@/features/appearance/typography.ts';
@@ -92,10 +92,10 @@ describe('createRepository', () => {
 
 describe('B7 through the storage facade', () => {
   it('deleting every contestant no longer brings back the sample data', () => {
-    saveContestants([]);
-    expect(loadContestants()).toEqual([]);
-    saveQuestions([]);
-    expect(loadQuestions()).toEqual([]);
+    contestantsRepository.save([]);
+    expect(contestantsRepository.load()).toEqual([]);
+    questionsRepository.save([]);
+    expect(questionsRepository.load()).toEqual([]);
   });
 });
 
@@ -142,14 +142,13 @@ describe('S2: CSV formula injection', () => {
     expect(toCsvCell('สมชาย')).toBe('"สมชาย"');
   });
 
-  it('applies to both history exports', () => {
+  it('applies to the history export', () => {
     const record = {
       id: 'h1', timestamp: 0, sessionId: 's', round: 'intro', contestantId: 'c', contestantName: '=1+1',
       questionId: 'q', questionText: 'Q', category: 'rain', timerConfiguredMs: 60000, timerUsedMs: 1000,
       isTimeout: false, result: 'completed'
     } as HistoryRecord;
     expect(exportHistoryToCSV([record])).toContain(`"'=1+1"`);
-    expect(exportHistoryAsCSV([record])).toContain(`"'=1+1"`);
   });
 });
 
@@ -164,7 +163,7 @@ describe('S6: custom font name', () => {
 
 describe('storage keys are unchanged', () => {
   it('still writes the same keys as before Phase 4', () => {
-    saveQuestions([q('a')]);
+    questionsRepository.save([q('a')]);
     expect(localStorage.getItem(STORAGE_KEYS.QUESTIONS)).toBe(JSON.stringify([q('a')]));
     expect(STORAGE_KEYS.QUESTIONS).toBe('season_transition_questions');
   });

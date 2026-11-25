@@ -107,21 +107,3 @@ export function selectNextQuestion(options: SelectQuestionOptions): QuestionSele
     fallbackReasons
   };
 }
-
-/**
- * Backward-compatible wrapper for legacy orchestrator calls
- */
-export function selectQuestionFlow(
-  allQuestions: Question[],
-  usedIds: string[],
-  seed: string,
-  _viewport?: { width: number; height: number },
-  forceCategory?: QuestionCategory
-): QuestionSelectionResult | null {
-  return selectNextQuestion({
-    questions: allQuestions,
-    usedQuestionIds: usedIds,
-    category: forceCategory,
-    seed
-  });
-}

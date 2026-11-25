@@ -1,7 +1,7 @@
 /** QuestionBankDashboard: props, state and handlers (Phase 6 split; body moved unchanged from QuestionBankDashboard.tsx). */
 import React, { useState, useMemo, useRef } from 'react';
 import { Question, QuestionCategory, QuestionDifficulty } from '@/types/question.ts';
-import { exportQuestionsAsJSON } from '@/storage/storageApi.ts';
+import { exportQuestionsAsJSON } from '@/features/questions/importQuestions.ts';
 import { useQuestionImport } from '@/features/questions/QuestionImportDialog.tsx';
 
 export interface QuestionBankDashboardProps {
