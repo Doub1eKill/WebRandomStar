@@ -1,11 +1,11 @@
 # 🔄 Project Hand-Off Summary
-> Generated: 2026-11-25 (อัปเดตหลังจบ Phase 9)
+> Generated: 2026-11-25 (อัปเดตหลังจบ Phase 10)
 
 ## 1. [Project Overview & Tech Stack]
 
 **WebRandomStar / Season Transition Quiz (เวอร์ชัน 3.0 "Royal Word Spin")**: เว็บสุ่มคำถามสำหรับเวทีประกวดดาว–เดือน ขึ้นจอโปรเจกเตอร์ ตัวเว็บสุ่ม "คำสำคัญ" ด้วยวงล้อหมุนก่อน แล้วเปิดคำถามในหมวดเดียวกัน มีตัวจับเวลา ประวัติ เพลงประกอบ และหน้าควบคุมระยะไกลในอีกหน้าต่าง
 
-- **Stack:** React 19, TypeScript ~5.7, Vite 6, Vitest 3 + happy-dom, react-router 7 (`HashRouter`), lucide-react, `vgpu` (WebGPU สำหรับพื้นหลัง AeroShards ซึ่งโหลดแบบ lazy)
+- **Stack:** React 19, TypeScript ~5.7, Vite 6, Vitest 4 + happy-dom 21, react-router 7 (`HashRouter`), lucide-react, `vgpu` (WebGPU สำหรับพื้นหลัง AeroShards ซึ่งโหลดแบบ lazy)
 - **ไม่มี backend:** ข้อมูลเก็บใน localStorage ส่วนไฟล์เพลงเก็บใน IndexedDB หน้าต่างต่าง ๆ ซิงก์กันผ่าน `BroadcastChannel`
 - **Repo:**
   - โคลนจาก `peak822/WebRandomStar` (commit ฐาน `0885cd9`) มาไว้ที่ `C:\Star` บน Windows
@@ -36,6 +36,7 @@
 | 7 | `a5b8fbb` | ขอบเขต Targeted: แยก `index.css` เป็น 15 ไฟล์ตามลำดับ cascade (`app/styles.css`) และ CSS ที่ build ออกมาเหมือนเดิมทุกไบต์ (A6), token สี `--ui-*` + `shared/ui` (`SettingGroup`, `ModeCard`, `ui.css`) ทำให้ inline style ลดจาก 574 เหลือ 445 จุด (PF11), drawer กับหน้า Live ใช้ `ControlCard` + `QuizModeToggle` ร่วมกันแต่มี variant แยกหน้าตาของแต่ละฝั่ง (`LivePage` 466 → 182 บรรทัด), ปุ่มหน้าตรวจสอบการนำเข้าไม่เบียดกันบนจอแคบแล้ว เช็กด้วย computed-style ทุก property ใน 8 หน้าควบคุม, เวที และ drawer/Live หลายสถานะ ผลคือเหมือนเดิม |
 | 8 | `75f2eb2` | ฟอนต์ self-host ผ่าน `@fontsource` (OFL) ใช้น้ำหนักเดียวกับ Google Fonts เดิม และเอาลิงก์ Google ออก (PF10), preset `amoria`/`verve` ใช้ Playfair Display / Cinzel Decorative แทน ส่วน id เหมือนเดิม (B12, Q4), `public/leaf.svg` (favicon), CSP ใส่ตอน build ผ่าน plugin ใน `vite.config.ts` (S5) ทดสอบบน `vite preview` แล้ว: ทุก request ไปแค่ localhost และไม่มี CSP violation |
 | 9 | `dc1ed4c` | Q3: ลบ dead code D1–D4 (3 คอมโพเนนต์เล่าเรื่อง + `storytelling.css`, `useTimer`, `selectQuestionFlow`, state เก่า 6 ตัว, ระบบฝน/หยดน้ำ/ใบไม้และเสียงของมัน) และ PF8, D7, ลบ wrapper `useStageSync` (StagePage ใช้ `SessionProvider` โดยตรง) และ facade `storageApi` (ย้ายตรรกะไปไว้กับฟีเจอร์), ESLint ทุกกฎเป็น error, README + PROJECT_SUMMARY เขียนใหม่ให้ตรงกับ v3 |
+| 10 | `0bb5808` | S9: vite 6.4.3 → 6.4.6, vitest 3 → **4.1.12** (เลิกใช้ tinypool), happy-dom 20 → **21.0.4**, `overrides` บังคับ `@modelcontextprotocol/server` เป็น `^2.4.0` (`vgpu` 0.5.0 และ 0.6.0 ล็อก 2.0.0 ไว้ จึงไม่อัปเกรด vgpu), zod และ source-map-js อัปเดตใน lockfile, `allowScripts` อนุญาตแค่ `esbuild` (deny `webgpu`, `@vgpu/adapter-node`), `npm audit` จาก 9 รายการ (critical 2, high 6) เหลือ **0** ส่วน bundle เหมือนเดิม (`index-B-H4j1M7.js` 403 KB) |
 
 **ตัวเลขล่าสุด:**
 - เทสต์ผ่าน **273/273** (42 ไฟล์ เพราะลบเทสต์ LeafSystem), **lint 0 ปัญหา ทุกกฎเป็น error**
@@ -54,12 +55,12 @@
 
 ## 3. [Current Task & Blockers]
 
-- **สถานะ:** Phase 9 เสร็จ commit และ push แล้ว **รอผู้ใช้อนุมัติก่อนเริ่ม Phase 10**
-- **Phase ถัดไป (10): Dependencies (S9)**
-  - อัปเดต `vite`, `vitest`, `happy-dom` เป็นเวอร์ชันที่แก้ช่องโหว่แล้ว แล้วรันเทสต์ทั้งหมด
-  - `vgpu` ดึง `@modelcontextprotocol/server` ติดมา ให้หาเวอร์ชันใหม่ หรือใช้ `overrides` (โค้ดนี้ไม่ได้อยู่ใน bundle จึงเสี่ยงแค่ฝั่ง dev/supply chain)
-  - อนุมัติ install script เฉพาะแพ็กเกจที่จำเป็น (`esbuild`) และ `npm audit` ต้องไม่เหลือ critical/high
-  - การเปลี่ยนเวอร์ชัน dependency เป็นการติดตั้งแพ็กเกจใหม่ ให้บอกผู้ใช้ว่าจะอัปเดตอะไรบ้างก่อน
+- **สถานะ:** Phase 10 เสร็จ commit และ push แล้ว **รอผู้ใช้อนุมัติก่อนเริ่ม Phase 11**
+- **Phase ถัดไป (11): ตรวจรับ** (Phase สุดท้าย)
+  - `npm run lint`, `npm test` และ `npm run build` ต้องผ่าน
+  - เทียบตัวชี้วัดในข้อ 2 ของแผนกับ baseline (`docs/superpowers/plans/2026-11-24-baseline.md`)
+  - ทดสอบจริงแบบเปิดสองหน้าต่าง (เวที + `#/control`): สุ่มครบรอบทั้งสองโหมด, จับเวลาจนหมด (เสียงดังครั้งเดียว), แก้รายชื่อจากรีโมตแล้วเวทีเปลี่ยนตาม, อัปโหลดเพลงแล้วรีโหลดแล้วยังเล่นได้, เปลี่ยน phase เร็ว ๆ แล้วเพลงไม่ซ้อน, รีโหลดกลางแอนิเมชัน, สลับพื้นหลัง WebGPU ↔ Canvas, นำเข้า JSON ที่ผิดรูปแบบ, ใช้งานแบบออฟไลน์
+  - ไล่เช็กทุกรายการใน Master Fix List (ข้อ 1) ว่าแก้แล้ว หรือระบุเหตุผลที่ไม่แก้
 - **ไฟล์ที่ยังใหญ่ (ตั้งใจเหลือไว้):**
   - `AeroShards.tsx` 730: effect WebGPU ก้อนเดียวที่แชร์ state ผ่าน closure
   - `shaders.ts` 666: WGSL
@@ -73,7 +74,10 @@
   - การ์ดของ drawer กับหน้า Live ใช้ `ControlCard`/`QuizModeToggle` ร่วมกันแล้ว แต่ข้อความปุ่ม, icon และเงื่อนไข disabled ของ pause/skip ต่างกันมาแต่เดิม จึงยังไม่ได้รวม เพราะถ้ารวมพฤติกรรมของหน้าใดหน้าหนึ่งจะเปลี่ยน
   - เบราว์เซอร์จะหน่วง timer ในแท็บที่ถูกซ่อน จึงควรเปิดหน้าเวทีไว้ในหน้าต่างที่มองเห็นได้ ปุ่ม popout เปิดรีโมตเป็นหน้าต่างแยกอยู่แล้ว และระบบเตือนผู้ควบคุมเมื่อหน้าเวทีถูกซ่อน
   - **state เก่าของ v2** (`rain`, `water-drop`, `mist`, `wind`, `leaf`, `sky-clear`) คือลำดับเวทีแบบเล่าเรื่องฤดูก่อนจะมีวงล้อคำ ใช้จริงจนถึง commit `179d876` (15 ก.ย. ในโปรเจกต์ต้นฉบับ) หลังจากนั้นเข้าถึงไม่ได้อีก และลบไปใน Phase 9 ถ้าจะเอากลับมา โค้ดเดิมอยู่ที่ commit ฐาน `0885cd9` เช่น `git show 0885cd9:src/components/Stage/canvas/LeafSystem.ts`
-  - `npm install` เตือนเรื่อง install scripts (`esbuild`, `webgpu`, `@vgpu/adapter-node`) และ `npm audit` ยังเจอช่องโหว่ ซึ่งจะแก้ใน Phase 10
+  - **install scripts:** `package.json` → `allowScripts` อนุมัติ `esbuild@0.25.12` แบบระบุเวอร์ชัน ถ้า esbuild เปลี่ยนเวอร์ชัน (เช่นตอนอัปเดต vite) ต้องรัน `npm install-scripts approve esbuild` ใหม่ ส่วน `webgpu` และ `@vgpu/adapter-node` ถูก deny เพราะเป็น native adapter ของ Node ที่เว็บไม่ได้ใช้ (CI ใช้ npm 10 ซึ่งไม่รู้จัก `allowScripts` จึงรัน script ทั้งหมดเหมือนเดิม)
+  - **`overrides` ของ `@modelcontextprotocol/server`:** ถ้า `vgpu` ออกเวอร์ชันที่ไม่ล็อก 2.0.0 แล้ว ให้ลบ override ออก
+  - **Vitest 4:** ถ้ามี `console.*` (เช่นคำเตือน act ของ React) ที่ยังส่งไม่เสร็จตอน worker ปิด จะนับเป็น error (`EnvironmentTeardownError ... onUserConsoleLog`) เทสต์ที่ mount หน้าควบคุมต้องรอ async (IndexedDB ของคลังเพลง) ให้เสร็จใน `act()` ก่อน unmount (ดู `afterEach` ใน `tests/routing.test.tsx`)
+  - **happy-dom 21** ไม่โหลด stylesheet ภายนอกเป็นค่าเริ่มต้น (เทสต์จึงไม่ออกเน็ต) และ `vite.config.ts` → `test.environmentOptions` ตั้ง `handleDisabledFileLoadingAsSuccess` ไว้ เพื่อไม่ให้พิมพ์ DOMException
 
 ## 4. [Key Context & Code Snippets]
 
@@ -161,12 +165,13 @@ export const STORAGE_KEYS = {
 (push ไปที่ origin = github.com/Doub1eKill/WebRandomStar, มี draft PR #1 ที่เปิด Auto-fix ไว้)
 อ่านไฟล์เหล่านี้ก่อนเริ่ม:
 1) Handoff.md (ฉบับล่าสุดเสมอ; สำเนาตามวันที่อยู่ใน docs/handoff-summary-*.md)
-2) docs/superpowers/plans/2026-11-24-architecture-refactor.md (Phase 0–9 ติ๊กครบแล้ว)
+2) docs/superpowers/plans/2026-11-24-architecture-refactor.md (Phase 0–10 ติ๊กครบแล้ว)
 3) docs/superpowers/plans/2026-11-24-baseline.md
 
-สถานะ: Phase 9 เสร็จแล้ว รอผู้ใช้อนุมัติ ห้ามเริ่ม Phase 10 เอง ให้ถามผู้ใช้ก่อน
+สถานะ: Phase 10 เสร็จแล้ว รอผู้ใช้อนุมัติ ห้ามเริ่ม Phase 11 เอง ให้ถามผู้ใช้ก่อน
 
-เมื่อผู้ใช้สั่งให้ทำต่อ ให้ทำ Phase 10 (Dependencies: S9) ตามแผน และแจ้งรายการแพ็กเกจที่จะอัปเดตก่อนติดตั้ง
+เมื่อผู้ใช้สั่งให้ทำต่อ ให้ทำ Phase 11 (ตรวจรับ) ตามแผน: เทียบตัวชี้วัดกับ baseline, ทดสอบสองหน้าต่างตามรายการ
+และไล่เช็ก Master Fix List ทุกข้อ
 กติกา:
 - ทำทีละ Phase และหยุดรออนุมัติ
 - หน้าตาต้องเหมือนเดิม: เทียบ computed style ก่อน/หลังด้วย .claude/fp.js (หรือ screenshot) ทุกหน้า (เวทีทุก state + #/control ทุกหน้า)

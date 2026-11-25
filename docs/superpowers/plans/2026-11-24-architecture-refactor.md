@@ -326,10 +326,10 @@ store ◀──────────SNAPSHOT (เมื่อ state เปล
 - [x] ตรวจในเบราว์เซอร์ (dev): หน้าควบคุมเชื่อมจอเวทีได้, สั่งหมุนจนถึงคำถามและรีเซ็ตได้, canvas วาดครบ และไม่มี error ใน console ผลรวม: เทสต์ 273 ตัว (ลบเทสต์ LeafSystem 4 ตัว) และ JS ที่จอเวทีโหลดลดจาก 417 เป็น 403 KB (gzip 123 KB)
 
 ### Phase 10: Dependencies (S9)
-- [ ] อัปเดต `vite`, `vitest`, `happy-dom` เป็นเวอร์ชันที่แก้ช่องโหว่แล้ว แล้วรันเทสต์ทั้งหมด
-- [ ] `vgpu`: หาเวอร์ชันใหม่ที่ไม่ดึง `@modelcontextprotocol/server` ติดมา ถ้าไม่มี ให้ใช้ `overrides` ใน `package.json` บังคับเวอร์ชันที่แก้แล้ว หรือพิจารณาเขียน WebGPU wrapper เอง (โค้ด MCP ไม่ได้ติดไปกับ bundle จึงเป็นความเสี่ยงเฉพาะฝั่ง dev/supply chain)
-- [ ] เปิด install scripts เฉพาะแพ็กเกจที่จำเป็น (`esbuild`) ด้วย `npm install-scripts approve`
-- [ ] `npm audit` ต้องไม่เหลือ critical/high
+- [x] อัปเดต `vite`, `vitest`, `happy-dom` เป็นเวอร์ชันที่แก้ช่องโหว่แล้ว แล้วรันเทสต์ทั้งหมด (vite 6.4.6, vitest 4.1.12, happy-dom 21.0.4)
+- [x] `vgpu`: หาเวอร์ชันใหม่ที่ไม่ดึง `@modelcontextprotocol/server` ติดมา ถ้าไม่มี ให้ใช้ `overrides` ใน `package.json` บังคับเวอร์ชันที่แก้แล้ว หรือพิจารณาเขียน WebGPU wrapper เอง (โค้ด MCP ไม่ได้ติดไปกับ bundle จึงเป็นความเสี่ยงเฉพาะฝั่ง dev/supply chain) — 0.6.0 ยังล็อก 2.0.0 จึงใช้ `overrides` `^2.4.0`
+- [x] เปิด install scripts เฉพาะแพ็กเกจที่จำเป็น (`esbuild`) ด้วย `npm install-scripts approve` (`webgpu`, `@vgpu/adapter-node` ถูก deny)
+- [x] `npm audit` ต้องไม่เหลือ critical/high — เหลือ 0 รายการ
 
 ### Phase 11: ตรวจรับ
 - [ ] `npm run lint`, `npm test` และ `npm run build` ผ่าน
