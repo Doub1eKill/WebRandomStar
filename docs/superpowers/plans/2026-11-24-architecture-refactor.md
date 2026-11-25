@@ -301,11 +301,11 @@ store ◀──────────SNAPSHOT (เมื่อ state เปล
 - [x] เช็กหน้าตา: ใช้ **computed-style fingerprint** ทุก element รวม `::before`/`::after` ทุก property ก่อนและหลังแก้ ที่ 1280×800 ผลคือเหมือนเดิมทุก property ใน 8 หน้าควบคุม, เวที (เปิดและปิด drawer), drawer 4 สถานะ (idle / keyword / STOP SPIN / hover) และหน้า Live 5 สถานะ (idle / keyword / STOP SPIN / running / paused) ส่วนที่ต่างกันมีแค่ความกว้างที่ขึ้นกับเนื้อหา (แถบ progress เพลง และป้ายคำ/ID ที่สุ่มได้) snapshot ของ panel 12 ตัวที่ต้องอัปเดต ถ้าตัด `style`/`class` ออกแล้วจะเหมือนเดิมทุกตัวอักษร
 
 ### Phase 8: Assets, ฟอนต์ และการใช้งานแบบออฟไลน์ (B12, PF10, S5)
-- [ ] สร้าง `public/` + `leaf.svg`
-- [ ] PF10: self-host Cinzel/Outfit/Prompt (woff2) + `preload` + `font-display: swap` แล้วเอา `<link>` ไป Google Fonts ออก
-- [ ] B12: ใส่ฟอนต์ Amoria/Verve หรือเอา preset ออก (ข้อ Q4)
-- [ ] S5: meta CSP
-- [ ] ทดสอบแบบตัดอินเทอร์เน็ต (DevTools → Offline): ทุกหน้าต้องทำงานและฟอนต์ต้องขึ้นครบ
+- [x] สร้าง `public/` + `leaf.svg` (ไอคอนใบไม้วาดใหม่ในโทนสีของธีม) favicon จึงไม่เป็น 404 อีกแล้ว
+- [x] PF10: self-host ฟอนต์ผ่าน `@fontsource/*` 5.3.0 (OFL-1.1) ใน `src/shared/styles/fonts.css` ซึ่งเป็นไฟล์แรกของ `app/styles.css` ใช้น้ำหนักเดียวกับที่ลิงก์ Google Fonts เคยโหลดทุกตัว (Cinzel 600–900, Outfit 300–800, Prompt 300–700 + 300 italic) มี subset ภาษาไทยและใช้ `font-display: swap` แล้วเอาลิงก์ Google Fonts ออกจาก `index.html` ส่วน **preload ไม่ได้ทำ** เพราะฟอนต์มาจาก origin เดียวกันแล้ว (ไม่ต้อง DNS/TLS เพิ่ม) และแต่ละ subset โหลดตาม `unicode-range` ถ้า preload ไฟล์ที่เดาไว้ล่วงหน้าอาจไม่ได้ใช้ CSS หลักโตขึ้นจาก gzip 12.8 เป็น 15.4 KB และมีไฟล์ฟอนต์ 1.1 MB (woff2) แต่เบราว์เซอร์โหลดแค่ไฟล์ที่ใช้จริง (หน้าเวทีตอนเปิด: 7 ไฟล์)
+- [x] B12 (Q4): Amoria (demo ใช้ได้แค่ส่วนตัว) และ Verve (ไม่มีใบอนุญาตเชิงพาณิชย์ที่ยืนยันได้) ไม่มีต้นทางที่ดาวน์โหลดได้อย่างถูกต้อง ผู้ใช้จึงเลือกใช้ฟอนต์ OFL หน้าตาใกล้เคียงแทน: preset `amoria` → **Playfair Display**, `verve` → **Cinzel Decorative** โดย id ยังเหมือนเดิม (การตั้งค่าที่บันทึกไว้ใช้ได้ต่อ) แต่ชื่อและผู้ออกแบบบนการ์ดเปลี่ยนตามฟอนต์จริง ลบ `@font-face` ที่ชี้ไป `/fonts/Amoria|Verve.*` (404) ออกแล้ว
+- [x] S5: CSP ใส่ผ่าน plugin ใน `vite.config.ts` เฉพาะตอน build (dev server ต้องใช้ inline script ของ React Fast Refresh): `script-src 'self'`, Google Fonts อนุญาตเฉพาะสำหรับฟอนต์ custom, `media-src *` เพราะเพิ่มเพลงจาก URL ไหนก็ได้ และ `object-src 'none'` (`frame-ancestors` ใส่ใน meta ไม่ได้ ต้องตั้งที่ server)
+- [x] ทดสอบ build จริง (`vite preview`): ทุก request ไปที่ `localhost` เท่านั้น ฟอนต์ (รวมภาษาไทย) และ favicon โหลดครบ ไม่มี CSP violation บนเวที, 8 หน้าควบคุม และพื้นหลัง AeroShards (WebGPU) จึงใช้งานออฟไลน์ได้ ส่วนการตัดเน็ตจริงด้วย DevTools ทำใน browser pane ไม่ได้ จึงยืนยันจากรายการ request แทน
 
 ### Phase 9: Cleanup และเอกสาร (D1–D4, D7, PF8, O1, O2)
 - [ ] ลบโค้ดใน D1–D4 พร้อมเทสต์ที่ผูกกับโค้ดนั้น (`tests/leafSystem.test.ts`) (ข้อ Q3)

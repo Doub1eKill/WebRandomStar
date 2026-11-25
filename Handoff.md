@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Generated: 2026-11-25 (อัปเดตหลังจบ Phase 7)
+> Generated: 2026-11-25 (อัปเดตหลังจบ Phase 8)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -34,11 +34,13 @@
 | 6 | `b11c62b` → `1eef097` (4 commits) | ย้าย 68 ไฟล์ไปโครงสร้างตามฟีเจอร์ + alias `@/` (build ได้ไฟล์เหมือนเดิมทุกไบต์), แยก AeroShards (1,785 → 730 บรรทัด), StageCanvas ใช้ตาราง (A8), AudioContext ตัวเดียว + `recipes.ts` (PF9), แยก 4 panel ใหญ่เป็น model + sections (snapshot ตรงกัน 12 สถานะ), ไม่มี `any` เหลือ (A5), ลบ props ที่ไม่ได้ใช้ (A9) |
 
 | B16 (แทรกก่อน Phase 7) | `a279717` | แก้เสียงค้าง: เพลง preset ที่เคยลากโน้ตตัวเดียวยาวตลอด phase เปลี่ยนเป็น arpeggio เบา ๆ (`features/music/presetArpeggio.ts`) ทุกโน้ตมีเวลา stop และเมื่อเลิก mute หรือ volume กลับจาก 0 เพลงจะเล่นต่อ ยืนยันในเบราว์เซอร์แล้วว่าหลัง stop ไม่มีโน้ตใหม่และไม่มี oscillator ค้าง |
-| 7 | (ดู git log) | ขอบเขต Targeted: แยก `index.css` เป็น 15 ไฟล์ตามลำดับ cascade (`app/styles.css`) และ CSS ที่ build ออกมาเหมือนเดิมทุกไบต์ (A6), token สี `--ui-*` + `shared/ui` (`SettingGroup`, `ModeCard`, `ui.css`) ทำให้ inline style ลดจาก 574 เหลือ 445 จุด (PF11), drawer กับหน้า Live ใช้ `ControlCard` + `QuizModeToggle` ร่วมกันแต่มี variant แยกหน้าตาของแต่ละฝั่ง (`LivePage` 466 → 182 บรรทัด), ปุ่มหน้าตรวจสอบการนำเข้าไม่เบียดกันบนจอแคบแล้ว เช็กด้วย computed-style ทุก property ใน 8 หน้าควบคุม, เวที และ drawer/Live หลายสถานะ ผลคือเหมือนเดิม |
+| 7 | `a5b8fbb` | ขอบเขต Targeted: แยก `index.css` เป็น 15 ไฟล์ตามลำดับ cascade (`app/styles.css`) และ CSS ที่ build ออกมาเหมือนเดิมทุกไบต์ (A6), token สี `--ui-*` + `shared/ui` (`SettingGroup`, `ModeCard`, `ui.css`) ทำให้ inline style ลดจาก 574 เหลือ 445 จุด (PF11), drawer กับหน้า Live ใช้ `ControlCard` + `QuizModeToggle` ร่วมกันแต่มี variant แยกหน้าตาของแต่ละฝั่ง (`LivePage` 466 → 182 บรรทัด), ปุ่มหน้าตรวจสอบการนำเข้าไม่เบียดกันบนจอแคบแล้ว เช็กด้วย computed-style ทุก property ใน 8 หน้าควบคุม, เวที และ drawer/Live หลายสถานะ ผลคือเหมือนเดิม |
+| 8 | (ดู git log) | ฟอนต์ self-host ผ่าน `@fontsource` (OFL) ใช้น้ำหนักเดียวกับ Google Fonts เดิม และเอาลิงก์ Google ออก (PF10), preset `amoria`/`verve` ใช้ Playfair Display / Cinzel Decorative แทน ส่วน id เหมือนเดิม (B12, Q4), `public/leaf.svg` (favicon), CSP ใส่ตอน build ผ่าน plugin ใน `vite.config.ts` (S5) ทดสอบบน `vite preview` แล้ว: ทุก request ไปแค่ localhost และไม่มี CSP violation |
 
 **ตัวเลขล่าสุด:**
 - เทสต์ผ่าน **277/277** (43 ไฟล์), **lint 0 errors / 0 warnings**
-- inline style **445** จุด (เดิม 574), CSS หลัก 63.9 KB (gzip 12.8 KB) ส่วน CSS ของหน้าควบคุมบางส่วนโหลดพร้อม lazy chunk
+- inline style **445** จุด (เดิม 574), CSS หลัก 92.6 KB (gzip 15.4 KB รวม `@font-face` ของฟอนต์ที่ self-host) ส่วน CSS ของหน้าควบคุมบางส่วนโหลดพร้อม lazy chunk
+- ไม่มี request ออกไปภายนอกตอนใช้งานปกติ (ยกเว้นตอนผู้ใช้ตั้งฟอนต์ custom ของ Google หรือเพิ่มเพลงจาก URL)
 - JS ที่จอเวทีโหลดตอนเปิด **416 KB (gzip 126 KB)** เทียบกับ baseline 751 KB (gzip 208 KB)
 - Draft PR: [Doub1eKill/WebRandomStar#1](https://github.com/Doub1eKill/WebRandomStar/pull/1) เปิด Auto-fix ไว้แล้ว
 
@@ -52,12 +54,12 @@
 
 ## 3. [Current Task & Blockers]
 
-- **สถานะ:** Phase 7 เสร็จ commit และ push แล้ว **รอผู้ใช้อนุมัติก่อนเริ่ม Phase 8**
-- **Phase ถัดไป (8): Assets, ฟอนต์ และการใช้งานแบบออฟไลน์ (B12, PF10, S5)**
-  - สร้าง `public/` + `leaf.svg` (favicon ตอนนี้ 404)
-  - self-host Cinzel/Outfit/Prompt (woff2) + preload + `font-display: swap` แล้วเอาลิงก์ Google Fonts ออก
-  - B12 (Q4): แทน Amoria/Verve ด้วย Playfair Display / Cinzel Decorative (@fontsource, OFL)
-  - meta CSP และทดสอบแบบออฟไลน์ทุกหน้า
+- **สถานะ:** Phase 8 เสร็จ commit และ push แล้ว **รอผู้ใช้อนุมัติก่อนเริ่ม Phase 9**
+- **Phase ถัดไป (9): Cleanup และเอกสาร (D1–D4, D7, PF8, O1, O2)**: Q3 = ลบได้เลย
+  - ลบ dead code D1–D4 พร้อมเทสต์ที่ผูกกับโค้ดนั้น (`LeafSystem`, `useTimer`, `pages/control/legacyRemote.css`, …)
+  - D7: เช็กค่าเริ่มต้นของหมวดใน QuestionManagerModal
+  - ลบ wrapper ชั่วคราว (`features/session/useStageSync.ts`, `storage/storageApi.ts`)
+  - ESLint warn → error, เขียน README / PROJECT_SUMMARY ใหม่ให้ตรงกับเวอร์ชัน 3.0 (ใส่เรื่อง CSP ที่ใช้เฉพาะตอน build และเครดิตฟอนต์ OFL ด้วย)
 - **ไฟล์ที่ยังใหญ่ (ตั้งใจเหลือไว้):**
   - `AeroShards.tsx` 730: effect WebGPU ก้อนเดียวที่แชร์ state ผ่าน closure
   - `shaders.ts` 666: WGSL
@@ -66,7 +68,8 @@
 - **คำถามที่ยังค้าง:**
   - ไม่มี (Q3 และ Q4 ได้คำตอบแล้ว ดูหัวข้อการตัดสินใจของผู้ใช้)
 - **ข้อควรรู้:**
-  - **ลำดับ CSS สำคัญ:** `src/app/styles.css` เป็นรายการ `@import` ตามลำดับ cascade เดิม ห้ามสลับลำดับโดยไม่เช็ก computed style ไฟล์ที่ import จากคอมโพเนนต์ (lazy chunk) จะโหลดหลัง CSS หลักเสมอ จึงใช้ได้เฉพาะกับ CSS ที่ควรอยู่ท้าย cascade
+  - **CSP ใส่แค่ตอน build** (`vite.config.ts` → `CONTENT_SECURITY_POLICY`): ถ้าเพิ่มฟีเจอร์ที่โหลดของจาก host อื่น ต้องแก้ policy และทดสอบด้วย `npx vite build && npx vite preview` (ตั้งไว้ใน `.claude/launch.json` ชื่อ `vite-preview` port 4173) เพราะ dev server ไม่มี CSP จึงไม่เห็นปัญหานี้
+- **ลำดับ CSS สำคัญ:** `src/app/styles.css` เป็นรายการ `@import` ตามลำดับ cascade เดิม ห้ามสลับลำดับโดยไม่เช็ก computed style ไฟล์ที่ import จากคอมโพเนนต์ (lazy chunk) จะโหลดหลัง CSS หลักเสมอ จึงใช้ได้เฉพาะกับ CSS ที่ควรอยู่ท้าย cascade
   - เครื่องมือเช็กหน้าตา: `.claude/fp.js` (ไม่ได้ commit) ใช้ใน dev server ด้วย `await import('/.claude/fp.js')` แล้วเรียก `save(name, selector)` หรือ `compare(name, selector)` เพื่อบันทึก computed style ทุก property ลง IndexedDB แล้วเทียบ ตัวเครื่องมือจะทำ transition ให้จบก่อนวัด และ rewind keyframe animation ไปที่ t=0 ข้อควรระวัง: แท็บต้องอยู่หน้า (rAF ไม่ทำงานในแท็บพื้นหลัง)
   - การ์ดของ drawer กับหน้า Live ใช้ `ControlCard`/`QuizModeToggle` ร่วมกันแล้ว แต่ข้อความปุ่ม, icon และเงื่อนไข disabled ของ pause/skip ต่างกันมาแต่เดิม จึงยังไม่ได้รวม เพราะถ้ารวมพฤติกรรมของหน้าใดหน้าหนึ่งจะเปลี่ยน
   - เบราว์เซอร์จะหน่วง timer ในแท็บที่ถูกซ่อน จึงควรเปิดหน้าเวทีไว้ในหน้าต่างที่มองเห็นได้ ปุ่ม popout เปิดรีโมตเป็นหน้าต่างแยกอยู่แล้ว และระบบเตือนผู้ควบคุมเมื่อหน้าเวทีถูกซ่อน
@@ -158,12 +161,12 @@ export const STORAGE_KEYS = {
 (push ไปที่ origin = github.com/Doub1eKill/WebRandomStar, มี draft PR #1 ที่เปิด Auto-fix ไว้)
 อ่านไฟล์เหล่านี้ก่อนเริ่ม:
 1) Handoff.md
-2) docs/superpowers/plans/2026-11-24-architecture-refactor.md (Phase 0–7 ติ๊กครบแล้ว)
+2) docs/superpowers/plans/2026-11-24-architecture-refactor.md (Phase 0–8 ติ๊กครบแล้ว)
 3) docs/superpowers/plans/2026-11-24-baseline.md
 
-สถานะ: Phase 7 เสร็จแล้ว รอผู้ใช้อนุมัติ ห้ามเริ่ม Phase 8 เอง ให้ถามผู้ใช้ก่อน (ได้คำตอบ Q3 และ Q4 แล้ว ดูใน Handoff)
+สถานะ: Phase 8 เสร็จแล้ว รอผู้ใช้อนุมัติ ห้ามเริ่ม Phase 9 เอง ให้ถามผู้ใช้ก่อน
 
-เมื่อผู้ใช้สั่งให้ทำต่อ ให้ทำ Phase 8 (Assets, ฟอนต์ และออฟไลน์: B12, PF10, S5) ตามแผน
+เมื่อผู้ใช้สั่งให้ทำต่อ ให้ทำ Phase 9 (Cleanup และเอกสาร: D1–D4, D7, PF8, O1, O2) ตามแผน (Q3 = ลบ dead code ได้เลย)
 กติกา:
 - ทำทีละ Phase และหยุดรออนุมัติ
 - หน้าตาต้องเหมือนเดิม: เทียบ computed style ก่อน/หลังด้วย .claude/fp.js (หรือ screenshot) ทุกหน้า (เวทีทุก state + #/control ทุกหน้า)
