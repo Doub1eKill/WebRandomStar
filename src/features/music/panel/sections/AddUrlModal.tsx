@@ -104,10 +104,10 @@ export const AddUrlModal: React.FC<{ m: MusicPanelModel }> = ({ m }) => {
                 }}
               >
                 <option value="none">-- ไม่ผูกช่วงเวที (เปิดเล่นเอง) --</option>
-                <option value="ambient">🏠 ช่วงพักเวที (Idle / Ambient)</option>
-                <option value="spin">⚡ ช่วงหมุนคำสุ่ม (Word Spin)</option>
-                <option value="question">💡 ช่วงคิดคำตอบ (Question / Timer)</option>
-                <option value="answered">🎉 ช่วงตอบเสร็จสิ้น (Celebration)</option>
+                <option value="ambient">ช่วงพักเวที (Idle / Ambient)</option>
+                <option value="spin">ช่วงหมุนคำสุ่ม (Word Spin)</option>
+                <option value="question">ช่วงคิดคำตอบ (Question / Timer)</option>
+                <option value="answered">ช่วงตอบเสร็จสิ้น (Celebration)</option>
               </select>
             </div>
 

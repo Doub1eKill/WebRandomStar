@@ -2,6 +2,7 @@
  * Remote "Contestants" page (Phase 5): the former ControlCenter "contestants" tab, unchanged markup.
  */
 import React, { useState } from 'react';
+import { UserPlus } from 'lucide-react';
 import { useSession, useSessionActions } from '@/features/session/SessionProvider.tsx';
 import { useContestants } from '@/storage/useRepository.ts';
 import { contestantsRepository } from '@/storage/repositories.ts';
@@ -19,7 +20,7 @@ export const ContestantsPage: React.FC = () => {
         <div className="ctl-page-head">
           <h2 className="ctl-page-title">รายชื่อผู้เข้าแข่งขันทั้งหมด ({contestants.length} คน)</h2>
           <button className="btn-primary-glow" onClick={() => setIsContestantModalOpen(true)}>
-            + จัดการ / เพิ่มรายชื่อผู้เข้าแข่งขัน
+            <UserPlus size={16} aria-hidden="true" /> จัดการ / เพิ่มรายชื่อผู้เข้าแข่งขัน
           </button>
         </div>
         <div className="ctl-contestant-grid">

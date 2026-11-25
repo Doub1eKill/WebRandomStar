@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Check, Sparkles, X } from 'lucide-react';
 import { KeywordItem } from '@/types/word.ts';
 import { CATEGORY_CONFIGS } from '@/types/question.ts';
 
@@ -77,10 +78,10 @@ export const WordManagerModal: React.FC<WordManagerModalProps> = ({
       <div className="modal-panel glassmorphism">
         <div className="modal-header">
           <div className="modal-title-wrap">
-            <span className="modal-icon">✦</span>
+            <span className="modal-icon" aria-hidden="true"><Sparkles size={22} aria-hidden="true" /></span>
             <h3 className="modal-title">{word ? 'แก้ไขคำสำคัญ (Edit Keyword)' : 'เพิ่มคำสำคัญใหม่ (New Keyword)'}</h3>
           </div>
-          <button className="btn-close-modal" onClick={onClose}>✕</button>
+          <button className="btn-close-modal" onClick={onClose} aria-label="ปิด"><X size={18} aria-hidden="true" /></button>
         </div>
 
         <form onSubmit={handleSubmit} className="modal-body">
@@ -106,7 +107,7 @@ export const WordManagerModal: React.FC<WordManagerModalProps> = ({
             >
               {Object.values(CATEGORY_CONFIGS).map(cat => (
                 <option key={cat.id} value={cat.id}>
-                  {cat.icon} {cat.name} ({cat.subtitle})
+                  {cat.name} ({cat.subtitle})
                 </option>
               ))}
             </select>
@@ -147,7 +148,7 @@ export const WordManagerModal: React.FC<WordManagerModalProps> = ({
 
           <div className="modal-footer">
             <button type="button" className="btn-secondary" onClick={onClose}>ยกเลิก</button>
-            <button type="submit" className="btn-primary">บันทึกคำสำคัญ ✓</button>
+            <button type="submit" className="btn-primary"><Check size={16} aria-hidden="true" /> บันทึกคำสำคัญ</button>
           </div>
         </form>
       </div>

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import { CategoryIcon } from '@/shared/ui/icons.tsx';
 import { KeywordItem } from '@/types/word.ts';
 import { Question, CATEGORY_CONFIGS } from '@/types/question.ts';
 import { WordManagerModal } from './WordManagerModal.tsx';
 import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
-import { Search, Plus, RotateCcw, Edit2, Trash2, Key, CheckCircle2, XCircle, Sparkles } from 'lucide-react';
+import { CheckCircle2, Edit2, Key, Plus, RotateCcw, Search, Sparkle, Sparkles, Trash2, XCircle } from 'lucide-react';
 
 interface WordBankDashboardProps {
   words: KeywordItem[];
@@ -101,10 +102,10 @@ export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
           value={selectedCategory}
           onChange={e => setSelectedCategory(e.target.value)}
         >
-          <option value="all">✦ ทุกหมวดหมู่ (All Categories)</option>
+          <option value="all">ทุกหมวดหมู่ (All Categories)</option>
           {Object.values(CATEGORY_CONFIGS).map(cat => (
             <option key={cat.id} value={cat.id}>
-              {cat.icon} {cat.name}
+              {cat.name}
             </option>
           ))}
         </select>
@@ -156,7 +157,6 @@ export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
               filteredWords.map(item => {
                 const cat = CATEGORY_CONFIGS[item.category.toLowerCase()] || {
                   name: item.category,
-                  icon: '✨',
                   color: '#38bdf8'
                 };
                 const qCount = getQuestionCountForCategory(item.category);
@@ -176,7 +176,8 @@ export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
                     <td>
                       <div className="word-cell-wrap">
                         <span className="word-main-title" style={{ color: item.color || cat.color }}>
-                          ✦ {item.word}
+                          <Sparkle size={14} aria-hidden="true" />
+                          {item.word}
                         </span>
                         {item.description && (
                           <span className="word-desc-snippet">{item.description}</span>
@@ -185,7 +186,7 @@ export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
                     </td>
                     <td>
                       <span className="cat-badge-chip" style={{ borderColor: `${cat.color}50`, color: cat.color, background: `${cat.color}15` }}>
-                        <span>{cat.icon}</span>
+                        <CategoryIcon category={item.category} size={13} />
                         <span>{cat.name}</span>
                       </span>
                     </td>

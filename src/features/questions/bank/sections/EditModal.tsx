@@ -1,4 +1,5 @@
 import React from 'react';
+import { Pencil, Plus } from 'lucide-react';
 import { QuestionDifficulty } from '@/types/question.ts';
 
 import type { QuestionBankDashboardModel } from '../useQuestionBankDashboardModel.tsx';
@@ -38,7 +39,7 @@ export const EditModal: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
             }}
           >
             <h3 style={{ margin: 0, color: '#f8fafc', fontSize: '1.15rem' }}>
-              {isAdding ? '➕ เพิ่มคำถามใหม่' : '✏️ แก้ไขคำถาม'}
+              <span className="ui-ico-label">{isAdding ? <><Plus size={18} aria-hidden="true" />เพิ่มคำถามใหม่</> : <><Pencil size={17} aria-hidden="true" />แก้ไขคำถาม</>}</span>
             </h3>
 
             <div>

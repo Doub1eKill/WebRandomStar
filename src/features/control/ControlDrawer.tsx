@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { Bell, CircleCheck, Crosshair, Crown, FastForward, Flag, FolderOpen, GalleryVerticalEnd, Gamepad2, Library, MonitorUp, Music, OctagonX, Pause, Pin, Play, RotateCcw, Sparkle, Sparkles, Timer, Trash2, TriangleAlert, Trophy, Upload, User, Users, Volume2, VolumeX, X, Zap } from 'lucide-react';
 import { SessionState } from '@/types/session.ts';
 import { Contestant, QuestionCategory } from '@/types/question.ts';
 import { KeywordItem } from '@/types/word.ts';
@@ -129,25 +130,25 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
         {/* Drawer Header */}
         <div className="drawer-header">
           <div className="drawer-title-wrap">
-            <span className="drawer-icon">👑</span>
+            <span className="drawer-icon" aria-hidden="true"><Crown size={22} aria-hidden="true" /></span>
             <div>
               <h2 className="drawer-title">แผงควบคุมผู้ดำเนินรายการ</h2>
               <p className="drawer-subtitle">Stage Controller & Settings</p>
             </div>
           </div>
-          <button className="btn-close-drawer" onClick={onClose} title="ปิด (Esc)">✕</button>
+          <button className="btn-close-drawer" onClick={onClose} title="ปิด (Esc)" aria-label="ปิด (Esc)"><X size={18} aria-hidden="true" /></button>
         </div>
 
         <div className="drawer-body">
           {/* Section 0: Competition Flow Mode Quick Toggle */}
           {onSetAppearanceSettings && (
-            <ControlCard variant="drawer" title="🏆 รูปแบบการแข่งขัน (Competition Mode)">
+            <ControlCard variant="drawer" icon={<Trophy size={15} aria-hidden="true" />} title="รูปแบบการแข่งขัน (Competition Mode)">
               <QuizModeToggle variant="drawer" quizMode={session.appearanceSettings?.quizMode} onChange={controls.setQuizMode} />
             </ControlCard>
           )}
 
           {/* Section 1: Contestant & Round */}
-          <ControlCard variant="drawer" title="👤 ผู้เข้าแข่งขันปัจจุบัน">
+          <ControlCard variant="drawer" icon={<User size={15} aria-hidden="true" />} title="ผู้เข้าแข่งขันปัจจุบัน">
             <div className="select-row">
               <select
                 className="custom-select"
@@ -165,13 +166,14 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                 className="btn-secondary btn-icon-only"
                 onClick={onOpenContestantManager}
                 title="จัดการรายชื่อผู้เข้าแข่งขัน"
+                aria-label="จัดการรายชื่อผู้เข้าแข่งขัน"
               >
-                👥
+                <Users size={16} aria-hidden="true" />
               </button>
             </div>
           </ControlCard>
 
-          <ControlCard variant="drawer" title="🎯 รอบการแข่งขัน">
+          <ControlCard variant="drawer" icon={<Flag size={15} aria-hidden="true" />} title="รอบการแข่งขัน">
             <select
               className="custom-select"
               value={session.selectedRound}
@@ -186,7 +188,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
           </ControlCard>
 
           {/* Section 2: Stage Actions */}
-          <ControlCard variant="drawer" title="⚡ ควบคุมการหมุนคำและเวที">
+          <ControlCard variant="drawer" icon={<Gamepad2 size={15} aria-hidden="true" />} title="ควบคุมการหมุนคำและเวที">
             <div className="actions-grid">
               {controls.isWordSpinning ? (
                 <button
@@ -194,7 +196,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                   style={{ background: 'linear-gradient(135deg, #ef4444, #dc2626)', borderColor: '#f87171' }}
                   onClick={controls.stopSpin}
                 >
-                  🛑 STOP SPIN (หยุดสุ่ม) [Space]
+                  <OctagonX size={16} aria-hidden="true" /> STOP SPIN (หยุดสุ่ม) [Space]
                 </button>
               ) : (
                 <button
@@ -202,7 +204,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                   onClick={() => onStart()}
                   disabled={!isIdle}
                 >
-                  👑 SPIN WORD [Space]
+                  <Crown size={16} aria-hidden="true" /> SPIN WORD [Space]
                 </button>
               )}
 
@@ -211,7 +213,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                 onClick={onPause}
                 disabled={isIdle || isQuestionActive || isAnswered}
               >
-                {session.isPaused ? '▶️ เล่นต่อ' : '⏸️ หยุดชั่วคราว'}
+                {session.isPaused ? <><Play size={15} aria-hidden="true" /> เล่นต่อ</> : <><Pause size={15} aria-hidden="true" /> หยุดชั่วคราว</>}
               </button>
 
               <button
@@ -219,7 +221,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                 onClick={onSkip}
                 disabled={isIdle || isQuestionActive || isAnswered}
               >
-                ⏩ ข้ามไปคำถาม
+                <FastForward size={15} aria-hidden="true" /> ข้ามไปคำถาม
               </button>
 
               <button
@@ -227,21 +229,21 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                 onClick={onMarkAnswered}
                 disabled={!isQuestionActive}
               >
-                ✓ ตอบแล้ว [Enter]
+                <CircleCheck size={15} aria-hidden="true" /> ตอบแล้ว [Enter]
               </button>
 
               <button
                 className="btn-secondary btn-danger-soft"
                 onClick={onReset}
               >
-                🔄 รีเซ็ตเวที (Reset)
+                <RotateCcw size={15} aria-hidden="true" /> รีเซ็ตเวที (Reset)
               </button>
             </div>
           </ControlCard>
 
           {/* Section 3: Word Lock Showcase Phase Toggle */}
           {onSetAppearanceSettings && (
-            <ControlCard variant="drawer" title="🎴 การ์ดคำที่สุ่มได้ (Word Lock Showcase)">
+            <ControlCard variant="drawer" icon={<GalleryVerticalEnd size={15} aria-hidden="true" />} title="การ์ดคำที่สุ่มได้ (Word Lock Showcase)">
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
                 <button
                   className="btn-secondary"
@@ -254,7 +256,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                   }}
                   onClick={() => controls.setShowWordLockPhase(true)}
                 >
-                  ✨ แสดงการ์ดคำ (ON)
+                  <Sparkles size={14} aria-hidden="true" /> แสดงการ์ดคำ (ON)
                 </button>
                 <button
                   className="btn-secondary"
@@ -267,7 +269,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                   }}
                   onClick={() => controls.setShowWordLockPhase(false)}
                 >
-                  ⚡ ข้ามไปคำถาม (OFF)
+                  <Zap size={14} aria-hidden="true" /> ข้ามไปคำถาม (OFF)
                 </button>
               </div>
             </ControlCard>
@@ -275,7 +277,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
 
           {/* Section: Word Spin Audio */}
           {tracks && (
-            <ControlCard variant="drawer" title="🎵 เสียงเพลงช่วงสุ่มคำ (Word Spin Audio)">
+            <ControlCard variant="drawer" icon={<Music size={15} aria-hidden="true" />} title="เสียงเพลงช่วงสุ่มคำ (Word Spin Audio)">
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <select
                   className="custom-select"
@@ -305,7 +307,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                         }
                       }}
                     >
-                      {isPlayingSelected ? '⏸️ หยุดฟัง' : '▶️ ฟังตัวอย่าง'}
+                      {isPlayingSelected ? <><Pause size={14} aria-hidden="true" /> หยุดฟัง</> : <><Play size={14} aria-hidden="true" /> ฟังตัวอย่าง</>}
                     </button>
                   )}
 
@@ -328,7 +330,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                     }}
                     onClick={() => spinFileInputRef.current?.click()}
                   >
-                    + อัปโหลดเสียงสุ่ม
+                    <Upload size={14} aria-hidden="true" /> อัปโหลดเสียงสุ่ม
                   </button>
 
                   {selectedSpinTrack && !selectedSpinTrack.isPreset && onDeleteTrack && (
@@ -343,7 +345,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                         }
                       }}
                     >
-                      🗑️
+                      <Trash2 size={15} aria-hidden="true" />
                     </button>
                   )}
                 </div>
@@ -353,7 +355,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
 
           {/* Section 3: Direct Word Selection */}
           {words.length > 0 && (
-            <ControlCard variant="drawer" title="🎯 สุ่มเจาะจงคำสำคัญ (Direct Word Spin)">
+            <ControlCard variant="drawer" icon={<Crosshair size={15} aria-hidden="true" />} title="สุ่มเจาะจงคำสำคัญ (Direct Word Spin)">
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                 {controls.enabledWords.map(w => (
                   <button
@@ -362,7 +364,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                     onClick={() => controls.startWithWord(w)}
                     style={{ fontSize: '0.75rem', padding: '4px 8px' }}
                   >
-                    ✦ {w.word}
+                    <Sparkle size={12} aria-hidden="true" /> {w.word}
                   </button>
                 ))}
               </div>
@@ -371,7 +373,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
 
           {/* Section 4: Timer Display Settings & Quick Adjust */}
           {onSetStageDisplaySettings && (
-            <ControlCard variant="drawer" title="⏱️ รูปแบบการแสดงตัวจับเวลาบนเวที">
+            <ControlCard variant="drawer" icon={<Timer size={15} aria-hidden="true" />} title="รูปแบบการแสดงตัวจับเวลาบนเวที">
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', marginBottom: '8px' }}>
                 <button
                   className="btn-secondary"
@@ -384,7 +386,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                   }}
                   onClick={() => onSetStageDisplaySettings({ timerDisplayMode: 'center' })}
                 >
-                  🌟 จอใหญ่ตรงกลาง
+                  <Sparkles size={14} aria-hidden="true" /> จอใหญ่ตรงกลาง
                 </button>
                 <button
                   className="btn-secondary"
@@ -397,7 +399,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                   }}
                   onClick={() => onSetStageDisplaySettings({ timerDisplayMode: 'corner' })}
                 >
-                  📌 มุมขวาบน
+                  <Pin size={14} aria-hidden="true" /> มุมขวาบน
                 </button>
               </div>
 
@@ -430,10 +432,10 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
           )}
 
           {/* Section 5: Audio Controls */}
-          <ControlCard variant="drawer" title="🔊 ระบบเสียงบรรยากาศ & ตัวจับเวลา">
+          <ControlCard variant="drawer" icon={<Volume2 size={15} aria-hidden="true" />} title="ระบบเสียงบรรยากาศ & ตัวจับเวลา">
             <div className="audio-row">
               <button className="btn-secondary" onClick={onToggleMute}>
-                {session.isMuted ? '🔇 ปิดเสียงอยู่' : '🔊 เปิดเสียง'}
+                {session.isMuted ? <><VolumeX size={15} aria-hidden="true" /> ปิดเสียงอยู่</> : <><Volume2 size={15} aria-hidden="true" /> เปิดเสียง</>}
               </button>
               <input
                 type="range"
@@ -450,7 +452,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
             {onSetTimerSoundSettings && session.timerSoundSettings && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', marginTop: '0.75rem', paddingTop: '0.6rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>⏱️ เสียงติ๊กถอยหลัง:</span>
+                  <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }} className="ui-ico-label"><Timer size={14} aria-hidden="true" />เสียงติ๊กถอยหลัง:</span>
                   <button
                     className="btn-secondary"
                     style={{
@@ -467,7 +469,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '0.8rem', color: '#fde68a' }}>⚠️ เสียงเตือนใกล้หมด:</span>
+                  <span style={{ fontSize: '0.8rem', color: '#fde68a' }} className="ui-ico-label"><TriangleAlert size={14} aria-hidden="true" />เสียงเตือนใกล้หมด:</span>
                   <button
                     className="btn-secondary"
                     style={{
@@ -484,7 +486,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '0.8rem', color: '#fca5a5' }}>🔔 เสียงเมื่อหมดเวลา:</span>
+                  <span style={{ fontSize: '0.8rem', color: '#fca5a5' }} className="ui-ico-label"><Bell size={14} aria-hidden="true" />เสียงเมื่อหมดเวลา:</span>
                   <button
                     className="btn-secondary"
                     style={{
@@ -504,13 +506,13 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
           </ControlCard>
 
           {/* Section 6: Question Bank Manager & Multi-display Window */}
-          <ControlCard variant="drawer" title="📂 การจัดการข้อมูลและการต่อจอ">
+          <ControlCard variant="drawer" icon={<FolderOpen size={15} aria-hidden="true" />} title="การจัดการข้อมูลและการต่อจอ">
             <div className="drawer-footer-actions">
               <button className="btn-secondary" onClick={onOpenQuestionManager}>
-                📝 คลังคำถาม
+                <Library size={15} aria-hidden="true" /> คลังคำถาม
               </button>
               <button className="btn-primary btn-remote-popup" onClick={handleOpenRemoteWindow}>
-                🖥️ เปิดหน้าต่างแยกจอ (Dual Display)
+                <MonitorUp size={15} aria-hidden="true" /> เปิดหน้าต่างแยกจอ (Dual Display)
               </button>
             </div>
           </ControlCard>

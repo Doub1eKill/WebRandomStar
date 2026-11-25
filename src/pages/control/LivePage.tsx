@@ -13,15 +13,8 @@ import { QuizModeToggle } from '@/features/control/QuizModeToggle.tsx';
 import { useContestants, useWords } from '@/storage/useRepository.ts';
 import { contestantsRepository } from '@/storage/repositories.ts';
 import { ContestantManagerModal } from '@/features/contestants/ContestantManagerModal.tsx';
-import {
-  Play,
-  Pause,
-  FastForward,
-  CheckCircle,
-  RotateCcw,
-  Users,
-  Crown
-} from 'lucide-react';
+import { CheckCircle, Crosshair, Crown, FastForward, Gamepad2, MonitorPlay, OctagonX, Pause, Play, RotateCcw, Sparkle, Trophy, User, Users } from 'lucide-react';
+import { CategoryIcon } from '@/shared/ui/icons.tsx';
 import './livePage.css';
 
 export const LivePage: React.FC = () => {
@@ -45,9 +38,9 @@ export const LivePage: React.FC = () => {
   return (
     <>
       <div className="live-grid">
-        <ControlCard variant="live" title="👤 ข้อมูลผู้เข้าแข่งขันและการแข่งขัน">
+        <ControlCard variant="live" icon={<User size={16} aria-hidden="true" />} title="ข้อมูลผู้เข้าแข่งขันและการแข่งขัน">
           <div className="live-field">
-            <label className="live-label">🏆 รูปแบบขั้นตอนการแข่งขัน (Competition Mode)</label>
+            <label className="live-label ui-ico-label"><Trophy size={14} aria-hidden="true" />รูปแบบขั้นตอนการแข่งขัน (Competition Mode)</label>
             <QuizModeToggle variant="live" quizMode={session.appearanceSettings?.quizMode} onChange={controls.setQuizMode} />
           </div>
 
@@ -98,11 +91,12 @@ export const LivePage: React.FC = () => {
           )}
         </ControlCard>
 
-        <ControlCard variant="live" title="🕹️ ควบคุมการหมุนคำและการแสดงผล">
+        <ControlCard variant="live" icon={<Gamepad2 size={16} aria-hidden="true" />} title="ควบคุมการหมุนคำและการแสดงผล">
           <div className="live-actions">
             {controls.isWordSpinning ? (
               <button className="live-spin-btn live-spin-btn--stop" onClick={controls.stopSpin}>
-                🛑 STOP SPIN (หยุดการหมุนคำ)
+                <OctagonX size={18} aria-hidden="true" />
+                STOP SPIN (หยุดการหมุนคำ)
               </button>
             ) : (
               <button className="live-spin-btn live-spin-btn--start" onClick={() => actions.startJourney()} disabled={!isIdle}>
@@ -134,7 +128,7 @@ export const LivePage: React.FC = () => {
 
           {/* Direct Word Launch Chips */}
           <div className="live-chips">
-            <div className="live-chips-label">🎯 หมุนเจาะจงคำสำคัญ (Direct Word Spin):</div>
+            <div className="live-chips-label ui-ico-label"><Crosshair size={14} aria-hidden="true" />หมุนเจาะจงคำสำคัญ (Direct Word Spin):</div>
             <div className="live-chips-row">
               {controls.enabledWords.map(w => {
                 const color = w.color || CATEGORY_CONFIGS[w.category.toLowerCase()]?.color;
@@ -145,7 +139,8 @@ export const LivePage: React.FC = () => {
                     onClick={() => controls.startWithWord(w)}
                     style={{ border: `1px solid ${color || 'rgba(255,255,255,0.15)'}50`, color: color || '#fff' }}
                   >
-                    ✦ {w.word}
+                    <CategoryIcon category={w.category} size={13} />
+                    {w.word}
                   </button>
                 );
               })}
@@ -153,18 +148,21 @@ export const LivePage: React.FC = () => {
           </div>
         </ControlCard>
 
-        <ControlCard variant="live" wide title="📺 มอนิเตอร์ข้อความที่กำลังปรากฏบนจอเวที (Live Stage Monitor)">
+        <ControlCard variant="live" wide icon={<MonitorPlay size={16} aria-hidden="true" />} title="มอนิเตอร์ข้อความที่กำลังปรากฏบนจอเวที (Live Stage Monitor)">
           {session.selectedQuestion ? (
             <div className="live-monitor-question">
               <div className="live-monitor-tags">
-                <span className="live-tag live-tag--category">{session.selectedQuestion.category.toUpperCase()}</span>
-                {session.selectedWordItem && <span className="live-tag live-tag--word">✦ {session.selectedWordItem.word}</span>}
+                <span className="live-tag live-tag--category ui-ico-label"><CategoryIcon category={session.selectedQuestion.category} size={12} />{session.selectedQuestion.category.toUpperCase()}</span>
+                {session.selectedWordItem && <span className="live-tag live-tag--word ui-ico-label"><Sparkle size={12} aria-hidden="true" />{session.selectedWordItem.word}</span>}
                 <span className="live-monitor-id">ID: {session.selectedQuestion.id}</span>
               </div>
               <div className="live-monitor-text">"{session.selectedQuestion.text}"</div>
             </div>
           ) : (
-            <div className="live-monitor-empty">ยังไม่มีคำถามบนเวที (กดปุ่ม SPIN WORD เพื่อเริ่มสุ่ม)</div>
+            <div className="live-monitor-empty">
+              <MonitorPlay size={28} aria-hidden="true" />
+              <span>ยังไม่มีคำถามบนเวที (กดปุ่ม SPIN WORD เพื่อเริ่มสุ่ม)</span>
+            </div>
           )}
         </ControlCard>
       </div>

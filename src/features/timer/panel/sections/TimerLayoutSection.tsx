@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  Layout,
-  Sparkles,
-  Type
-} from 'lucide-react';
+import { Layout, PanelTop, Pin, Sparkles, Type } from 'lucide-react';
 
 import type { TimerPanelModel } from '../useTimerPanelModel.tsx';
 
@@ -67,7 +63,7 @@ export const TimerLayoutSection: React.FC<{ m: TimerPanelModel }> = ({ m }) => {
                 textAlign: 'left'
               }}
             >
-              <div style={{ fontWeight: 700, fontSize: '0.88rem' }}>📌 มุมขวาบน</div>
+              <div className="ui-ico-label" style={{ fontWeight: 700, fontSize: '0.88rem' }}><Pin size={14} aria-hidden="true" />มุมขวาบน</div>
               <div style={{ fontSize: '0.7rem', marginTop: '0.2rem', color: '#94a3b8' }}>
                 Corner HUD คลาสสิก
               </div>
@@ -85,7 +81,7 @@ export const TimerLayoutSection: React.FC<{ m: TimerPanelModel }> = ({ m }) => {
                 textAlign: 'left'
               }}
             >
-              <div style={{ fontWeight: 700, fontSize: '0.88rem' }}>🔹 แถบกะทัดรัด</div>
+              <div className="ui-ico-label" style={{ fontWeight: 700, fontSize: '0.88rem' }}><PanelTop size={14} aria-hidden="true" />แถบกะทัดรัด</div>
               <div style={{ fontSize: '0.7rem', marginTop: '0.2rem', color: '#94a3b8' }}>
                 Floating Capsule HUD
               </div>

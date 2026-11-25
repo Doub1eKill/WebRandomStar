@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  Play,
-  Pause,
-  RotateCcw,
-} from 'lucide-react';
+import { AudioLines, CirclePause, Folder, Link, Pause, Play, RotateCcw, Sparkles } from 'lucide-react';
 
 import type { MusicPanelModel } from '../useMusicPanelModel.tsx';
 import { formatTime } from '../useMusicPanelModel.tsx';
@@ -36,7 +32,7 @@ export const NowPlayingSection: React.FC<{ m: MusicPanelModel }> = ({ m }) => {
                 border: `1px solid ${musicState.isPlaying ? 'rgba(34, 197, 94, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`
               }}
             >
-              {musicState.isPlaying ? '● กำลังเล่น (Now Playing)' : '○ พักชั่วคราว (Paused / Idle)'}
+              {musicState.isPlaying ? <><AudioLines size={13} aria-hidden="true" /> กำลังเล่น (Now Playing)</> : <><CirclePause size={13} aria-hidden="true" /> พักชั่วคราว (Paused / Idle)</>}
             </span>
             {currentTrack && (
               <span
@@ -56,9 +52,9 @@ export const NowPlayingSection: React.FC<{ m: MusicPanelModel }> = ({ m }) => {
                     : '#fde68a'
                 }}
               >
-                {currentTrack.sourceType === 'local_blob' && '📁 ไฟล์ในเครื่อง'}
-                {currentTrack.sourceType === 'url' && '🔗 ลิงก์ออนไลน์'}
-                {currentTrack.sourceType === 'preset' && '✨ เพลงระบบ'}
+                {currentTrack.sourceType === 'local_blob' && <span className="ui-ico-label"><Folder size={12} aria-hidden="true" />ไฟล์ในเครื่อง</span>}
+                {currentTrack.sourceType === 'url' && <span className="ui-ico-label"><Link size={12} aria-hidden="true" />ลิงก์ออนไลน์</span>}
+                {currentTrack.sourceType === 'preset' && <span className="ui-ico-label"><Sparkles size={12} aria-hidden="true" />เพลงระบบ</span>}
               </span>
             )}
           </div>

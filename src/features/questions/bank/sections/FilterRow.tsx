@@ -26,7 +26,7 @@ export const FilterRow: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
             const cfg = CATEGORY_CONFIGS[c.toLowerCase()];
             return (
               <option key={c} value={c}>
-                {cfg ? `${cfg.icon} ${cfg.name} (${cfg.englishName})` : c}
+                {cfg ? `${cfg.name} (${cfg.englishName})` : c}
               </option>
             );
           })}

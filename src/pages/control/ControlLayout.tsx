@@ -8,7 +8,7 @@ import React, { useEffect, useMemo } from 'react';
 // It holds the control window's theme, scoped under .control-app.
 import './controlLayout.css';
 import { NavLink, Outlet } from 'react-router';
-import { Layers, Key, BookOpen, Clock, Music, Users, History, Palette, Sparkles } from 'lucide-react';
+import { BookOpen, Clock, History, Key, Layers, Music, Palette, Sparkles, TriangleAlert, Users } from 'lucide-react';
 import { SessionProvider, useSession, usePeerConnected } from '@/features/session/SessionProvider.tsx';
 import { useRemoteMusic } from '@/features/music/musicRemote.ts';
 import { useMusicLibrary } from '@/features/music/useMusicLibrary.ts';
@@ -63,7 +63,8 @@ const ControlShell: React.FC = () => {
         {/* Q2: the stage window is the only host; without it commands have no effect. */}
         {!isStageConnected && (
           <div className="stage-disconnected-banner" role="alert">
-            ⚠ ไม่พบหน้าจอเวทีที่เปิดอยู่ — คำสั่งจะไม่มีผลจนกว่าจะเปิดหน้าเวที (หน้าเว็บหลัก) ในเบราว์เซอร์เดียวกัน
+            <TriangleAlert size={16} aria-hidden="true" />
+            ไม่พบหน้าจอเวทีที่เปิดอยู่ — คำสั่งจะไม่มีผลจนกว่าจะเปิดหน้าเวที (หน้าเว็บหลัก) ในเบราว์เซอร์เดียวกัน
           </div>
         )}
 
@@ -74,7 +75,7 @@ const ControlShell: React.FC = () => {
             </div>
             <div className="ctl-brand-text">
               <div className="ctl-brand-eyebrow">Backstage Control</div>
-              <h1 className="ctl-brand-title">✦ SCi TECH TINE ✦ CHARM OF TRANSITION (Ambassador 2026)</h1>
+              <h1 className="ctl-brand-title">SCi TECH TINE · CHARM OF TRANSITION (Ambassador 2026)</h1>
             </div>
           </div>
           <div className="ctl-status" aria-live="polite">

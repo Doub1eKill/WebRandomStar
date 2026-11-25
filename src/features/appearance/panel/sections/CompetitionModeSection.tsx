@@ -1,4 +1,5 @@
 import React from 'react';
+import { BookOpen, Tag, Trophy } from 'lucide-react';
 
 import type { AppearanceSettingsModel } from '../useAppearanceSettingsModel.tsx';
 import { SettingGroup } from '@/shared/ui/SettingGroup.tsx';
@@ -8,7 +9,7 @@ export const CompetitionModeSection: React.FC<{ m: AppearanceSettingsModel }> = 
   const { current, updateSetting } = m;
   return (
     <SettingGroup
-      icon="🏆"
+      icon={<Trophy size={18} aria-hidden="true" />}
       title="รูปแบบการแข่งขันบนเวที (Competition Flow Mode)"
       hint="เลือกรูปแบบขั้นตอนการแข่งขัน: สุ่มเฉพาะคำสำคัญเพื่อแสดงการ์ดคำพร้อมจับเวลาตอบสด หรือสุ่มเปิดคลังคำถามเต็มรูปแบบ"
     >
@@ -17,7 +18,7 @@ export const CompetitionModeSection: React.FC<{ m: AppearanceSettingsModel }> = 
           testId="quiz-mode-question"
           active={!current.quizMode || current.quizMode === 'question'}
           onSelect={() => updateSetting('quizMode', 'question')}
-          icon="📜"
+          icon={<BookOpen size={22} aria-hidden="true" />}
           name="โหมดสุ่มคลังคำถาม"
           badge="มาตรฐาน"
           tone="sky"
@@ -27,7 +28,7 @@ export const CompetitionModeSection: React.FC<{ m: AppearanceSettingsModel }> = 
           testId="quiz-mode-keyword"
           active={current.quizMode === 'keyword'}
           onSelect={() => updateSetting('quizMode', 'keyword')}
-          icon="🏷️"
+          icon={<Tag size={22} aria-hidden="true" />}
           name="โหมดสุ่มคำสำคัญ"
           badge="สุนทรพจน์ / คีย์เวิร์ด"
           tone="violet"

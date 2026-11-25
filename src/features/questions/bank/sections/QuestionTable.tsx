@@ -1,4 +1,5 @@
 import React from 'react';
+import { CategoryIcon } from '@/shared/ui/icons.tsx';
 import { CATEGORY_CONFIGS } from '@/types/question.ts';
 import {
   Edit2,
@@ -78,7 +79,7 @@ export const QuestionTable: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }
                               whiteSpace: 'nowrap'
                             }}
                           >
-                            <span>{cfg?.icon || '✨'}</span>
+                            <CategoryIcon category={q.category} size={13} />
                             <span>{cfg?.name || q.category}</span>
                           </span>
                         );

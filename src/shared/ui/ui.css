@@ -85,3 +85,70 @@
   background: var(--ui-ink);
   color: var(--ui-text-strong);
 }
+
+/* Icons (lucide-react) that replace the emoji the UI used to show (2026-11-25). The containers
+   below were sized for emoji glyphs; they are now tinted icon tiles. */
+.ui-ico-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.ui-ico-label > svg,
+button > svg,
+label > svg {
+  flex-shrink: 0;
+}
+
+.group-icon,
+.mode-icon,
+.modal-icon,
+.drawer-icon,
+.card-title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #c4b5fd;
+  background: rgba(124, 58, 237, 0.16);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  line-height: 1;
+}
+
+.group-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+}
+
+.mode-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+}
+
+.mode-card.active .mode-icon {
+  color: #fff;
+  background: linear-gradient(135deg, #7c3aed, #9333ea);
+  border-color: transparent;
+}
+
+.modal-icon,
+.drawer-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+}
+
+.card-title-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+/* Drawer card titles (ControlCard variant="drawer") */
+.section-label:has(> .card-title-icon) {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}

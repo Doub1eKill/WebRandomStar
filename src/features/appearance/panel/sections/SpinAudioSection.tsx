@@ -1,4 +1,5 @@
 import React from 'react';
+import { Folder, Music, Pause, Play, Sparkles, Trash2, Upload } from 'lucide-react';
 
 import type { AppearanceSettingsModel } from '../useAppearanceSettingsModel.tsx';
 import { SettingGroup } from '@/shared/ui/SettingGroup.tsx';
@@ -6,7 +7,7 @@ import { SettingGroup } from '@/shared/ui/SettingGroup.tsx';
 export const SpinAudioSection: React.FC<{ m: AppearanceSettingsModel }> = ({ m }) => {
   const { tracks, musicState, onAssignPhaseTrack, onDeleteTrack, onPlayTrack, onStopMusic, spinFileInputRef, selectedSpinTrack, isPlayingSelected, handleSpinFileUpload } = m;
   return (
-    <SettingGroup icon="🎵" title="เพลง/เสียงประกอบช่วงสุ่มคำ (Word Spin Audio Track)" hint="เลือกเพลงหรือเสียงระทึกช่วงสุ่มคำ สามารถอัปโหลดไฟล์เสียงใหม่ (MP3/WAV) หรือทดลองฟังเสียงได้ทันที">
+    <SettingGroup icon={<Music size={18} aria-hidden="true" />} title="เพลง/เสียงประกอบช่วงสุ่มคำ (Word Spin Audio Track)" hint="เลือกเพลงหรือเสียงระทึกช่วงสุ่มคำ สามารถอัปโหลดไฟล์เสียงใหม่ (MP3/WAV) หรือทดลองฟังเสียงได้ทันที">
 
       <div style={{ background: 'rgba(14, 18, 44, 0.7)', border: '1px solid rgba(245, 158, 11, 0.25)', borderRadius: '12px', padding: '14px' }}>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '8px' }}>
@@ -51,7 +52,7 @@ export const SpinAudioSection: React.FC<{ m: AppearanceSettingsModel }> = ({ m }
                   }
                 }}
               >
-                {isPlayingSelected ? '⏸️ หยุดฟัง' : '▶️ ฟังตัวอย่าง'}
+                {isPlayingSelected ? <><Pause size={14} aria-hidden="true" /> หยุดฟัง</> : <><Play size={14} aria-hidden="true" /> ฟังตัวอย่าง</>}
               </button>
             )}
 
@@ -74,7 +75,7 @@ export const SpinAudioSection: React.FC<{ m: AppearanceSettingsModel }> = ({ m }
               }}
               onClick={() => spinFileInputRef.current?.click()}
             >
-              + อัปโหลดเสียงสุ่ม (MP3/WAV)
+              <Upload size={14} aria-hidden="true" /> อัปโหลดเสียงสุ่ม (MP3/WAV)
             </button>
 
             {/* Delete Button (for custom uploaded track) */}
@@ -90,7 +91,7 @@ export const SpinAudioSection: React.FC<{ m: AppearanceSettingsModel }> = ({ m }
                   }
                 }}
               >
-                🗑️ ลบเพลง
+                <Trash2 size={14} aria-hidden="true" /> ลบเพลง
               </button>
             )}
           </div>
@@ -100,7 +101,7 @@ export const SpinAudioSection: React.FC<{ m: AppearanceSettingsModel }> = ({ m }
           <div style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
             <span>ความยาว: {Math.round(selectedSpinTrack.duration)}s</span>
             <span>•</span>
-            <span>สถานะ: {selectedSpinTrack.isPreset ? '✨ เพลงระบบมาตรฐาน' : '📁 ไฟล์เสียงที่อัปโหลดเอง'}</span>
+            <span className="ui-ico-label">สถานะ: {selectedSpinTrack.isPreset ? <><Sparkles size={13} aria-hidden="true" /> เพลงระบบมาตรฐาน</> : <><Folder size={13} aria-hidden="true" /> ไฟล์เสียงที่อัปโหลดเอง</>}</span>
           </div>
         )}
       </div>

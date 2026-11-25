@@ -59,7 +59,7 @@ export const TrackLibrarySection: React.FC<{ m: MusicPanelModel }> = ({ m }) => 
                 boxShadow: '0 2px 10px rgba(124, 58, 237, 0.3)'
               }}
             >
-              <Upload size={15} /> + อัปโหลดไฟล์เพลง (MP3/WAV)
+              <Upload size={15} /> อัปโหลดไฟล์เพลง (MP3/WAV)
             </button>
 
             <button
@@ -77,7 +77,7 @@ export const TrackLibrarySection: React.FC<{ m: MusicPanelModel }> = ({ m }) => 
                 cursor: 'pointer'
               }}
             >
-              <LinkIcon size={14} /> + ใส่ลิงก์ URL
+              <LinkIcon size={14} /> ใส่ลิงก์ URL
             </button>
 
             <button

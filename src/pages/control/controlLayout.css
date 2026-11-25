@@ -41,6 +41,10 @@
    now, so it pushes the header down instead of covering it. */
 .control-app .stage-disconnected-banner {
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   padding: 0.55rem 1.25rem;
   background: linear-gradient(90deg, rgba(127, 29, 29, 0.95), rgba(153, 27, 27, 0.9));
   border-bottom: 1px solid rgba(244, 63, 94, 0.6);
@@ -297,6 +301,9 @@
 }
 
 .control-app .live-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--ctl-text);
@@ -437,6 +444,10 @@
 }
 
 .control-app .live-monitor-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
   border: 1px dashed var(--ctl-border-strong);
   border-radius: var(--ctl-radius-sm);
   color: var(--ctl-text-3);
@@ -453,6 +464,22 @@
   background: var(--ctl-accent-tint);
   border-color: var(--ctl-accent-soft);
   color: var(--ctl-accent-pale);
+}
+
+/* Icon colours inside the control window */
+.control-app .live-monitor-empty svg {
+  color: var(--ctl-accent-soft);
+  opacity: 0.8;
+}
+
+.control-app .live-chip svg {
+  opacity: 0.9;
+}
+
+.control-app .live-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 /* ---------- Page heading + contestants page ---------- */
@@ -690,6 +717,7 @@
 }
 
 .control-app .group-title {
+  gap: 0.7rem;
   font-size: 1rem;
   font-weight: 600;
   color: var(--ctl-text);
@@ -799,4 +827,17 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Labels that carry an icon keep their block layout but space the icon from the text */
+.control-app .live-label.ui-ico-label,
+.control-app .live-chips-label.ui-ico-label {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.control-app .word-main-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
