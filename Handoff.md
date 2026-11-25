@@ -44,7 +44,7 @@
 - inline style **445** จุด (เดิม 574), CSS หลัก 87.0 KB (gzip 14.4 KB รวม `@font-face` ของฟอนต์ที่ self-host) ส่วน CSS ของหน้าควบคุมบางส่วนโหลดพร้อม lazy chunk
 - ไม่มี request ออกไปภายนอกตอนใช้งานปกติ (ยกเว้นตอนผู้ใช้ตั้งฟอนต์ custom ของ Google หรือเพิ่มเพลงจาก URL)
 - JS ที่จอเวทีโหลดตอนเปิด **403 KB (gzip 123 KB)** เทียบกับ baseline 751 KB (gzip 208 KB)
-- Draft PR: [Doub1eKill/WebRandomStar#1](https://github.com/Doub1eKill/WebRandomStar/pull/1) เปิด Auto-fix ไว้แล้ว
+- PR: [Doub1eKill/WebRandomStar#1](https://github.com/Doub1eKill/WebRandomStar/pull/1) ready for review (Auto-fix ปิดอยู่)
 
 **การตัดสินใจของผู้ใช้:**
 - Q1 = react-router
@@ -56,10 +56,9 @@
 
 ## 3. [Current Task & Blockers]
 
-- **สถานะ:** Phase 11 (ตรวจรับ) เสร็จ commit และ push แล้ว **ครบทุก Phase ของแผน** รอผู้ใช้ตัดสินใจเรื่อง PR
+- **สถานะ:** Phase 11 (ตรวจรับ) เสร็จ commit และ push แล้ว **ครบทุก Phase ของแผน** PR #1 อัปเดตชื่อและคำอธิบายเป็น Phases 0–11 และเปลี่ยนเป็น **ready for review** แล้ว (ไม่ใช่ draft)
 - **ขั้นต่อไป (ให้ผู้ใช้ตัดสินใจ):**
-  - อัปเดตชื่อและคำอธิบายของ PR #1 (ชื่อตอนนี้ยังเป็น "Phases 0–6") แล้วเปลี่ยนจาก draft เป็น ready for review
-  - การ merge เข้า `main` เป็นการตัดสินใจของผู้ใช้ ห้าม merge เอง
+  - review แล้ว merge PR #1 เข้า `main` เป็นการตัดสินใจของผู้ใช้ ห้าม merge เอง
   - ก่อนวันงาน: วัด FPS/React Profiler บนเครื่องหน้างานจริง และลองเปิดเวทีตอนตัดเน็ต (ดูข้อ 5 ในรายงานตรวจรับ)
   - งานที่เลือกทำต่อได้ (ไม่อยู่ในแผน): แยก `AeroShards.tsx` / `ControlDrawer.tsx` / `musicPlayerEngine.ts` ให้ต่ำกว่า ~400 บรรทัด (A2), ย้าย inline style ที่เหลือ (PF11)
 - **ไฟล์ที่ยังใหญ่ (ตั้งใจเหลือไว้):**
@@ -157,21 +156,21 @@ export const STORAGE_KEYS = {
 - `tsconfig.json` รวมโฟลเดอร์ `tests` ไว้ด้วย และเปิด `noUnusedLocals` ถ้ามี import ที่ไม่ได้ใช้ `npm run build` จะพัง
 - ไฟล์เดิมหลายไฟล์ใช้ CRLF ถ้าแก้ด้วยสคริปต์ต้องระวัง (Edit tool จัดการให้ได้)
 - **CI ใช้ Node 22 แต่เครื่อง dev ใช้ Node 24:** ผล `Math.pow` ต่างกันที่ทศนิยมหลักสุดท้าย snapshot ที่มีตัวเลขทศนิยมจึงต้องปัดก่อน (ดู `normalizeNumbers` ใน `tests/spinViews.visual.test.tsx`)
-- **PR:** [Doub1eKill/WebRandomStar#1](https://github.com/Doub1eKill/WebRandomStar/pull/1) (draft, `refactor/architecture` → `main`) เปิด Auto-fix ไว้แล้ว เมื่อ CI ล้มเหลว session จะถูกปลุกให้แก้
+- **PR:** [Doub1eKill/WebRandomStar#1](https://github.com/Doub1eKill/WebRandomStar/pull/1) (ready for review, `refactor/architecture` → `main`) ตอนนี้ Auto-fix ปิดอยู่ ถ้าอยากให้แก้ CI ที่ล้มเหลวอัตโนมัติ ต้องเปิดใหม่
 
 ## 5. [Prompt for the Next AI]
 
 ```text
 คุณกำลัง refactor โปรเจกต์ WebRandomStar (React 19 + Vite + TS) ที่ C:Star บน branch refactor/architecture
-(push ไปที่ origin = github.com/Doub1eKill/WebRandomStar, มี draft PR #1 ที่เปิด Auto-fix ไว้)
+(push ไปที่ origin = github.com/Doub1eKill/WebRandomStar, มี PR #1 ที่เป็น ready for review แล้ว)
 อ่านไฟล์เหล่านี้ก่อนเริ่ม:
 1) Handoff.md (ฉบับล่าสุดเสมอ; สำเนาตามวันที่อยู่ใน docs/handoff-summary-*.md)
 2) docs/superpowers/plans/2026-11-24-architecture-refactor.md (Phase 0–11 ติ๊กครบแล้ว)
 3) docs/superpowers/plans/2026-11-25-acceptance.md (ผลตรวจรับ) และ 2026-11-24-baseline.md
 
 สถานะ: แผน refactor ครบทุก Phase แล้ว ห้ามเริ่มงานใหม่เอง ให้ถามผู้ใช้ก่อน
-ตัวเลือกถัดไป: อัปเดตชื่อ/คำอธิบาย PR #1 แล้วเปลี่ยนเป็น ready for review (ห้าม merge เอง),
-หรือทำงานเสริมนอกแผน (A2 แยกไฟล์ใหญ่, PF11 inline style) ถ้าผู้ใช้สั่ง
+PR #1 เป็น ready for review แล้ว (ห้าม merge เอง)
+ตัวเลือกถัดไป: ทำงานเสริมนอกแผน (A2 แยกไฟล์ใหญ่, PF11 inline style) ถ้าผู้ใช้สั่ง
 กติกา:
 - ทำทีละขั้นและหยุดรออนุมัติ
 - หน้าตาต้องเหมือนเดิม: เทียบ computed style ก่อน/หลังด้วย .claude/fp.js (หรือ screenshot) ทุกหน้า (เวทีทุก state + #/control ทุกหน้า)
