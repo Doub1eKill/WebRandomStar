@@ -308,11 +308,22 @@ store ◀──────────SNAPSHOT (เมื่อ state เปล
 - [x] ทดสอบ build จริง (`vite preview`): ทุก request ไปที่ `localhost` เท่านั้น ฟอนต์ (รวมภาษาไทย) และ favicon โหลดครบ ไม่มี CSP violation บนเวที, 8 หน้าควบคุม และพื้นหลัง AeroShards (WebGPU) จึงใช้งานออฟไลน์ได้ ส่วนการตัดเน็ตจริงด้วย DevTools ทำใน browser pane ไม่ได้ จึงยืนยันจากรายการ request แทน
 
 ### Phase 9: Cleanup และเอกสาร (D1–D4, D7, PF8, O1, O2)
-- [ ] ลบโค้ดใน D1–D4 พร้อมเทสต์ที่ผูกกับโค้ดนั้น (`tests/leafSystem.test.ts`) (ข้อ Q3)
-- [ ] D7: เช็กค่าเริ่มต้นของหมวดใน QuestionManagerModal
-- [ ] ลบ wrapper ชั่วคราวจาก Phase 3–4 (`useStageSync`, `utils/storage.ts`)
-- [ ] เปลี่ยนกฎ ESLint จาก warn เป็น error เมื่อโค้ดสะอาดแล้ว
-- [ ] O1, O2: เขียน README และ PROJECT_SUMMARY ใหม่ให้ตรงกับเวอร์ชัน 3.0 (หน้าใหม่, โครงสร้าง, คีย์ลัด, วิธีใช้สองหน้าต่าง)
+- [x] D1–D4 (Q3 = ลบ): ลบไฟล์และโค้ดต่อไปนี้
+  - D1: `CinematicNarrator`, `SeasonJourneyBreadcrumb`, `CategoryAnnouncementBanner` พร้อม `storytelling.css` ที่มีแค่ class ของสามคอมโพเนนต์นี้ (22 class ที่ไม่มีที่อื่นใช้)
+  - D2: `useTimer`
+  - D3: `selectQuestionFlow`, `playTimerWarning` (ปุ่มเปิด/ปิดเสียงเตือนยังใช้ได้ เพราะเสียง tick ช่วงเตือนเช็ก `warningSoundEnabled` เอง), `fadeRainOut`
+  - D4: state เก่า 6 ตัวออกจาก `AppState`/`STAGE_DURATION`/ตาราง canvas, `RainSystem`/`WaterDropSystem`/`LeafSystem` (+ เทสต์), particle type ที่เกี่ยวข้อง, กิ่ง `sky-clear` ใน `TransitionLightingSystem` และเสียงฝน/หยดน้ำ/ลม/ใบไม้/ฟ้าเปิดทั้งใน engine และ recipes
+  - ยังเก็บ `MistSystem` และ `SkySystem` ไว้ ชื่อหมวด `rain/mist/wind/leaf` ก็ยังอยู่เพราะเป็นหมวดคำถาม ไม่ใช่ state
+  - สิ่งเดียวที่ต่างที่มองเห็นได้: `RainSystem` เริ่มที่ intensity 1.0 จึงมีสายฝนจาง ๆ ราว 0.3 วินาทีตอนเปิดหน้าก่อนจะหายไป (ซึ่งเป็นของค้างจาก v2) ตอนนี้ไม่มีแล้ว
+  - `pages/control/legacyRemote.css` ลบด้วย
+- [x] PF8: `StageCanvas` ไม่ update/วาด rain, drop, leaf อีกแล้ว (ลบไปพร้อม D4)
+- [x] D7: `'rain'` ยังเป็นหมวดจริง (มีคำถามเริ่มต้น 6 ข้อและคำสำคัญ 1 คำ) และเป็นตัวเลือกแรกในรายการ ตอนนี้ค่าเริ่มต้นใช้ตัวแรกของ `CATEGORY_CONFIGS` จึงไม่หลุดจากกันอีก (พฤติกรรมเหมือนเดิม)
+- [x] ลบ wrapper ชั่วคราว
+  - `features/session/useStageSync.ts`: `StagePage` ใช้ `<SessionProvider role="stage">` + `useSession`/`useSessionActions`/`usePeerConnected` แทน ส่วนเทสต์ใช้ `tests/helpers/session.tsx` ที่ mount provider ตัวจริง (characterization test เปลี่ยนชื่อเป็น `session.characterization.test.tsx`)
+  - `storage/storageApi.ts`: load/save ธรรมดาเรียก repository ตรง ๆ ส่วนตรรกะย้ายไปที่ฟีเจอร์เจ้าของ (`history/historyManager.ts`, `timer/timerSettings.ts`, `appearance/appearanceSettings.ts`, `questions/importQuestions.ts`) ลบ `exportHistoryAsCSV` ที่ซ้ำกับ `exportHistoryToCSV` (ซึ่งเป็นตัวที่หน้า History ใช้จริง) แล้วย้ายเทสต์ CSV injection ไปทดสอบตัวที่ใช้จริง
+- [x] ESLint: ทุกกฎเป็น `error` แล้ว (lint ยังผ่าน 0 ปัญหา)
+- [x] O1, O2: เขียน `README.md` ใหม่ (ฟีเจอร์ v3, ใช้สองหน้าต่าง, คีย์ลัดที่ตรงกับโค้ด, คำสั่ง, โครงสร้าง, เครดิตฟอนต์ และลบบรรทัด `"# WebRandomStar"` ที่หลงอยู่) และ `PROJECT_SUMMARY.md` ใหม่ (session host, ลำดับ state, การสุ่ม, ภาพ, เสียง, คีย์ storage, ความปลอดภัย, styles, โครงสร้าง, การทดสอบ)
+- [x] ตรวจในเบราว์เซอร์ (dev): หน้าควบคุมเชื่อมจอเวทีได้, สั่งหมุนจนถึงคำถามและรีเซ็ตได้, canvas วาดครบ และไม่มี error ใน console ผลรวม: เทสต์ 273 ตัว (ลบเทสต์ LeafSystem 4 ตัว) และ JS ที่จอเวทีโหลดลดจาก 417 เป็น 403 KB (gzip 123 KB)
 
 ### Phase 10: Dependencies (S9)
 - [ ] อัปเดต `vite`, `vitest`, `happy-dom` เป็นเวอร์ชันที่แก้ช่องโหว่แล้ว แล้วรันเทสต์ทั้งหมด

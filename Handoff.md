@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Generated: 2026-11-25 (อัปเดตหลังจบ Phase 8)
+> Generated: 2026-11-25 (อัปเดตหลังจบ Phase 9)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -35,13 +35,14 @@
 
 | B16 (แทรกก่อน Phase 7) | `a279717` | แก้เสียงค้าง: เพลง preset ที่เคยลากโน้ตตัวเดียวยาวตลอด phase เปลี่ยนเป็น arpeggio เบา ๆ (`features/music/presetArpeggio.ts`) ทุกโน้ตมีเวลา stop และเมื่อเลิก mute หรือ volume กลับจาก 0 เพลงจะเล่นต่อ ยืนยันในเบราว์เซอร์แล้วว่าหลัง stop ไม่มีโน้ตใหม่และไม่มี oscillator ค้าง |
 | 7 | `a5b8fbb` | ขอบเขต Targeted: แยก `index.css` เป็น 15 ไฟล์ตามลำดับ cascade (`app/styles.css`) และ CSS ที่ build ออกมาเหมือนเดิมทุกไบต์ (A6), token สี `--ui-*` + `shared/ui` (`SettingGroup`, `ModeCard`, `ui.css`) ทำให้ inline style ลดจาก 574 เหลือ 445 จุด (PF11), drawer กับหน้า Live ใช้ `ControlCard` + `QuizModeToggle` ร่วมกันแต่มี variant แยกหน้าตาของแต่ละฝั่ง (`LivePage` 466 → 182 บรรทัด), ปุ่มหน้าตรวจสอบการนำเข้าไม่เบียดกันบนจอแคบแล้ว เช็กด้วย computed-style ทุก property ใน 8 หน้าควบคุม, เวที และ drawer/Live หลายสถานะ ผลคือเหมือนเดิม |
-| 8 | (ดู git log) | ฟอนต์ self-host ผ่าน `@fontsource` (OFL) ใช้น้ำหนักเดียวกับ Google Fonts เดิม และเอาลิงก์ Google ออก (PF10), preset `amoria`/`verve` ใช้ Playfair Display / Cinzel Decorative แทน ส่วน id เหมือนเดิม (B12, Q4), `public/leaf.svg` (favicon), CSP ใส่ตอน build ผ่าน plugin ใน `vite.config.ts` (S5) ทดสอบบน `vite preview` แล้ว: ทุก request ไปแค่ localhost และไม่มี CSP violation |
+| 8 | `75f2eb2` | ฟอนต์ self-host ผ่าน `@fontsource` (OFL) ใช้น้ำหนักเดียวกับ Google Fonts เดิม และเอาลิงก์ Google ออก (PF10), preset `amoria`/`verve` ใช้ Playfair Display / Cinzel Decorative แทน ส่วน id เหมือนเดิม (B12, Q4), `public/leaf.svg` (favicon), CSP ใส่ตอน build ผ่าน plugin ใน `vite.config.ts` (S5) ทดสอบบน `vite preview` แล้ว: ทุก request ไปแค่ localhost และไม่มี CSP violation |
+| 9 | (ดู git log) | Q3: ลบ dead code D1–D4 (3 คอมโพเนนต์เล่าเรื่อง + `storytelling.css`, `useTimer`, `selectQuestionFlow`, state เก่า 6 ตัว, ระบบฝน/หยดน้ำ/ใบไม้และเสียงของมัน) และ PF8, D7, ลบ wrapper `useStageSync` (StagePage ใช้ `SessionProvider` โดยตรง) และ facade `storageApi` (ย้ายตรรกะไปไว้กับฟีเจอร์), ESLint ทุกกฎเป็น error, README + PROJECT_SUMMARY เขียนใหม่ให้ตรงกับ v3 |
 
 **ตัวเลขล่าสุด:**
-- เทสต์ผ่าน **277/277** (43 ไฟล์), **lint 0 errors / 0 warnings**
+- เทสต์ผ่าน **273/273** (42 ไฟล์ เพราะลบเทสต์ LeafSystem), **lint 0 ปัญหา ทุกกฎเป็น error**
 - inline style **445** จุด (เดิม 574), CSS หลัก 92.6 KB (gzip 15.4 KB รวม `@font-face` ของฟอนต์ที่ self-host) ส่วน CSS ของหน้าควบคุมบางส่วนโหลดพร้อม lazy chunk
 - ไม่มี request ออกไปภายนอกตอนใช้งานปกติ (ยกเว้นตอนผู้ใช้ตั้งฟอนต์ custom ของ Google หรือเพิ่มเพลงจาก URL)
-- JS ที่จอเวทีโหลดตอนเปิด **416 KB (gzip 126 KB)** เทียบกับ baseline 751 KB (gzip 208 KB)
+- JS ที่จอเวทีโหลดตอนเปิด **403 KB (gzip 123 KB)** เทียบกับ baseline 751 KB (gzip 208 KB)
 - Draft PR: [Doub1eKill/WebRandomStar#1](https://github.com/Doub1eKill/WebRandomStar/pull/1) เปิด Auto-fix ไว้แล้ว
 
 **การตัดสินใจของผู้ใช้:**
@@ -54,17 +55,16 @@
 
 ## 3. [Current Task & Blockers]
 
-- **สถานะ:** Phase 8 เสร็จ commit และ push แล้ว **รอผู้ใช้อนุมัติก่อนเริ่ม Phase 9**
-- **Phase ถัดไป (9): Cleanup และเอกสาร (D1–D4, D7, PF8, O1, O2)**: Q3 = ลบได้เลย
-  - ลบ dead code D1–D4 พร้อมเทสต์ที่ผูกกับโค้ดนั้น (`LeafSystem`, `useTimer`, `pages/control/legacyRemote.css`, …)
-  - D7: เช็กค่าเริ่มต้นของหมวดใน QuestionManagerModal
-  - ลบ wrapper ชั่วคราว (`features/session/useStageSync.ts`, `storage/storageApi.ts`)
-  - ESLint warn → error, เขียน README / PROJECT_SUMMARY ใหม่ให้ตรงกับเวอร์ชัน 3.0 (ใส่เรื่อง CSP ที่ใช้เฉพาะตอน build และเครดิตฟอนต์ OFL ด้วย)
+- **สถานะ:** Phase 9 เสร็จ commit และ push แล้ว **รอผู้ใช้อนุมัติก่อนเริ่ม Phase 10**
+- **Phase ถัดไป (10): Dependencies (S9)**
+  - อัปเดต `vite`, `vitest`, `happy-dom` เป็นเวอร์ชันที่แก้ช่องโหว่แล้ว แล้วรันเทสต์ทั้งหมด
+  - `vgpu` ดึง `@modelcontextprotocol/server` ติดมา ให้หาเวอร์ชันใหม่ หรือใช้ `overrides` (โค้ดนี้ไม่ได้อยู่ใน bundle จึงเสี่ยงแค่ฝั่ง dev/supply chain)
+  - อนุมัติ install script เฉพาะแพ็กเกจที่จำเป็น (`esbuild`) และ `npm audit` ต้องไม่เหลือ critical/high
+  - การเปลี่ยนเวอร์ชัน dependency เป็นการติดตั้งแพ็กเกจใหม่ ให้บอกผู้ใช้ว่าจะอัปเดตอะไรบ้างก่อน
 - **ไฟล์ที่ยังใหญ่ (ตั้งใจเหลือไว้):**
   - `AeroShards.tsx` 730: effect WebGPU ก้อนเดียวที่แชร์ state ผ่าน closure
   - `shaders.ts` 666: WGSL
   - `musicPlayerEngine` ~540 และ `ControlDrawer` 528
-  - `LeafSystem` 420: dead code ลบใน Phase 9
 - **คำถามที่ยังค้าง:**
   - ไม่มี (Q3 และ Q4 ได้คำตอบแล้ว ดูหัวข้อการตัดสินใจของผู้ใช้)
 - **ข้อควรรู้:**
@@ -73,7 +73,6 @@
   - เครื่องมือเช็กหน้าตา: `.claude/fp.js` (ไม่ได้ commit) ใช้ใน dev server ด้วย `await import('/.claude/fp.js')` แล้วเรียก `save(name, selector)` หรือ `compare(name, selector)` เพื่อบันทึก computed style ทุก property ลง IndexedDB แล้วเทียบ ตัวเครื่องมือจะทำ transition ให้จบก่อนวัด และ rewind keyframe animation ไปที่ t=0 ข้อควรระวัง: แท็บต้องอยู่หน้า (rAF ไม่ทำงานในแท็บพื้นหลัง)
   - การ์ดของ drawer กับหน้า Live ใช้ `ControlCard`/`QuizModeToggle` ร่วมกันแล้ว แต่ข้อความปุ่ม, icon และเงื่อนไข disabled ของ pause/skip ต่างกันมาแต่เดิม จึงยังไม่ได้รวม เพราะถ้ารวมพฤติกรรมของหน้าใดหน้าหนึ่งจะเปลี่ยน
   - เบราว์เซอร์จะหน่วง timer ในแท็บที่ถูกซ่อน จึงควรเปิดหน้าเวทีไว้ในหน้าต่างที่มองเห็นได้ ปุ่ม popout เปิดรีโมตเป็นหน้าต่างแยกอยู่แล้ว และระบบเตือนผู้ควบคุมเมื่อหน้าเวทีถูกซ่อน
-  - `features/session/useStageSync.ts` (wrapper) และ `storage/storageApi.ts` (facade ชื่อฟังก์ชันเดิม) ยังใช้อยู่ ลบใน Phase 9
   - `npm install` เตือนเรื่อง install scripts (`esbuild`, `webgpu`, `@vgpu/adapter-node`) และ `npm audit` ยังเจอช่องโหว่ ซึ่งจะแก้ใน Phase 10
 
 ## 4. [Key Context & Code Snippets]
@@ -99,11 +98,11 @@ dev server อยู่ที่พอร์ต 3000 และมี config ข�
 src/
 ├── app/                            # main.tsx (index.html ชี้มาที่นี่), App.tsx (HashRouter), router.tsx, styles.css (ลำดับ cascade)
 ├── pages/
-│   ├── stage/StagePage.tsx         # จอเวที + session host (useStageSync('stage'))
+│   ├── stage/StagePage.tsx         # จอเวที + session host (<SessionProvider role="stage">)
 │   └── control/                    # ControlLayout (SessionProvider controller) + 8 หน้า + controlMusic.ts
 ├── features/
 │   ├── session/                    # commands, sessionReducer, runtime (host/mirror), sessionChannel (v3), persistence,
-│   │                               # sessionStore, actions, SessionProvider, stateMachine, useStageSync (wrapper)
+│   │                               # sessionStore, actions, SessionProvider, stateMachine
 │   ├── stage/                      # overlay/, word-spin/ (+wordSpinEngine), background/{canvas (+stateTargets), aero-shards},
 │   │                               # KeyboardController
 │   ├── timer/                      # timerEngine, useRemainingMs, TimerDisplay, panel/ (model + sections), useTimer (dead)
@@ -119,7 +118,7 @@ src/
 │   ├── notices/                    # operatorNotices, OperatorToasts
 │   ├── styles/                     # tokens (CSS variables), base, modals, dashboard, toggle
 │   └── ui/                         # ui.css, SettingGroup, ModeCard
-├── storage/                        # repositories (STORAGE_KEYS), useRepository, storageApi (facade ชื่อเดิม ลบใน Phase 9)
+├── storage/                        # repositories (STORAGE_KEYS), useRepository
 ├── data/  types/
 ```
 
@@ -161,12 +160,12 @@ export const STORAGE_KEYS = {
 (push ไปที่ origin = github.com/Doub1eKill/WebRandomStar, มี draft PR #1 ที่เปิด Auto-fix ไว้)
 อ่านไฟล์เหล่านี้ก่อนเริ่ม:
 1) Handoff.md
-2) docs/superpowers/plans/2026-11-24-architecture-refactor.md (Phase 0–8 ติ๊กครบแล้ว)
+2) docs/superpowers/plans/2026-11-24-architecture-refactor.md (Phase 0–9 ติ๊กครบแล้ว)
 3) docs/superpowers/plans/2026-11-24-baseline.md
 
-สถานะ: Phase 8 เสร็จแล้ว รอผู้ใช้อนุมัติ ห้ามเริ่ม Phase 9 เอง ให้ถามผู้ใช้ก่อน
+สถานะ: Phase 9 เสร็จแล้ว รอผู้ใช้อนุมัติ ห้ามเริ่ม Phase 10 เอง ให้ถามผู้ใช้ก่อน
 
-เมื่อผู้ใช้สั่งให้ทำต่อ ให้ทำ Phase 9 (Cleanup และเอกสาร: D1–D4, D7, PF8, O1, O2) ตามแผน (Q3 = ลบ dead code ได้เลย)
+เมื่อผู้ใช้สั่งให้ทำต่อ ให้ทำ Phase 10 (Dependencies: S9) ตามแผน และแจ้งรายการแพ็กเกจที่จะอัปเดตก่อนติดตั้ง
 กติกา:
 - ทำทีละ Phase และหยุดรออนุมัติ
 - หน้าตาต้องเหมือนเดิม: เทียบ computed style ก่อน/หลังด้วย .claude/fp.js (หรือ screenshot) ทุกหน้า (เวทีทุก state + #/control ทุกหน้า)
