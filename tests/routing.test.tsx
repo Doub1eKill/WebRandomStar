@@ -36,7 +36,10 @@ function renderAt(path: string) {
 const text = () => view!.container.textContent || '';
 
 beforeEach(() => localStorage.clear());
-afterEach(() => { view?.unmount(); view = null; });
+// Let async work (the music library's IndexedDB load) finish inside act() before unmounting:
+// a late update would log an act() warning, and Vitest 4 fails the run when a log is still
+// in flight as the worker tears down.
+afterEach(async () => { await settle(); view?.unmount(); view = null; });
 
 describe('Phase 5 routing', () => {
   it('#/control redirects to the live page and shows the tab bar', async () => {

@@ -50,6 +50,11 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'happy-dom',
+    environmentOptions: {
+      // happy-dom 21 blocks external stylesheets by default (tests stay offline);
+      // treat the blocked load as a success instead of logging a DOMException.
+      happyDOM: { settings: { handleDisabledFileLoadingAsSuccess: true } },
+    },
   },
   server: {
     port: 3000,
