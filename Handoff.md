@@ -11,7 +11,7 @@
   - โคลนจาก `peak822/WebRandomStar` (commit ฐาน `0885cd9`) มาไว้ที่ `C:\Star` บน Windows
   - remote `origin` = `github.com/Doub1eKill/WebRandomStar` (private)
   - remote `upstream` = repo ต้นฉบับ
-  - งาน refactor ทำบน branch `refactor/architecture` และ **merge เข้า `main` แล้ว** (merge commit `da0d00d`, 2026-11-25) branch เดิมยังไม่ได้ลบ
+  - งาน refactor ทำบน branch `refactor/architecture` และ **merge เข้า `main` แล้ว** (merge commit `da0d00d`, 2026-11-25) ลบ branch `refactor/architecture` และ `docs/architecture-refactor-plan` แล้วทั้งในเครื่องและบน GitHub (ทุก commit อยู่ใน `main` ครบ hash ที่อ้างในเอกสารจึงยังใช้ได้) ตอนนี้ origin มีแค่ `main`
   - ไม่ส่งงานกลับ `upstream` เพราะเพื่อนส่งต่อโปรเจกต์นี้มาให้แล้ว (ผู้ใช้ยืนยัน) งานจึงอยู่ใน fork `Doub1eKill/WebRandomStar`
 - **เป้าหมาย:** refactor ตามแผน 12 Phase ใน `docs/superpowers/plans/2026-11-24-architecture-refactor.md` (Master Fix List 55 รายการ: B1–B15, PF1–PF12, S1–S9, A1–A10, D1–D7, O1–O3) โดย **หน้าตาและขั้นตอนบนเวทีต้องเหมือนเดิม** ยกเว้นจุดที่แผนระบุว่าเป็นการแก้บั๊ก
 - **กติกาที่ผู้ใช้สั่งไว้:**
@@ -24,7 +24,7 @@
 
 | Phase | Commit | สรุป |
 |---|---|---|
-| แผน | `39e9f27` | แผน refactor + Master Fix List (branch `docs/architecture-refactor-plan`) |
+| แผน | `39e9f27` | แผน refactor + Master Fix List (เดิมอยู่บน branch `docs/architecture-refactor-plan` ซึ่งลบแล้ว commit อยู่ใน `main`) |
 | 0 | `6cfec33` | ESLint + CI (`.github/workflows/ci.yml`), characterization tests, เทสต์ยืนยันบั๊ก, baseline |
 | 1 | `5933356` | ประสิทธิภาพ: timer ไม่ re-render ทั้งแอป (PF1+B13), วงล้อ ref-driven (PF4: 62.5 → 12.5 commit/s), `useLazyRef` (PF2), cache gradient (PF7), selector เพลง (PF5), คีย์ลัดผูกครั้งเดียว (PF6), lazy-load (PF3) ลด JS ตอนเปิดจาก 751 เหลือ 359 KB |
 | 2 | `839fe16` | บั๊กเพลง B2–B6 (blob URL หลังรีโหลด, fade ซ้อน, volume), B9 (กดค้างยิงซ้ำ), B10 (เลิกใช้ `alert()` แล้วใช้ notice มุมจอ), B11 (เตือนเมื่อสุ่มนอกรอบหรือหมวด) |
