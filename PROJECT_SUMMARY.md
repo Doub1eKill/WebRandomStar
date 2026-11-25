@@ -12,7 +12,7 @@
 - **ไม่มี backend:** ข้อมูลอยู่ใน `localStorage`, ไฟล์เพลงอยู่ใน IndexedDB และหน้าต่างต่าง ๆ คุยกันผ่าน `BroadcastChannel`
 - **ออฟไลน์ได้:** ฟอนต์ self-host ด้วย `@fontsource`, เสียงประกอบสังเคราะห์ด้วย Web Audio, ไม่มี request ออกนอกเครื่องตอนใช้งานปกติ (ยกเว้นผู้ใช้ตั้งฟอนต์ Google เองหรือเพิ่มเพลงจาก URL)
 
-**Stack:** React 19, TypeScript ~5.7, Vite 6, react-router 7 (`HashRouter`), Vitest 3 + happy-dom, lucide-react, `vgpu` (WebGPU สำหรับพื้นหลัง AeroShards ซึ่งโหลดแบบ lazy)
+**Stack:** React 19, TypeScript ~5.7, Vite 6, react-router 7 (`HashRouter`), Vitest 4 + happy-dom 21, lucide-react, `vgpu` (WebGPU สำหรับพื้นหลัง AeroShards ซึ่งโหลดแบบ lazy)
 
 ---
 
@@ -166,7 +166,7 @@ Import ใช้ alias `@/` = `src/`
 
 ## 12. การทดสอบและคุณภาพ
 
-- **273 เทสต์** (Vitest + happy-dom) ครอบคลุม reducer และ runtime, การซิงก์หลายหน้าต่าง, ตัวจับเวลา, การสุ่ม, repository และการนำเข้า, เพลง (crossfade, blob URL หลังรีโหลด, arpeggio), เสียง, routing และ snapshot ของ panel และวงล้อ
+- **277 เทสต์** (Vitest + happy-dom) ครอบคลุม reducer และ runtime, การซิงก์หลายหน้าต่าง, ตัวจับเวลา, การสุ่ม, repository และการนำเข้า, เพลง (crossfade, blob URL หลังรีโหลด, arpeggio), เสียง, routing, asset ในเครื่อง และ snapshot ของ panel และวงล้อ
 - **ESLint:** ทุกกฎเป็น error (`no-explicit-any`, `exhaustive-deps`, `no-unused-vars`, `no-empty`) และโค้ดไม่มี `any` เลย
 - **CI:** GitHub Actions บน Node 22 รัน `npm ci`, `lint`, `test` และ `build`
 - **การเช็กหน้าตาตอน refactor:** เทียบ computed style ทุก property ก่อนและหลังในเบราว์เซอร์จริง (ดู `Handoff.md`)

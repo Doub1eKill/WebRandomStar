@@ -55,7 +55,7 @@
 ```bash
 npm install          # ติดตั้ง dependencies
 npm run dev          # dev server ที่ http://localhost:3000
-npm test             # Vitest (273 เทสต์)
+npm test             # Vitest (277 เทสต์)
 npm run lint         # ESLint (ทุกกฎเป็น error)
 npm run build        # type-check + build ลง dist/
 npm run preview      # เปิด build จริงเพื่อทดสอบ (มี Content-Security-Policy)
