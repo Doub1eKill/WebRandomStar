@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Generated: 2026-11-25 (อัปเดตหลังจบ Phase 11 — ครบทุก Phase ของแผนแล้ว)
+> Generated: 2026-11-25 (อัปเดตหลัง merge PR #1 เข้า `main` — ครบทุก Phase ของแผนแล้ว)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -11,7 +11,8 @@
   - โคลนจาก `peak822/WebRandomStar` (commit ฐาน `0885cd9`) มาไว้ที่ `C:\Star` บน Windows
   - remote `origin` = `github.com/Doub1eKill/WebRandomStar` (private)
   - remote `upstream` = repo ต้นฉบับ
-  - ทำงานบน branch **`refactor/architecture`**
+  - งาน refactor ทำบน branch `refactor/architecture` และ **merge เข้า `main` แล้ว** (merge commit `da0d00d`, 2026-11-25) branch เดิมยังไม่ได้ลบ
+  - ไม่ส่งงานกลับ `upstream` เพราะเพื่อนส่งต่อโปรเจกต์นี้มาให้แล้ว (ผู้ใช้ยืนยัน) งานจึงอยู่ใน fork `Doub1eKill/WebRandomStar`
 - **เป้าหมาย:** refactor ตามแผน 12 Phase ใน `docs/superpowers/plans/2026-11-24-architecture-refactor.md` (Master Fix List 55 รายการ: B1–B15, PF1–PF12, S1–S9, A1–A10, D1–D7, O1–O3) โดย **หน้าตาและขั้นตอนบนเวทีต้องเหมือนเดิม** ยกเว้นจุดที่แผนระบุว่าเป็นการแก้บั๊ก
 - **กติกาที่ผู้ใช้สั่งไว้:**
   - ทำทีละ Phase แล้ว **หยุดรออนุมัติทุก Phase**
@@ -44,7 +45,7 @@
 - inline style **445** จุด (เดิม 574), CSS หลัก 87.0 KB (gzip 14.4 KB รวม `@font-face` ของฟอนต์ที่ self-host) ส่วน CSS ของหน้าควบคุมบางส่วนโหลดพร้อม lazy chunk
 - ไม่มี request ออกไปภายนอกตอนใช้งานปกติ (ยกเว้นตอนผู้ใช้ตั้งฟอนต์ custom ของ Google หรือเพิ่มเพลงจาก URL)
 - JS ที่จอเวทีโหลดตอนเปิด **403 KB (gzip 123 KB)** เทียบกับ baseline 751 KB (gzip 208 KB)
-- PR: [Doub1eKill/WebRandomStar#1](https://github.com/Doub1eKill/WebRandomStar/pull/1) ready for review และเปิด Auto-fix ไว้แล้ว
+- PR: [Doub1eKill/WebRandomStar#1](https://github.com/Doub1eKill/WebRandomStar/pull/1) **merged** เข้า `main` แล้ว (CI `verify` ผ่านบน `a68bafb` ก่อน merge)
 
 **การตัดสินใจของผู้ใช้:**
 - Q1 = react-router
@@ -56,9 +57,8 @@
 
 ## 3. [Current Task & Blockers]
 
-- **สถานะ:** Phase 11 (ตรวจรับ) เสร็จ commit และ push แล้ว **ครบทุก Phase ของแผน** PR #1 อัปเดตชื่อและคำอธิบายเป็น Phases 0–11 และเปลี่ยนเป็น **ready for review** แล้ว (ไม่ใช่ draft)
+- **สถานะ:** แผน refactor **ครบทุก Phase** และ PR #1 merge เข้า `main` แล้ว (`da0d00d`) ตอนนี้ไม่มีงานค้าง
 - **ขั้นต่อไป (ให้ผู้ใช้ตัดสินใจ):**
-  - review แล้ว merge PR #1 เข้า `main` เป็นการตัดสินใจของผู้ใช้ ห้าม merge เอง
   - ก่อนวันงาน: วัด FPS/React Profiler บนเครื่องหน้างานจริง และลองเปิดเวทีตอนตัดเน็ต (ดูข้อ 5 ในรายงานตรวจรับ)
   - งานที่เลือกทำต่อได้ (ไม่อยู่ในแผน): แยก `AeroShards.tsx` / `ControlDrawer.tsx` / `musicPlayerEngine.ts` ให้ต่ำกว่า ~400 บรรทัด (A2), ย้าย inline style ที่เหลือ (PF11)
 - **ไฟล์ที่ยังใหญ่ (ตั้งใจเหลือไว้):**
@@ -156,26 +156,27 @@ export const STORAGE_KEYS = {
 - `tsconfig.json` รวมโฟลเดอร์ `tests` ไว้ด้วย และเปิด `noUnusedLocals` ถ้ามี import ที่ไม่ได้ใช้ `npm run build` จะพัง
 - ไฟล์เดิมหลายไฟล์ใช้ CRLF ถ้าแก้ด้วยสคริปต์ต้องระวัง (Edit tool จัดการให้ได้)
 - **CI ใช้ Node 22 แต่เครื่อง dev ใช้ Node 24:** ผล `Math.pow` ต่างกันที่ทศนิยมหลักสุดท้าย snapshot ที่มีตัวเลขทศนิยมจึงต้องปัดก่อน (ดู `normalizeNumbers` ใน `tests/spinViews.visual.test.tsx`)
-- **PR:** [Doub1eKill/WebRandomStar#1](https://github.com/Doub1eKill/WebRandomStar/pull/1) (ready for review, `refactor/architecture` → `main`) เปิด Auto-fix ไว้แล้ว เมื่อ CI ล้มเหลว, merge conflict หรือมี review comment session จะถูกปลุกให้แก้
+- **PR:** [Doub1eKill/WebRandomStar#1](https://github.com/Doub1eKill/WebRandomStar/pull/1) (`refactor/architecture` → `main`) merged แล้ว งานใหม่ให้แตก branch ใหม่จาก `main` แล้วเปิด PR ใหม่ (CI `.github/workflows/ci.yml` รัน lint/test/build บนทุก PR)
 
 ## 5. [Prompt for the Next AI]
 
 ```text
-คุณกำลัง refactor โปรเจกต์ WebRandomStar (React 19 + Vite + TS) ที่ C:Star บน branch refactor/architecture
-(push ไปที่ origin = github.com/Doub1eKill/WebRandomStar, มี PR #1 ที่เป็น ready for review แล้ว)
+คุณกำลังดูแลโปรเจกต์ WebRandomStar (React 19 + Vite + TS) ที่ C:Star
+(origin = github.com/Doub1eKill/WebRandomStar; งาน refactor merge เข้า main แล้วผ่าน PR #1, ไม่ส่งกลับ upstream)
 อ่านไฟล์เหล่านี้ก่อนเริ่ม:
 1) Handoff.md (ฉบับล่าสุดเสมอ; สำเนาตามวันที่อยู่ใน docs/handoff-summary-*.md)
 2) docs/superpowers/plans/2026-11-24-architecture-refactor.md (Phase 0–11 ติ๊กครบแล้ว)
 3) docs/superpowers/plans/2026-11-25-acceptance.md (ผลตรวจรับ) และ 2026-11-24-baseline.md
 
 สถานะ: แผน refactor ครบทุก Phase แล้ว ห้ามเริ่มงานใหม่เอง ให้ถามผู้ใช้ก่อน
-PR #1 เป็น ready for review แล้ว (ห้าม merge เอง)
+PR #1 merge เข้า main แล้ว
 ตัวเลือกถัดไป: ทำงานเสริมนอกแผน (A2 แยกไฟล์ใหญ่, PF11 inline style) ถ้าผู้ใช้สั่ง
+โดยแตก branch ใหม่จาก main แล้วเปิด PR ใหม่ (ห้าม merge เองถ้าผู้ใช้ไม่สั่ง)
 กติกา:
 - ทำทีละขั้นและหยุดรออนุมัติ
 - หน้าตาต้องเหมือนเดิม: เทียบ computed style ก่อน/หลังด้วย .claude/fp.js (หรือ screenshot) ทุกหน้า (เวทีทุก state + #/control ทุกหน้า)
 - ห้ามเปลี่ยน STORAGE_KEYS หรือชื่อ BroadcastChannel; ย้ายไฟล์ด้วย git mv; import ใช้ @/
 - จบ Phase ด้วย npm run lint (0 errors, 0 warnings), npm test, npm run build ที่ผ่านทั้งหมด
-- ติ๊ก checklist ในแผน อัปเดต Handoff.md แล้ว commit (อ้างรหัสรายการใน message) และ git push origin refactor/architecture
+- ติ๊ก checklist ในแผน อัปเดต Handoff.md แล้ว commit (อ้างรหัสรายการใน message) และ push branch ของงานนั้น
 - Q3 = ลบ dead code, Q4 = Playfair Display / Cinzel Decorative แทน Amoria/Verve
 ```
