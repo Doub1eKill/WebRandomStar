@@ -47,6 +47,8 @@
 - Q2 = จอเวทีเป็น host ตัวเดียว
 - Q5 = ให้เลือกตอนนำเข้า (UI มีทั้ง "รวม" และ "แทนที่")
 - Q6 = ESLint + CI ทำไปแล้ว ผู้ใช้ไม่ได้คัดค้าน
+- Q3 = ลบ dead code (D1–D4) ออกเลย เพราะกู้คืนจาก git ได้ (รวม `legacyRemote.css`)
+- Q4 = ใช้ฟอนต์ฟรี (OFL) ที่หน้าตาใกล้เคียงแทน: Amoria → **Playfair Display**, Verve → **Cinzel Decorative** โดย self-host ผ่าน `@fontsource` และแก้ชื่อบนการ์ดให้ตรงกับฟอนต์จริง (ไฟล์ Amoria/Verve ตัวจริงมีแจกแค่บนเว็บรวมฟอนต์ภายนอก Amoria เป็นรุ่น demo ที่ใช้ได้แค่ส่วนตัว ส่วน Verve ไม่มีใบอนุญาตเชิงพาณิชย์ที่ยืนยันได้ จึงไม่ดาวน์โหลด)
 
 ## 3. [Current Task & Blockers]
 
@@ -54,7 +56,7 @@
 - **Phase ถัดไป (8): Assets, ฟอนต์ และการใช้งานแบบออฟไลน์ (B12, PF10, S5)**
   - สร้าง `public/` + `leaf.svg` (favicon ตอนนี้ 404)
   - self-host Cinzel/Outfit/Prompt (woff2) + preload + `font-display: swap` แล้วเอาลิงก์ Google Fonts ออก
-  - B12: ใส่ฟอนต์ Amoria/Verve หรือเอา preset ออก (**ต้องได้คำตอบ Q4 ก่อน**)
+  - B12 (Q4): แทน Amoria/Verve ด้วย Playfair Display / Cinzel Decorative (@fontsource, OFL)
   - meta CSP และทดสอบแบบออฟไลน์ทุกหน้า
 - **ไฟล์ที่ยังใหญ่ (ตั้งใจเหลือไว้):**
   - `AeroShards.tsx` 730: effect WebGPU ก้อนเดียวที่แชร์ state ผ่าน closure
@@ -62,8 +64,7 @@
   - `musicPlayerEngine` ~540 และ `ControlDrawer` 528
   - `LeafSystem` 420: dead code ลบใน Phase 9
 - **คำถามที่ยังค้าง:**
-  - **Q3** ลบ dead code (D1–D4) ทิ้งเลยหรือเก็บไว้ ต้องได้คำตอบก่อน Phase 9 (รวม `pages/control/legacyRemote.css` ที่ไม่มีใครใช้แล้ว)
-  - **Q4** มีไฟล์ฟอนต์ Amoria/Verve ไหม ต้องได้คำตอบก่อน Phase 8
+  - ไม่มี (Q3 และ Q4 ได้คำตอบแล้ว ดูหัวข้อการตัดสินใจของผู้ใช้)
 - **ข้อควรรู้:**
   - **ลำดับ CSS สำคัญ:** `src/app/styles.css` เป็นรายการ `@import` ตามลำดับ cascade เดิม ห้ามสลับลำดับโดยไม่เช็ก computed style ไฟล์ที่ import จากคอมโพเนนต์ (lazy chunk) จะโหลดหลัง CSS หลักเสมอ จึงใช้ได้เฉพาะกับ CSS ที่ควรอยู่ท้าย cascade
   - เครื่องมือเช็กหน้าตา: `.claude/fp.js` (ไม่ได้ commit) ใช้ใน dev server ด้วย `await import('/.claude/fp.js')` แล้วเรียก `save(name, selector)` หรือ `compare(name, selector)` เพื่อบันทึก computed style ทุก property ลง IndexedDB แล้วเทียบ ตัวเครื่องมือจะทำ transition ให้จบก่อนวัด และ rewind keyframe animation ไปที่ t=0 ข้อควรระวัง: แท็บต้องอยู่หน้า (rAF ไม่ทำงานในแท็บพื้นหลัง)
@@ -160,7 +161,7 @@ export const STORAGE_KEYS = {
 2) docs/superpowers/plans/2026-11-24-architecture-refactor.md (Phase 0–7 ติ๊กครบแล้ว)
 3) docs/superpowers/plans/2026-11-24-baseline.md
 
-สถานะ: Phase 7 เสร็จแล้ว รอผู้ใช้อนุมัติ ห้ามเริ่ม Phase 8 เอง ให้ถามผู้ใช้ก่อน และต้องได้คำตอบ Q4 (มีไฟล์ฟอนต์ Amoria/Verve ไหม) ก่อน
+สถานะ: Phase 7 เสร็จแล้ว รอผู้ใช้อนุมัติ ห้ามเริ่ม Phase 8 เอง ให้ถามผู้ใช้ก่อน (ได้คำตอบ Q3 และ Q4 แล้ว ดูใน Handoff)
 
 เมื่อผู้ใช้สั่งให้ทำต่อ ให้ทำ Phase 8 (Assets, ฟอนต์ และออฟไลน์: B12, PF10, S5) ตามแผน
 กติกา:
@@ -169,5 +170,5 @@ export const STORAGE_KEYS = {
 - ห้ามเปลี่ยน STORAGE_KEYS หรือชื่อ BroadcastChannel; ย้ายไฟล์ด้วย git mv; import ใช้ @/
 - จบ Phase ด้วย npm run lint (0 errors, 0 warnings), npm test, npm run build ที่ผ่านทั้งหมด
 - ติ๊ก checklist ในแผน อัปเดต Handoff.md แล้ว commit (อ้างรหัสรายการใน message) และ git push origin refactor/architecture
-- ถาม Q3 (ลบ dead code?) และ Q4 (ไฟล์ฟอนต์ Amoria/Verve?) ก่อนถึง Phase 8–9
+- Q3 = ลบ dead code, Q4 = Playfair Display / Cinzel Decorative แทน Amoria/Verve
 ```
