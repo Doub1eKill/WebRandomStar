@@ -147,7 +147,15 @@ export const LivePage: React.FC = () => {
         </ControlCard>
 
         <ControlCard variant="live" wide icon={<MonitorPlay size={16} aria-hidden="true" />} title="มอนิเตอร์ข้อความที่กำลังปรากฏบนจอเวที (Live Stage Monitor)">
-          {session.selectedQuestion ? (
+          {controls.isKeywordMode && session.selectedWordItem ? (
+            <div className="live-monitor-question">
+              <div className="live-monitor-tags">
+                <span className="live-tag live-tag--word ui-ico-label"><Sparkle size={12} aria-hidden="true" />คำสำคัญ</span>
+                {session.selectedWordItem.englishTheme && <span className="live-monitor-id">{session.selectedWordItem.englishTheme}</span>}
+              </div>
+              <div className="live-monitor-text">"{session.selectedWordItem.word}"</div>
+            </div>
+          ) : session.selectedQuestion ? (
             <div className="live-monitor-question">
               <div className="live-monitor-tags">
                 {session.selectedWordItem && <span className="live-tag live-tag--word ui-ico-label"><Sparkle size={12} aria-hidden="true" />{session.selectedWordItem.word}</span>}

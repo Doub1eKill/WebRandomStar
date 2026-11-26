@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { filterWords, selectTargetWord } from '@/features/words/wordSelector.ts';
+import { filterWords, selectTargetWord, allWordsUsed } from '@/features/words/wordSelector.ts';
 import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
 
 describe('Word Selector Engine', () => {
@@ -30,5 +30,17 @@ describe('Word Selector Engine', () => {
       { id: '2', word: 'B', enabled: true }
     ];
     for (let i = 0; i < 10; i++) expect(selectTargetWord(words, `seed_${i}`)?.id).toBe('2');
+  });
+
+  it('skips used words until every enabled word is used, then repeats', () => {
+    const words = [
+      { id: 'a', word: 'A', enabled: true },
+      { id: 'b', word: 'B', enabled: true },
+      { id: 'c', word: 'C', enabled: false }
+    ];
+    for (let i = 0; i < 10; i++) expect(selectTargetWord(words, `seed_${i}`, ['a'])?.id).toBe('b');
+    expect(allWordsUsed(words, ['a'])).toBe(false);
+    expect(allWordsUsed(words, ['a', 'b'])).toBe(true);
+    expect(['a', 'b']).toContain(selectTargetWord(words, 'seed_x', ['a', 'b'])?.id);
   });
 });
