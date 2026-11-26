@@ -32,6 +32,8 @@ export function stageControls(session: SessionState, words: KeywordItem[], handl
     isWordSpinning: session.currentState === 'word-spin',
     isQuestionActive: session.currentState === 'question',
     isAnswered: session.currentState === 'answered',
+    /** SPIN works from idle and straight after Done (answered), with no Reset in between. */
+    canSpin: session.currentState === 'idle' || session.currentState === 'answered',
     isKeywordMode: session.appearanceSettings?.quizMode === 'keyword',
     showWordLockPhase: session.appearanceSettings?.showWordLockPhase !== false,
     enabledWords: words.filter(w => w.enabled),

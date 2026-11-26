@@ -31,7 +31,6 @@ export const LivePage: React.FC = () => {
   });
 
   const activeContestant = contestants.find(c => c.id === session.selectedContestantId);
-  const isIdle = controls.isIdle;
 
   return (
     <>
@@ -97,7 +96,7 @@ export const LivePage: React.FC = () => {
                 STOP SPIN (หยุดการหมุนคำ)
               </button>
             ) : (
-              <button className="live-spin-btn live-spin-btn--start" onClick={() => actions.startJourney()} disabled={!isIdle}>
+              <button className="live-spin-btn live-spin-btn--start" onClick={() => actions.startJourney()} disabled={!controls.canSpin}>
                 <Crown size={18} color="#F5D98A" />
                 SPIN WORD (หมุนคำสำคัญ)
               </button>

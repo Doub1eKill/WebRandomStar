@@ -4,6 +4,7 @@ import { parseChannelMessage } from '@/features/session/sessionChannel.ts';
 import { createInitialSession } from '@/features/session/persistence.ts';
 import { DEFAULT_TIMER_SOUND_SETTINGS, DEFAULT_STAGE_DISPLAY_SETTINGS } from '@/types/timer.ts';
 import { Question } from '@/types/question.ts';
+import { SessionState } from '@/types/session.ts';
 import { KeywordItem } from '@/types/word.ts';
 
 const question: Question = { id: 'q1', text: 'Q', round: 'intro', difficulty: 'medium', enabled: true };
@@ -71,6 +72,32 @@ describe('sessionReducer', () => {
     const r = sessionReducer(createInitialSession(), { type: 'SET_TIMER_SOUND_SETTINGS', settings: { tickVolume: 0.2 } }, ctx());
     expect(r.state.timerSoundSettings?.tickVolume).toBe(0.2);
     expect(r.effects[0]).toMatchObject({ type: 'PERSIST_TIMER_SOUND', settings: { tickVolume: 0.2 } });
+  });
+
+  it('START_JOURNEY straight from answered spins the next one with no Reset in between', () => {
+    const q2: Question = { id: 'q2', text: 'Q2', round: 'intro', difficulty: 'medium', enabled: true };
+    const answered = {
+      ...createInitialSession(),
+      currentState: 'answered' as const,
+      selectedQuestion: question,
+      usedQuestionIds: ['q1'],
+      timerState: { ...createInitialSession().timerState, status: 'idle' as const, remainingMs: 12_000 }
+    };
+    const r = sessionReducer(answered, { type: 'START_JOURNEY' }, ctx({ loadQuestions: () => [question, q2] }));
+    expect(r.state.currentState).toBe('pre-spin');
+    expect(r.state.selectedQuestion?.id).toBe('q2'); // the answered one is not drawn again
+    expect(r.state.timerState.status).toBe('ready');
+    expect(r.state.timerState.remainingMs).toBe(r.state.timerState.durationMs);
+  });
+
+  it('stageControls: SPIN is available when idle and right after Done, not mid-round', async () => {
+    const { stageControls } = await import('@/features/control/useStageControls.ts');
+    const handlers = { onStart: () => {}, onSkip: () => {} };
+    const at = (currentState: SessionState['currentState']) => stageControls({ ...createInitialSession(), currentState }, [], handlers).canSpin;
+    expect(at('idle')).toBe(true);
+    expect(at('answered')).toBe(true);
+    expect(at('question')).toBe(false);
+    expect(at('word-spin')).toBe(false);
   });
 
   it('RESET_USED_QUESTIONS lets every question be drawn again and keeps everything else', () => {
