@@ -43,7 +43,8 @@ const StageScreen: React.FC = () => {
     pauseJourney,
     skipToQuestion,
     markAnswered,
-    resetStage,
+    resetUsedQuestions,
+    resetUsedWords,
     setContestant,
     setRound,
     setVolume,
@@ -181,7 +182,7 @@ const StageScreen: React.FC = () => {
             onPause={pauseJourney}
             onSkip={skipToQuestion}
             onMarkAnswered={markAnswered}
-            onReset={resetStage}
+            onReturnAllDrawn={() => { resetUsedQuestions(); resetUsedWords(); }}
             onSelectContestant={setContestant}
             onSelectRound={setRound}
             onSetVolume={setVolume}

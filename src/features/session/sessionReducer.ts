@@ -60,6 +60,20 @@ export function describeFallback(reason: SelectionFallbackReason, round: string)
 }
 
 const unchanged = (state: SessionState): ReducerResult => ({ state, effects: [] });
+
+/** The idle stage, ready for the next spin: nothing selected and a fresh timer. */
+function backToIdle(s: SessionState): SessionState {
+  const safeDuration = s.timerState.durationMs || DEFAULT_TIMER_DURATION_MS;
+  return {
+    ...s,
+    currentState: 'idle',
+    isPaused: false,
+    selectedQuestion: undefined,
+    selectedWordItem: undefined,
+    selectedKeyword: undefined,
+    timerState: createInitialTimerState(safeDuration)
+  };
+}
 const next = (state: SessionState, effects: SessionEffect[] = []): ReducerResult => ({ state, effects });
 
 /** Timer state for a question that just became visible, honouring autoStartTimerOnReveal. */
@@ -193,12 +207,12 @@ export function sessionReducer(s: SessionState, command: AnyCommand, ctx: Reduce
         ? Array.from(new Set([...(s.usedWordIds ?? []), s.selectedWordId]))
         : s.usedWordIds;
 
+      // Done goes straight back to the idle stage (2026-11-26: the operator asked for an automatic
+      // reset; the `answered` card and its celebration music are no longer shown).
       return next({
-        ...s,
-        currentState: 'answered',
+        ...backToIdle(s),
         usedQuestionIds: updatedUsed,
-        usedWordIds: updatedUsedWords,
-        timerState: { ...s.timerState, status: 'idle' }
+        usedWordIds: updatedUsedWords
       }, [{
         type: 'RECORD_HISTORY',
         params: {
@@ -214,18 +228,9 @@ export function sessionReducer(s: SessionState, command: AnyCommand, ctx: Reduce
       }]);
     }
 
-    case 'RESET_STAGE': {
-      const safeDuration = s.timerState.durationMs || DEFAULT_TIMER_DURATION_MS;
-      return next({
-        ...s,
-        currentState: 'idle',
-        isPaused: false,
-        selectedQuestion: undefined,
-        selectedWordItem: undefined,
-        selectedKeyword: undefined,
-        timerState: createInitialTimerState(safeDuration)
-      });
-    }
+    // No button sends this any more (Done resets the stage itself); kept for remotes on older builds.
+    case 'RESET_STAGE':
+      return next(backToIdle(s));
 
     // Every question can be drawn again (e.g. after a rehearsal). History is kept.
     case 'RESET_USED_QUESTIONS':

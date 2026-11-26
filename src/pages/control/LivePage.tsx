@@ -27,7 +27,8 @@ export const LivePage: React.FC = () => {
     onStart: word => actions.startJourney(undefined, word),
     onStopSpin: actions.stopWordSpin,
     onSkip: actions.skipToQuestion,
-    onSetAppearanceSettings: actions.setAppearanceSettings
+    onSetAppearanceSettings: actions.setAppearanceSettings,
+    onReturnAllDrawn: () => { actions.resetUsedQuestions(); actions.resetUsedWords(); }
   });
 
   const activeContestant = contestants.find(c => c.id === session.selectedContestantId);
@@ -117,9 +118,14 @@ export const LivePage: React.FC = () => {
               ตอบเสร็จสิ้น (Done)
             </button>
 
-            <button className="live-btn live-btn--reset" onClick={actions.resetStage}>
+            <button
+              className="live-btn live-btn--reset"
+              onClick={controls.returnAllDrawn}
+              disabled={controls.drawnCount === 0}
+              title={controls.drawnCount === 0 ? 'ยังไม่มีคำที่สุ่มไปแล้ว' : 'ให้คำถามและคำสำคัญที่สุ่มไปแล้วกลับมาสุ่มได้อีกครั้ง (ประวัติยังอยู่)'}
+            >
               <RotateCcw size={15} />
-              รีเซ็ตเวที (Reset)
+              คืนคำที่สุ่มแล้วทั้งหมด ({controls.drawnCount})
             </button>
           </div>
 
