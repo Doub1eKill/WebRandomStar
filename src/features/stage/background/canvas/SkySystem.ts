@@ -12,6 +12,7 @@ export class SkySystem {
   private width: number = 0;
   private height: number = 0;
   public skyClarity: number = 0.0; // 0 (hidden by rain/mist) to 1 (crystal clear night)
+  /** Lerped by StageCanvas and passed to MoonSystem, which draws the moon. */
   public moonOpacity: number = 0.0;
 
   constructor(starCount: number = 90) {
@@ -87,38 +88,6 @@ export class SkySystem {
     ctx.beginPath();
     ctx.ellipse(this.width * 0.5, this.height * 0.88, this.width * 0.55, this.height * 0.14, 0, Math.PI, Math.PI * 2);
     ctx.stroke();
-
-    // 3. Draw serene Moon in top quadrant
-    if (this.moonOpacity > 0.01) {
-      const moonX = this.width * 0.8;
-      const moonY = this.height * 0.22;
-      const moonRadius = 40;
-
-      // Soft Moon Glow with Violet Halo
-      const moonGlow = ctx.createRadialGradient(
-        moonX, moonY, moonRadius * 0.8,
-        moonX, moonY, moonRadius * 3.2
-      );
-      moonGlow.addColorStop(0, `rgba(241, 245, 249, ${0.32 * this.moonOpacity})`);
-      moonGlow.addColorStop(0.4, `rgba(192, 132, 252, ${0.18 * this.moonOpacity})`);
-      moonGlow.addColorStop(1, 'rgba(7, 8, 24, 0)');
-      ctx.fillStyle = moonGlow;
-      ctx.beginPath();
-      ctx.arc(moonX, moonY, moonRadius * 3.2, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Moon body (Silver crescent)
-      ctx.fillStyle = `rgba(248, 250, 252, ${0.9 * this.moonOpacity})`;
-      ctx.beginPath();
-      ctx.arc(moonX, moonY, moonRadius, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Crescent shadow
-      ctx.fillStyle = `rgba(16, 14, 43, ${0.95 * this.moonOpacity})`;
-      ctx.beginPath();
-      ctx.arc(moonX - moonRadius * 0.4, moonY - moonRadius * 0.2, moonRadius * 0.88, 0, Math.PI * 2);
-      ctx.fill();
-    }
 
     ctx.restore();
   }

@@ -11,6 +11,7 @@ import { NebulaSystem } from './NebulaSystem.ts';
 import { SpotlightSystem } from './SpotlightSystem.ts';
 import { ShootingStarSystem } from './ShootingStarSystem.ts';
 import { SparkleBurstSystem } from './SparkleBurstSystem.ts';
+import { MoonSystem } from './MoonSystem.ts';
 import { INITIAL_TARGETS, STATE_SOUNDS, STATE_TARGETS, LayerTargets } from './stateTargets.ts';
 import { getLiveRemainingMs } from '@/features/timer/timerEngine.ts';
 import { useLazyRef } from '@/shared/lib/useLazyRef.ts';
@@ -39,6 +40,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session }) => {
   const spotlightRef = useLazyRef(() => new SpotlightSystem());
   const meteorRef = useLazyRef(() => new ShootingStarSystem());
   const sparkleRef = useLazyRef(() => new SparkleBurstSystem());
+  const moonRef = useLazyRef(() => new MoonSystem());
   const prevStateRef = useRef(session.currentState);
   /** prefers-reduced-motion: freezes drift and sweeps, and skips meteors and bursts. */
   const reducedMotionRef = useRef(false);
@@ -142,6 +144,8 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session }) => {
       spotlightRef.current.resize(width, height);
       meteorRef.current.resize(width, height);
       sparkleRef.current.resize(width, height);
+      crownRef.current.resize(width, height);
+      moonRef.current.resize(width, height);
     };
 
     handleResize();
@@ -193,6 +197,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session }) => {
       const spotlights = spotlightRef.current;
       const meteors = meteorRef.current;
       const sparkles = sparkleRef.current;
+      const moon = moonRef.current;
       const targets = targetsRef.current;
       const appearance = currentSession.appearanceSettings;
       const glow = appearance?.glowIntensity || 1.0;
@@ -251,6 +256,8 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session }) => {
       // 4. Stars & Celestial Sky
       if (motion) sky.update();
       sky.draw(ctx);
+      moon.update(dtMs, motion);
+      moon.render(ctx, sky.moonOpacity, glow);
 
       if (vignette) {
         ctx.fillStyle = vignette;
@@ -278,6 +285,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session }) => {
       if (showReflection) {
         reflection.update(motionDtMs);
         reflection.render(ctx, width, height, curReflection);
+        moon.renderReflection(ctx, sky.moonOpacity * curReflection, glow);
       }
 
       // 9. Stage spotlight rig (drawn over the water so the floor pools and streaks show)
@@ -311,7 +319,7 @@ export const StageCanvas: React.FC<StageCanvasProps> = ({ session }) => {
       motionQuery?.removeEventListener?.('change', syncMotion);
     };
   }, [auroraRef, crownRef, crystalRef, lightingRef, mistRef, reflectionRef, skyRef,
-      nebulaRef, spotlightRef, meteorRef, sparkleRef]); // stable refs: runs once
+      nebulaRef, spotlightRef, meteorRef, sparkleRef, moonRef]); // stable refs: runs once
 
   return (
     <canvas
