@@ -3,7 +3,7 @@ import { loadAppearanceSettings, saveAppearanceSettings } from '@/features/appea
 import { appendHistoryRecord, clearHistory } from '@/features/history/historyManager.ts';
 import { exportQuestionsAsJSON, parseImportedQuestions } from '@/features/questions/importQuestions.ts';
 import { loadTimerSoundSettings, saveTimerSoundSettings, loadStageDisplaySettings, saveStageDisplaySettings } from '@/features/timer/timerSettings.ts';
-import { questionsRepository, contestantsRepository, wordsRepository, historyRepository } from '@/storage/repositories.ts';
+import { questionsRepository, contestantsRepository, wordsRepository, historyRepository, STORAGE_KEYS } from '@/storage/repositories.ts';
 import { DEFAULT_QUESTIONS } from '@/data/defaultQuestions.ts';
 import { DEFAULT_CONTESTANTS } from '@/data/defaultContestants.ts';
 import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
@@ -28,7 +28,6 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
       {
         id: 'CUSTOM_01',
         text: 'คำถามทดสอบระบบ',
-        category: 'Wind',
         difficulty: 'easy',
         round: 'attitude',
         enabled: true,
@@ -53,7 +52,6 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
       {
         id: 'IMP_01',
         text: 'คำถามนำเข้า',
-        category: 'Rain',
         difficulty: 'medium',
         round: 'intro',
         enabled: true,
@@ -72,7 +70,7 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
     const result1 = parseImportedQuestions(malformed);
     expect(result1.success).toBe(false);
 
-    const missingFields = JSON.stringify([{ id: '1' }]); // missing text and category
+    const missingFields = JSON.stringify([{ id: '1' }]); // missing text
     const result2 = parseImportedQuestions(missingFields);
     expect(result2.success).toBe(false);
   });
@@ -86,7 +84,7 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
   it('should load default words and save modified word bank', () => {
     expect(wordsRepository.load().length).toBe(DEFAULT_WORDS.length);
     const customWords: KeywordItem[] = [
-      { id: 'w-1', word: 'ความรัก', category: 'moon', enabled: true }
+      { id: 'w-1', word: 'ความรัก', enabled: true }
     ];
     wordsRepository.save(customWords);
     expect(wordsRepository.load().length).toBe(1);
@@ -121,7 +119,6 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
       contestantName: 'สมชาย',
       questionId: 'q1',
       questionText: 'คำถาม',
-      category: 'Rain',
       seed: 123,
       timerConfiguredMs: 90000,
       timerUsedMs: 45000,
@@ -193,7 +190,6 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
         contestantNumber: i + 1,
         questionId: `Q_${i}`,
         questionText: `คำถาม ${i}`,
-        category: 'Rain',
         seed: i,
         timerConfiguredMs: 90000,
         timerUsedMs: 30000,
@@ -211,7 +207,7 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
       {
         id: 'MAL_01',
         text: '<script>alert("xss")</script><b>คำถามทดสอบ</b><img src=x onerror=alert(1)>',
-        category: '<svg onload=alert(1)>Rain</svg>',
+        category: '<svg onload=alert(1)>Rain</svg>', // files exported before categories were removed
         difficulty: 'medium',
         round: 'attitude',
         notes: '<iframe src="evil.html"></iframe>โน้ตทดสอบ',
@@ -226,10 +222,20 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
     expect(q.text).not.toContain('<script>');
     expect(q.text).not.toContain('<img');
     expect(q.text).toContain('คำถามทดสอบ');
-    expect(q.category).not.toContain('<svg');
+    expect(q).not.toHaveProperty('category');
     expect(q.notes).not.toContain('<iframe');
     expect(q.tags).not.toContain('<script>evil</script>');
     expect(q.tags).toEqual(['valid-tag']);
+  });
+
+  it('drops the category that data saved before categories were removed still carries', () => {
+    localStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify([{ id: 'old', text: 'เก่า', category: 'rain', difficulty: 'easy', round: 'intro', enabled: true }]));
+    localStorage.setItem(STORAGE_KEYS.WORDS, JSON.stringify([{ id: 'w-old', word: 'เก่า', category: 'moon', enabled: true }]));
+    localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify([{ id: 'h-old', timestamp: 1, category: 'rain' }]));
+    expect(questionsRepository.load()[0]).not.toHaveProperty('category');
+    expect(questionsRepository.load()[0].text).toBe('เก่า');
+    expect(wordsRepository.load()[0]).not.toHaveProperty('category');
+    expect(historyRepository.load()[0]).not.toHaveProperty('category');
   });
 
   it('should export history records as valid CSV string', async () => {
@@ -246,7 +252,6 @@ describe('Storage Utilities & Multi-Namespace Persistence', () => {
         contestantNumber: 1,
         questionId: 'Q_1',
         questionText: 'คำถามข้อที่หนึ่ง "มีเครื่องหมายคำพูด"',
-        category: 'Rain',
         seed: 'seed-123',
         timerConfiguredMs: 90000,
         timerUsedMs: 45000,

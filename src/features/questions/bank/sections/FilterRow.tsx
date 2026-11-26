@@ -1,5 +1,4 @@
 import React from 'react';
-import { CATEGORY_CONFIGS } from '@/types/question.ts';
 import {
   Filter,
 } from 'lucide-react';
@@ -7,7 +6,7 @@ import {
 import type { QuestionBankDashboardModel } from '../useQuestionBankDashboardModel.tsx';
 
 export const FilterRow: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) => {
-  const { questions, selectedCategory, setSelectedCategory, selectedRound, setSelectedRound, selectedDifficulty, setSelectedDifficulty, selectedStatus, setSelectedStatus, categoriesList, roundsList, filteredQuestions } = m;
+  const { questions, selectedRound, setSelectedRound, selectedDifficulty, setSelectedDifficulty, selectedStatus, setSelectedStatus, roundsList, filteredQuestions } = m;
   return (
     <>
       {/* Filter Row */}
@@ -15,22 +14,6 @@ export const FilterRow: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
         <span style={{ color: '#64748b', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
           <Filter size={14} /> ตัวกรอง:
         </span>
-
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="ui-select-compact"
-        >
-          <option value="all">ทุกหมวดหมู่ ({categoriesList.length})</option>
-          {categoriesList.map(c => {
-            const cfg = CATEGORY_CONFIGS[c.toLowerCase()];
-            return (
-              <option key={c} value={c}>
-                {cfg ? `${cfg.name} (${cfg.englishName})` : c}
-              </option>
-            );
-          })}
-        </select>
 
         <select
           value={selectedRound}

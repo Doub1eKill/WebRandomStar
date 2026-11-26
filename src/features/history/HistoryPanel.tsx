@@ -158,7 +158,6 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ history, onClearHist
               <th style={{ padding: '0.75rem 1rem', width: '110px' }}>เวลา</th>
               <th style={{ padding: '0.75rem 1rem', width: '140px' }}>ผู้เข้าแข่งขัน</th>
               <th style={{ padding: '0.75rem 1rem' }}>คำถาม</th>
-              <th style={{ padding: '0.75rem 1rem', width: '90px' }}>หมวดหมู่</th>
               <th style={{ padding: '0.75rem 1rem', width: '100px', textAlign: 'center' }}>เวลาที่ใช้</th>
               <th style={{ padding: '0.75rem 1rem', width: '90px', textAlign: 'center' }}>ผลลัพธ์</th>
             </tr>
@@ -166,7 +165,7 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ history, onClearHist
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={6} style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
+                <td colSpan={5} style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
                   ยังไม่มีประวัติการตอบคำถามในระบบ
                 </td>
               </tr>
@@ -190,11 +189,6 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ history, onClearHist
                     <td style={{ padding: '0.75rem 1rem', color: '#cbd5e1' }}>
                       <div style={{ fontSize: '0.75rem', color: '#38bdf8', fontFamily: 'monospace' }}>{item.questionId}</div>
                       <div style={{ fontSize: '0.85rem' }}>{item.questionText}</div>
-                    </td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>
-                      <span style={{ padding: '0.2rem 0.4rem', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.05)', fontSize: '0.75rem' }}>
-                        {item.category}
-                      </span>
                     </td>
                     <td style={{ padding: '0.75rem 1rem', textAlign: 'center', fontFamily: 'monospace', color: '#f8fafc' }}>
                       {secondsUsed}s / {secondsConfigured}s

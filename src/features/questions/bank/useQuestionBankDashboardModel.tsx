@@ -1,6 +1,6 @@
 /** QuestionBankDashboard: props, state and handlers (Phase 6 split; body moved unchanged from QuestionBankDashboard.tsx). */
 import React, { useState, useMemo, useRef } from 'react';
-import { Question, QuestionCategory, QuestionDifficulty } from '@/types/question.ts';
+import { Question, QuestionDifficulty } from '@/types/question.ts';
 import { exportQuestionsAsJSON } from '@/features/questions/importQuestions.ts';
 import { useQuestionImport } from '@/features/questions/QuestionImportDialog.tsx';
 
@@ -17,7 +17,6 @@ export function useQuestionBankDashboardModel(props: QuestionBankDashboardProps)
   onSaveQuestions
   } = props;
   const [search, setSearch] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedRound, setSelectedRound] = useState<string>('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
@@ -40,14 +39,10 @@ export function useQuestionBankDashboardModel(props: QuestionBankDashboardProps)
     const disabled = total - enabled;
     const used = questions.filter(q => usedQuestionIds.includes(q.id) || q.used).length;
     const remaining = Math.max(0, enabled - used);
-    const categories = Array.from(new Set(questions.map(q => q.category))).length;
-    return { total, enabled, disabled, used, remaining, categories };
+    return { total, enabled, disabled, used, remaining };
   }, [questions, usedQuestionIds]);
 
-  // Unique Categories & Rounds
-  const categoriesList = useMemo(() => {
-    return Array.from(new Set(questions.map(q => q.category)));
-  }, [questions]);
+  // Unique Rounds
 
   const roundsList = useMemo(() => {
     return Array.from(new Set(questions.map(q => q.round)));
@@ -58,7 +53,6 @@ export function useQuestionBankDashboardModel(props: QuestionBankDashboardProps)
     return questions.filter(q => {
       const isUsed = usedQuestionIds.includes(q.id) || q.used;
 
-      if (selectedCategory !== 'all' && q.category.toLowerCase() !== selectedCategory.toLowerCase()) return false;
       if (selectedRound !== 'all' && q.round.toLowerCase() !== selectedRound.toLowerCase()) return false;
       if (selectedDifficulty !== 'all' && q.difficulty !== selectedDifficulty) return false;
       if (selectedStatus === 'enabled' && !q.enabled) return false;
@@ -76,7 +70,7 @@ export function useQuestionBankDashboardModel(props: QuestionBankDashboardProps)
 
       return true;
     });
-  }, [questions, usedQuestionIds, selectedCategory, selectedRound, selectedDifficulty, selectedStatus, search]);
+  }, [questions, usedQuestionIds, selectedRound, selectedDifficulty, selectedStatus, search]);
 
   const showNotification = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message });
@@ -110,7 +104,7 @@ export function useQuestionBankDashboardModel(props: QuestionBankDashboardProps)
 
   const handleSaveEdit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingQuestion?.text || !editingQuestion.id || !editingQuestion.category) {
+    if (!editingQuestion?.text || !editingQuestion.id) {
       showNotification('error', 'กรุณากรอกข้อมูลให้ครบถ้วน');
       return;
     }
@@ -124,7 +118,6 @@ export function useQuestionBankDashboardModel(props: QuestionBankDashboardProps)
       const newQuestion: Question = {
         id: editingQuestion.id,
         text: editingQuestion.text,
-        category: editingQuestion.category as QuestionCategory,
         difficulty: (editingQuestion.difficulty || 'medium') as QuestionDifficulty,
         round: editingQuestion.round || 'intro',
         enabled: editingQuestion.enabled !== false,
@@ -165,7 +158,7 @@ export function useQuestionBankDashboardModel(props: QuestionBankDashboardProps)
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  return { questions, usedQuestionIds, onSaveQuestions, search, setSearch, selectedCategory, setSelectedCategory, selectedRound, setSelectedRound, selectedDifficulty, setSelectedDifficulty, selectedStatus, setSelectedStatus, previewQuestion, setPreviewQuestion, editingQuestion, setEditingQuestion, isAdding, setIsAdding, notification, setNotification, fileInputRef, stats, categoriesList, roundsList, filteredQuestions, showNotification, handleToggleEnable, handleDelete, handleDuplicate, handleSaveEdit, handleExport, questionImport, handleImport };
+  return { questions, usedQuestionIds, onSaveQuestions, search, setSearch, selectedRound, setSelectedRound, selectedDifficulty, setSelectedDifficulty, selectedStatus, setSelectedStatus, previewQuestion, setPreviewQuestion, editingQuestion, setEditingQuestion, isAdding, setIsAdding, notification, setNotification, fileInputRef, stats, roundsList, filteredQuestions, showNotification, handleToggleEnable, handleDelete, handleDuplicate, handleSaveEdit, handleExport, questionImport, handleImport };
 }
 
 export type QuestionBankDashboardModel = ReturnType<typeof useQuestionBankDashboardModel>;

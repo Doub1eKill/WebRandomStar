@@ -8,15 +8,15 @@ import { renderSession } from './helpers/session.tsx';
 import { questionsRepository } from '@/storage/repositories.ts';
 import { Question } from '@/types/question.ts';
 
-const q = (id: string, round: string, category: string, enabled = true): Question => ({
-  id, text: id, round, category: category as Question['category'], difficulty: 'medium', enabled
+const q = (id: string, round: string, enabled = true): Question => ({
+  id, text: id, round, difficulty: 'medium', enabled
 });
 
 describe('B11: selectNextQuestion reports fallbacks without changing the pick logic', () => {
-  const bank = [q('a', 'intro', 'rain'), q('b', 'intro', 'mist'), q('c', 'final', 'final')];
+  const bank = [q('a', 'intro'), q('b', 'intro'), q('c', 'final')];
 
   it('no fallback when the requested pool has unused questions', () => {
-    expect(selectNextQuestion({ questions: bank, round: 'intro', category: 'rain', seed: 's' })?.fallbackReasons).toEqual([]);
+    expect(selectNextQuestion({ questions: bank, round: 'intro', seed: 's' })?.fallbackReasons).toEqual([]);
   });
 
   it('round-empty', () => {
@@ -24,16 +24,10 @@ describe('B11: selectNextQuestion reports fallbacks without changing the pick lo
     expect(r?.fallbackReasons).toEqual(['round-empty']);
   });
 
-  it('category-empty', () => {
-    const r = selectNextQuestion({ questions: bank, round: 'intro', category: 'star', seed: 's' });
-    expect(r?.fallbackReasons).toEqual(['category-empty']);
-    expect(['a', 'b']).toContain(r?.selectedQuestion.id); // still drawn from the round, as before
-  });
-
   it('subset-exhausted', () => {
-    const r = selectNextQuestion({ questions: bank, round: 'intro', category: 'rain', usedQuestionIds: ['a'], seed: 's' });
+    const r = selectNextQuestion({ questions: bank, round: 'intro', usedQuestionIds: ['a', 'b'], seed: 's' });
     expect(r?.fallbackReasons).toEqual(['subset-exhausted']);
-    expect(r?.selectedQuestion.id).not.toBe('a');
+    expect(r?.selectedQuestion.id).toBe('c');
   });
 
   it('bank-exhausted', () => {
@@ -55,7 +49,7 @@ describe('B10: operator notices', () => {
   it('startJourney with no usable questions raises an error notice instead of alert()', () => {
     const alertSpy = vi.fn();
     vi.stubGlobal('alert', alertSpy);
-    questionsRepository.save([q('off', 'intro', 'rain', false)]);
+    questionsRepository.save([q('off', 'intro', false)]);
     const received: OperatorNotice[] = [];
     const unsubscribe = subscribeOperatorNotices(n => received.push(n));
 
@@ -71,7 +65,7 @@ describe('B10: operator notices', () => {
   });
 
   it('startJourney warns when the question comes from outside the requested round', () => {
-    questionsRepository.save([q('x', 'final', 'rain')]);
+    questionsRepository.save([q('x', 'final')]);
     const received: OperatorNotice[] = [];
     const unsubscribe = subscribeOperatorNotices(n => received.push(n));
 

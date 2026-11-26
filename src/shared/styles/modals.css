@@ -89,10 +89,6 @@
   font-size: 0.9rem;
 }
 
-.select-filter {
-  width: 220px;
-}
-
 .add-question-form {
   padding: 18px;
   display: flex;
@@ -178,16 +174,6 @@
 .btn-toggle-switch.active {
   background: #10b981;
   color: #000000;
-}
-
-.cat-table-badge {
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
 }
 
 .round-table-badge {

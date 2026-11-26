@@ -2,11 +2,11 @@ import { describe, it, expect } from 'vitest';
 import { KeywordItem } from '@/types/word.ts';
 
 export const mockWords: KeywordItem[] = [
-  { id: 'w1', word: 'ความฝัน', category: 'moon', enabled: true },
-  { id: 'w2', word: 'วิสัยทัศน์', category: 'mist', enabled: true },
-  { id: 'w3', word: 'ภาวะผู้นำ', category: 'wind', enabled: true },
-  { id: 'w4', word: 'ตัวตน', category: 'star', enabled: true },
-  { id: 'w5', word: 'คุณค่า', category: 'final', enabled: true }
+  { id: 'w1', word: 'ความฝัน', enabled: true },
+  { id: 'w2', word: 'วิสัยทัศน์', enabled: true },
+  { id: 'w3', word: 'ภาวะผู้นำ', enabled: true },
+  { id: 'w4', word: 'ตัวตน', enabled: true },
+  { id: 'w5', word: 'คุณค่า', enabled: true }
 ];
 
 describe('Word Spin View Types & Definitions', () => {
@@ -184,8 +184,8 @@ describe('WordCarousel Orchestrator Mode Switching', () => {
     const { WordCarousel } = await import('@/features/stage/word-spin/WordCarousel.tsx');
 
     const sampleQuestions = [
-      { id: 'q1', text: 'ในยุคดิจิทัล ทักษะใดสำคัญที่สุดสำหรับผู้นำ?', category: 'general', enabled: true },
-      { id: 'q2', text: 'แนวคิดการพัฒนาที่ยั่งยืนคืออะไร?', category: 'attitude', enabled: true }
+      { id: 'q1', text: 'ในยุคดิจิทัล ทักษะใดสำคัญที่สุดสำหรับผู้นำ?', enabled: true },
+      { id: 'q2', text: 'แนวคิดการพัฒนาที่ยั่งยืนคืออะไร?', enabled: true }
     ];
 
     const html = renderToString(

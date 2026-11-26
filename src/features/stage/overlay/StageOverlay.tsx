@@ -163,7 +163,6 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
             {session.appearanceSettings?.quizMode === 'keyword' ? (
               <KeywordShowcaseCard
                 keyword={session.selectedKeyword || session.selectedWordItem?.word}
-                category={session.selectedCategory || session.selectedWordItem?.category}
                 isAnswered={session.currentState === 'answered'}
                 compact={isCenterTimer}
               />

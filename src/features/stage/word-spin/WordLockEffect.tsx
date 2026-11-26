@@ -19,7 +19,6 @@ export const WordLockEffect: React.FC<WordLockEffectProps> = ({
   const word = isQuestionMode
     ? (question?.text || 'คำถามประจำรอบ')
     : (wordItem?.word || 'คำสำคัญประจำค่ำคืน');
-  const category = (isQuestionMode ? question?.category : wordItem?.category) || 'general';
   const theme = isQuestionMode
     ? (question?.round ? `รอบ ${question.round}` : 'Question')
     : (wordItem?.englishTheme || 'Theme Keyword');
@@ -71,8 +70,6 @@ export const WordLockEffect: React.FC<WordLockEffectProps> = ({
         </div>
 
         <div className="lock-details-badge">
-          <span className="badge-cat-tag">หมวด: {category.toUpperCase()}</span>
-          <span className="badge-dot">•</span>
           <span className="badge-theme-text">{theme}</span>
         </div>
 

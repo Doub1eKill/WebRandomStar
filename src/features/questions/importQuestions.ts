@@ -1,9 +1,10 @@
 /**
  * S1: safe question import. Validates every row against the values the app understands,
  * rejects duplicate ids, limits the file size, and lets the operator merge into the bank
- * (default) or replace it after an automatic backup.
+ * (default) or replace it after an automatic backup. Files exported before categories were
+ * removed still import: a `category` field is ignored.
  */
-import { Question, CATEGORY_CONFIGS } from '@/types/question.ts';
+import { Question } from '@/types/question.ts';
 
 export const MAX_IMPORT_BYTES = 2 * 1024 * 1024;
 export const QUESTION_ROUNDS = ['intro', 'general', 'attitude', 'scenario', 'final'] as const;
@@ -21,11 +22,6 @@ export function sanitizeText(input: string): string {
     .replace(/<[^>]+>/g, '')
     .trim();
 }
-
-const knownCategory = (value: string): string | null => {
-  const lower = value.trim().toLowerCase();
-  return Object.keys(CATEGORY_CONFIGS).includes(lower) ? lower : null;
-};
 
 export interface ImportResult {
   success: boolean;
@@ -48,8 +44,8 @@ export function parseImportedQuestions(jsonString: string): ImportResult {
     for (let i = 0; i < parsed.length; i++) {
       const row = i + 1;
       const item = parsed[i];
-      if (!item || typeof item !== 'object' || !item.id || !item.text || !item.category) {
-        return { success: false, error: `ข้อมูลแถวที่ ${row} ไม่ครบถ้วน (ต้องมี id, text, category)` };
+      if (!item || typeof item !== 'object' || !item.id || !item.text) {
+        return { success: false, error: `ข้อมูลแถวที่ ${row} ไม่ครบถ้วน (ต้องมี id และ text)` };
       }
 
       const id = sanitizeText(String(item.id));
@@ -65,11 +61,6 @@ export function parseImportedQuestions(jsonString: string): ImportResult {
       }
       seenIds.add(id);
 
-      const category = knownCategory(sanitizeText(String(item.category)));
-      if (!category) {
-        return { success: false, error: `แถวที่ ${row}: ไม่รู้จักหมวด "${item.category}" (ใช้ได้: ${Object.keys(CATEGORY_CONFIGS).join(', ')})` };
-      }
-
       const round = item.round === undefined ? 'attitude' : String(item.round).trim().toLowerCase();
       if (!(QUESTION_ROUNDS as readonly string[]).includes(round)) {
         return { success: false, error: `แถวที่ ${row}: ไม่รู้จักรอบ "${item.round}" (ใช้ได้: ${QUESTION_ROUNDS.join(', ')})` };
@@ -83,7 +74,6 @@ export function parseImportedQuestions(jsonString: string): ImportResult {
       validated.push({
         id,
         text,
-        category,
         difficulty: difficulty as Question['difficulty'],
         round: round as Question['round'],
         enabled: item.enabled !== false,

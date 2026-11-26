@@ -3,22 +3,22 @@ import { DEFAULT_QUESTIONS } from '@/data/defaultQuestions.ts';
 import { DEFAULT_CONTESTANTS } from '@/data/defaultContestants.ts';
 import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
 import { DEFAULT_APPEARANCE_SETTINGS } from '@/types/appearance.ts';
-import { QuestionCategory } from '@/types/question.ts';
+import { QUESTION_ROUNDS } from '@/features/questions/importQuestions.ts';
 
 describe('Question, Contestant and Word Bank Data Integrity', () => {
   it('should have at least 35 default questions', () => {
     expect(DEFAULT_QUESTIONS.length).toBeGreaterThanOrEqual(35);
   });
 
-  it('should cover all 7 natural categories', () => {
-    const requiredCategories: QuestionCategory[] = ['rain', 'mist', 'wind', 'leaf', 'moon', 'star', 'final'];
-    const presentCategories = new Set(DEFAULT_QUESTIONS.map(q => q.category));
-    
-    for (const cat of requiredCategories) {
-      expect(presentCategories.has(cat)).toBe(true);
-      // Each category must have at least 3 questions
-      const count = DEFAULT_QUESTIONS.filter(q => q.category === cat).length;
-      expect(count).toBeGreaterThanOrEqual(3);
+  it('has questions for every round (questions are drawn by round only)', () => {
+    for (const round of QUESTION_ROUNDS) {
+      expect(DEFAULT_QUESTIONS.filter(q => q.round === round).length).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it('carries no category: categories were removed', () => {
+    for (const item of [...DEFAULT_QUESTIONS, ...DEFAULT_WORDS]) {
+      expect(item).not.toHaveProperty('category');
     }
   });
 
@@ -41,10 +41,10 @@ describe('Question, Contestant and Word Bank Data Integrity', () => {
     const uniqueWordIds = new Set(wordIds);
     expect(uniqueWordIds.size).toBe(wordIds.length);
 
-    // Each word must have a valid word string and category
+    // Each word must have a valid word string and its English subtitle
     for (const item of DEFAULT_WORDS) {
       expect(item.word.trim().length).toBeGreaterThan(0);
-      expect(item.category).toBeDefined();
+      expect(item.englishTheme?.trim().length).toBeGreaterThan(0);
       expect(item.enabled).toBe(true);
     }
   });

@@ -4,7 +4,7 @@
  * returned as data and executed by the stage host, so this module never touches the outside world.
  */
 import { SessionState } from '@/types/session.ts';
-import { Question, QuestionCategory, Contestant, CATEGORY_CONFIGS } from '@/types/question.ts';
+import { Question, Contestant } from '@/types/question.ts';
 import { KeywordItem } from '@/types/word.ts';
 import { TimerSoundSettings, StageDisplaySettings } from '@/types/timer.ts';
 import { AppearanceSettings } from '@/types/appearance.ts';
@@ -46,17 +46,14 @@ export interface ReducerResult {
 }
 
 /** Operator-facing explanation of a selector fallback (B11). */
-export function describeFallback(reason: SelectionFallbackReason, round: string, category?: string): string {
-  const categoryName = category ? (CATEGORY_CONFIGS[category]?.name || category) : '';
+export function describeFallback(reason: SelectionFallbackReason, round: string): string {
   switch (reason) {
     case 'round-empty':
       return `ไม่มีคำถามในรอบ "${round}" จึงสุ่มจากทุกรอบแทน`;
-    case 'category-empty':
-      return `ไม่มีคำถามหมวด "${categoryName}" ในรอบ "${round}" จึงสุ่มจากหมวดอื่นแทน`;
     case 'difficulty-empty':
       return 'ไม่มีคำถามตามระดับความยากที่เลือก จึงสุ่มจากทุกระดับแทน';
     case 'subset-exhausted':
-      return 'คำถามในรอบ/หมวดที่เลือกถูกใช้ครบแล้ว จึงสุ่มจากคำถามที่ยังไม่ถูกใช้นอกรอบ/หมวดนี้';
+      return 'คำถามในรอบที่เลือกถูกใช้ครบแล้ว จึงสุ่มจากคำถามที่ยังไม่ถูกใช้ในรอบอื่น';
     case 'bank-exhausted':
       return 'คำถามทั้งคลังถูกใช้ครบแล้ว ระบบเริ่มวนใช้คำถามซ้ำ';
   }
@@ -90,28 +87,26 @@ export function sessionReducer(s: SessionState, command: AnyCommand, ctx: Reduce
       const newSeed = 'seed-' + now;
 
       // 1. Deterministically select the target keyword
-      const targetWord = command.forceWord || selectTargetWord(words, command.forceCategory, newSeed) || words[0];
-      const categoryToUse = command.forceCategory || (targetWord ? (targetWord.category as QuestionCategory) : undefined);
+      const targetWord = command.forceWord || selectTargetWord(words, newSeed) || words[0];
 
-      // 2. Deterministically select the question matching the selected word / category
+      // 2. Deterministically select an unused question from the selected round
       const selection = selectNextQuestion({
         questions,
         usedQuestionIds: s.usedQuestionIds,
         round: s.selectedRound,
-        category: categoryToUse,
         seed: newSeed
       });
 
       if (!selection) {
         // B10: a notice for the operator instead of alert()
-        return next(s, [{ type: 'NOTIFY', level: 'error', message: 'ไม่มีคำถามที่พร้อมใช้งานในหมวด/รอบที่เลือก' }]);
+        return next(s, [{ type: 'NOTIFY', level: 'error', message: 'ไม่มีคำถามที่พร้อมใช้งานในรอบที่เลือก' }]);
       }
 
-      // B11: tell the operator when the question did not come from the requested round/category
+      // B11: tell the operator when the question did not come from the requested round
       const effects: SessionEffect[] = selection.fallbackReasons.map(reason => ({
         type: 'NOTIFY',
         level: 'warning',
-        message: describeFallback(reason, s.selectedRound, categoryToUse)
+        message: describeFallback(reason, s.selectedRound)
       }));
 
       const safeDuration = s.timerState.durationMs || DEFAULT_TIMER_DURATION_MS;
@@ -122,7 +117,6 @@ export function sessionReducer(s: SessionState, command: AnyCommand, ctx: Reduce
         selectedWordId: targetWord?.id,
         selectedKeyword: targetWord?.word,
         selectedWordItem: targetWord || undefined,
-        selectedCategory: selection.selectedCategory,
         selectedQuestion: selection.selectedQuestion,
         isPaused: false,
         timerState: {
@@ -164,7 +158,6 @@ export function sessionReducer(s: SessionState, command: AnyCommand, ctx: Reduce
       const activeQuestion: Question | undefined = s.selectedQuestion || (isKeywordMode && s.selectedKeyword ? {
         id: `KW_${s.selectedWordItem?.id || now}`,
         text: s.selectedKeyword,
-        category: (s.selectedCategory || s.selectedWordItem?.category || 'general') as QuestionCategory,
         difficulty: 'medium',
         round: s.selectedRound,
         enabled: true
@@ -209,7 +202,6 @@ export function sessionReducer(s: SessionState, command: AnyCommand, ctx: Reduce
         selectedQuestion: undefined,
         selectedWordItem: undefined,
         selectedKeyword: undefined,
-        selectedCategory: undefined,
         timerState: createInitialTimerState(safeDuration)
       });
     }

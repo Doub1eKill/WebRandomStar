@@ -2,15 +2,12 @@ import { KeywordItem } from '@/types/word.ts';
 
 /**
  * Default keyword bank: the 20 words the show uses (list supplied on 2026-11-26).
- * `category` picks the question category in question-bank mode, so every word maps to one of
- * the seven categories in CATEGORY_CONFIGS; `englishTheme` is the English word the stage shows
- * under the keyword when it locks.
+ * `englishTheme` is the English word the stage shows under the keyword when it locks.
  */
 export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-self-worth',
     word: 'คุณค่าในตัวเอง',
-    category: 'star',
     englishTheme: 'Self-Worth',
     color: '#fde047',
     enabled: true,
@@ -20,7 +17,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-confidence',
     word: 'ความมั่นใจ',
-    category: 'star',
     englishTheme: 'Confidence',
     color: '#fde047',
     enabled: true,
@@ -30,7 +26,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-true-beauty',
     word: 'ความงามที่แท้จริง',
-    category: 'mist',
     englishTheme: 'True Beauty',
     color: '#94a3b8',
     enabled: true,
@@ -40,7 +35,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-equality',
     word: 'ความเท่าเทียม',
-    category: 'final',
     englishTheme: 'Equality',
     color: '#f43f5e',
     enabled: true,
@@ -50,7 +44,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-diversity',
     word: 'การยอมรับความแตกต่าง',
-    category: 'moon',
     englishTheme: 'Diversity',
     color: '#e2e8f0',
     enabled: true,
@@ -60,7 +53,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-courage',
     word: 'ความกล้าหาญ',
-    category: 'star',
     englishTheme: 'Courage',
     color: '#fde047',
     enabled: true,
@@ -70,7 +62,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-failure',
     word: 'ความล้มเหลว',
-    category: 'rain',
     englishTheme: 'Failure',
     color: '#38bdf8',
     enabled: true,
@@ -80,7 +71,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-success',
     word: 'ความสำเร็จ',
-    category: 'rain',
     englishTheme: 'Success',
     color: '#38bdf8',
     enabled: true,
@@ -90,7 +80,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-forgiveness',
     word: 'การให้อภัย',
-    category: 'moon',
     englishTheme: 'Forgiveness',
     color: '#e2e8f0',
     enabled: true,
@@ -100,7 +89,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-empathy',
     word: 'ความเห็นอกเห็นใจ',
-    category: 'moon',
     englishTheme: 'Empathy',
     color: '#e2e8f0',
     enabled: true,
@@ -110,7 +98,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-justice',
     word: 'ความยุติธรรม',
-    category: 'final',
     englishTheme: 'Justice',
     color: '#f43f5e',
     enabled: true,
@@ -120,7 +107,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-leadership',
     word: 'ความเป็นผู้นำ',
-    category: 'wind',
     englishTheme: 'Leadership',
     color: '#86efac',
     enabled: true,
@@ -130,7 +116,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-sacrifice',
     word: 'การเสียสละ',
-    category: 'leaf',
     englishTheme: 'Sacrifice',
     color: '#fbbf24',
     enabled: true,
@@ -140,7 +125,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-responsibility',
     word: 'ความรับผิดชอบ',
-    category: 'wind',
     englishTheme: 'Responsibility',
     color: '#86efac',
     enabled: true,
@@ -150,7 +134,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-change',
     word: 'การเปลี่ยนแปลง',
-    category: 'rain',
     englishTheme: 'Change',
     color: '#38bdf8',
     enabled: true,
@@ -160,7 +143,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-prejudice',
     word: 'อคติ',
-    category: 'mist',
     englishTheme: 'Prejudice',
     color: '#94a3b8',
     enabled: true,
@@ -170,7 +152,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-truth',
     word: 'ความจริง',
-    category: 'mist',
     englishTheme: 'Truth',
     color: '#94a3b8',
     enabled: true,
@@ -180,7 +161,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-self-respect',
     word: 'การเคารพตัวเอง',
-    category: 'star',
     englishTheme: 'Self-Respect',
     color: '#fde047',
     enabled: true,
@@ -190,7 +170,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-women-empowerment',
     word: 'พลังของผู้หญิง',
-    category: 'wind',
     englishTheme: 'Women Empowerment',
     color: '#86efac',
     enabled: true,
@@ -200,7 +179,6 @@ export const DEFAULT_WORDS: KeywordItem[] = [
   {
     id: 'w-humanity',
     word: 'ความเป็นมนุษย์',
-    category: 'leaf',
     englishTheme: 'Humanity',
     color: '#fbbf24',
     enabled: true,

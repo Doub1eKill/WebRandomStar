@@ -1,4 +1,3 @@
-import { QuestionCategory } from '@/types/question.ts';
 import { KeywordItem } from '@/types/word.ts';
 import { TimerSoundSettings, StageDisplaySettings } from '@/types/timer.ts';
 import { AppearanceSettings } from '@/types/appearance.ts';
@@ -7,8 +6,8 @@ import { SessionCommand } from './commands.ts';
 /** Named action functions over `dispatch` (same API the old useStageSync exposed). */
 export function createSessionActions(d: (command: SessionCommand) => void) {
   return {
-    startJourney: (_viewport?: { width: number; height: number }, forceCategory?: QuestionCategory, forceWord?: KeywordItem) =>
-      d({ type: 'START_JOURNEY', forceCategory, forceWord }),
+    startJourney: (_viewport?: { width: number; height: number }, forceWord?: KeywordItem) =>
+      d({ type: 'START_JOURNEY', forceWord }),
     stopWordSpin: () => d({ type: 'STOP_WORD_SPIN' }),
     pauseJourney: () => d({ type: 'TOGGLE_PAUSE' }),
     skipToQuestion: () => d({ type: 'SKIP_TO_QUESTION' }),

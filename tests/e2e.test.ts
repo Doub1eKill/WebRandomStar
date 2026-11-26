@@ -25,14 +25,13 @@ describe('End-to-End Royal Word Spin V3 Journey Simulation', () => {
   it('should guarantee reproducible word selection and question results with identical seeds', () => {
     const seed = 'pageant-final-2026-royal-spin';
 
-    const word1 = selectTargetWord(DEFAULT_WORDS, undefined, seed);
-    const word2 = selectTargetWord(DEFAULT_WORDS, undefined, seed);
+    const word1 = selectTargetWord(DEFAULT_WORDS, seed);
+    const word2 = selectTargetWord(DEFAULT_WORDS, seed);
     expect(word1).toEqual(word2);
 
-    const run1 = selectNextQuestion({ questions: DEFAULT_QUESTIONS, category: word1?.category, seed });
-    const run2 = selectNextQuestion({ questions: DEFAULT_QUESTIONS, category: word2?.category, seed });
+    const run1 = selectNextQuestion({ questions: DEFAULT_QUESTIONS, seed });
+    const run2 = selectNextQuestion({ questions: DEFAULT_QUESTIONS, seed });
 
-    expect(run1?.selectedCategory).toBe(run2?.selectedCategory);
     expect(run1?.selectedQuestion.id).toBe(run2?.selectedQuestion.id);
     expect(run1?.selectedQuestion.text).toBe(run2?.selectedQuestion.text);
   });
@@ -76,14 +75,12 @@ describe('End-to-End Royal Word Spin V3 Journey Simulation', () => {
 
   it('should simulate full question lifecycle: word spin -> word lock -> reveal -> timer -> audit log', () => {
     // 1. Select Word
-    const word = selectTargetWord(DEFAULT_WORDS, 'moon', 'seed_e2e_full');
+    const word = selectTargetWord(DEFAULT_WORDS, 'seed_e2e_full');
     expect(word).not.toBeNull();
-    expect(word?.category).toBe('moon');
 
     // 2. Select Question
     const selection = selectNextQuestion({
       questions: DEFAULT_QUESTIONS,
-      category: word?.category,
       round: 'attitude',
       seed: 'seed_e2e_full'
     });

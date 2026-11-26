@@ -69,27 +69,15 @@ export const EditModal: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-              <div>
-                <label className="ui-field-label">หมวดหมู่</label>
-                <input
-                  type="text"
-                  value={editingQuestion.category || ''}
-                  onChange={(e) => setEditingQuestion({ ...editingQuestion, category: e.target.value })}
-                  style={{ width: '100%', padding: '0.5rem', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '6px', color: '#f8fafc' }}
-                  required
-                />
-              </div>
-              <div>
-                <label className="ui-field-label">รอบการแข่งขัน</label>
-                <input
-                  type="text"
-                  value={editingQuestion.round || ''}
-                  onChange={(e) => setEditingQuestion({ ...editingQuestion, round: e.target.value })}
-                  style={{ width: '100%', padding: '0.5rem', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '6px', color: '#f8fafc' }}
-                  required
-                />
-              </div>
+            <div>
+              <label className="ui-field-label">รอบการแข่งขัน</label>
+              <input
+                type="text"
+                value={editingQuestion.round || ''}
+                onChange={(e) => setEditingQuestion({ ...editingQuestion, round: e.target.value })}
+                style={{ width: '100%', padding: '0.5rem', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '6px', color: '#f8fafc' }}
+                required
+              />
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>

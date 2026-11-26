@@ -5,7 +5,6 @@
  * and its inline styles became classes in livePage.css.
  */
 import React, { useState } from 'react';
-import { CATEGORY_CONFIGS } from '@/types/question.ts';
 import { useSession, useSessionActions } from '@/features/session/SessionProvider.tsx';
 import { stageControls, ROUND_OPTIONS } from '@/features/control/useStageControls.ts';
 import { ControlCard } from '@/features/control/ControlCard.tsx';
@@ -14,7 +13,6 @@ import { useContestants, useWords } from '@/storage/useRepository.ts';
 import { contestantsRepository } from '@/storage/repositories.ts';
 import { ContestantManagerModal } from '@/features/contestants/ContestantManagerModal.tsx';
 import { CheckCircle, Crosshair, Crown, FastForward, Gamepad2, MonitorPlay, OctagonX, Pause, Play, RotateCcw, Sparkle, Trophy, User, Users } from 'lucide-react';
-import { CategoryIcon } from '@/shared/ui/icons.tsx';
 import './livePage.css';
 
 export const LivePage: React.FC = () => {
@@ -26,7 +24,7 @@ export const LivePage: React.FC = () => {
 
   // A3: logic shared with the stage drawer
   const controls = stageControls(session, words, {
-    onStart: (category, word) => actions.startJourney(undefined, category, word),
+    onStart: word => actions.startJourney(undefined, word),
     onStopSpin: actions.stopWordSpin,
     onSkip: actions.skipToQuestion,
     onSetAppearanceSettings: actions.setAppearanceSettings
@@ -131,7 +129,7 @@ export const LivePage: React.FC = () => {
             <div className="live-chips-label ui-ico-label"><Crosshair size={14} aria-hidden="true" />หมุนเจาะจงคำสำคัญ (Direct Word Spin):</div>
             <div className="live-chips-row">
               {controls.enabledWords.map(w => {
-                const color = w.color || CATEGORY_CONFIGS[w.category.toLowerCase()]?.color;
+                const color = w.color;
                 return (
                   <button
                     key={w.id}
@@ -139,7 +137,7 @@ export const LivePage: React.FC = () => {
                     onClick={() => controls.startWithWord(w)}
                     style={{ border: `1px solid ${color || 'rgba(255,255,255,0.15)'}50`, color: color || '#fff' }}
                   >
-                    <CategoryIcon category={w.category} size={13} />
+                    <Sparkle size={13} aria-hidden="true" />
                     {w.word}
                   </button>
                 );
@@ -152,7 +150,6 @@ export const LivePage: React.FC = () => {
           {session.selectedQuestion ? (
             <div className="live-monitor-question">
               <div className="live-monitor-tags">
-                <span className="live-tag live-tag--category ui-ico-label"><CategoryIcon category={session.selectedQuestion.category} size={12} />{session.selectedQuestion.category.toUpperCase()}</span>
                 {session.selectedWordItem && <span className="live-tag live-tag--word ui-ico-label"><Sparkle size={12} aria-hidden="true" />{session.selectedWordItem.word}</span>}
                 <span className="live-monitor-id">ID: {session.selectedQuestion.id}</span>
               </div>

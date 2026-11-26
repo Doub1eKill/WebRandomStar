@@ -7,7 +7,7 @@ import { useMusicStageRouter } from '@/features/music/useMusicStageRouter.ts';
 import { applyTypography } from '@/features/appearance/typography.ts';
 import { questionsRepository, contestantsRepository } from '@/storage/repositories.ts';
 import { useQuestions, useContestants, useWords } from '@/storage/useRepository.ts';
-import { Question, Contestant, QuestionCategory } from '@/types/question.ts';
+import { Question, Contestant } from '@/types/question.ts';
 import { KeywordItem } from '@/types/word.ts';
 import { musicPlayer } from '@/features/music/musicPlayerEngine.ts';
 import { useMusicPlayerState } from '@/features/music/useMusicPlayerState.ts';
@@ -114,8 +114,8 @@ const StageScreen: React.FC = () => {
 
   const activeContestant = contestants.find(c => c.id === session.selectedContestantId);
 
-  const handleStart = (forceCategory?: QuestionCategory, forceWord?: KeywordItem) => {
-    startJourney({ width: window.innerWidth, height: window.innerHeight }, forceCategory, forceWord);
+  const handleStart = (forceWord?: KeywordItem) => {
+    startJourney({ width: window.innerWidth, height: window.innerHeight }, forceWord);
   };
 
   const handleStartOrPause = () => {

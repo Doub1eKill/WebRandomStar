@@ -1,6 +1,4 @@
 import React from 'react';
-import { CategoryIcon } from '@/shared/ui/icons.tsx';
-import { CATEGORY_CONFIGS } from '@/types/question.ts';
 import {
   Edit2,
   Copy,
@@ -23,7 +21,6 @@ export const QuestionTable: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }
             <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)', background: 'rgba(255, 255, 255, 0.02)', color: '#94a3b8' }}>
               <th style={{ padding: '0.75rem 1rem', width: '90px' }}>ID</th>
               <th style={{ padding: '0.75rem 1rem' }}>ข้อความคำถาม</th>
-              <th style={{ padding: '0.75rem 1rem', width: '190px' }}>หมวดหมู่</th>
               <th style={{ padding: '0.75rem 1rem', width: '80px' }}>ระดับ</th>
               <th style={{ padding: '0.75rem 1rem', width: '90px' }}>รอบ</th>
               <th style={{ padding: '0.75rem 1rem', width: '90px', textAlign: 'center' }}>สถานะ</th>
@@ -33,7 +30,7 @@ export const QuestionTable: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }
           <tbody>
             {filteredQuestions.length === 0 ? (
               <tr>
-                <td colSpan={7} style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
+                <td colSpan={6} style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
                   ไม่พบคำถามที่ตรงกับเงื่อนไขการค้นหา
                 </td>
               </tr>
@@ -59,31 +56,6 @@ export const QuestionTable: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }
                           ใช้แล้ว
                         </span>
                       )}
-                    </td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#cbd5e1' }}>
-                      {(() => {
-                        const cfg = CATEGORY_CONFIGS[q.category.toLowerCase()];
-                        return (
-                          <span
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.3rem',
-                              padding: '0.2rem 0.55rem',
-                              borderRadius: '6px',
-                              background: cfg ? `${cfg.color}18` : 'rgba(255, 255, 255, 0.06)',
-                              border: `1px solid ${cfg ? `${cfg.color}40` : 'rgba(255, 255, 255, 0.1)'}`,
-                              color: cfg ? cfg.color : '#cbd5e1',
-                              fontSize: '0.75rem',
-                              fontWeight: 600,
-                              whiteSpace: 'nowrap'
-                            }}
-                          >
-                            <CategoryIcon category={q.category} size={13} />
-                            <span>{cfg?.name || q.category}</span>
-                          </span>
-                        );
-                      })()}
                     </td>
                     <td style={{ padding: '0.75rem 1rem', color: '#94a3b8', textTransform: 'capitalize' }}>
                       {q.difficulty}

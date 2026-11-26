@@ -566,31 +566,6 @@
   z-index: 2;
 }
 
-.keyword-category-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 14px;
-  background: linear-gradient(135deg, rgba(147, 51, 234, 0.35) 0%, rgba(56, 189, 248, 0.25) 100%);
-  border: 1px solid rgba(216, 180, 254, 0.5);
-  border-radius: 9999px;
-  box-shadow: 0 0 14px rgba(147, 51, 234, 0.3);
-}
-
-.keyword-category-icon {
-  font-size: 0.75rem;
-  color: #fde047;
-  text-shadow: 0 0 8px rgba(253, 224, 71, 0.8);
-}
-
-.keyword-category-text {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
 .keyword-subtitle-prompt {
   font-size: 0.95rem;
   color: #cbd5e1;
