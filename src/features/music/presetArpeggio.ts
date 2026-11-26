@@ -23,14 +23,11 @@ const AMBIENT: ArpeggioPattern = { notes: [329.63, 415.3, 493.88, 659.25, 493.88
 const SPIN: ArpeggioPattern = { notes: [220, 261.63, 329.63, 440, 329.63, 261.63], stepSec: 0.16, noteSec: 0.22, level: 0.045, type: 'triangle' };
 // C4 E4 G4 B4 G4 E4 — gentle, thinking
 const QUESTION: ArpeggioPattern = { notes: [261.63, 329.63, 392, 493.88, 392, 329.63], stepSec: 0.5, noteSec: 1.1, level: 0.045, type: 'sine' };
-// C5 E5 G5 C6 G5 C6 — bright fanfare
-const FANFARE: ArpeggioPattern = { notes: [523.25, 659.25, 783.99, 1046.5, 783.99, 1046.5], stepSec: 0.14, noteSec: 0.5, level: 0.06, type: 'triangle' };
 
 export const PRESET_PATTERNS: Record<string, ArpeggioPattern> = {
   'preset-ambient-luxury': AMBIENT,
   'preset-spin-tension': SPIN,
-  'preset-question-focus': QUESTION,
-  'preset-fanfare-royal': FANFARE
+  'preset-question-focus': QUESTION
 };
 
 export const patternFor = (trackId: string): ArpeggioPattern => PRESET_PATTERNS[trackId] ?? QUESTION;

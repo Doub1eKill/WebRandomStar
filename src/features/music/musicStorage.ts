@@ -124,6 +124,13 @@ export function saveMusicStateToStorage(state: MusicState): void {
 }
 
 /**
+ * A saved track that is not one of today's presets. Saved presets that no longer exist (the
+ * answered-phase fanfare, removed 2026-11-27) have no audio of their own, so they are dropped.
+ */
+const isCustomTrack = (t: MusicTrack): boolean =>
+  t.sourceType !== 'preset' && !PRESET_MUSIC_TRACKS.some(p => p.id === t.id);
+
+/**
  * Get all tracks from IndexedDB or Fallback
  */
 export async function getAllTracksFromStorage(): Promise<MusicTrack[]> {
@@ -134,7 +141,7 @@ export async function getAllTracksFromStorage(): Promise<MusicTrack[]> {
         if (raw) {
           const parsed: MusicTrack[] = JSON.parse(raw);
           // Merge presets and custom tracks without duplicates
-          const custom = parsed.filter(t => !PRESET_MUSIC_TRACKS.some(p => p.id === t.id)).map(hydrate);
+          const custom = parsed.filter(isCustomTrack).map(hydrate);
           return [...PRESET_MUSIC_TRACKS, ...custom];
         }
       }
@@ -158,7 +165,7 @@ export async function getAllTracksFromStorage(): Promise<MusicTrack[]> {
         const hydrated = savedTracks.map(hydrate);
 
         // Ensure all presets exist
-        const customTracks = hydrated.filter(t => !PRESET_MUSIC_TRACKS.some(p => p.id === t.id));
+        const customTracks = hydrated.filter(isCustomTrack);
         resolve([...PRESET_MUSIC_TRACKS, ...customTracks]);
       };
 
