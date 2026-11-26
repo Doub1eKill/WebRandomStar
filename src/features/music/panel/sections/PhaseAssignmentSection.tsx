@@ -107,33 +107,6 @@ export const PhaseAssignmentSection: React.FC<{ m: MusicPanelModel }> = ({ m }) 
               ))}
             </select>
           </div>
-
-          {/* Phase 4: Answered Fanfare */}
-          <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '0.9rem', borderRadius: '10px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
-            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f87171', marginBottom: '0.4rem' }}>
-              <span className="ui-ico-label"><MusicPhaseIcon phase="answered" />4. ช่วงตอบเสร็จสิ้น (Celebration)</span>
-            </div>
-            <select
-              value={musicState.phaseTrackMapping.answered || ''}
-              onChange={e => onAssignPhaseTrack('answered', e.target.value || null)}
-              style={{
-                width: '100%',
-                padding: '0.55rem',
-                background: '#0f172a',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
-                borderRadius: '8px',
-                color: '#f8fafc',
-                fontSize: '0.85rem',
-                marginBottom: '0.5rem',
-                colorScheme: 'dark'
-              }}
-            >
-              <option value="">-- ไม่เปิดเพลง (ปิดเสียง) --</option>
-              {tracks.map(t => (
-                <option key={t.id} value={t.id}>{t.title}</option>
-              ))}
-            </select>
-          </div>
         </div>
       </div>
     </>

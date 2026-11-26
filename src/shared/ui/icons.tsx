@@ -1,17 +1,16 @@
 import React from 'react';
-import { House, Lightbulb, PartyPopper, Zap, type LucideIcon } from 'lucide-react';
+import { House, Lightbulb, Zap, type LucideIcon } from 'lucide-react';
 
 /**
  * Icons that stand in for the emoji and symbol glyphs the control UI used to show (2026-11-25:
  * the user asked for icons only, no emoji).
  */
-export type MusicPhase = 'ambient' | 'spin' | 'question' | 'answered';
+export type MusicPhase = 'ambient' | 'spin' | 'question';
 
 const MUSIC_PHASE_ICONS: Record<MusicPhase, LucideIcon> = {
   ambient: House,
   spin: Zap,
-  question: Lightbulb,
-  answered: PartyPopper
+  question: Lightbulb
 };
 
 export const MusicPhaseIcon: React.FC<{ phase: MusicPhase; size?: number }> = ({ phase, size = 15 }) => {

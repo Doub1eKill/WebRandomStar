@@ -1,6 +1,6 @@
 export type AudioSourceType = 'local_blob' | 'url' | 'preset';
 
-export type StagePhaseTarget = 'ambient' | 'spin' | 'question' | 'answered' | 'none';
+export type StagePhaseTarget = 'ambient' | 'spin' | 'question' | 'none';
 
 export interface MusicTrack {
   id: string;
@@ -21,7 +21,8 @@ export interface PhaseTrackMapping {
   ambient: string | null;   // Track ID for Stage Idle / Ambient
   spin: string | null;      // Track ID for Word Spin tension
   question: string | null;  // Track ID for Question thinking / Timer
-  answered: string | null;  // Track ID for Victory / Celebration
+  // No `answered` slot (2026-11-27): Done returns straight to idle, so there is no celebration
+  // music; the fanfare preset was removed too. Saved mappings that still carry `answered` are ignored.
 }
 
 export interface MusicState {
@@ -74,19 +75,6 @@ export const PRESET_MUSIC_TRACKS: MusicTrack[] = [
     targetPhase: 'question',
     createdAt: 1700000000000,
     isPreset: true
-  },
-  {
-    id: 'preset-fanfare-royal',
-    title: 'Victory Crown Fanfare (เฉลิมฉลองชัยชนะ)',
-    artist: 'Antigravity Sound System',
-    sourceType: 'preset',
-    url: '',
-    duration: 15,
-    defaultVolume: 0.85,
-    loop: false,
-    targetPhase: 'answered',
-    createdAt: 1700000000000,
-    isPreset: true
   }
 ];
 
@@ -101,7 +89,6 @@ export const DEFAULT_MUSIC_STATE: MusicState = {
   phaseTrackMapping: {
     ambient: 'preset-ambient-luxury',
     spin: 'preset-spin-tension',
-    question: 'preset-question-focus',
-    answered: 'preset-fanfare-royal'
+    question: 'preset-question-focus'
   }
 };

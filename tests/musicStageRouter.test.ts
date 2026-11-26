@@ -24,9 +24,10 @@ describe('Music Stage Router', () => {
     expect(track2?.id).toBe('preset-question-focus');
   });
 
-  it('resolves answered track for answered state', () => {
-    const track = getTargetTrackForStagePhase('answered', DEFAULT_MUSIC_STATE.phaseTrackMapping, PRESET_MUSIC_TRACKS);
-    expect(track?.id).toBe('preset-fanfare-royal');
+  it('plays no celebration track for answered (Done returns straight to idle)', () => {
+    // A mapping saved before 2026-11-27 may still carry `answered`; it is ignored.
+    const legacy = { ...DEFAULT_MUSIC_STATE.phaseTrackMapping, answered: 'preset-fanfare-royal' };
+    expect(getTargetTrackForStagePhase('answered', legacy, PRESET_MUSIC_TRACKS)).toBeNull();
   });
 
   it('resolves null when a stage phase has no mapped track', () => {

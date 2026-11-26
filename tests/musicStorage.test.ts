@@ -21,6 +21,20 @@ describe('IndexedDB & LocalStorage Music Storage', () => {
     expect(loaded.isMuted).toBe(true);
   });
 
+  it('drops a saved preset that no longer exists (the removed fanfare) but keeps custom tracks', async () => {
+    const stalePreset: MusicTrack = {
+      id: 'preset-fanfare-royal', title: 'Victory Crown Fanfare', sourceType: 'preset', url: '',
+      duration: 15, defaultVolume: 0.85, loop: false, createdAt: 1700000000000, isPreset: true
+    };
+    await saveTrackToStorage(stalePreset);
+    await saveTrackToStorage({ ...stalePreset, id: 'custom-keep', title: 'Keep me', sourceType: 'url', url: 'https://example.com/a.mp3', isPreset: false });
+    const ids = (await getAllTracksFromStorage()).map(t => t.id);
+    expect(ids).not.toContain('preset-fanfare-royal');
+    expect(ids).toContain('custom-keep');
+    await deleteTrackFromStorage('custom-keep');
+    await deleteTrackFromStorage('preset-fanfare-royal');
+  });
+
   it('saves and retrieves custom tracks', async () => {
     const newTrack: MusicTrack = {
       id: 'custom-1',

@@ -19,8 +19,6 @@ export function getTargetTrackForStagePhase(
     targetTrackId = mapping.spin;
   } else if (['question-reveal', 'question'].includes(currentState)) {
     targetTrackId = mapping.question;
-  } else if (currentState === 'answered') {
-    targetTrackId = mapping.answered;
   }
 
   if (!targetTrackId) return null;
@@ -64,10 +62,9 @@ export function useMusicStageRouter(
       lastTargetTrackIdRef.current = targetId;
 
       if (targetTrack) {
-        const isOneShot = currentState === 'answered';
         player.playTrack(targetTrack, {
           fadeInDuration: 1.0,
-          loop: !isOneShot && targetTrack.loop
+          loop: targetTrack.loop
         });
       } else {
         player.stop({ fadeOutDuration: 0.8 });
