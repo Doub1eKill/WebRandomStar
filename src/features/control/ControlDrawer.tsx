@@ -23,7 +23,8 @@ interface ControlDrawerProps {
   onPause: () => void;
   onSkip: () => void;
   onMarkAnswered: () => void;
-  onReset: () => void;
+  /** Makes every used question and keyword drawable again (replaces the old Reset button). */
+  onReturnAllDrawn: () => void;
   onSelectContestant: (id: string) => void;
   onSelectRound: (round: string) => void;
   onSetVolume: (vol: number) => void;
@@ -54,7 +55,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
   onPause,
   onSkip,
   onMarkAnswered,
-  onReset,
+  onReturnAllDrawn,
   onSelectContestant,
   onSelectRound,
   onSetVolume,
@@ -120,7 +121,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
   };
 
   // A3: logic shared with the remote Live page
-  const controls = stageControls(session, words, { onStart, onStopSpin, onSkip, onSetAppearanceSettings });
+  const controls = stageControls(session, words, { onStart, onStopSpin, onSkip, onSetAppearanceSettings, onReturnAllDrawn });
   const { isIdle, isQuestionActive, isAnswered } = controls;
   const displaySettings = session.stageDisplaySettings || DEFAULT_STAGE_DISPLAY_SETTINGS;
 
@@ -234,9 +235,10 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
 
               <button
                 className="btn-secondary btn-danger-soft"
-                onClick={onReset}
+                onClick={controls.returnAllDrawn}
+                disabled={controls.drawnCount === 0}
               >
-                <RotateCcw size={15} aria-hidden="true" /> รีเซ็ตเวที (Reset)
+                <RotateCcw size={15} aria-hidden="true" /> คืนคำที่สุ่มแล้วทั้งหมด ({controls.drawnCount})
               </button>
             </div>
           </ControlCard>

@@ -20,6 +20,8 @@ interface Handlers {
   onStopSpin?: () => void;
   onSkip: () => void;
   onSetAppearanceSettings?: (settings: AppearanceSettings) => void;
+  /** Makes every used question and keyword drawable again (replaces the old Reset button). */
+  onReturnAllDrawn?: () => void;
 }
 
 export function stageControls(session: SessionState, words: KeywordItem[], handlers: Handlers) {
@@ -41,6 +43,16 @@ export function stageControls(session: SessionState, words: KeywordItem[], handl
     setShowWordLockPhase: (showWordLockPhase: boolean) => patchAppearance({ showWordLockPhase }),
     /** STOP SPIN button: stop the reel, or skip to the question when no stop handler exists. */
     stopSpin: () => (handlers.onStopSpin ? handlers.onStopSpin() : handlers.onSkip()),
-    startWithWord: (word: KeywordItem) => handlers.onStart(word)
+    startWithWord: (word: KeywordItem) => handlers.onStart(word),
+    /** Used questions + used keywords: what "คืนคำที่สุ่มแล้วทั้งหมด" gives back. */
+    drawnCount: session.usedQuestionIds.length + (session.usedWordIds?.length ?? 0),
+    /** Asks first, then makes every used question and keyword drawable again. History is kept. */
+    returnAllDrawn: () => {
+      const count = session.usedQuestionIds.length + (session.usedWordIds?.length ?? 0);
+      if (count === 0 || !handlers.onReturnAllDrawn) return;
+      if (!window.confirm(`คืนคำถามและคำสำคัญที่สุ่มไปแล้ว ${count} รายการ ให้กลับมาสุ่มได้อีกครั้งหรือไม่?
+(ประวัติการตอบยังอยู่ครบ)`)) return;
+      handlers.onReturnAllDrawn();
+    }
   };
 }

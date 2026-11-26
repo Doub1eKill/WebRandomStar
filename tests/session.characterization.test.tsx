@@ -269,8 +269,10 @@ describe('session: answering, history and reset', () => {
     advance(15_000);
 
     act(() => h.result.current.markAnswered());
-    expect(state(h).currentState).toBe('answered');
-    expect(state(h).timerState.status).toBe('idle');
+    // Done goes straight back to the idle stage (no `answered` card since 2026-11-26).
+    expect(state(h).currentState).toBe('idle');
+    expect(state(h).selectedQuestion).toBeUndefined();
+    expect(state(h).timerState).toMatchObject({ status: 'idle', remainingMs: 60_000 });
     expect(state(h).usedQuestionIds).toContain(questionId);
 
     const [record] = historyRepository.load();

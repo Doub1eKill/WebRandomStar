@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { sessionReducer, ReducerContext } from '@/features/session/sessionReducer.ts';
 import { parseChannelMessage } from '@/features/session/sessionChannel.ts';
 import { createInitialSession } from '@/features/session/persistence.ts';
@@ -55,7 +55,9 @@ describe('sessionReducer', () => {
   it('MARK_ANSWERED emits a history effect instead of writing storage itself', () => {
     const s = { ...createInitialSession(), currentState: 'question' as const, selectedQuestion: question };
     const r = sessionReducer(s, { type: 'MARK_ANSWERED' }, ctx());
-    expect(r.state.currentState).toBe('answered');
+    expect(r.state.currentState).toBe('idle'); // Done resets the stage itself
+    expect(r.state.selectedQuestion).toBeUndefined();
+    expect(r.state.usedQuestionIds).toEqual(['q1']);
     expect(r.effects).toHaveLength(1);
     expect(r.effects[0]).toMatchObject({ type: 'RECORD_HISTORY', params: { question: { id: 'q1' } } });
   });
@@ -98,6 +100,26 @@ describe('sessionReducer', () => {
     expect(at('answered')).toBe(true);
     expect(at('question')).toBe(false);
     expect(at('word-spin')).toBe(false);
+  });
+
+  it('stageControls.returnAllDrawn counts used questions + keywords and gives them back after confirming', async () => {
+    const { stageControls } = await import('@/features/control/useStageControls.ts');
+    const onReturnAllDrawn = vi.fn();
+    const handlers = { onStart: () => {}, onSkip: () => {}, onReturnAllDrawn };
+    const s = { ...createInitialSession(), usedQuestionIds: ['q1', 'q2'], usedWordIds: ['w1'] };
+    const controls = stageControls(s, [], handlers);
+    expect(controls.drawnCount).toBe(3);
+
+    vi.stubGlobal('confirm', () => false);
+    controls.returnAllDrawn();
+    expect(onReturnAllDrawn).not.toHaveBeenCalled();
+    vi.stubGlobal('confirm', () => true);
+    controls.returnAllDrawn();
+    expect(onReturnAllDrawn).toHaveBeenCalledTimes(1);
+    vi.unstubAllGlobals();
+
+    stageControls(createInitialSession(), [], handlers).returnAllDrawn(); // nothing drawn: no prompt, no call
+    expect(onReturnAllDrawn).toHaveBeenCalledTimes(1);
   });
 
   it('RESET_USED_QUESTIONS lets every question be drawn again and keeps everything else', () => {
