@@ -75,7 +75,7 @@ const ControlShell: React.FC = () => {
             </div>
             <div className="ctl-brand-text">
               <div className="ctl-brand-eyebrow">Backstage Control</div>
-              <h1 className="ctl-brand-title">SCi TECH TINE · CHARM OF TRANSITION (Ambassador 2026)</h1>
+              <h1 className="ctl-brand-title">SCi TECH THE · CHARM OF TRANSITION (Ambassador 2026)</h1>
             </div>
           </div>
           <div className="ctl-status" aria-live="polite">

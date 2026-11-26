@@ -10,7 +10,7 @@ export const StageHeader: React.FC<StageHeaderProps> = () => {
   return (
     <header className="stage-header stage-header-left-clean">
       <div className="header-titles">
-        <div className="event-pre-title">✦ SCI TECH TINE ✦</div>
+        <div className="event-pre-title">✦ SCI TECH THE ✦</div>
         <h1 className="event-title royal-serif">CHARM OF TRANSITION</h1>
         <div className="event-post-title">
           <span className="post-ambassador">✦ AMBASSADOR 2026 ✦</span>

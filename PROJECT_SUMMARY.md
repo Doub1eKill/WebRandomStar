@@ -1,6 +1,6 @@
 # 👑 สรุปเชิงเทคนิค (Project Technical Summary)
 ## รอยต่อฤดู — Version 3.0 Royal Word Spin
-### ✦ SCi TECH TINE ✦ CHARM OF TRANSITION AMBASSADOR 2026
+### ✦ SCi TECH THE ✦ CHARM OF TRANSITION AMBASSADOR 2026
 
 เอกสารนี้อธิบายการทำงานภายในหลังการ refactor ปี 2026 (แผนอยู่ที่ `docs/superpowers/plans/2026-11-24-architecture-refactor.md`) ส่วนวิธีติดตั้งและใช้งานอยู่ใน [README.md](README.md)
 
