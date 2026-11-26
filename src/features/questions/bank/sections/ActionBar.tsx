@@ -4,12 +4,13 @@ import {
   Plus,
   Download,
   Upload,
+  RotateCcw,
 } from 'lucide-react';
 
 import type { QuestionBankDashboardModel } from '../useQuestionBankDashboardModel.tsx';
 
 export const ActionBar: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) => {
-  const { search, setSearch, setEditingQuestion, setIsAdding, fileInputRef, roundsList, handleExport, handleImport } = m;
+  const { search, setSearch, setEditingQuestion, setIsAdding, fileInputRef, roundsList, handleExport, handleImport, handleResetUsed, stats } = m;
   return (
     <>
       {/* 2. Action Bar & Filters */}
@@ -105,6 +106,27 @@ export const ActionBar: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
               style={{ display: 'none' }}
             />
           </label>
+
+          <button
+            onClick={handleResetUsed}
+            disabled={stats.used === 0}
+            title={stats.used === 0 ? 'ยังไม่มีคำถามที่ใช้แล้ว' : 'ให้คำถามที่ใช้แล้วกลับมาสุ่มได้อีกครั้ง (ประวัติยังอยู่)'}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              padding: '0.55rem 0.8rem',
+              background: 'rgba(234, 179, 8, 0.1)',
+              border: '1px solid rgba(234, 179, 8, 0.35)',
+              borderRadius: '8px',
+              color: '#facc15',
+              fontSize: '0.85rem',
+              cursor: stats.used === 0 ? 'not-allowed' : 'pointer',
+              opacity: stats.used === 0 ? 0.45 : 1
+            }}
+          >
+            <RotateCcw size={15} /> รีเซ็ตคำถามที่ใช้แล้ว ({stats.used})
+          </button>
         </div>
       </div>
     </>

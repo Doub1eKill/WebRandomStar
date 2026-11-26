@@ -8,13 +8,16 @@ export interface QuestionBankDashboardProps {
   questions: Question[];
   usedQuestionIds: string[];
   onSaveQuestions: (updated: Question[]) => void;
+  /** Clears the session's used-question list so every question can be drawn again. */
+  onResetUsedQuestions?: () => void;
 }
 
 export function useQuestionBankDashboardModel(props: QuestionBankDashboardProps) {
   const {
   questions,
   usedQuestionIds,
-  onSaveQuestions
+  onSaveQuestions,
+  onResetUsedQuestions
   } = props;
   const [search, setSearch] = useState('');
   const [selectedRound, setSelectedRound] = useState<string>('all');
@@ -149,6 +152,16 @@ export function useQuestionBankDashboardModel(props: QuestionBankDashboardProps)
     showNotification('success', 'ส่งออกข้อมูลคำถามเป็น JSON สำเร็จ');
   };
 
+  // After a rehearsal: every question can be drawn again. History is kept.
+  const handleResetUsed = () => {
+    if (stats.used === 0) return;
+    if (!window.confirm(`คืนสถานะคำถามที่ใช้แล้ว ${stats.used} ข้อ ให้กลับมาสุ่มได้อีกครั้งหรือไม่?
+(ประวัติการตอบยังอยู่ครบ)`)) return;
+    if (questions.some(q => q.used)) onSaveQuestions(questions.map(q => (q.used ? { ...q, used: false } : q)));
+    onResetUsedQuestions?.();
+    showNotification('success', `รีเซ็ตแล้ว คำถาม ${stats.used} ข้อกลับมาสุ่มได้อีกครั้ง`);
+  };
+
   // S1: validate, preview, then merge (default) or replace with a backup.
   const questionImport = useQuestionImport(questions, onSaveQuestions);
 
@@ -158,7 +171,7 @@ export function useQuestionBankDashboardModel(props: QuestionBankDashboardProps)
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  return { questions, usedQuestionIds, onSaveQuestions, search, setSearch, selectedRound, setSelectedRound, selectedDifficulty, setSelectedDifficulty, selectedStatus, setSelectedStatus, previewQuestion, setPreviewQuestion, editingQuestion, setEditingQuestion, isAdding, setIsAdding, notification, setNotification, fileInputRef, stats, roundsList, filteredQuestions, showNotification, handleToggleEnable, handleDelete, handleDuplicate, handleSaveEdit, handleExport, questionImport, handleImport };
+  return { questions, usedQuestionIds, onSaveQuestions, search, setSearch, selectedRound, setSelectedRound, selectedDifficulty, setSelectedDifficulty, selectedStatus, setSelectedStatus, previewQuestion, setPreviewQuestion, editingQuestion, setEditingQuestion, isAdding, setIsAdding, notification, setNotification, fileInputRef, stats, roundsList, filteredQuestions, showNotification, handleToggleEnable, handleDelete, handleDuplicate, handleSaveEdit, handleExport, handleResetUsed, questionImport, handleImport };
 }
 
 export type QuestionBankDashboardModel = ReturnType<typeof useQuestionBankDashboardModel>;
