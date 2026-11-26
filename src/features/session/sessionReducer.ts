@@ -206,6 +206,10 @@ export function sessionReducer(s: SessionState, command: AnyCommand, ctx: Reduce
       });
     }
 
+    // Every question can be drawn again (e.g. after a rehearsal). History is kept.
+    case 'RESET_USED_QUESTIONS':
+      return s.usedQuestionIds.length === 0 ? unchanged(s) : next({ ...s, usedQuestionIds: [] });
+
     // ── Selections & settings ────────────────────────────────────────────────
     case 'SET_CONTESTANT':
       return next({ ...s, selectedContestantId: command.contestantId });

@@ -13,6 +13,7 @@ export function createSessionActions(d: (command: SessionCommand) => void) {
     skipToQuestion: () => d({ type: 'SKIP_TO_QUESTION' }),
     markAnswered: () => d({ type: 'MARK_ANSWERED' }),
     resetStage: () => d({ type: 'RESET_STAGE' }),
+    resetUsedQuestions: () => d({ type: 'RESET_USED_QUESTIONS' }),
     setContestant: (contestantId: string) => d({ type: 'SET_CONTESTANT', contestantId }),
     setRound: (round: string) => d({ type: 'SET_ROUND', round }),
     setVolume: (volume: number) => d({ type: 'SET_VOLUME', volume }),

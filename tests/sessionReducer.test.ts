@@ -72,6 +72,15 @@ describe('sessionReducer', () => {
     expect(r.state.timerSoundSettings?.tickVolume).toBe(0.2);
     expect(r.effects[0]).toMatchObject({ type: 'PERSIST_TIMER_SOUND', settings: { tickVolume: 0.2 } });
   });
+
+  it('RESET_USED_QUESTIONS lets every question be drawn again and keeps everything else', () => {
+    const s = { ...createInitialSession(), usedQuestionIds: ['q1', 'q2'], currentState: 'question' as const };
+    const r = sessionReducer(s, { type: 'RESET_USED_QUESTIONS' }, ctx());
+    expect(r.state.usedQuestionIds).toEqual([]);
+    expect(r.state.currentState).toBe('question');
+    expect(r.effects).toEqual([]);
+    expect(parseChannelMessage({ kind: 'COMMAND', from: 'c1', command: { type: 'RESET_USED_QUESTIONS' } })).not.toBeNull();
+  });
 });
 
 describe('S7: channel message validation', () => {

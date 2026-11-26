@@ -11,6 +11,7 @@ export type SessionCommand =
   | { type: 'SKIP_TO_QUESTION' }
   | { type: 'MARK_ANSWERED' }
   | { type: 'RESET_STAGE' }
+  | { type: 'RESET_USED_QUESTIONS' }
   | { type: 'SET_CONTESTANT'; contestantId: string }
   | { type: 'SET_ROUND'; round: string }
   | { type: 'SET_VOLUME'; volume: number }
@@ -34,7 +35,7 @@ export type InternalCommand =
 export type AnyCommand = SessionCommand | InternalCommand;
 
 export const REMOTE_COMMAND_TYPES: ReadonlySet<SessionCommand['type']> = new Set<SessionCommand['type']>([
-  'START_JOURNEY', 'STOP_WORD_SPIN', 'TOGGLE_PAUSE', 'SKIP_TO_QUESTION', 'MARK_ANSWERED', 'RESET_STAGE',
+  'START_JOURNEY', 'STOP_WORD_SPIN', 'TOGGLE_PAUSE', 'SKIP_TO_QUESTION', 'MARK_ANSWERED', 'RESET_STAGE', 'RESET_USED_QUESTIONS',
   'SET_CONTESTANT', 'SET_ROUND', 'SET_VOLUME', 'TOGGLE_MUTE', 'SET_APPEARANCE',
   'SET_TIMER_DURATION', 'START_TIMER', 'PAUSE_TIMER', 'RESUME_TIMER', 'RESET_TIMER', 'FINISH_TIMER', 'ADJUST_TIMER',
   'SET_TIMER_SOUND_SETTINGS', 'SET_STAGE_DISPLAY_SETTINGS'
