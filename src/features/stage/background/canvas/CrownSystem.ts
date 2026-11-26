@@ -68,7 +68,9 @@ const shade = (c: Rgb, k: number): Rgb =>
 /**
  * CrownSystem: the royal crown above the stage, the pageant's centrepiece.
  *
- * A gold openwork tiara with five peaks (a brilliant-cut diamond on the tallest), teardrop
+ * Styled in the stage palette (Cosmic Diamond & Nebula Pageant): a diamond-crystal openwork
+ * tiara (white / ice / lavender facets fading to nebula violet) with a thin gold trim as the only
+ * gold accent, lit by violet and diamond-cyan light. Five peaks (a brilliant-cut diamond on the tallest), teardrop
  * sapphires and amethysts hanging in the windows, and a jewelled band. The crown itself is baked
  * once per resize into an offscreen canvas (metal gradients, gems and facets are far too costly
  * to draw every frame). Each frame only adds the live light: a breathing gold/violet halo, slowly
@@ -86,7 +88,7 @@ export class CrownSystem {
   private flares = [
     makeFlareSprite(STAGE_RGB.white, 96),
     makeFlareSprite(STAGE_RGB.ice, 96),
-    makeFlareSprite(STAGE_RGB.gold, 96)
+    makeFlareSprite(STAGE_RGB.lavender, 96)
   ];
 
   public resize(width: number, height: number): void {
@@ -111,7 +113,7 @@ export class CrownSystem {
     const W = this.crownW;
     const H = this.crownH;
     const t = this.shimmerTime;
-    // Light effects follow the phase; the metal itself stays solid so the gold never looks washed out.
+    // Light effects follow the phase; the crystal itself stays solid so it never looks washed out.
     const a = Math.min(1, 0.45 + 0.6 * opacity);
     const solid = Math.min(1, 0.6 + 0.8 * opacity);
 
@@ -127,17 +129,18 @@ export class CrownSystem {
     const breathe = 0.85 + 0.15 * Math.sin(t * 1.3);
     const haloR = W * 0.95;
     const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, haloR);
-    halo.addColorStop(0, rgba(STAGE_RGB.gold, 0.3 * a * breathe));
-    halo.addColorStop(0.35, rgba(STAGE_RGB.lavender, 0.14 * a * breathe));
+    halo.addColorStop(0, rgba(STAGE_RGB.ice, 0.22 * a * breathe));
+    halo.addColorStop(0.3, rgba(STAGE_RGB.lavender, 0.2 * a * breathe));
+    halo.addColorStop(0.65, rgba(STAGE_RGB.violet, 0.1 * a));
     halo.addColorStop(1, rgba(STAGE_RGB.violet, 0));
     ctx.fillStyle = halo;
     ctx.fillRect(cx - haloR, cy - haloR, haloR * 2, haloR * 2);
 
     // 2. Slowly rotating light rays fanning out from the crown
     const rays = ctx.createRadialGradient(cx, cy, W * 0.1, cx, cy, W * 1.25);
-    rays.addColorStop(0, rgba(STAGE_RGB.white, 0.2 * a));
-    rays.addColorStop(0.3, rgba(STAGE_RGB.gold, 0.09 * a));
-    rays.addColorStop(1, rgba(STAGE_RGB.gold, 0));
+    rays.addColorStop(0, rgba(STAGE_RGB.white, 0.18 * a));
+    rays.addColorStop(0.3, rgba(STAGE_RGB.lavender, 0.09 * a));
+    rays.addColorStop(1, rgba(STAGE_RGB.cyan, 0));
     ctx.fillStyle = rays;
     ctx.beginPath();
     const rayCount = 16;
@@ -168,7 +171,7 @@ export class CrownSystem {
       ctx.globalCompositeOperation = 'lighter';
       const sweep = ctx.createLinearGradient(sx - W * 0.12, -H, sx + W * 0.12, 0);
       sweep.addColorStop(0, 'rgba(255, 255, 255, 0)');
-      sweep.addColorStop(0.5, `rgba(255, 250, 225, ${0.55 * a * Math.sin(p * Math.PI)})`);
+      sweep.addColorStop(0.5, `rgba(235, 250, 255, ${0.6 * a * Math.sin(p * Math.PI)})`);
       sweep.addColorStop(1, 'rgba(255, 255, 255, 0)');
       ctx.fillStyle = sweep;
       ctx.fillRect(-W * 0.6, -H * 1.05, W * 1.2, H * 1.15);
@@ -232,22 +235,22 @@ export class CrownSystem {
 
     // Soft gold glow around the silhouette
     ctx.save();
-    ctx.shadowColor = 'rgba(245, 217, 138, 0.85)';
-    ctx.shadowBlur = W * 0.05;
-    ctx.fillStyle = '#C9A24B';
+    ctx.shadowColor = 'rgba(167, 139, 250, 0.9)';
+    ctx.shadowBlur = W * 0.06;
+    ctx.fillStyle = '#8B5CF6';
     ctx.fill(outline);
     ctx.restore();
 
-    // Polished gold body
-    const gold = ctx.createLinearGradient(0, -H, 0, H * 0.05);
-    gold.addColorStop(0, '#FFF7DA');
-    gold.addColorStop(0.18, '#F5D98A');
-    gold.addColorStop(0.42, '#D4A03A');
-    gold.addColorStop(0.55, '#9A6A1C');
-    gold.addColorStop(0.66, '#F7DC8E');
-    gold.addColorStop(0.82, '#C8902E');
-    gold.addColorStop(1, '#6E4A12');
-    ctx.fillStyle = gold;
+    // Diamond-crystal body: white and ice at the tips, lavender facets, nebula violet at the base
+    const crystal = ctx.createLinearGradient(0, -H, 0, H * 0.05);
+    crystal.addColorStop(0, '#FFFFFF');
+    crystal.addColorStop(0.2, '#E0E7FF');
+    crystal.addColorStop(0.42, '#C4B5FD');
+    crystal.addColorStop(0.56, '#A5F3FC');
+    crystal.addColorStop(0.7, '#A78BFA');
+    crystal.addColorStop(0.86, '#7C3AED');
+    crystal.addColorStop(1, '#4C1D95');
+    ctx.fillStyle = crystal;
     ctx.fill(outline);
 
     // Vertical metal sheen bands (gives the curved, 3D feel)
@@ -256,7 +259,7 @@ export class CrownSystem {
     ctx.globalCompositeOperation = 'source-atop';
     const sheen = ctx.createLinearGradient(-W / 2, 0, W / 2, 0);
     const bands = [0, 0.12, 0.25, 0.38, 0.5, 0.62, 0.75, 0.88, 1];
-    bands.forEach((stop, i) => sheen.addColorStop(stop, i % 2 === 0 ? 'rgba(80, 50, 10, 0.22)' : 'rgba(255, 252, 235, 0.28)'));
+    bands.forEach((stop, i) => sheen.addColorStop(stop, i % 2 === 0 ? 'rgba(46, 16, 101, 0.22)' : 'rgba(255, 255, 255, 0.32)'));
     ctx.fillStyle = sheen;
     ctx.fillRect(-W / 2, -H, W, H * 1.1);
 
@@ -268,9 +271,9 @@ export class CrownSystem {
     band.quadraticCurveTo(0, 0.07 * H, -0.45 * W, 0);
     band.closePath();
     const bandGrad = ctx.createLinearGradient(0, -0.17 * H, 0, 0.05 * H);
-    bandGrad.addColorStop(0, 'rgba(255, 244, 200, 0.55)');
-    bandGrad.addColorStop(0.25, 'rgba(120, 80, 20, 0.25)');
-    bandGrad.addColorStop(1, 'rgba(60, 35, 5, 0.45)');
+    bandGrad.addColorStop(0, 'rgba(236, 254, 255, 0.6)');
+    bandGrad.addColorStop(0.25, 'rgba(76, 29, 149, 0.3)');
+    bandGrad.addColorStop(1, 'rgba(30, 12, 70, 0.55)');
     ctx.fillStyle = bandGrad;
     ctx.fill(band);
     ctx.restore();
@@ -299,13 +302,13 @@ export class CrownSystem {
       // Deep violet backing glimpsed through the window
       ctx.fillStyle = 'rgba(46, 16, 101, 0.35)';
       ctx.fill(path);
-      ctx.strokeStyle = '#FFF1C1';
-      ctx.lineWidth = Math.max(1, W * 0.006);
+      ctx.strokeStyle = '#F5D98A';
+      ctx.lineWidth = Math.max(1, W * 0.005);
       ctx.stroke(path);
     }
 
     // Filigree: thin scrolls along each arch and a bead line on the band rim
-    ctx.strokeStyle = 'rgba(255, 246, 214, 0.75)';
+    ctx.strokeStyle = 'rgba(236, 254, 255, 0.7)';
     ctx.lineWidth = Math.max(0.8, W * 0.004);
     for (let i = 0; i < PEAKS.length - 1; i++) {
       const [ax, ay] = PEAKS[i];
@@ -317,7 +320,7 @@ export class CrownSystem {
       ctx.quadraticCurveTo(((ax + bx) / 2) * W, cyCtrl * H, bx * W, (by + 0.08) * H);
       ctx.stroke();
     }
-    ctx.fillStyle = 'rgba(255, 248, 225, 0.9)';
+    ctx.fillStyle = 'rgba(245, 217, 138, 0.95)';
     for (let i = 0; i <= 24; i++) {
       const u = i / 24;
       const x = (-0.46 + u * 0.92) * W;
@@ -328,7 +331,7 @@ export class CrownSystem {
     }
 
     // Crisp outline
-    ctx.strokeStyle = '#FFF3C4';
+    ctx.strokeStyle = '#FFFFFF';
     ctx.lineWidth = Math.max(1, W * 0.007);
     ctx.lineJoin = 'round';
     ctx.stroke(outline);
@@ -404,7 +407,7 @@ export class CrownSystem {
     }
 
     // Gold setting rim
-    ctx.strokeStyle = '#FFE9A8';
+    ctx.strokeStyle = '#EEF2FF';
     ctx.lineWidth = Math.max(0.8, r * 0.16);
     ctx.stroke(path);
 

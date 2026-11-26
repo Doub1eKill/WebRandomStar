@@ -1,7 +1,8 @@
 import { makeFlareSprite, rgba, seededRandom, STAGE_RGB } from './sprites.ts';
 
 /**
- * MoonSystem: the luminous moon in the upper right of the Cosmic Canvas stage.
+ * MoonSystem: the luminous moon in the upper right of the Cosmic Canvas stage, in the stage
+ * palette: --moon-silver #f8fafc with a lavender --moon-glow halo and violet-indigo shading.
  *
  * The moon body is baked once per resize: a limb-darkened sphere with maria and craters, cut to
  * a waxing crescent by a soft terminator. The dark side keeps a faint blue earthshine instead of
@@ -94,8 +95,8 @@ export class MoonSystem {
       ctx.translate(wx, wy);
       ctx.scale(1, 0.16);
       const wisp = ctx.createRadialGradient(0, 0, 0, 0, 0, wr);
-      wisp.addColorStop(0, `rgba(120, 90, 190, ${0.32 * a})`);
-      wisp.addColorStop(1, 'rgba(120, 90, 190, 0)');
+      wisp.addColorStop(0, `rgba(124, 58, 237, ${0.3 * a})`);
+      wisp.addColorStop(1, 'rgba(124, 58, 237, 0)');
       ctx.fillStyle = wisp;
       ctx.fillRect(-wr, -wr, wr * 2, wr * 2);
       ctx.restore();
@@ -157,9 +158,9 @@ export class MoonSystem {
     // Sphere with limb darkening, lit from the upper right
     const sphere = ctx.createRadialGradient(R * 0.25, -R * 0.3, R * 0.1, 0, 0, R);
     sphere.addColorStop(0, '#FFFFFF');
-    sphere.addColorStop(0.45, '#F1F3FF');
-    sphere.addColorStop(0.85, '#CDD2EC');
-    sphere.addColorStop(1, '#A9AED6');
+    sphere.addColorStop(0.45, '#F8FAFC');
+    sphere.addColorStop(0.85, '#E0E7FF');
+    sphere.addColorStop(1, '#C4B5FD');
     ctx.fillStyle = sphere;
     ctx.beginPath();
     ctx.arc(0, 0, R, 0, Math.PI * 2);
@@ -176,8 +177,8 @@ export class MoonSystem {
       const my = (rand() - 0.5) * R * 1.3;
       const mr = R * (0.2 + rand() * 0.32);
       const g = ctx.createRadialGradient(mx, my, 0, mx, my, mr);
-      g.addColorStop(0, 'rgba(110, 112, 160, 0.32)');
-      g.addColorStop(1, 'rgba(110, 112, 160, 0)');
+      g.addColorStop(0, 'rgba(167, 139, 250, 0.2)');
+      g.addColorStop(1, 'rgba(167, 139, 250, 0)');
       ctx.fillStyle = g;
       ctx.fillRect(mx - mr, my - mr, mr * 2, mr * 2);
     }
@@ -189,7 +190,7 @@ export class MoonSystem {
       const cx = Math.cos(ang) * dist;
       const cy = Math.sin(ang) * dist;
       const cr = R * (0.03 + rand() * 0.09);
-      ctx.fillStyle = 'rgba(120, 122, 165, 0.16)';
+      ctx.fillStyle = 'rgba(167, 139, 250, 0.12)';
       ctx.beginPath();
       ctx.arc(cx, cy, cr, 0, Math.PI * 2);
       ctx.fill();
@@ -207,9 +208,9 @@ export class MoonSystem {
     const sx = -R * 1.22;
     const sy = R * 0.1;
     const shadow = ctx.createRadialGradient(sx, sy, 0, sx, sy, R * 1.02);
-    shadow.addColorStop(0, 'rgba(34, 38, 92, 0.8)');
-    shadow.addColorStop(0.8, 'rgba(34, 38, 92, 0.74)');
-    shadow.addColorStop(1, 'rgba(34, 38, 92, 0)');
+    shadow.addColorStop(0, 'rgba(46, 16, 101, 0.78)');
+    shadow.addColorStop(0.8, 'rgba(46, 16, 101, 0.7)');
+    shadow.addColorStop(1, 'rgba(46, 16, 101, 0)');
     ctx.fillStyle = shadow;
     ctx.fillRect(-R * 1.1, -R * 1.1, R * 2.2, R * 2.2);
     ctx.restore();
@@ -221,7 +222,7 @@ export class MoonSystem {
     ctx.arc(0, 0, R * 0.985, -Math.PI * 0.7, Math.PI * 0.7);
     ctx.stroke();
     // Faint earthshine rim on the dark limb
-    ctx.strokeStyle = 'rgba(165, 243, 252, 0.25)';
+    ctx.strokeStyle = 'rgba(192, 132, 252, 0.35)';
     ctx.beginPath();
     ctx.arc(0, 0, R * 0.985, Math.PI * 0.75, Math.PI * 1.25);
     ctx.stroke();
