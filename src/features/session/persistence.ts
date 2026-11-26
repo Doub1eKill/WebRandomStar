@@ -11,6 +11,7 @@ export function createInitialSession(): SessionState {
     currentState: 'idle',
     selectedRound: 'intro',
     usedQuestionIds: [],
+    usedWordIds: [],
     isMuted: false,
     volume: 0.8,
     isPaused: false,

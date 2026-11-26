@@ -2,10 +2,15 @@ import React, { useState } from 'react';
 import { KeywordItem } from '@/types/word.ts';
 import { WordManagerModal } from './WordManagerModal.tsx';
 import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
-import { CheckCircle2, Edit2, Key, Plus, RotateCcw, Search, Sparkle, Sparkles, Trash2, XCircle } from 'lucide-react';
+import { CheckCircle2, Edit2, History, Key, Plus, RotateCcw, Search, Sparkle, Sparkles, Trash2, XCircle } from 'lucide-react';
+import { notifyOperator } from '@/shared/notices/operatorNotices.ts';
 
 interface WordBankDashboardProps {
   words: KeywordItem[];
+  /** Keywords answered in keyword mode (session `usedWordIds`). */
+  usedWordIds?: string[];
+  /** Clears the session's used-keyword list so every keyword can be drawn again. */
+  onResetUsedWords?: () => void;
   onSaveWord: (word: KeywordItem) => void;
   onDeleteWord: (id: string) => void;
   onToggleWord: (id: string) => void;
@@ -14,6 +19,8 @@ interface WordBankDashboardProps {
 
 export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
   words,
+  usedWordIds = [],
+  onResetUsedWords,
   onSaveWord,
   onDeleteWord,
   onToggleWord,
@@ -31,6 +38,15 @@ export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
   );
 
   const enabledCount = words.filter(w => w.enabled).length;
+  const usedCount = words.filter(w => usedWordIds.includes(w.id)).length;
+
+  const handleResetUsed = () => {
+    if (usedCount === 0) return;
+    if (!window.confirm(`คืนสถานะคำสำคัญที่ใช้แล้ว ${usedCount} คำ ให้กลับมาสุ่มได้อีกครั้งหรือไม่?
+(ประวัติการตอบยังอยู่ครบ)`)) return;
+    onResetUsedWords?.();
+    notifyOperator('info', `รีเซ็ตแล้ว คำสำคัญ ${usedCount} คำกลับมาสุ่มได้อีกครั้ง`);
+  };
 
   const handleOpenNew = () => {
     setEditingWord(null);
@@ -69,6 +85,14 @@ export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
             <span className="stat-lbl">ปิดการใช้งาน</span>
           </div>
         </div>
+
+        <div className="qb-stat-card stat-used">
+          <div className="stat-card-icon"><History size={20} /></div>
+          <div className="stat-card-body">
+            <span className="stat-num">{usedCount}</span>
+            <span className="stat-lbl">ใช้แล้ว (ไม่ถูกสุ่มซ้ำ)</span>
+          </div>
+        </div>
       </div>
 
       {/* Action and Filter Toolbar */}
@@ -100,6 +124,15 @@ export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
           >
             <RotateCcw size={15} />
             <span>รีเซ็ตค่าเริ่มต้น</span>
+          </button>
+          <button
+            className="btn-secondary-ghost btn-reset-used"
+            onClick={handleResetUsed}
+            disabled={usedCount === 0}
+            title={usedCount === 0 ? 'ยังไม่มีคำสำคัญที่ใช้แล้ว' : 'ให้คำสำคัญที่ใช้แล้วกลับมาสุ่มได้อีกครั้ง (ประวัติยังอยู่)'}
+          >
+            <RotateCcw size={15} />
+            <span>รีเซ็ตคำที่ใช้แล้ว ({usedCount})</span>
           </button>
         </div>
       </div>
@@ -144,6 +177,7 @@ export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
                         <span className="word-main-title" style={{ color: item.color || '#e2e8f0' }}>
                           <Sparkle size={14} aria-hidden="true" />
                           {item.word}
+                          {usedWordIds.includes(item.id) && <span className="word-used-badge">ใช้แล้ว</span>}
                         </span>
                         {item.description && (
                           <span className="word-desc-snippet">{item.description}</span>

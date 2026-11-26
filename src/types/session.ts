@@ -25,6 +25,11 @@ export interface SessionState {
   selectedWordItem?: KeywordItem;
   selectedQuestion?: Question;
   usedQuestionIds: string[];
+  /**
+   * Keywords answered in keyword mode (Done). They are not drawn again until every enabled
+   * keyword is used. Optional: sessions saved before 2026-11-26 do not have it.
+   */
+  usedWordIds?: string[];
   isMuted: boolean;
   volume: number;
   isPaused: boolean;

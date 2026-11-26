@@ -9,7 +9,7 @@ import { KeywordItem } from '@/types/word.ts';
 import { TimerSoundSettings, StageDisplaySettings } from '@/types/timer.ts';
 import { AppearanceSettings } from '@/types/appearance.ts';
 import { selectNextQuestion, SelectionFallbackReason } from '@/features/questions/questionSelector.ts';
-import { selectTargetWord } from '@/features/words/wordSelector.ts';
+import { selectTargetWord, allWordsUsed } from '@/features/words/wordSelector.ts';
 import { getNextState } from './stateMachine.ts';
 import {
   createInitialTimerState,
@@ -87,27 +87,38 @@ export function sessionReducer(s: SessionState, command: AnyCommand, ctx: Reduce
       const newSeed = 'seed-' + now;
 
       // 1. Deterministically select the target keyword
-      const targetWord = command.forceWord || selectTargetWord(words, newSeed) || words[0];
+      const usedWordIds = s.usedWordIds ?? [];
+      const targetWord = command.forceWord || selectTargetWord(words, newSeed, usedWordIds) || words[0];
+      const isKeywordMode = s.appearanceSettings?.quizMode === 'keyword';
 
-      // 2. Deterministically select an unused question from the selected round
-      const selection = selectNextQuestion({
+      // Keyword mode shows only the keyword, so no question is drawn (one used to be drawn and
+      // hidden, and Done then recorded that question and marked it used).
+      if (isKeywordMode && !targetWord) {
+        return next(s, [{ type: 'NOTIFY', level: 'error', message: 'ไม่มีคำสำคัญที่เปิดใช้งาน' }]);
+      }
+
+      // 2. Question mode: deterministically select an unused question from the selected round
+      const selection = isKeywordMode ? null : selectNextQuestion({
         questions,
         usedQuestionIds: s.usedQuestionIds,
         round: s.selectedRound,
         seed: newSeed
       });
 
-      if (!selection) {
+      if (!isKeywordMode && !selection) {
         // B10: a notice for the operator instead of alert()
         return next(s, [{ type: 'NOTIFY', level: 'error', message: 'ไม่มีคำถามที่พร้อมใช้งานในรอบที่เลือก' }]);
       }
 
       // B11: tell the operator when the question did not come from the requested round
-      const effects: SessionEffect[] = selection.fallbackReasons.map(reason => ({
+      const effects: SessionEffect[] = (selection?.fallbackReasons ?? []).map(reason => ({
         type: 'NOTIFY',
         level: 'warning',
         message: describeFallback(reason, s.selectedRound)
       }));
+      if (isKeywordMode && !command.forceWord && allWordsUsed(words, usedWordIds)) {
+        effects.push({ type: 'NOTIFY', level: 'warning', message: 'คำสำคัญทุกคำถูกใช้ครบแล้ว ระบบเริ่มวนใช้คำซ้ำ (กดรีเซ็ตในหน้าคลังคำสำคัญได้)' });
+      }
 
       const safeDuration = s.timerState.durationMs || DEFAULT_TIMER_DURATION_MS;
       return next({
@@ -117,7 +128,7 @@ export function sessionReducer(s: SessionState, command: AnyCommand, ctx: Reduce
         selectedWordId: targetWord?.id,
         selectedKeyword: targetWord?.word,
         selectedWordItem: targetWord || undefined,
-        selectedQuestion: selection.selectedQuestion,
+        selectedQuestion: selection?.selectedQuestion,
         isPaused: false,
         timerState: {
           ...s.timerState,
@@ -136,9 +147,11 @@ export function sessionReducer(s: SessionState, command: AnyCommand, ctx: Reduce
     case 'STOP_WORD_SPIN':
       return s.currentState === 'word-spin' ? next({ ...s, currentState: 'word-decelerate' }) : unchanged(s);
 
-    case 'SKIP_TO_QUESTION':
-      if (!s.selectedQuestion) return unchanged(s);
+    case 'SKIP_TO_QUESTION': {
+      const hasContent = s.appearanceSettings?.quizMode === 'keyword' ? Boolean(s.selectedWordItem) : Boolean(s.selectedQuestion);
+      if (!hasContent) return unchanged(s);
       return next({ ...s, currentState: 'question', isPaused: false, timerState: timerOnReveal(s, now) });
+    }
 
     case 'ADVANCE_PHASE': {
       // Scheduler fired for `from`; ignore it if the stage has moved on or was paused since.
@@ -155,13 +168,16 @@ export function sessionReducer(s: SessionState, command: AnyCommand, ctx: Reduce
 
     case 'MARK_ANSWERED': {
       const isKeywordMode = s.appearanceSettings?.quizMode === 'keyword';
-      const activeQuestion: Question | undefined = s.selectedQuestion || (isKeywordMode && s.selectedKeyword ? {
-        id: `KW_${s.selectedWordItem?.id || now}`,
-        text: s.selectedKeyword,
-        difficulty: 'medium',
-        round: s.selectedRound,
-        enabled: true
-      } : undefined);
+      // Keyword mode records the keyword itself; question mode records the question.
+      const activeQuestion: Question | undefined = isKeywordMode
+        ? (s.selectedKeyword ? {
+            id: `KW_${s.selectedWordItem?.id || now}`,
+            text: s.selectedKeyword,
+            difficulty: 'medium',
+            round: s.selectedRound,
+            enabled: true
+          } : undefined)
+        : s.selectedQuestion;
 
       if (!activeQuestion) return unchanged(s);
 
@@ -169,14 +185,19 @@ export function sessionReducer(s: SessionState, command: AnyCommand, ctx: Reduce
       const timeUsed = calculateTimeUsedMs(s.timerState.durationMs, getLiveRemainingMs(s.timerState, now));
       const contestant = ctx.loadContestants().find(c => c.id === s.selectedContestantId);
 
-      const updatedUsed = s.selectedQuestion
+      const updatedUsed = !isKeywordMode && s.selectedQuestion
         ? Array.from(new Set([...s.usedQuestionIds, s.selectedQuestion.id]))
         : s.usedQuestionIds;
+      // In keyword mode the keyword is what was answered; it is not drawn again until all are used.
+      const updatedUsedWords = isKeywordMode && s.selectedWordId
+        ? Array.from(new Set([...(s.usedWordIds ?? []), s.selectedWordId]))
+        : s.usedWordIds;
 
       return next({
         ...s,
         currentState: 'answered',
         usedQuestionIds: updatedUsed,
+        usedWordIds: updatedUsedWords,
         timerState: { ...s.timerState, status: 'idle' }
       }, [{
         type: 'RECORD_HISTORY',
@@ -209,6 +230,10 @@ export function sessionReducer(s: SessionState, command: AnyCommand, ctx: Reduce
     // Every question can be drawn again (e.g. after a rehearsal). History is kept.
     case 'RESET_USED_QUESTIONS':
       return s.usedQuestionIds.length === 0 ? unchanged(s) : next({ ...s, usedQuestionIds: [] });
+
+    // Every keyword can be drawn again. History is kept.
+    case 'RESET_USED_WORDS':
+      return (s.usedWordIds ?? []).length === 0 ? unchanged(s) : next({ ...s, usedWordIds: [] });
 
     // ── Selections & settings ────────────────────────────────────────────────
     case 'SET_CONTESTANT':

@@ -81,6 +81,56 @@ describe('sessionReducer', () => {
     expect(r.effects).toEqual([]);
     expect(parseChannelMessage({ kind: 'COMMAND', from: 'c1', command: { type: 'RESET_USED_QUESTIONS' } })).not.toBeNull();
   });
+
+  describe('used keywords (keyword mode)', () => {
+    const words: KeywordItem[] = [{ id: 'w1', word: 'หนึ่ง', enabled: true }, { id: 'w2', word: 'สอง', enabled: true }];
+    const keywordSession = () => {
+      const s = createInitialSession();
+      return { ...s, appearanceSettings: { ...s.appearanceSettings!, quizMode: 'keyword' as const } };
+    };
+
+    it('Done marks the keyword used, and the next draw skips it', () => {
+      const started = sessionReducer(keywordSession(), { type: 'START_JOURNEY', forceWord: words[0] }, ctx({ loadWords: () => words }));
+      const answered = sessionReducer({ ...started.state, currentState: 'question' }, { type: 'MARK_ANSWERED' }, ctx({ loadWords: () => words }));
+      expect(answered.state.usedWordIds).toEqual(['w1']);
+      for (let i = 0; i < 5; i++) {
+        const again = sessionReducer({ ...answered.state, currentState: 'idle' }, { type: 'START_JOURNEY' }, ctx({ now: 2_000_000 + i, loadWords: () => words }));
+        expect(again.state.selectedWordId).toBe('w2');
+      }
+    });
+
+    it('warns once every keyword is used, and RESET_USED_WORDS clears the list', () => {
+      const s = { ...keywordSession(), usedWordIds: ['w1', 'w2'] };
+      const r = sessionReducer(s, { type: 'START_JOURNEY' }, ctx({ loadWords: () => words }));
+      expect(r.effects).toContainEqual(expect.objectContaining({ type: 'NOTIFY', level: 'warning' }));
+      const reset = sessionReducer(s, { type: 'RESET_USED_WORDS' }, ctx());
+      expect(reset.state.usedWordIds).toEqual([]);
+      expect(parseChannelMessage({ kind: 'COMMAND', from: 'c1', command: { type: 'RESET_USED_WORDS' } })).not.toBeNull();
+    });
+
+    it('keyword mode draws no hidden question, and Done records the keyword, not a question', () => {
+      const started = sessionReducer(keywordSession(), { type: 'START_JOURNEY', forceWord: words[1] }, ctx({ loadWords: () => words }));
+      expect(started.state.selectedQuestion).toBeUndefined();
+      const answered = sessionReducer({ ...started.state, currentState: 'question' }, { type: 'MARK_ANSWERED' }, ctx({ loadWords: () => words }));
+      expect(answered.state.usedQuestionIds).toEqual([]);
+      const history = answered.effects.find(e => e.type === 'RECORD_HISTORY');
+      expect(history).toMatchObject({ params: { question: { id: 'KW_w2', text: 'สอง' } } });
+    });
+
+    it('keyword mode starts even with an empty question bank, and Skip works', () => {
+      const started = sessionReducer(keywordSession(), { type: 'START_JOURNEY' }, ctx({ loadWords: () => words, loadQuestions: () => [] }));
+      expect(started.state.currentState).toBe('pre-spin');
+      expect(started.effects).toEqual([]);
+      const skipped = sessionReducer({ ...started.state, currentState: 'word-spin' }, { type: 'SKIP_TO_QUESTION' }, ctx());
+      expect(skipped.state.currentState).toBe('question');
+    });
+
+    it('question mode does not mark keywords used', () => {
+      const started = sessionReducer(createInitialSession(), { type: 'START_JOURNEY', forceWord: words[0] }, ctx({ loadWords: () => words }));
+      const answered = sessionReducer({ ...started.state, currentState: 'question' }, { type: 'MARK_ANSWERED' }, ctx({ loadWords: () => words }));
+      expect(answered.state.usedWordIds ?? []).toEqual([]);
+    });
+  });
 });
 
 describe('S7: channel message validation', () => {

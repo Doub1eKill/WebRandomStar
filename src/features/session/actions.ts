@@ -14,6 +14,7 @@ export function createSessionActions(d: (command: SessionCommand) => void) {
     markAnswered: () => d({ type: 'MARK_ANSWERED' }),
     resetStage: () => d({ type: 'RESET_STAGE' }),
     resetUsedQuestions: () => d({ type: 'RESET_USED_QUESTIONS' }),
+    resetUsedWords: () => d({ type: 'RESET_USED_WORDS' }),
     setContestant: (contestantId: string) => d({ type: 'SET_CONTESTANT', contestantId }),
     setRound: (round: string) => d({ type: 'SET_ROUND', round }),
     setVolume: (volume: number) => d({ type: 'SET_VOLUME', volume }),

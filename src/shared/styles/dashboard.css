@@ -65,6 +65,13 @@
   border: 1px solid rgba(244, 63, 94, 0.35);
 }
 
+/* Used keywords (same yellow as the question bank's "ใช้แล้ว") */
+.qb-stat-card.stat-used .stat-card-icon {
+  background: rgba(234, 179, 8, 0.18);
+  color: #fde047;
+  border: 1px solid rgba(234, 179, 8, 0.35);
+}
+
 .stat-card-body {
   display: flex;
   flex-direction: column;
@@ -228,6 +235,17 @@
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: 0.02em;
+}
+
+.word-used-badge {
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  background: rgba(234, 179, 8, 0.2);
+  color: #fde047;
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .word-desc-snippet {

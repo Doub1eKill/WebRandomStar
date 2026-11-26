@@ -651,6 +651,17 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+.control-app .btn-secondary-ghost.btn-reset-used {
+  background: rgba(234, 179, 8, 0.1);
+  border-color: rgba(234, 179, 8, 0.35);
+  color: #facc15;
+}
+
+.control-app .btn-secondary-ghost.btn-reset-used:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .control-app .qb-table-wrap {
   background: var(--ctl-surface);
   border-color: var(--ctl-border);
