@@ -25,6 +25,12 @@ export const StageBackground: React.FC<StageBackgroundProps> = ({ session }) => 
 
   const canvas = <StageCanvas session={session} />;
 
+  // Appearance sliders also drive AeroShards: density scales the shard count, glow the shard
+  // glow plus the backdrop (nebula, stars, beams). Defaults (1.0) give the original 1.2 / 1.2.
+  const appearance = session.appearanceSettings;
+  const densitySetting = appearance?.particleDensity || 1.0;
+  const glowSetting = appearance?.glowIntensity || 1.0;
+
   // If user selected aero-shards and WebGPU is available without error:
   if (backgroundMode === 'aero-shards' && !webGpuFailed) {
     return (
@@ -44,11 +50,11 @@ export const StageBackground: React.FC<StageBackgroundProps> = ({ session }) => 
             speed={0.85}
             spin={1}
             interaction="repel"
-            density={1.2}
+            density={Math.min(1.5, Math.max(0.5, 1.2 * densitySetting))}
             shardSize={1.1}
             stretch={1}
             turbulence={1}
-            glow={1.2}
+            glow={Math.min(2, 1.2 * glowSetting)}
             edgeSoftness={2}
             bloom={0.6}
             grain={0.04}
@@ -58,6 +64,11 @@ export const StageBackground: React.FC<StageBackgroundProps> = ({ session }) => 
             interactionStrength={0.5}
             rippleIntensity={1}
             holdToGather={true}
+            stageState={session.currentState}
+            backdropGlow={glowSetting}
+            showLightRays={appearance?.showLightRays !== false}
+            showNebulaBand={appearance?.showAurora !== false}
+            showHorizon={appearance?.showWaterReflection !== false}
             onError={(err) => {
               console.warn('[StageBackground] AeroShards WebGPU error, falling back to Canvas 2D:', err);
               setWebGpuFailed(true);

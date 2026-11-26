@@ -23,8 +23,9 @@ export class AuroraSystem {
     // Layer 1: Cosmic Nebula Violet / Deep Space Wave
     const grad1 = ctx.createLinearGradient(0, 0, width, height * 0.8);
     const offset1 = Math.sin(this.time * 2) * 0.15;
-    grad1.addColorStop(0, `rgba(46, 16, 101, ${0.45 * intensity})`);
-    grad1.addColorStop(0.4 + offset1, `rgba(109, 40, 217, ${0.35 * intensity})`);
+    // Toned down from 0.45 / 0.35: the nebula layer underneath now carries the colour.
+    grad1.addColorStop(0, `rgba(46, 16, 101, ${0.3 * intensity})`);
+    grad1.addColorStop(0.4 + offset1, `rgba(109, 40, 217, ${0.2 * intensity})`);
     grad1.addColorStop(1, 'rgba(6, 9, 25, 0)');
 
     ctx.fillStyle = grad1;

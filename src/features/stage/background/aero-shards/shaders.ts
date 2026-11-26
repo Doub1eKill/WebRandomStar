@@ -1,5 +1,6 @@
 /** WGSL shaders for AeroShards (Phase 6, A2). */
 import { RIPPLE_SPEED, RIPPLE_TAIL } from './presets.ts';
+import { BACKDROP_WGSL, STAGE_POST_FIELDS } from './backdropShader.ts';
 export const SHARD_SHADER = `
 struct ViewParams {
   viewport: vec4f,
@@ -554,8 +555,7 @@ struct PostParams {
   finishing: vec4f,
   background: vec4f,
   temporal: vec4f,
-  tint: vec4f,
-}
+  tint: vec4f,${STAGE_POST_FIELDS}}
 
 @group(0) @binding(0) var sceneTexture: texture_2d<f32>;
 @group(0) @binding(1) var sceneSampler: sampler;
@@ -612,8 +612,7 @@ struct PostParams {
   finishing: vec4f,
   background: vec4f,
   temporal: vec4f,
-  tint: vec4f,
-}
+  tint: vec4f,${STAGE_POST_FIELDS}}
 
 @group(0) @binding(0) var sceneTexture: texture_2d<f32>;
 @group(0) @binding(1) var bloomTexture: texture_2d<f32>;
@@ -625,10 +624,11 @@ fn hash12(value: vec2f) -> f32 {
   let mixed = p + dot(p, p.yx + 33.33);
   return fract((mixed.x + mixed.y) * mixed.x);
 }
-
+${BACKDROP_WGSL}
 @fragment
 fn fs_main(@location(0) uv: vec2f, @builtin(position) pixel: vec4f) -> @location(0) vec4f {
   let background = post.background.rgb;
+  let backdrop = stageBackdrop(pixel.xy);
   var scene = textureLoad(sceneTexture, vec2i(pixel.xy), 0).rgb;
 
   if (post.finishing.z > 0.000001) {
@@ -661,6 +661,11 @@ fn fs_main(@location(0) uv: vec2f, @builtin(position) pixel: vec4f) -> @location
     foreground += vec3f(noise * post.finishing.y * signal);
   }
 
-  return vec4f(clamp(background + foreground, vec3f(0.0), vec3f(1.0)), 1.0);
+  // The scene target was cleared to the flat background, so foreground is the light the shards
+  // add on top of it. Adding it to the backdrop makes the glass luminous and translucent; only a
+  // light touch of the flat background under strong shards keeps their edges crisp (a full swap
+  // turned dim shards into dark silhouettes against the bright nebula).
+  let base = mix(backdrop, background, signal * 0.15);
+  return vec4f(clamp(base + foreground, vec3f(0.0), vec3f(1.0)), 1.0);
 }
 `;

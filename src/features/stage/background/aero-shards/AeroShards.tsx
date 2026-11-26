@@ -3,7 +3,8 @@ import { frame, init, surface } from 'vgpu';
 import type { Frame, FramePass, Gpu } from 'vgpu';
 import './AeroShards.css';
 import { advanceFormation, advanceFrameDeadline, advanceHold, advancePointer, advanceRipples, createFormation, createHold, createRipples, mixColor, resetPointerMotion, resolveFrameInterval, resolvePathLength, startRipple } from './motion.ts';
-import { FRAME_STATES, INTERACTIONS, QUALITY_PRESETS, RUNTIME_QUALITY } from './presets.ts';
+import { FRAME_STATES, INTERACTIONS, QUALITY_PRESETS, RUNTIME_QUALITY, STAGE_SCENERY } from './presets.ts';
+import type { AppState } from '@/types/session.ts';
 import { resolveAeroSettings, AeroSettings } from './settings.ts';
 import { createRenderGraph, prepareRenderGraph, resolveBloomSize, resolveDpr, resolveQuality } from './renderGraph.ts';
 
@@ -43,6 +44,23 @@ export interface AeroShardsProps {
   paused?: boolean;
   className?: string;
   onError?: (error: Error) => void;
+  /** Stage phase: drives the backdrop energy, spotlights and the word-lock / Done pulses. */
+  stageState?: AppState;
+  /** Appearance glow slider (0.2 to 2): brightness of the nebula, stars and beams. */
+  backdropGlow?: number;
+  /** Appearance toggles mapped onto the backdrop layers. */
+  showLightRays?: boolean;
+  showNebulaBand?: boolean;
+  showHorizon?: boolean;
+}
+
+/** Stage-driven backdrop inputs, read by the render loop (kept out of the settings signature). */
+interface StageInputs {
+  state: AppState;
+  glow: number;
+  lightRays: boolean;
+  nebulaBand: boolean;
+  horizon: boolean;
 }
 
 
@@ -76,7 +94,12 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
   holdToGather = true,
   paused = false,
   className = '',
-  onError
+  onError,
+  stageState = 'idle',
+  backdropGlow = 1,
+  showLightRays = true,
+  showNebulaBand = true,
+  showHorizon = true
 }) => {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -95,6 +118,12 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
   const ripplesRef = useRef(createRipples());
   const holdRef = useRef(createHold());
   const [ready, setReady] = useState(false);
+  const stageRef = useRef<StageInputs>({
+    state: stageState, glow: backdropGlow, lightRays: showLightRays, nebulaBand: showNebulaBand, horizon: showHorizon
+  });
+  /** One-shot stage events queued for the render loop (consumed on the next frame). */
+  const stageEventsRef = useRef({ lock: false, reveal: false, done: false });
+  const previousStageRef = useRef(stageState);
 
   settingsRef.current = resolveAeroSettings({
     backgroundColor, shardColor, accentColor, placement, flow, material, detail, scale, spread, depth,
@@ -108,6 +137,21 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
   useEffect(() => {
     wakeRef.current();
   }, [settingsSignature]);
+
+  useEffect(() => {
+    stageRef.current = {
+      state: stageState, glow: backdropGlow, lightRays: showLightRays, nebulaBand: showNebulaBand, horizon: showHorizon
+    };
+    const previous = previousStageRef.current;
+    previousStageRef.current = stageState;
+    if (previous !== stageState) {
+      const events = stageEventsRef.current;
+      if (stageState === 'word-lock') events.lock = true;
+      else if (stageState === 'question-reveal' && previous !== 'word-lock') events.reveal = true;
+      else if (stageState === 'idle' && (previous === 'question' || previous === 'answered')) events.done = true;
+    }
+    wakeRef.current();
+  }, [stageState, backdropGlow, showLightRays, showNebulaBand, showHorizon]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -335,6 +379,15 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
         let travelPhase = 0;
         let grainTime = 0;
         let firstFrame = true;
+        // Stage backdrop state (see backdropShader.ts)
+        const initialScenery = STAGE_SCENERY[stageRef.current.state] ?? STAGE_SCENERY.idle;
+        let stageEnergy = initialScenery.energy;
+        let beamLevel = initialScenery.beams;
+        let beamPhase = 0;
+        let starDrift = 0;
+        let converge = 0;
+        let lockPulse = 0;
+        let goldPulse = 0;
         const placementMotion = createFormation(settingsRef.current.composition);
         let layoutWeights = placementMotion.weights;
         let layoutTransitioning = false;
@@ -439,9 +492,44 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
           lastSettingsSignature = settings.signature;
           needsRender = false;
 
+          // Stage reactions: ease toward the phase's energy/beam level, fire queued pulses.
+          const stage = stageRef.current;
+          const scenery = STAGE_SCENERY[stage.state] ?? STAGE_SCENERY.idle;
+          const sceneryEase = frozen ? 1 : 1 - Math.exp(-elapsed * 2.5);
+          stageEnergy += (scenery.energy - stageEnergy) * sceneryEase;
+          beamLevel += (scenery.beams - beamLevel) * sceneryEase;
+          const convergeTarget = stage.state === 'word-lock' ? 1 : 0;
+          converge = frozen
+            ? convergeTarget
+            : converge + (convergeTarget - converge) * (1 - Math.exp(-elapsed * (convergeTarget > converge ? 5 : 1.4)));
+          lockPulse = Math.max(0, lockPulse - elapsed / 1.6);
+          goldPulse = Math.max(0, goldPulse - elapsed / 2.2);
+          const events = stageEventsRef.current;
+          if (events.lock || events.reveal || events.done) {
+            // Reduced motion / paused: skip the flashes and shockwaves entirely.
+            if (!frozen) {
+              const aspectNow = output.size[0] / Math.max(output.size[1], 1);
+              if (events.lock || events.reveal) {
+                lockPulse = events.lock ? 1 : 0.8;
+                startRipple(ripplesRef.current, [0.5, 0.45], aspectNow, events.lock ? 1.8 : 1.3);
+              }
+              if (events.done) {
+                goldPulse = 1;
+                startRipple(ripplesRef.current, [0.5, 0.2], aspectNow, 1.2);
+              }
+            }
+            events.lock = false;
+            events.reveal = false;
+            events.done = false;
+          }
+          // Idle is 1x; the spin roughly doubles the stream, a question on screen slows it down.
+          const speedBoost = 0.55 + stageEnergy * 1.3;
+
           if (!frozen) {
-            flowDistance += elapsed * settings.speed * 0.34;
+            flowDistance += elapsed * settings.speed * 0.34 * speedBoost;
             grainTime += elapsed;
+            beamPhase += elapsed * (0.25 + stageEnergy * 0.9);
+            starDrift += elapsed * (0.35 + stageEnergy * 0.9);
           }
           if (frozen) {
             renderScale = settings.scale;
@@ -455,7 +543,7 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
           if (!frozen) {
             const travelAspect = output.size[0] / Math.max(output.size[1], 1);
             travelPhase =
-              (travelPhase + (elapsed * settings.speed * 0.34) / resolvePathLength(travelAspect, layoutWeights)) % 1;
+              (travelPhase + (elapsed * settings.speed * 0.34 * speedBoost) / resolvePathLength(travelAspect, layoutWeights)) % 1;
           }
 
           const pointer = pointerRef.current;
@@ -537,37 +625,35 @@ export const AeroShards: React.FC<AeroShardsProps> = ({
             finishing: [settings.bloom, settings.grain, settings.chromaticAberration, settings.lightSurface],
             background: settings.background,
             tint: mixColor(settings.shard, settings.accent, 0.4),
-            temporal: [grainTime, 0, 0, 0]
+            temporal: [grainTime, 0, 0, 0],
+            stage: [grainTime, stageEnergy, lockPulse, goldPulse],
+            rig: [beamPhase, converge, starDrift, stage.horizon ? 1 : 0],
+            scenery: [
+              stage.lightRays ? beamLevel * stage.glow : 0,
+              Math.min(1.5, 0.55 + 0.45 * stage.glow),
+              stage.nebulaBand ? 1 : 0,
+              stage.glow
+            ]
           });
 
-          const postEnabled =
-            settings.bloom > 0.0001 ||
-            settings.grain > 0.0001 ||
-            settings.chromaticAberration > 0.000001;
-
-          if (!postEnabled) {
-            currentFrame.pass({ target: output, clear: settings.background }, (pass: FramePass) => {
-              pass.draw(graph.shardDraw, { instances: activeCount });
+          // The finish pass always runs: it paints the stage backdrop behind the shards.
+          currentFrame.pass({ target: graph.sceneTarget, clear: settings.background }, (pass: FramePass) => {
+            pass.draw(graph.shardDraw, { instances: activeCount });
+          });
+          if (settings.bloom > 0.0001) {
+            currentFrame.pass({ target: graph.bloomTarget, clear: [0, 0, 0, 0] }, (pass: FramePass) => {
+              pass.draw(graph.bloomEffect);
             });
-          } else {
-            currentFrame.pass({ target: graph.sceneTarget, clear: settings.background }, (pass: FramePass) => {
-              pass.draw(graph.shardDraw, { instances: activeCount });
+            currentFrame.pass({ target: graph.bloomScratchTarget, clear: [0, 0, 0, 0] }, (pass: FramePass) => {
+              pass.draw(graph.bloomBlurX);
             });
-            if (settings.bloom > 0.0001) {
-              currentFrame.pass({ target: graph.bloomTarget, clear: [0, 0, 0, 0] }, (pass: FramePass) => {
-                pass.draw(graph.bloomEffect);
-              });
-              currentFrame.pass({ target: graph.bloomScratchTarget, clear: [0, 0, 0, 0] }, (pass: FramePass) => {
-                pass.draw(graph.bloomBlurX);
-              });
-              currentFrame.pass({ target: graph.bloomTarget, clear: [0, 0, 0, 0] }, (pass: FramePass) => {
-                pass.draw(graph.bloomBlurY);
-              });
-            }
-            currentFrame.pass({ target: output, clear: settings.background }, (pass: FramePass) => {
-              pass.draw(graph.finishEffect);
+            currentFrame.pass({ target: graph.bloomTarget, clear: [0, 0, 0, 0] }, (pass: FramePass) => {
+              pass.draw(graph.bloomBlurY);
             });
           }
+          currentFrame.pass({ target: output, clear: settings.background }, (pass: FramePass) => {
+            pass.draw(graph.finishEffect);
+          });
 
           if (firstFrame) {
             firstFrame = false;
