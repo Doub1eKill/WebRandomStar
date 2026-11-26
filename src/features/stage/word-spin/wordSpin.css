@@ -540,15 +540,6 @@
   text-align: center;
 }
 
-.ribbon-question-cat {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: #7dd3fc;
-  text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
-  text-transform: uppercase;
-}
-
 .ribbon-word-item.is-question {
   max-width: clamp(600px, 72vw, 860px);
   white-space: normal;

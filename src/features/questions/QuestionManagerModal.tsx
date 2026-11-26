@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Download, Library, Plus, RotateCcw, Trash2, Upload, X } from 'lucide-react';
-import { Question, QuestionCategory, CATEGORY_CONFIGS } from '@/types/question.ts';
+import { Question } from '@/types/question.ts';
 import { exportQuestionsAsJSON } from '@/features/questions/importQuestions.ts';
 import { useQuestionImport } from './QuestionImportDialog.tsx';
 import { DEFAULT_QUESTIONS } from '@/data/defaultQuestions.ts';
@@ -18,14 +18,11 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
   questions,
   onSaveQuestions
 }) => {
-  const [filterCategory, setFilterCategory] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   // New question form state
   const [isAdding, setIsAdding] = useState(false);
   const [newText, setNewText] = useState('');
-  // D7: default to the first category in the dropdown ('rain' today), so the two can't drift apart.
-  const [newCategory, setNewCategory] = useState<QuestionCategory>(() => Object.keys(CATEGORY_CONFIGS)[0]);
   const [newDifficulty, setNewDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
   const [newRound, setNewRound] = useState<'intro' | 'general' | 'attitude' | 'scenario' | 'final'>('attitude');
   const [newTags, setNewTags] = useState('');
@@ -36,11 +33,9 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
 
   if (!isOpen) return null;
 
-  const filtered = questions.filter(q => {
-    const matchCat = filterCategory === 'all' || q.category === filterCategory;
-    const matchSearch = searchTerm === '' || q.text.toLowerCase().includes(searchTerm.toLowerCase()) || q.id.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchCat && matchSearch;
-  });
+  const filtered = questions.filter(q =>
+    searchTerm === '' || q.text.toLowerCase().includes(searchTerm.toLowerCase()) || q.id.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleToggleEnabled = (id: string) => {
     const updated = questions.map(q => q.id === id ? { ...q, enabled: !q.enabled } : q);
@@ -61,7 +56,6 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
     const newQ: Question = {
       id: `Q_CUSTOM_${Date.now().toString().slice(-4)}`,
       text: newText.trim(),
-      category: newCategory,
       difficulty: newDifficulty,
       round: newRound,
       enabled: true,
@@ -123,19 +117,6 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
-          <select
-            className="custom-select select-filter"
-            value={filterCategory}
-            onChange={(e) => setFilterCategory(e.target.value)}
-          >
-            <option value="all">ทุกหมวดธรรมชาติ (All Categories)</option>
-            {Object.values(CATEGORY_CONFIGS).map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name} ({cat.englishName})
-              </option>
-            ))}
-          </select>
-
           <button className="btn-primary btn-sm" onClick={() => setIsAdding(!isAdding)}>
             {isAdding ? 'ยกเลิก' : <><Plus size={14} aria-hidden="true" /> เพิ่มคำถามใหม่</>}
           </button>
@@ -154,21 +135,6 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
               required
             />
             <div className="form-row">
-              <div>
-                <label>หมวดธรรมชาติ:</label>
-                <select
-                  className="custom-select"
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value as QuestionCategory)}
-                >
-                  {Object.values(CATEGORY_CONFIGS).map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.name} ({cat.englishName})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
               <div>
                 <label>ระดับความยาก:</label>
                 <select
@@ -222,7 +188,6 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
             <thead>
               <tr>
                 <th style={{ width: '80px' }}>สถานะ</th>
-                <th style={{ width: '100px' }}>หมวด</th>
                 <th>ข้อความคำถาม</th>
                 <th style={{ width: '90px' }}>รอบ</th>
                 <th style={{ width: '100px' }}>จัดการ</th>
@@ -239,9 +204,6 @@ export const QuestionManagerModal: React.FC<QuestionManagerModalProps> = ({
                     >
                       {q.enabled ? 'ON' : 'OFF'}
                     </button>
-                  </td>
-                  <td>
-                    <span className="cat-table-badge">{q.category}</span>
                   </td>
                   <td>
                     <p className="table-q-text">{q.text}</p>

@@ -22,7 +22,7 @@ export const CompetitionModeSection: React.FC<{ m: AppearanceSettingsModel }> = 
           name="โหมดสุ่มคลังคำถาม"
           badge="มาตรฐาน"
           tone="sky"
-          description="สุ่มคำสำคัญ/หมวดหมู่ → สุ่มดึงข้อสอบจากการ์ดคำถาม → เปิดการ์ดคำถามเต็มพร้อมจับเวลา"
+          description="สุ่มดึงคำถามจากคลังคำถามของรอบที่เลือก → เปิดการ์ดคำถามเต็มพร้อมจับเวลา"
         />
         <ModeCard
           testId="quiz-mode-keyword"

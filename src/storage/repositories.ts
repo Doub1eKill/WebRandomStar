@@ -27,9 +27,20 @@ const LEGACY_CONTESTANTS_KEY = 'season_quiz_contestants_list';
 
 const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 
+/**
+ * Categories were removed from questions, keywords and history (2026-11-26). Data saved before
+ * still carries a `category` field: it is dropped on load and disappears at the next save.
+ */
+export function withoutCategory<T>(item: T): T {
+  if (!isObject(item) || !('category' in item)) return item;
+  const copy: Record<string, unknown> = { ...item };
+  delete copy.category;
+  return copy as T;
+}
+
 /** Keep the well-formed entries of a stored list (S3); anything that is not a list is unusable. */
 function listOf<T>(isItem: (v: unknown) => boolean) {
-  return (raw: unknown): T[] | null => (Array.isArray(raw) ? (raw.filter(isItem) as T[]) : null);
+  return (raw: unknown): T[] | null => (Array.isArray(raw) ? (raw.filter(isItem).map(withoutCategory) as T[]) : null);
 }
 
 const hasStrings = (...fields: string[]) => (v: unknown) =>

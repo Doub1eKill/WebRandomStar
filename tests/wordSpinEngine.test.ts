@@ -50,9 +50,9 @@ describe('Word Spin Engine', () => {
 
   it('generates a question spin reel where the final item is the target question', () => {
     const sampleQuestions = [
-      { id: 'Q1', text: 'คำถามข้อที่ 1', category: 'general', difficulty: 'easy', round: 'intro', enabled: true },
-      { id: 'Q2', text: 'คำถามข้อที่ 2', category: 'general', difficulty: 'easy', round: 'intro', enabled: true },
-      { id: 'Q3', text: 'คำถามข้อที่ 3', category: 'general', difficulty: 'easy', round: 'intro', enabled: true }
+      { id: 'Q1', text: 'คำถามข้อที่ 1', difficulty: 'easy', round: 'intro', enabled: true },
+      { id: 'Q2', text: 'คำถามข้อที่ 2', difficulty: 'easy', round: 'intro', enabled: true },
+      { id: 'Q3', text: 'คำถามข้อที่ 3', difficulty: 'easy', round: 'intro', enabled: true }
     ];
     const target = sampleQuestions[1];
     const reel = generateSpinReel(sampleQuestions, target, 20, 'test_seed_q');

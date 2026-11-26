@@ -2,7 +2,7 @@ import { KeywordItem } from '@/types/word.ts';
 import { Question } from '@/types/question.ts';
 import type { RegisterApply } from './spinDom.ts';
 
-export type SpinItem = KeywordItem | Question | { id: string; text?: string; word?: string; displayText?: string; category?: string; enabled?: boolean };
+export type SpinItem = KeywordItem | Question | { id: string; text?: string; word?: string; displayText?: string; enabled?: boolean };
 
 export interface SpinViewProps {
   reel: SpinItem[];

@@ -9,7 +9,7 @@ import {
 import type { QuestionBankDashboardModel } from '../useQuestionBankDashboardModel.tsx';
 
 export const ActionBar: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) => {
-  const { search, setSearch, setEditingQuestion, setIsAdding, fileInputRef, categoriesList, roundsList, handleExport, handleImport } = m;
+  const { search, setSearch, setEditingQuestion, setIsAdding, fileInputRef, roundsList, handleExport, handleImport } = m;
   return (
     <>
       {/* 2. Action Bar & Filters */}
@@ -42,7 +42,6 @@ export const ActionBar: React.FC<{ m: QuestionBankDashboardModel }> = ({ m }) =>
               setEditingQuestion({
                 id: `Q_${Date.now().toString().slice(-4)}`,
                 text: '',
-                category: categoriesList[0] || 'Rain',
                 difficulty: 'medium',
                 round: roundsList[0] || 'intro',
                 enabled: true

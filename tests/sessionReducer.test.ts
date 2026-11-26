@@ -6,8 +6,8 @@ import { DEFAULT_TIMER_SOUND_SETTINGS, DEFAULT_STAGE_DISPLAY_SETTINGS } from '@/
 import { Question } from '@/types/question.ts';
 import { KeywordItem } from '@/types/word.ts';
 
-const question: Question = { id: 'q1', text: 'Q', round: 'intro', category: 'rain', difficulty: 'medium', enabled: true };
-const word: KeywordItem = { id: 'w1', word: 'ฝน', category: 'rain', enabled: true } as KeywordItem;
+const question: Question = { id: 'q1', text: 'Q', round: 'intro', difficulty: 'medium', enabled: true };
+const word: KeywordItem = { id: 'w1', word: 'ฝน', enabled: true } as KeywordItem;
 
 const ctx = (patch: Partial<ReducerContext> = {}): ReducerContext => ({
   now: 1_000_000,

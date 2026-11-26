@@ -1,4 +1,4 @@
-import { Question, QuestionCategory } from './question.ts';
+import { Question } from './question.ts';
 import { TimerState, TimerSoundSettings, StageDisplaySettings } from './timer.ts';
 import { KeywordItem, WordSpinMode } from './word.ts';
 import { AppearanceSettings } from './appearance.ts';
@@ -20,7 +20,6 @@ export interface SessionState {
   currentState: AppState;
   selectedContestantId?: string;
   selectedRound: string;
-  selectedCategory?: QuestionCategory;
   selectedWordId?: string;
   selectedKeyword?: string;
   selectedWordItem?: KeywordItem;

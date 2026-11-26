@@ -2,14 +2,12 @@ import React from 'react';
 
 interface KeywordShowcaseCardProps {
   keyword?: string;
-  category?: string;
   isAnswered?: boolean;
   compact?: boolean;
 }
 
 export const KeywordShowcaseCard: React.FC<KeywordShowcaseCardProps> = ({
   keyword,
-  category,
   isAnswered,
   compact = false
 }) => {
@@ -26,14 +24,6 @@ export const KeywordShowcaseCard: React.FC<KeywordShowcaseCardProps> = ({
 
       {/* Card Inner Shell */}
       <div className="keyword-card-inner-shell" style={{ padding: compact ? '28px 36px' : '44px 58px' }}>
-        {/* Top Category Badge */}
-        {category && (
-          <div className="keyword-category-pill">
-            <span className="keyword-category-icon">✦</span>
-            <span className="keyword-category-text">{category}</span>
-          </div>
-        )}
-
         {/* Subtitle / Prompt Tag */}
         <div className="keyword-subtitle-prompt">
           <span>คำสำคัญประจำรอบการประกวด</span>

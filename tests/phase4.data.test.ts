@@ -9,7 +9,7 @@ import { parseImportedQuestions, mergeQuestions, planImport, backupQuestions, lo
 import { Question } from '@/types/question.ts';
 import { HistoryRecord } from '@/types/history.ts';
 
-const q = (id: string, text = id): Question => ({ id, text, category: 'rain', difficulty: 'medium', round: 'intro', enabled: true });
+const q = (id: string, text = id): Question => ({ id, text, difficulty: 'medium', round: 'intro', enabled: true });
 
 beforeEach(() => {
   localStorage.clear();
@@ -102,16 +102,18 @@ describe('B7 through the storage facade', () => {
 describe('S1: question import', () => {
   const file = (rows: unknown[]) => JSON.stringify(rows);
 
-  it('rejects unknown categories, rounds and difficulties, and duplicate ids', () => {
-    expect(parseImportedQuestions(file([{ id: 'a', text: 't', category: 'lava' }])).error).toContain('หมวด');
-    expect(parseImportedQuestions(file([{ id: 'a', text: 't', category: 'rain', round: 'semi' }])).error).toContain('รอบ');
-    expect(parseImportedQuestions(file([{ id: 'a', text: 't', category: 'rain', difficulty: 'insane' }])).error).toContain('ความยาก');
-    expect(parseImportedQuestions(file([{ id: 'a', text: 't', category: 'rain' }, { id: 'a', text: 'u', category: 'rain' }])).error).toContain('ซ้ำ');
+  it('rejects unknown rounds and difficulties, and duplicate ids; ignores a legacy category', () => {
+    const legacy = parseImportedQuestions(file([{ id: 'a', text: 't', category: 'lava' }]));
+    expect(legacy.success).toBe(true);
+    expect(legacy.data?.[0]).not.toHaveProperty('category');
+    expect(parseImportedQuestions(file([{ id: 'a', text: 't', round: 'semi' }])).error).toContain('รอบ');
+    expect(parseImportedQuestions(file([{ id: 'a', text: 't', difficulty: 'insane' }])).error).toContain('ความยาก');
+    expect(parseImportedQuestions(file([{ id: 'a', text: 't' }, { id: 'a', text: 'u' }])).error).toContain('ซ้ำ');
   });
 
   it('normalises known values and keeps the old defaults', () => {
-    const r = parseImportedQuestions(file([{ id: 'a', text: 't', category: 'Rain' }]));
-    expect(r.data?.[0]).toMatchObject({ category: 'rain', round: 'attitude', difficulty: 'medium', enabled: true });
+    const r = parseImportedQuestions(file([{ id: 'a', text: 't' }]));
+    expect(r.data?.[0]).toMatchObject({ round: 'attitude', difficulty: 'medium', enabled: true });
   });
 
   it('rejects oversized input', () => {
@@ -145,7 +147,7 @@ describe('S2: CSV formula injection', () => {
   it('applies to the history export', () => {
     const record = {
       id: 'h1', timestamp: 0, sessionId: 's', round: 'intro', contestantId: 'c', contestantName: '=1+1',
-      questionId: 'q', questionText: 'Q', category: 'rain', timerConfiguredMs: 60000, timerUsedMs: 1000,
+      questionId: 'q', questionText: 'Q', timerConfiguredMs: 60000, timerUsedMs: 1000,
       isTimeout: false, result: 'completed'
     } as HistoryRecord;
     expect(exportHistoryToCSV([record])).toContain(`"'=1+1"`);

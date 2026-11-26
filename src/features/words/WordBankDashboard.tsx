@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
-import { CategoryIcon } from '@/shared/ui/icons.tsx';
 import { KeywordItem } from '@/types/word.ts';
-import { Question, CATEGORY_CONFIGS } from '@/types/question.ts';
 import { WordManagerModal } from './WordManagerModal.tsx';
 import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
 import { CheckCircle2, Edit2, Key, Plus, RotateCcw, Search, Sparkle, Sparkles, Trash2, XCircle } from 'lucide-react';
 
 interface WordBankDashboardProps {
   words: KeywordItem[];
-  questions?: Question[];
   onSaveWord: (word: KeywordItem) => void;
   onDeleteWord: (id: string) => void;
   onToggleWord: (id: string) => void;
@@ -17,27 +14,21 @@ interface WordBankDashboardProps {
 
 export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
   words,
-  questions = [],
   onSaveWord,
   onDeleteWord,
   onToggleWord,
   onResetWords
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [editingWord, setEditingWord] = useState<KeywordItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Filter words
-  const filteredWords = words.filter(w => {
-    const matchesSearch =
-      w.word.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (w.englishTheme && w.englishTheme.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (w.description && w.description.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory =
-      selectedCategory === 'all' || w.category.toLowerCase() === selectedCategory.toLowerCase();
-    return matchesSearch && matchesCategory;
-  });
+  const filteredWords = words.filter(w =>
+    w.word.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (w.englishTheme && w.englishTheme.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (w.description && w.description.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   const enabledCount = words.filter(w => w.enabled).length;
 
@@ -49,10 +40,6 @@ export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
   const handleEdit = (word: KeywordItem) => {
     setEditingWord(word);
     setIsModalOpen(true);
-  };
-
-  const getQuestionCountForCategory = (cat: string) => {
-    return questions.filter(q => q.category.toLowerCase() === cat.toLowerCase()).length;
   };
 
   return (
@@ -97,19 +84,6 @@ export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
           />
         </div>
 
-        <select
-          className="qb-filter-select"
-          value={selectedCategory}
-          onChange={e => setSelectedCategory(e.target.value)}
-        >
-          <option value="all">ทุกหมวดหมู่ (All Categories)</option>
-          {Object.values(CATEGORY_CONFIGS).map(cat => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
-
         <div className="qb-toolbar-buttons">
           <button className="btn-primary-glow" onClick={handleOpenNew}>
             <Plus size={16} />
@@ -118,11 +92,11 @@ export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
           <button
             className="btn-secondary-ghost"
             onClick={() => {
-              if (window.confirm('คุณต้องการรีเซ็ตคลังคำสำคัญกลับเป็นค่าเริ่มต้น 10 คำหรือไม่?')) {
+              if (window.confirm(`คุณต้องการรีเซ็ตคลังคำสำคัญกลับเป็นค่าเริ่มต้น ${DEFAULT_WORDS.length} คำหรือไม่?`)) {
                 onResetWords(DEFAULT_WORDS);
               }
             }}
-            title="รีเซ็ตเป็นคำเริ่มต้น 10 คำ"
+            title={`รีเซ็ตเป็นคำเริ่มต้น ${DEFAULT_WORDS.length} คำ`}
           >
             <RotateCcw size={15} />
             <span>รีเซ็ตค่าเริ่มต้น</span>
@@ -137,16 +111,14 @@ export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
             <tr>
               <th style={{ width: '80px', textAlign: 'center' }}>สถานะ</th>
               <th>คำสำคัญ (Keyword)</th>
-              <th style={{ width: '220px' }}>หมวดหมู่ (Category)</th>
               <th style={{ width: '200px' }}>ธีมภาษาอังกฤษ</th>
-              <th style={{ width: '130px', textAlign: 'center' }}>จำนวนคำถาม</th>
               <th style={{ width: '120px', textAlign: 'center' }}>จัดการ</th>
             </tr>
           </thead>
           <tbody>
             {filteredWords.length === 0 ? (
               <tr>
-                <td colSpan={6} style={{ textAlign: 'center', padding: '48px', color: '#94a3b8' }}>
+                <td colSpan={4} style={{ textAlign: 'center', padding: '48px', color: '#94a3b8' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
                     <Sparkles size={28} color="#7c3aed" />
                     <span style={{ fontSize: '1rem', fontWeight: 500 }}>ไม่พบคำสำคัญที่ตรงกับเงื่อนไขการค้นหา</span>
@@ -155,12 +127,6 @@ export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
               </tr>
             ) : (
               filteredWords.map(item => {
-                const cat = CATEGORY_CONFIGS[item.category.toLowerCase()] || {
-                  name: item.category,
-                  color: '#38bdf8'
-                };
-                const qCount = getQuestionCountForCategory(item.category);
-
                 return (
                   <tr key={item.id} className={!item.enabled ? 'row-disabled' : ''}>
                     <td style={{ textAlign: 'center' }}>
@@ -175,7 +141,7 @@ export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
                     </td>
                     <td>
                       <div className="word-cell-wrap">
-                        <span className="word-main-title" style={{ color: item.color || cat.color }}>
+                        <span className="word-main-title" style={{ color: item.color || '#e2e8f0' }}>
                           <Sparkle size={14} aria-hidden="true" />
                           {item.word}
                         </span>
@@ -185,16 +151,7 @@ export const WordBankDashboard: React.FC<WordBankDashboardProps> = ({
                       </div>
                     </td>
                     <td>
-                      <span className="cat-badge-chip" style={{ borderColor: `${cat.color}50`, color: cat.color, background: `${cat.color}15` }}>
-                        <CategoryIcon category={item.category} size={13} />
-                        <span>{cat.name}</span>
-                      </span>
-                    </td>
-                    <td>
                       <span className="theme-text-muted">{item.englishTheme || '-'}</span>
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <span className="q-count-badge">{qCount} ข้อ</span>
                     </td>
                     <td style={{ textAlign: 'center' }}>
                       <div className="table-actions-center">

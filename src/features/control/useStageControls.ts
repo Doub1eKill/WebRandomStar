@@ -4,7 +4,6 @@
  * QuizModeToggle (variant "drawer" or "live"), so each keeps its own look.
  */
 import { SessionState } from '@/types/session.ts';
-import { QuestionCategory } from '@/types/question.ts';
 import { KeywordItem } from '@/types/word.ts';
 import { AppearanceSettings, DEFAULT_APPEARANCE_SETTINGS } from '@/types/appearance.ts';
 
@@ -17,7 +16,7 @@ export const ROUND_OPTIONS = [
 ] as const;
 
 interface Handlers {
-  onStart: (forceCategory?: QuestionCategory, forceWord?: KeywordItem) => void;
+  onStart: (forceWord?: KeywordItem) => void;
   onStopSpin?: () => void;
   onSkip: () => void;
   onSetAppearanceSettings?: (settings: AppearanceSettings) => void;
@@ -40,6 +39,6 @@ export function stageControls(session: SessionState, words: KeywordItem[], handl
     setShowWordLockPhase: (showWordLockPhase: boolean) => patchAppearance({ showWordLockPhase }),
     /** STOP SPIN button: stop the reel, or skip to the question when no stop handler exists. */
     stopSpin: () => (handlers.onStopSpin ? handlers.onStopSpin() : handlers.onSkip()),
-    startWithWord: (word: KeywordItem) => handlers.onStart(word.category as QuestionCategory, word)
+    startWithWord: (word: KeywordItem) => handlers.onStart(word)
   };
 }

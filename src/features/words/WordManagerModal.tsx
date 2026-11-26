@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Check, Pencil, Plus, X } from 'lucide-react';
+import { Check, Pencil, Plus, Sparkle, X } from 'lucide-react';
 import { KeywordItem } from '@/types/word.ts';
-import { CATEGORY_CONFIGS } from '@/types/question.ts';
-import { CategoryIcon } from '@/shared/ui/icons.tsx';
 // Loaded with the word bank chunk, after the main stylesheet.
 import './wordManagerModal.css';
 
@@ -21,7 +19,6 @@ export const WordManagerModal: React.FC<WordManagerModalProps> = ({
 }) => {
   const [formData, setFormData] = useState<Partial<KeywordItem>>({
     word: '',
-    category: 'moon',
     englishTheme: '',
     color: '#e2e8f0',
     enabled: true,
@@ -36,8 +33,7 @@ export const WordManagerModal: React.FC<WordManagerModalProps> = ({
       setFormData({
         id: `word_${Date.now()}`,
         word: '',
-        category: 'moon',
-        englishTheme: 'Authenticity & Empathy',
+        englishTheme: '',
         color: '#e2e8f0',
         enabled: true,
         description: '',
@@ -58,16 +54,6 @@ export const WordManagerModal: React.FC<WordManagerModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleCategoryChange = (catId: string) => {
-    const config = CATEGORY_CONFIGS[catId.toLowerCase()];
-    setFormData(prev => ({
-      ...prev,
-      category: catId,
-      englishTheme: config?.subtitle || prev.englishTheme,
-      color: config?.color || prev.color
-    }));
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.word || formData.word.trim() === '') return;
@@ -75,7 +61,6 @@ export const WordManagerModal: React.FC<WordManagerModalProps> = ({
     onSave({
       id: formData.id || `word_${Date.now()}`,
       word: formData.word.trim(),
-      category: formData.category || 'moon',
       englishTheme: formData.englishTheme || 'Theme Keyword',
       color: formData.color || '#F5D98A',
       enabled: formData.enabled ?? true,
@@ -86,8 +71,7 @@ export const WordManagerModal: React.FC<WordManagerModalProps> = ({
     onClose();
   };
 
-  const category = formData.category || 'moon';
-  const previewColor = formData.color || CATEGORY_CONFIGS[category.toLowerCase()]?.color || '#e2e8f0';
+  const previewColor = formData.color || '#e2e8f0';
   const enabled = formData.enabled ?? true;
 
   return (
@@ -109,11 +93,11 @@ export const WordManagerModal: React.FC<WordManagerModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} className="kw-form">
-          {/* Live preview: the keyword in its colour with its category icon */}
+          {/* Live preview: the keyword in its colour */}
           <div className="kw-preview" style={{ borderColor: `${previewColor}55`, background: `${previewColor}12` }}>
             <span className="kw-preview-label">ตัวอย่าง</span>
             <span className="kw-preview-word" style={{ color: previewColor }}>
-              <CategoryIcon category={category} size={18} />
+              <Sparkle size={18} aria-hidden="true" />
               {formData.word?.trim() || 'คำสำคัญ'}
             </span>
             <span className="kw-preview-theme">{formData.englishTheme || 'English Subtitle'}</span>
@@ -135,35 +119,17 @@ export const WordManagerModal: React.FC<WordManagerModalProps> = ({
             />
           </div>
 
-          <div className="kw-grid">
-            <div className="kw-field">
-              <label className="kw-label" htmlFor="kw-category">หมวดหมู่ประจำคำ (Category)</label>
-              <select
-                id="kw-category"
-                className="kw-input"
-                value={category}
-                onChange={e => handleCategoryChange(e.target.value)}
-              >
-                {Object.values(CATEGORY_CONFIGS).map(cat => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name} ({cat.subtitle})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="kw-field">
-              <label className="kw-label" htmlFor="kw-theme">ธีมภาษาอังกฤษ (English Subtitle)</label>
-              <input
-                id="kw-theme"
-                type="text"
-                className="kw-input"
-                value={formData.englishTheme || ''}
-                onChange={e => setFormData({ ...formData, englishTheme: e.target.value })}
-                placeholder="เช่น Authenticity & Empathy"
-              />
-              <span className="kw-hint">เติมให้อัตโนมัติเมื่อเปลี่ยนหมวดหมู่</span>
-            </div>
+          <div className="kw-field">
+            <label className="kw-label" htmlFor="kw-theme">ธีมภาษาอังกฤษ (English Subtitle)</label>
+            <input
+              id="kw-theme"
+              type="text"
+              className="kw-input"
+              value={formData.englishTheme || ''}
+              onChange={e => setFormData({ ...formData, englishTheme: e.target.value })}
+              placeholder="เช่น Self-Worth"
+            />
+            <span className="kw-hint">แสดงใต้คำสำคัญบนจอเวทีตอนล็อกคำ</span>
           </div>
 
           <div className="kw-field">

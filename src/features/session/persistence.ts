@@ -1,5 +1,5 @@
 import { SessionState } from '@/types/session.ts';
-import { STORAGE_KEYS } from '@/storage/repositories.ts';
+import { STORAGE_KEYS, withoutCategory } from '@/storage/repositories.ts';
 import { loadAppearanceSettings } from '@/features/appearance/appearanceSettings.ts';
 import { loadTimerSoundSettings, loadStageDisplaySettings } from '@/features/timer/timerSettings.ts';
 import { createInitialTimerState, DEFAULT_TIMER_DURATION_MS } from '@/features/timer/timerEngine.ts';
@@ -52,8 +52,12 @@ export function loadPersistedSession(): SessionState {
         pausedRemainingMs: rawTimer.pausedRemainingMs
       };
 
+      // Sessions saved before categories were removed carry them; drop them (see withoutCategory).
+      const { selectedCategory: _dropped, ...rest } = parsed;
       const base = {
-        ...parsed,
+        ...rest,
+        selectedQuestion: rest.selectedQuestion && withoutCategory(rest.selectedQuestion),
+        selectedWordItem: rest.selectedWordItem && withoutCategory(rest.selectedWordItem),
         timerState: safeTimerState,
         timerSoundSettings: soundSettings,
         stageDisplaySettings: displaySettings,

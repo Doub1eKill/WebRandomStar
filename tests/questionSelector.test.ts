@@ -4,10 +4,10 @@ import { Question } from '@/types/question.ts';
 import { DEFAULT_QUESTIONS } from '@/data/defaultQuestions.ts';
 
 const mockQuestions: Question[] = [
-  { id: 'q1', text: 'Q1', category: 'Rain', difficulty: 'easy', round: 'intro', enabled: true, used: false },
-  { id: 'q2', text: 'Q2', category: 'Wind', difficulty: 'medium', round: 'intro', enabled: true, used: true },
-  { id: 'q3', text: 'Q3', category: 'Wind', difficulty: 'hard', round: 'final', enabled: true, used: false },
-  { id: 'q4', text: 'Q4', category: 'Leaf', difficulty: 'easy', round: 'intro', enabled: false, used: false }
+  { id: 'q1', text: 'Q1', difficulty: 'easy', round: 'intro', enabled: true, used: false },
+  { id: 'q2', text: 'Q2', difficulty: 'medium', round: 'intro', enabled: true, used: true },
+  { id: 'q3', text: 'Q3', difficulty: 'hard', round: 'final', enabled: true, used: false },
+  { id: 'q4', text: 'Q4', difficulty: 'easy', round: 'intro', enabled: false, used: false }
 ];
 
 describe('Decoupled Question Selector Engine (V2 - No Constellation/Meteor)', () => {
@@ -35,21 +35,19 @@ describe('Decoupled Question Selector Engine (V2 - No Constellation/Meteor)', ()
     });
 
     expect(res1?.selectedQuestion.id).toBe(res2?.selectedQuestion.id);
-    expect(res1?.selectedCategory).toBe(res2?.selectedCategory);
   });
 
-  it('should filter by category when requested', () => {
-    const result = selectNextQuestion({
-      questions: DEFAULT_QUESTIONS,
-      category: 'Rain',
-      seed: 'category-test'
-    });
-    expect(result?.selectedQuestion.category.toLowerCase()).toBe('rain');
+  it('draws from the requested round only (categories were removed)', () => {
+    for (let i = 0; i < 20; i++) {
+      const result = selectNextQuestion({ questions: DEFAULT_QUESTIONS, round: 'final', seed: `round-test-${i}` });
+      expect(result?.selectedQuestion.round).toBe('final');
+      expect(result?.fallbackReasons).toEqual([]);
+    }
   });
 
   it('should return null when question pool is empty or all disabled', () => {
     const emptyResult = selectNextQuestion({
-      questions: [{ id: 'q0', text: 'disabled', category: 'Rain', difficulty: 'easy', round: 'intro', enabled: false }]
+      questions: [{ id: 'q0', text: 'disabled', difficulty: 'easy', round: 'intro', enabled: false }]
     });
     expect(emptyResult).toBeNull();
   });

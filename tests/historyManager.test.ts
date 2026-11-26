@@ -10,7 +10,6 @@ import { Question, Contestant } from '@/types/question.ts';
 const mockQuestion: Question = {
   id: 'q1',
   text: 'คำถามจำลองความท้าทาย',
-  category: 'Wind',
   difficulty: 'medium',
   round: 'Round 1',
   enabled: true
@@ -76,7 +75,8 @@ describe('History Manager Engine', () => {
     const csv = exportHistoryToCSV([record]);
     expect(csv).toContain('Timestamp,Date & Time,Session ID');
     expect(csv).toContain('"สมชาย ใจดี"');
-    expect(csv).toContain('"Wind"');
+    expect(csv).toContain('"คำถามจำลองความท้าทาย"');
+    expect(csv).not.toContain('Category'); // categories were removed
   });
 
   it('should filter records by search query and round', () => {

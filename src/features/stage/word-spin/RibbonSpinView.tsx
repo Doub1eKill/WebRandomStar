@@ -70,9 +70,6 @@ export const RibbonSpinView: React.FC<SpinViewProps> = ({
               <div key={key} ref={refFor(itemIndex)} className={look.className} style={look.style}>
                 {isQuestion ? (
                   <div className="ribbon-question-capsule">
-                    {item?.category && (
-                      <span className="ribbon-question-cat">✦ หมวด: {String(item.category).toUpperCase()} ✦</span>
-                    )}
                     <span className="word-text">{text}</span>
                   </div>
                 ) : (

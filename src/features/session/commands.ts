@@ -1,12 +1,11 @@
 import { AppState } from '@/types/session.ts';
-import { QuestionCategory } from '@/types/question.ts';
 import { KeywordItem } from '@/types/word.ts';
 import { TimerSoundSettings, StageDisplaySettings } from '@/types/timer.ts';
 import { AppearanceSettings } from '@/types/appearance.ts';
 
 /** Commands any window may send to the stage host (A1/B1). */
 export type SessionCommand =
-  | { type: 'START_JOURNEY'; forceCategory?: QuestionCategory; forceWord?: KeywordItem }
+  | { type: 'START_JOURNEY'; forceWord?: KeywordItem }
   | { type: 'STOP_WORD_SPIN' }
   | { type: 'TOGGLE_PAUSE' }
   | { type: 'SKIP_TO_QUESTION' }

@@ -33,7 +33,6 @@ describe('QuestionCard Transitions', () => {
         question: {
           id: 'q1',
           text: 'คุณคิดว่าอะไรคือคุณสมบัติสำคัญที่สุดของผู้นำ?',
-          category: 'wind',
           round: 'intro',
           tags: [],
           difficulty: 'medium',
@@ -57,7 +56,6 @@ describe('QuestionCard Transitions', () => {
         question: {
           id: 'q1',
           text: 'ทดสอบคำถาม',
-          category: 'wind',
           round: 'intro',
           tags: [],
           difficulty: 'medium',
@@ -79,7 +77,7 @@ describe('WordLockEffect Transitions', () => {
 
     const html = renderToString(
       React.createElement(WordLockEffect, {
-        wordItem: { id: 'w1', word: 'วิสัยทัศน์', category: 'moon', enabled: true }
+        wordItem: { id: 'w1', word: 'วิสัยทัศน์', enabled: true }
       })
     );
 
@@ -97,7 +95,7 @@ describe('WordLockEffect Transitions', () => {
 
     const html = renderToString(
       React.createElement(WordLockEffect, {
-        question: { id: 'q1', text: 'คำถามข้อทดสอบใหญ่', category: 'final', round: 'final', enabled: true, tags: [], difficulty: 'hard' },
+        question: { id: 'q1', text: 'คำถามข้อทดสอบใหญ่', round: 'final', enabled: true, tags: [], difficulty: 'hard' },
         quizMode: 'question'
       })
     );
@@ -150,14 +148,13 @@ describe('ContestantBadge & Timer Transitions', () => {
     const html = renderToString(
       React.createElement(KeywordShowcaseCard, {
         keyword: 'นวัตกรรมเพื่อสังคม',
-        category: 'Innovation',
         isAnswered: false
       })
     );
 
     expect(html).toContain('keyword-showcase-card');
     expect(html).toContain('นวัตกรรมเพื่อสังคม');
-    expect(html).toContain('Innovation');
+    expect(html).not.toContain('keyword-category-pill'); // categories were removed
     expect(html).toContain('คำสำคัญประจำรอบการประกวด');
   });
 });

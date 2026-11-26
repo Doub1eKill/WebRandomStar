@@ -1,11 +1,9 @@
 import { Question } from '@/types/question.ts';
 
 export const DEFAULT_QUESTIONS: Question[] = [
-  // 🌧️ Rain — สายฝนแห่งการปรับตัว (Adaptability & Growth)
   {
     id: 'Q_RAIN_01',
     text: 'ในยุคที่โลกและสังคมเปลี่ยนแปลงอย่างรวดเร็ว คุณคิดว่า "เสน่ห์" ของการเป็นผู้นำที่พร้อมปรับตัวรับมือกับความไม่แน่นอนคืออะไร?',
-    category: 'rain',
     difficulty: 'medium',
     round: 'attitude',
     enabled: true,
@@ -14,7 +12,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_RAIN_02',
     text: 'หากเปรียบชีวิตช่วงที่ผ่านมาเป็นฤดูฝนที่มีมรสุม บทเรียนสำคัญที่สุดที่คุณได้เรียนรู้เพื่อเติบโตมาเป็นคุณในวันนี้คืออะไร?',
-    category: 'rain',
     difficulty: 'medium',
     round: 'attitude',
     enabled: true,
@@ -23,7 +20,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_RAIN_03',
     text: 'นิยามของคำว่า "ความงามที่แท้จริง" ในแบบฉบับของคุณ มีองค์ประกอบอะไรบ้างที่สายตาคนทั่วไปอาจมองไม่เห็น?',
-    category: 'rain',
     difficulty: 'hard',
     round: 'general',
     enabled: true,
@@ -32,7 +28,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_RAIN_04',
     text: 'ถ้ามีโอกาสบอกข้อความหนึ่งประโยคกับตัวเองในวัยเด็ก คุณจะบอกเขาว่าอย่างไรเพื่อเป็นร่มกันฝนในใจ?',
-    category: 'rain',
     difficulty: 'easy',
     round: 'intro',
     enabled: true,
@@ -41,7 +36,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_RAIN_05',
     text: 'เสน่ห์ที่โดดเด่นที่สุดของคุณที่ทำให้เพื่อนร่วมงานหรือคนรอบข้างจดจำคุณได้เสมอคืออะไร?',
-    category: 'rain',
     difficulty: 'easy',
     round: 'intro',
     enabled: true,
@@ -50,18 +44,15 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_RAIN_06',
     text: 'ความเงียบสงบหรือเสียงครึกครื้น แบบไหนที่สะท้อนความเป็นตัวคุณได้อย่างซื่อสัตย์ที่สุด เพราะเหตุใด?',
-    category: 'rain',
     difficulty: 'medium',
     round: 'general',
     enabled: true,
     tags: ['บุคลิกภาพ', 'การสะท้อนตนเอง']
   },
 
-  // 🌫️ Mist — สายหมอกแห่งวิสัยทัศน์ (Vision & Perspective)
   {
     id: 'Q_MIST_01',
     text: 'เมื่อต้องเผชิญหน้ากับการตัดสินใจครั้งสำคัญท่ามกลางความคิดเห็นที่แตกต่างและข้อมูลที่คลุมเครือ คุณมีหลักคิดในการค้นหาคำตอบที่ถูกต้องอย่างไร?',
-    category: 'mist',
     difficulty: 'hard',
     round: 'attitude',
     enabled: true,
@@ -70,7 +61,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_MIST_02',
     text: 'ในมุมมองของคุณ อะไรคือความแตกต่างระหว่าง "การมองเห็นโอกาส" กับ "การสร้างโอกาส" ให้แก่ผู้ด้อยโอกาสในสังคม?',
-    category: 'mist',
     difficulty: 'hard',
     round: 'scenario',
     enabled: true,
@@ -79,7 +69,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_MIST_03',
     text: 'หากต้องเลือกระหว่าง "การพูดความจริงที่เจ็บปวด" กับ "การปลอบใจที่อาจบิดเบือนความจริง" คุณจะเลือกสิ่งใดในฐานะตัวแทนคนรุ่นใหม่?',
-    category: 'mist',
     difficulty: 'hard',
     round: 'scenario',
     enabled: true,
@@ -88,7 +77,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_MIST_04',
     text: 'คำวิจารณ์แบบใดที่คุณคิดว่ามีคุณค่าที่สุด และคุณมีเกณฑ์อย่างไรในการแยกแยะระหว่างคำติเพื่อก่อกับคำพูดที่บั่นทอน?',
-    category: 'mist',
     difficulty: 'medium',
     round: 'attitude',
     enabled: true,
@@ -97,7 +85,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_MIST_05',
     text: 'คุณมองว่าความไม่สมบูรณ์แบบ (Imperfection) เป็นอุปสรรคหรือเป็นเอกลักษณ์ที่มีเสน่ห์ของมนุษย์?',
-    category: 'mist',
     difficulty: 'medium',
     round: 'general',
     enabled: true,
@@ -106,18 +93,15 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_MIST_06',
     text: 'ถ้าคุณสามารถเปลี่ยนมุมมองหนึ่งเรื่องของคนในสังคมที่มีต่อกลุ่มผู้มีความหลากหลายทางเพศ (LGBTQIAN+) คุณอยากเปลี่ยนเรื่องใดมากที่สุด?',
-    category: 'mist',
     difficulty: 'hard',
     round: 'attitude',
     enabled: true,
     tags: ['ความหลากหลาย', 'ความเท่าเทียม']
   },
 
-  // 🍃 Wind — ลมหนาวแห่งแรงบันดาลใจ (Leadership & Impact)
   {
     id: 'Q_WIND_01',
     text: 'หากคุณได้รับเลือกให้ดำรงตำแหน่งนี้ สิ่งแรกที่คุณต้องการใช้เสียงของคุณ (Platform) เป็นกระบอกเสียงเพื่อขับเคลื่อนสังคมคือเรื่องใด และทำไม?',
-    category: 'wind',
     difficulty: 'medium',
     round: 'intro',
     enabled: true,
@@ -126,7 +110,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_WIND_02',
     text: 'คุณคิดว่าพลังของคนรุ่นใหม่ (Youth Power) สามารถขับเคลื่อนการเปลี่ยนแปลงเชิงบวกให้กับชุมชนและประเทศได้อย่างไร?',
-    category: 'wind',
     difficulty: 'hard',
     round: 'attitude',
     enabled: true,
@@ -135,7 +118,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_WIND_03',
     text: 'หากคุณต้องนำทีมผ่านวิกฤตที่ไม่มีใครเคยเจอมาก่อน คุณจะสร้างความเชื่อมั่นและรักษาพลังใจของทีมไว้ได้อย่างไร?',
-    category: 'wind',
     difficulty: 'hard',
     round: 'scenario',
     enabled: true,
@@ -144,7 +126,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_WIND_04',
     text: 'ความล้มเหลวครั้งใดในอดีตที่กลายเป็น "ลมใต้ปีก" ผลักดันให้คุณกลายมาเป็นคนที่เข้มแข็งขึ้นในวันนี้?',
-    category: 'wind',
     difficulty: 'medium',
     round: 'attitude',
     enabled: true,
@@ -153,7 +134,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_WIND_05',
     text: 'คนเราควรยืนหยัดต้านกระแสสังคม หรือปรับตัวลู่ตามลม เมื่อเกิดความขัดแย้งเชิงคุณค่า?',
-    category: 'wind',
     difficulty: 'hard',
     round: 'scenario',
     enabled: true,
@@ -162,18 +142,15 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_WIND_06',
     text: 'หากคุณได้รับโอกาสแก้ไขปัญหาความเครียดของเพื่อนนักศึกษา คุณจะมีนโยบายหรือกิจกรรมใดที่ช่วยได้อย่างแท้จริง?',
-    category: 'wind',
     difficulty: 'medium',
     round: 'scenario',
     enabled: true,
     tags: ['สุขภาพจิต', 'ชีวิตนักศึกษา']
   },
 
-  // 🍂 Leaf — ใบไม้ทองแห่งพันธกิจ (Purpose & Legacy)
   {
     id: 'Q_LEAF_01',
     text: 'คำว่า "มรดกทางความคิด" (Legacy) ที่คุณต้องการทิ้งไว้ให้ผู้คนจดจำคุณในฐานะตัวแทนของเวทีนี้คืออะไร?',
-    category: 'leaf',
     difficulty: 'hard',
     round: 'final',
     enabled: true,
@@ -182,7 +159,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_LEAF_02',
     text: 'ความงามที่แท้จริงที่คงทนเหนือกาลเวลา ไม่แปรเปลี่ยนไปตามกาลเวลาและฤดูกาล ในนิยามของคุณคืออะไร?',
-    category: 'leaf',
     difficulty: 'medium',
     round: 'attitude',
     enabled: true,
@@ -191,7 +167,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_LEAF_03',
     text: 'หากเปรียบเพื่อนร่วมรุ่นของคุณเป็นต้นไม้ใหญ่ คุณคิดว่าตัวเองทำหน้าที่เป็นส่วนใดของต้นไม้ต้นนี้?',
-    category: 'leaf',
     difficulty: 'medium',
     round: 'general',
     enabled: true,
@@ -200,7 +175,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_LEAF_04',
     text: 'รุ่นพี่หรืออาจารย์ท่านใดที่เป็นแรงบันดาลใจสำคัญให้คุณอยากเป็นผู้ให้และพัฒนาตนเองอย่างต่อเนื่อง?',
-    category: 'leaf',
     difficulty: 'easy',
     round: 'intro',
     enabled: true,
@@ -209,7 +183,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_LEAF_05',
     text: 'กิจกรรมรับน้องและประเพณีของมหาวิทยาลัย ควรปรับตัวอย่างไรให้ทันกับยุคสมัยแต่ยังคงรักษาคุณค่าของความอบอุ่นไว้ได้?',
-    category: 'leaf',
     difficulty: 'hard',
     round: 'attitude',
     enabled: true,
@@ -218,18 +191,15 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_LEAF_06',
     text: 'สิ่งที่คุณอยากทิ้งไว้เป็นรอยจารึกหรือประโยชน์แก่รุ่นน้องก่อนสำเร็จการศึกษาจากที่นี่คืออะไร?',
-    category: 'leaf',
     difficulty: 'medium',
     round: 'attitude',
     enabled: true,
     tags: ['มรดกทางความคิด', 'การสร้างคุณค่า']
   },
 
-  // 🌙 Moon — แสงจันทร์สะท้อนคุณค่า (Authenticity & Empathy)
   {
     id: 'Q_MOON_01',
     text: 'ในสังคมที่ทุกคนต่างนำเสนอความสมบูรณ์แบบบนโลกออนไลน์ คุณรักษา "ความเป็นตัวของตัวเอง" (Authenticity) ไว้อย่างไรให้ทรงคุณค่าที่สุด?',
-    category: 'moon',
     difficulty: 'medium',
     round: 'attitude',
     enabled: true,
@@ -238,7 +208,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_MOON_02',
     text: 'ความเข้าอกเข้าใจผู้อื่น (Empathy) มีพลังในการเยียวยาและสร้างการเปลี่ยนแปลงให้แก่สังคมในมิติใดได้บ้าง?',
-    category: 'moon',
     difficulty: 'hard',
     round: 'scenario',
     enabled: true,
@@ -247,7 +216,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_MOON_03',
     text: 'หากคุณประสบความสำเร็จในอาชีพการงานตามที่ฝันไว้ คุณจะตอบแทนสังคมหรือชุมชนที่คุณเติบโตมาอย่างไร?',
-    category: 'moon',
     difficulty: 'hard',
     round: 'scenario',
     enabled: true,
@@ -256,7 +224,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_MOON_04',
     text: 'ความสุขที่แท้จริงระหว่าง "การไปถึงเป้าหมาย" กับ "ประสบการณ์ระหว่างทาง" คุณให้น้ำหนักกับสิ่งใดมากกว่ากัน?',
-    category: 'moon',
     difficulty: 'medium',
     round: 'attitude',
     enabled: true,
@@ -265,7 +232,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_MOON_05',
     text: 'หากมีสิ่งหนึ่งที่คุณยอมเสียสละได้เพื่อแลกกับการทำให้ความฝันของคนในครอบครัวเป็นจริง สิ่งนั้นคืออะไร?',
-    category: 'moon',
     difficulty: 'hard',
     round: 'attitude',
     enabled: true,
@@ -274,18 +240,15 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_MOON_06',
     text: 'ภาพตัวคุณเองในอีก 10 ปีข้างหน้า กำลังทำอะไรอยู่ และกำลังส่งต่อแรงบันดาลใจให้ใครบ้าง?',
-    category: 'moon',
     difficulty: 'easy',
     round: 'intro',
     enabled: true,
     tags: ['อนาคต', 'วิสัยทัศน์']
   },
 
-  // ⭐ Star — สังคมและความคิดสร้างสรรค์ (6 ข้อ)
   {
     id: 'Q_STAR_01',
     text: 'ในฐานะตัวแทนคนรุ่นใหม่ คุณคิดว่าปัญหาทางสังคมใดในระดับประเทศที่ควรได้รับการแก้ไขอย่างเร่งด่วนที่สุด?',
-    category: 'star',
     difficulty: 'hard',
     round: 'attitude',
     enabled: true,
@@ -294,7 +257,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_STAR_02',
     text: 'ดาวแต่ละดวงเปล่งประกายด้วยตัวเองได้ แต่เมื่อรวมกันจึงเป็นกลุ่มดาว คุณมีแนวคิดในการสร้างพลังแห่งความสามัคคีในสังคมอย่างไร?',
-    category: 'star',
     difficulty: 'medium',
     round: 'attitude',
     enabled: true,
@@ -303,7 +265,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_STAR_03',
     text: 'นวัตกรรมหรือความคิดสร้างสรรค์แบบใดที่คุณเชื่อว่าจะช่วยยกระดับคุณภาพชีวิตของชุมชนรอบมหาวิทยาลัยได้อย่างยั่งยืน?',
-    category: 'star',
     difficulty: 'hard',
     round: 'scenario',
     enabled: true,
@@ -312,7 +273,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_STAR_04',
     text: 'คำว่า "Soft Power" ของประเทศไทยในมุมมองของคุณ ควรเน้นย้ำจุดเด่นใดเพื่อให้คนทั่วโลกประทับใจอย่างแท้จริง?',
-    category: 'star',
     difficulty: 'hard',
     round: 'general',
     enabled: true,
@@ -321,7 +281,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_STAR_05',
     text: 'ผู้นำที่ดีในศตวรรษที่ 21 ควรใช้อำนาจในการสั่งการ หรือใช้ความเข้าอกเข้าใจ (Empathy) เป็นหลักในการขับเคลื่อนองค์กร?',
-    category: 'star',
     difficulty: 'medium',
     round: 'attitude',
     enabled: true,
@@ -330,18 +289,15 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_STAR_06',
     text: 'หากคุณได้รับงบประมาณสำหรับทำโครงการเพื่อสังคมหนึ่งโครงการ คุณจะเลือกทำโครงการเกี่ยวกับอะไรเพื่อใคร?',
-    category: 'star',
     difficulty: 'medium',
     round: 'scenario',
     enabled: true,
     tags: ['โครงการสังคม', 'การช่วยเหลือ']
   },
 
-  // ☄️ Final — คำถามรอบตัดสิน (6 ข้อ)
   {
     id: 'Q_FINAL_01',
     text: 'ตำแหน่งดาวและเดือนในค่ำคืนนี้ เป็นเพียงมงกุฎหรือสายสะพาย หรือเป็นคำสัญญาที่คุณจะมอบให้แก่มหาวิทยาลัยและสังคม?',
-    category: 'final',
     difficulty: 'hard',
     round: 'final',
     enabled: true,
@@ -350,7 +306,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_FINAL_02',
     text: 'หากการเปลี่ยนผ่านของฤดูกาลเปรียบเสมือนจุดเปลี่ยนของชีวิต คุณคิดว่าการก้าวขึ้นสู่เวทีแห่งนี้ได้เปลี่ยนชีวิตและความคิดของคุณไปอย่างไร?',
-    category: 'final',
     difficulty: 'hard',
     round: 'final',
     enabled: true,
@@ -359,7 +314,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_FINAL_03',
     text: 'ระหว่าง "การเป็นที่รักของทุกคน" กับ "การเป็นกระบอกเสียงที่กล้ายืนหยัดเพื่อความถูกต้องแม้ต้องเผชิญแรงต้าน" คุณจะเลือกสิ่งใด?',
-    category: 'final',
     difficulty: 'hard',
     round: 'final',
     enabled: true,
@@ -368,7 +322,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_FINAL_04',
     text: 'คุณค่าสำคัญที่สุด 3 ประการที่คุณจะยึดถือในการดำเนินชีวิตและเป็นแบบอย่างให้แก่ผู้อื่นตลอดการดำรงตำแหน่งคืออะไร?',
-    category: 'final',
     difficulty: 'hard',
     round: 'final',
     enabled: true,
@@ -377,7 +330,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_FINAL_05',
     text: 'หากในค่ำคืนนี้ ผลการตัดสินไม่ได้เป็นไปตามที่คุณหวัง คุณจะบอกอะไรกับผู้เข้าแข่งขันที่ชนะ และคุณจะบอกอะไรกับตัวเอง?',
-    category: 'final',
     difficulty: 'hard',
     round: 'final',
     enabled: true,
@@ -386,7 +338,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   {
     id: 'Q_FINAL_06',
     text: 'คำกล่าวสุดท้ายที่คุณอยากทิ้งไว้ให้ทุกคนในหอประชุมแห่งนี้จดจำคุณ ไม่ใช่เพียงในฐานะผู้เข้าประกวด แต่ในฐานะมนุษย์คนหนึ่งคืออะไร?',
-    category: 'final',
     difficulty: 'hard',
     round: 'final',
     enabled: true,

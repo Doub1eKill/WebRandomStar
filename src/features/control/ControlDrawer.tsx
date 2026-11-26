@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Bell, CircleCheck, Crosshair, Crown, FastForward, Flag, FolderOpen, GalleryVerticalEnd, Gamepad2, Library, MonitorUp, Music, OctagonX, Pause, Pin, Play, RotateCcw, Sparkle, Sparkles, Timer, Trash2, TriangleAlert, Trophy, Upload, User, Users, Volume2, VolumeX, X, Zap } from 'lucide-react';
 import { SessionState } from '@/types/session.ts';
-import { Contestant, QuestionCategory } from '@/types/question.ts';
+import { Contestant } from '@/types/question.ts';
 import { KeywordItem } from '@/types/word.ts';
 import { TimerSoundSettings, StageDisplaySettings, DEFAULT_STAGE_DISPLAY_SETTINGS } from '@/types/timer.ts';
 import { AppearanceSettings } from '@/types/appearance.ts';
@@ -18,7 +18,7 @@ interface ControlDrawerProps {
   words?: KeywordItem[];
   tracks?: MusicTrack[];
   musicState?: MusicState;
-  onStart: (forceCategory?: QuestionCategory, forceWord?: KeywordItem) => void;
+  onStart: (forceWord?: KeywordItem) => void;
   onStopSpin?: () => void;
   onPause: () => void;
   onSkip: () => void;

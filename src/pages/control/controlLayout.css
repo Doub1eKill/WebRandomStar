@@ -437,12 +437,6 @@
   border-radius: var(--ctl-radius-sm);
 }
 
-.control-app .live-tag--category {
-  background: var(--ctl-accent-tint);
-  color: var(--ctl-accent-pale);
-  border-color: rgba(167, 139, 250, 0.4);
-}
-
 .control-app .live-monitor-empty {
   display: flex;
   flex-direction: column;
@@ -613,7 +607,6 @@
 }
 
 .control-app .qb-search-input,
-.control-app .qb-filter-select,
 .control-app .input-search {
   min-height: 44px;
   background: var(--ctl-surface-sunken);
@@ -624,7 +617,6 @@
 }
 
 .control-app .qb-search-input:focus,
-.control-app .qb-filter-select:focus,
 .control-app .input-search:focus {
   border-color: var(--ctl-accent-soft);
   box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.28);

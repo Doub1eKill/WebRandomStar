@@ -10,7 +10,6 @@ export interface HistoryRecord {
   contestantNumber?: string | number;
   questionId: string;
   questionText: string;
-  category: string;
   seed: number | string;
   timerConfiguredMs: number;
   timerUsedMs: number;

@@ -38,9 +38,6 @@ export const PreviewModal: React.FC<{ m: QuestionBankDashboardModel }> = ({ m })
               <span style={{ fontSize: '0.8rem', color: '#38bdf8', fontFamily: 'monospace' }}>
                 ID: {previewQuestion.id} (Operator Preview Only)
               </span>
-              <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px', color: '#cbd5e1' }}>
-                หมวด: {previewQuestion.category}
-              </span>
             </div>
 
             <div style={{ fontSize: '1.2rem', fontWeight: 600, color: '#f8fafc', lineHeight: 1.5, marginBottom: '1.25rem' }}>
