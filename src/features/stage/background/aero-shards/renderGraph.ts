@@ -58,7 +58,12 @@ export const createRenderGraph = (gpu: Gpu, outputSize: readonly [number, number
     finishing: [0.5, 0.05, 0.0075, 0],
     background: [0.071, 0.059, 0.09, 1],
     temporal: [0, 0, 0, 0],
-    tint: [137 / 255, 106 / 255, 189 / 255, 1]
+    tint: [137 / 255, 106 / 255, 189 / 255, 1],
+    // Stage backdrop (backdropShader.ts): [time, energy, pulse, goldPulse],
+    // [beamPhase, converge, drift, horizon], [beams, nebula, band, glow]
+    stage: [0, 0.35, 0, 0],
+    rig: [0, 0, 0, 1],
+    scenery: [1, 1, 1, 1]
   });
   const shardDraw = draw(gpu, {
     shader: SHARD_SHADER,

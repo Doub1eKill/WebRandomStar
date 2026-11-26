@@ -1,9 +1,12 @@
+import { makeFlareSprite, STAGE_RGB } from './sprites.ts';
+
 /**
  * CrownSystem: Draws a regal, translucent diamond crystal crown watermark
  * in the upper-center of the stage with subtle breathing shimmer in Cosmic Diamond & Lavender glow.
  */
 export class CrownSystem {
   private shimmerTime: number = 0;
+  private glint = makeFlareSprite(STAGE_RGB.gold, 96);
 
   public update(dt: number): void {
     this.shimmerTime += dt * 0.001;
@@ -25,7 +28,15 @@ export class CrownSystem {
 
     const shimmer = 0.8 + 0.2 * Math.sin(this.shimmerTime * 2);
     ctx.globalAlpha = 0.22 * opacity * shimmer;
-    ctx.strokeStyle = '#FFFFFF';
+    // Gold-to-lavender band with a highlight that travels slowly across the crown
+    const sweep = (Math.sin(this.shimmerTime * 0.7) + 1) / 2;
+    const stroke = ctx.createLinearGradient(centerX - crownWidth * 0.5, 0, centerX + crownWidth * 0.5, 0);
+    stroke.addColorStop(0, '#C084FC');
+    stroke.addColorStop(Math.max(0, sweep - 0.18), '#F5D98A');
+    stroke.addColorStop(sweep, '#FFFFFF');
+    stroke.addColorStop(Math.min(1, sweep + 0.18), '#F5D98A');
+    stroke.addColorStop(1, '#C084FC');
+    ctx.strokeStyle = stroke;
     ctx.lineWidth = 2;
     ctx.shadowColor = '#7C3AED';
     ctx.shadowBlur = 24;
@@ -70,6 +81,17 @@ export class CrownSystem {
       ctx.beginPath();
       ctx.arc(jewel.x, jewel.y, jewel.r, 0, Math.PI * 2);
       ctx.fill();
+    }
+
+    // Diamond glint: the centre jewel flashes a gold four-point star every few seconds
+    const glintPulse = Math.pow(Math.max(0, Math.sin(this.shimmerTime * 1.1)), 12);
+    if (this.glint && glintPulse > 0.02) {
+      const top = jewelPeaks[2];
+      const size = 70 + glintPulse * 50;
+      ctx.shadowBlur = 0;
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = Math.min(1, opacity) * glintPulse * 0.9;
+      ctx.drawImage(this.glint, top.x - size / 2, top.y - size / 2, size, size);
     }
 
     ctx.restore();

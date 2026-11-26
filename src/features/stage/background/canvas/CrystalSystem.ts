@@ -1,4 +1,10 @@
 import { CrystalParticle } from './particleTypes.ts';
+import { makeGlowSprite, Rgb } from './sprites.ts';
+
+const hexToRgb = (hex: string): Rgb => {
+  const n = parseInt(hex.slice(1), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+};
 
 /**
  * CrystalSystem: Floating, sparkling 2D/3D crystal particles and bokeh
@@ -7,6 +13,17 @@ import { CrystalParticle } from './particleTypes.ts';
 export class CrystalSystem {
   private particles: CrystalParticle[] = [];
   private maxParticles: number = 65;
+  /** Soft bokeh sprites per colour (a flat disc looked like a sticker on a projector). */
+  private bokehSprites = new Map<string, HTMLCanvasElement | null>();
+
+  private bokehSprite(color: string): HTMLCanvasElement | null {
+    let sprite = this.bokehSprites.get(color);
+    if (sprite === undefined) {
+      sprite = makeGlowSprite(hexToRgb(color), 64, 0.05);
+      this.bokehSprites.set(color, sprite);
+    }
+    return sprite;
+  }
 
   public init(width: number, height: number, density: number = 1.0): void {
     const count = Math.floor(this.maxParticles * density);
@@ -94,11 +111,17 @@ export class CrystalSystem {
         ctx.closePath();
         ctx.fill();
       } else {
-        // Soft celestial bokeh orb
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(0, 0, p.size, 0, Math.PI * 2);
-        ctx.fill();
+        // Soft celestial bokeh orb (glow sprite with a faint rim, like an out-of-focus light)
+        const sprite = this.bokehSprite(p.color);
+        if (sprite) {
+          ctx.globalAlpha = alpha * 0.8;
+          ctx.drawImage(sprite, -p.size * 1.6, -p.size * 1.6, p.size * 3.2, p.size * 3.2);
+        } else {
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
       ctx.restore();

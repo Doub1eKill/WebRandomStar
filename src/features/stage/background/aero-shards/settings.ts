@@ -4,8 +4,10 @@ import { clamp, mixColor } from './motion.ts';
 import { parseColor } from './renderGraph.ts';
 import type { AeroShardsProps } from './AeroShards.tsx';
 
-/** Props after defaults have been applied (callbacks, className and the unused `effect` prop excluded). */
-export type ResolvedAeroProps = Required<Omit<AeroShardsProps, 'onError' | 'className' | 'effect'>>;
+/** Props after defaults have been applied (callbacks, className, the unused `effect` prop and the
+ * stage-backdrop inputs, which the render loop reads from a ref, excluded). */
+export type ResolvedAeroProps = Required<Omit<AeroShardsProps,
+  'onError' | 'className' | 'effect' | 'stageState' | 'backdropGlow' | 'showLightRays' | 'showNebulaBand' | 'showHorizon'>>;
 
 export function resolveAeroSettings({
   backgroundColor, shardColor, accentColor, placement, flow, material, detail, scale, spread, depth,

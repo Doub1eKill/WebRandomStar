@@ -32,3 +32,19 @@ export const FRAME_STATES = {
   ambient: { interval: 1000 / 60, continuous: true },
   partial: { interval: 1000 / 12, continuous: false }
 };
+
+/**
+ * How the stage backdrop and the sculpture react to each phase (mirrors the Cosmic Canvas
+ * stateTargets): `energy` speeds up the shard stream, beam sweep and star drift; `beams` is the
+ * spotlight brightness. Question phases stay calm so the question card is easy to read.
+ */
+export const STAGE_SCENERY: Record<string, { energy: number; beams: number }> = {
+  idle: { energy: 0.35, beams: 0.55 },
+  'pre-spin': { energy: 0.75, beams: 0.85 },
+  'word-spin': { energy: 1, beams: 1 },
+  'word-decelerate': { energy: 0.8, beams: 0.95 },
+  'word-lock': { energy: 0.6, beams: 1.25 },
+  'question-reveal': { energy: 0.4, beams: 0.7 },
+  question: { energy: 0.12, beams: 0.3 },
+  answered: { energy: 0.12, beams: 0.3 }
+};
