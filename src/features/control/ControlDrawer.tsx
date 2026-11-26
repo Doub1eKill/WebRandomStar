@@ -202,7 +202,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                 <button
                   className="btn-primary"
                   onClick={() => onStart()}
-                  disabled={!isIdle}
+                  disabled={!controls.canSpin}
                 >
                   <Crown size={16} aria-hidden="true" /> SPIN WORD [Space]
                 </button>

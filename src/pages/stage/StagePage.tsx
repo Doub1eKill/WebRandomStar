@@ -118,29 +118,26 @@ const StageScreen: React.FC = () => {
     startJourney({ width: window.innerWidth, height: window.innerHeight }, forceWord);
   };
 
+  // After Done (answered) Space/Enter spins the next one straight away, with no Reset in between.
   const handleStartOrPause = () => {
-    if (session.currentState === 'idle') {
+    if (session.currentState === 'idle' || session.currentState === 'answered') {
       handleStart();
     } else if (session.currentState === 'word-spin') {
       stopWordSpin();
     } else if (session.currentState === 'question') {
       markAnswered();
-    } else if (session.currentState === 'answered') {
-      resetStage();
     } else {
       pauseJourney();
     }
   };
 
   const handleProceed = () => {
-    if (session.currentState === 'idle') {
+    if (session.currentState === 'idle' || session.currentState === 'answered') {
       handleStart();
     } else if (session.currentState === 'word-spin') {
       stopWordSpin();
     } else if (session.currentState === 'question') {
       markAnswered();
-    } else if (session.currentState === 'answered') {
-      resetStage();
     } else {
       skipToQuestion();
     }
