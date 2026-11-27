@@ -14,7 +14,7 @@ import { contestantsRepository } from '@/storage/repositories.ts';
 import { ContestantManagerModal } from '@/features/contestants/ContestantManagerModal.tsx';
 import { ContestantAvatar } from '@/features/contestants/ContestantAvatar.tsx';
 import { contestantOptionLabel } from '@/data/contestantPhotos.ts';
-import { CheckCircle, Crosshair, Crown, FastForward, Gamepad2, MonitorPlay, OctagonX, Pause, Play, RotateCcw, Sparkle, Trophy, User, Users } from 'lucide-react';
+import { CheckCircle, Crosshair, Crown, FastForward, Gamepad2, MonitorPlay, OctagonX, Pause, Pencil, Play, RotateCcw, Sparkle, Trophy, User, Users } from 'lucide-react';
 import './livePage.css';
 
 export const LivePage: React.FC = () => {
@@ -23,6 +23,11 @@ export const LivePage: React.FC = () => {
   const contestants = useContestants();
   const words = useWords();
   const [isContestantModalOpen, setIsContestantModalOpen] = useState(false);
+  const [editId, setEditId] = useState<string | undefined>(undefined);
+  const openManager = (id?: string) => {
+    setEditId(id);
+    setIsContestantModalOpen(true);
+  };
 
   // A3: logic shared with the stage drawer
   const controls = stageControls(session, words, {
@@ -59,7 +64,7 @@ export const LivePage: React.FC = () => {
                   </option>
                 ))}
               </select>
-              <button className="live-icon-btn" onClick={() => setIsContestantModalOpen(true)} title="จัดการรายชื่อผู้เข้าแข่งขัน">
+              <button className="live-icon-btn" onClick={() => openManager()} title="จัดการรายชื่อผู้เข้าแข่งขัน">
                 <Users size={16} />
               </button>
             </div>
@@ -92,6 +97,14 @@ export const LivePage: React.FC = () => {
                   {[activeContestant.faculty, activeContestant.title || 'ผู้เข้าประกวด'].filter(Boolean).join(' | ')}
                 </div>
               </div>
+              <button
+                className="live-icon-btn live-contestant-edit"
+                onClick={() => openManager(activeContestant.id)}
+                aria-label={`แก้ไข ${activeContestant.nickname || activeContestant.name}`}
+                title="แก้ไขหมายเลข / ชื่อ"
+              >
+                <Pencil size={15} aria-hidden="true" />
+              </button>
             </div>
           )}
         </ControlCard>
@@ -189,6 +202,7 @@ export const LivePage: React.FC = () => {
         contestants={contestants}
         onClose={() => setIsContestantModalOpen(false)}
         onSaveContestants={contestantsRepository.save}
+        initialEditId={editId}
       />
     </>
   );

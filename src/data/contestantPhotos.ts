@@ -8,6 +8,9 @@
  *
  * File name format: `ชื่อเล่น_ชื่อจริง_นามสกุล.jpg`. Someone whose nickname is their first name
  * may leave it out (`ชื่อจริง_นามสกุล.jpg`); the nickname is then the first name.
+ *
+ * Numbers come from `Photo/numbers.txt` (also not in Git), one contestant per line:
+ * `ชื่อเล่น 01`. Anyone not listed is numbered after the highest listed number.
  */
 import type { Contestant } from '@/types/question.ts';
 
@@ -33,10 +36,31 @@ export function parsePhotoFileName(path: string): PhotoName | null {
 }
 
 /**
- * Turn photo files (path -> served URL) into a numbered contestant list, in Thai name order of
- * the file names, plus the photo URL for each photo key.
+ * Read `Photo/numbers.txt`: one `ชื่อเล่น หมายเลข` per line (`ชื่อเล่น01` and `ชื่อเล่น ST01` work
+ * too). Blank lines and lines starting with `#` are skipped. Returns nickname (NFC) -> number.
  */
-export function buildPhotoContestants(files: Record<string, string>): { contestants: Contestant[]; urls: Record<string, string> } {
+export function parseNumbersFile(text: string): Record<string, number> {
+  const numbers: Record<string, number> = {};
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line || line.startsWith('#')) continue;
+    const m = line.match(/^(.*?)[\s:=,-]*(?:ST)?\s*(\d+)$/i);
+    if (!m) continue;
+    const nickname = m[1].trim().normalize('NFC');
+    if (nickname) numbers[nickname] = parseInt(m[2], 10);
+  }
+  return numbers;
+}
+
+/**
+ * Turn photo files (path -> served URL) into a numbered contestant list, plus the photo URL for
+ * each photo key. Numbers come from `numbers` (by nickname); anyone without one follows the
+ * highest number, in Thai order of the file names. The list is sorted by number.
+ */
+export function buildPhotoContestants(
+  files: Record<string, string>,
+  numbers: Record<string, number> = {}
+): { contestants: Contestant[]; urls: Record<string, string> } {
   const urls: Record<string, string> = {};
   const entries: { key: string; name: PhotoName }[] = [];
   for (const [path, url] of Object.entries(files)) {
@@ -48,14 +72,17 @@ export function buildPhotoContestants(files: Record<string, string>): { contesta
     entries.push({ key, name });
   }
   entries.sort((a, b) => a.key.localeCompare(b.key, 'th'));
-  const contestants = entries.map(({ key, name }, i): Contestant => ({
+  const numberOf = (n: PhotoName) => numbers[n.nickname] ?? numbers[n.firstName];
+  let next = Math.max(0, ...entries.map(e => numberOf(e.name) ?? 0));
+  const contestants = entries.map(({ key, name }): Contestant => ({
     id: `photo:${key}`,
-    number: i + 1,
+    number: numberOf(name) ?? ++next,
     name: `${name.firstName} ${name.lastName}`.trim(),
     nickname: name.nickname,
     faculty: '',
     photoKey: key
   }));
+  contestants.sort((a, b) => Number(a.number) - Number(b.number));
   return { contestants, urls };
 }
 
@@ -64,7 +91,11 @@ const PHOTO_FILES: Record<string, string> = import.meta.env.MODE === 'test'
   ? {}
   : import.meta.glob<string>('/Photo/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}', { eager: true, query: '?url', import: 'default' });
 
-const built = buildPhotoContestants(PHOTO_FILES);
+const NUMBERS_FILES: Record<string, string> = import.meta.env.MODE === 'test'
+  ? {}
+  : import.meta.glob<string>('/Photo/numbers.txt', { eager: true, query: '?raw', import: 'default' });
+
+const built = buildPhotoContestants(PHOTO_FILES, parseNumbersFile(Object.values(NUMBERS_FILES)[0] ?? ''));
 
 /** The contestants found in `Photo/` (empty when the folder is missing). */
 export const PHOTO_CONTESTANTS: Contestant[] = built.contestants;

@@ -580,8 +580,33 @@
   color: var(--ctl-text-3);
 }
 
-.ctl-contestant .ctl-contestant-pick {
-  width: 100%;
+.ctl-contestant-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.ctl-contestant-actions .ctl-contestant-pick {
+  flex: 1;
+}
+
+.ctl-contestant-edit {
+  flex-shrink: 0;
+  width: 36px;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--ctl-border-strong);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ctl-text-2);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.ctl-contestant-edit:hover {
+  background: var(--ctl-accent-tint);
+  color: #fff;
 }
 
 /* Contestant photo (or number when there is no photo), see ContestantAvatar. */

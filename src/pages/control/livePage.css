@@ -83,6 +83,10 @@
   gap: 0.85rem;
 }
 
+.live-contestant-edit {
+  margin-left: auto;
+}
+
 .live-contestant-number {
   width: 42px;
   height: 42px;
