@@ -12,6 +12,8 @@ import { QuizModeToggle } from '@/features/control/QuizModeToggle.tsx';
 import { useContestants, useWords } from '@/storage/useRepository.ts';
 import { contestantsRepository } from '@/storage/repositories.ts';
 import { ContestantManagerModal } from '@/features/contestants/ContestantManagerModal.tsx';
+import { ContestantAvatar } from '@/features/contestants/ContestantAvatar.tsx';
+import { contestantOptionLabel } from '@/data/contestantPhotos.ts';
 import { CheckCircle, Crosshair, Crown, FastForward, Gamepad2, MonitorPlay, OctagonX, Pause, Play, RotateCcw, Sparkle, Trophy, User, Users } from 'lucide-react';
 import './livePage.css';
 
@@ -53,7 +55,7 @@ export const LivePage: React.FC = () => {
                 <option value="">-- ยังไม่ได้เลือกผู้เข้าแข่งขัน --</option>
                 {contestants.map(c => (
                   <option key={c.id} value={c.id}>
-                    No. {c.number} - {c.name} ({c.faculty})
+                    {contestantOptionLabel(c)}
                   </option>
                 ))}
               </select>
@@ -80,10 +82,15 @@ export const LivePage: React.FC = () => {
 
           {activeContestant && (
             <div className="live-contestant">
-              <div className="live-contestant-number">{activeContestant.number}</div>
+              <ContestantAvatar contestant={activeContestant} className="ctl-avatar--live" />
               <div>
-                <div className="live-contestant-name">{activeContestant.name}</div>
-                <div className="live-contestant-meta">{activeContestant.faculty} | {activeContestant.title || 'ผู้เข้าประกวด'}</div>
+                <div className="live-contestant-name">
+                  No. {activeContestant.number} · {activeContestant.nickname?.trim() || activeContestant.name}
+                </div>
+                {activeContestant.nickname?.trim() && <div className="live-contestant-meta">{activeContestant.name}</div>}
+                <div className="live-contestant-meta">
+                  {[activeContestant.faculty, activeContestant.title || 'ผู้เข้าประกวด'].filter(Boolean).join(' | ')}
+                </div>
               </div>
             </div>
           )}

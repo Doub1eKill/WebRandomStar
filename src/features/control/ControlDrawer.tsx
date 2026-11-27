@@ -9,6 +9,7 @@ import { stageControls } from './useStageControls.ts';
 import { ControlCard } from './ControlCard.tsx';
 import { QuizModeToggle } from './QuizModeToggle.tsx';
 import { MusicTrack, MusicState } from '@/types/music.ts';
+import { contestantOptionLabel } from '@/data/contestantPhotos.ts';
 
 interface ControlDrawerProps {
   isOpen: boolean;
@@ -159,7 +160,7 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
                 <option value="">-- เลือกผู้เข้าแข่งขัน --</option>
                 {contestants.map((c) => (
                   <option key={c.id} value={c.id}>
-                    #{c.number} [{c.title}] {c.name} ({c.faculty})
+                    {c.title ? `[${c.title}] ` : ''}{contestantOptionLabel(c)}
                   </option>
                 ))}
               </select>

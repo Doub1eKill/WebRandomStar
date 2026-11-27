@@ -7,7 +7,7 @@ import { KeywordItem } from '@/types/word.ts';
 import { HistoryRecord } from '@/types/history.ts';
 import { AppearanceSettings, DEFAULT_APPEARANCE_SETTINGS } from '@/types/appearance.ts';
 import { DEFAULT_QUESTIONS } from '@/data/defaultQuestions.ts';
-import { DEFAULT_CONTESTANTS } from '@/data/defaultContestants.ts';
+import { DEFAULT_CONTESTANTS, upgradePlaceholderList } from '@/data/defaultContestants.ts';
 import { DEFAULT_WORDS } from '@/data/defaultWords.ts';
 import { createRepository } from '@/shared/lib/createRepository.ts';
 
@@ -69,7 +69,7 @@ export const contestantsRepository = createRepository<Contestant[]>({
   legacyKeys: [LEGACY_CONTESTANTS_KEY],
   schemaVersion: 1,
   defaults: () => DEFAULT_CONTESTANTS,
-  validate: listOf<Contestant>(hasStrings('id', 'name'))
+  validate: raw => upgradePlaceholderList(listOf<Contestant>(hasStrings('id', 'name'))(raw))
 });
 
 export const historyRepository = createRepository<HistoryRecord[]>({
