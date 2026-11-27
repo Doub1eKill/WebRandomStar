@@ -24,6 +24,10 @@ export interface Contestant {
   title?: 'ดาว' | 'เดือน' | 'ดาวจำแลง' | 'ทั่วไป' | string;
   round?: string;
   avatarUrl?: string;
+  /** Nickname shown large on the cards (from the photo file name). */
+  nickname?: string;
+  /** File name (without extension) of this contestant's picture in Photo/, see contestantPhotos. */
+  photoKey?: string;
   status?: 'waiting' | 'answering' | 'completed';
   questionsAnswered?: number;
   timeUsedMs?: number;

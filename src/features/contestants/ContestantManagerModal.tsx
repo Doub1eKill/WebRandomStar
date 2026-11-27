@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { RotateCcw, Trash2, UserPlus, Users, X } from 'lucide-react';
 import { Contestant } from '@/types/question.ts';
 import { DEFAULT_CONTESTANTS } from '@/data/defaultContestants.ts';
+import { ContestantAvatar } from './ContestantAvatar.tsx';
 
 interface ContestantManagerModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ export const ContestantManagerModal: React.FC<ContestantManagerModalProps> = ({
   const [isAdding, setIsAdding] = useState(false);
   const [num, setNum] = useState<number>(contestants.length + 1);
   const [name, setName] = useState('');
+  const [nickname, setNickname] = useState('');
   const [faculty, setFaculty] = useState('');
   const [title, setTitle] = useState<'ดาว' | 'เดือน' | 'ดาวจำแลง' | 'ทั่วไป'>('ดาว');
 
@@ -26,18 +28,20 @@ export const ContestantManagerModal: React.FC<ContestantManagerModalProps> = ({
 
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !faculty.trim()) return;
+    if (!name.trim()) return;
 
     const newC: Contestant = {
       id: `C_${Date.now().toString().slice(-4)}`,
       number: num,
       name: name.trim(),
+      ...(nickname.trim() ? { nickname: nickname.trim() } : {}),
       faculty: faculty.trim(),
       title
     };
 
     onSaveContestants([...contestants, newC].sort((a, b) => Number(a.number) - Number(b.number)));
     setName('');
+    setNickname('');
     setFaculty('');
     setNum(contestants.length + 2);
     setIsAdding(false);
@@ -74,7 +78,7 @@ export const ContestantManagerModal: React.FC<ContestantManagerModalProps> = ({
             {isAdding ? 'ยกเลิก' : <><UserPlus size={14} aria-hidden="true" /> เพิ่มผู้เข้าแข่งขัน</>}
           </button>
           <button className="btn-secondary btn-sm btn-danger-soft" onClick={handleResetDefaults}>
-            <RotateCcw size={14} aria-hidden="true" /> คืนค่าเริ่มต้น 10 ท่าน
+            <RotateCcw size={14} aria-hidden="true" /> คืนค่าเริ่มต้น {DEFAULT_CONTESTANTS.length} ท่าน
           </button>
         </div>
 
@@ -120,16 +124,27 @@ export const ContestantManagerModal: React.FC<ContestantManagerModalProps> = ({
               </div>
             </div>
 
-            <div>
-              <label>คณะ/สังกัด:</label>
-              <input
-                type="text"
-                className="custom-input"
-                placeholder="เช่น คณะวิศวกรรมศาสตร์"
-                value={faculty}
-                onChange={(e) => setFaculty(e.target.value)}
-                required
-              />
+            <div className="form-row">
+              <div style={{ width: '140px' }}>
+                <label>ชื่อเล่น:</label>
+                <input
+                  type="text"
+                  className="custom-input"
+                  placeholder="เช่น เอ"
+                  value={nickname}
+                  onChange={(e) => setNickname(e.target.value)}
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label>คณะ/สังกัด:</label>
+                <input
+                  type="text"
+                  className="custom-input"
+                  placeholder="เช่น คณะวิศวกรรมศาสตร์"
+                  value={faculty}
+                  onChange={(e) => setFaculty(e.target.value)}
+                />
+              </div>
             </div>
 
             <div className="form-actions">
@@ -143,10 +158,11 @@ export const ContestantManagerModal: React.FC<ContestantManagerModalProps> = ({
           {contestants.map(c => (
             <div key={c.id} className="contestant-list-item glass-panel">
               <span className="item-num">#{c.number}</span>
-              <span className="item-title-tag">{c.title}</span>
+              <ContestantAvatar contestant={c} className="ctl-avatar--list" />
+              {c.title && <span className="item-title-tag">{c.title}</span>}
               <div className="item-details">
-                <div className="item-name">{c.name}</div>
-                <div className="item-faculty">{c.faculty}</div>
+                <div className="item-name">{c.nickname?.trim() ? `${c.nickname.trim()} · ${c.name}` : c.name}</div>
+                {c.faculty && <div className="item-faculty">{c.faculty}</div>}
               </div>
               <button className="btn-table-delete" onClick={() => handleDelete(c.id)} aria-label={`ลบ ${c.name}`} title="ลบ"><Trash2 size={16} aria-hidden="true" /></button>
             </div>

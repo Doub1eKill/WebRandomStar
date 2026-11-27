@@ -1,6 +1,8 @@
 import { Contestant } from '@/types/question.ts';
+import { PHOTO_CONTESTANTS } from './contestantPhotos.ts';
 
-export const DEFAULT_CONTESTANTS: Contestant[] = [
+/** The sample list used before the real contestants' photos were added (and when Photo/ is missing). */
+export const PLACEHOLDER_CONTESTANTS: Contestant[] = [
   {
     id: 'C01',
     number: 1,
@@ -72,3 +74,16 @@ export const DEFAULT_CONTESTANTS: Contestant[] = [
     title: 'ดาว'
   }
 ];
+
+/** The contestants from Photo/ when there are any, else the sample list. */
+export const DEFAULT_CONTESTANTS: Contestant[] = PHOTO_CONTESTANTS.length > 0 ? PHOTO_CONTESTANTS : PLACEHOLDER_CONTESTANTS;
+
+/**
+ * A saved list that is still exactly the sample list was never edited by the operator, so it is
+ * swapped for the real contestants once their photos exist.
+ */
+export function upgradePlaceholderList(list: Contestant[] | null): Contestant[] | null {
+  if (!list || PHOTO_CONTESTANTS.length === 0 || list.length !== PLACEHOLDER_CONTESTANTS.length) return list;
+  const unchanged = list.every((c, i) => c.id === PLACEHOLDER_CONTESTANTS[i].id && c.name === PLACEHOLDER_CONTESTANTS[i].name);
+  return unchanged ? PHOTO_CONTESTANTS : list;
+}

@@ -1,5 +1,5 @@
 /**
- * Remote "Contestants" page (Phase 5): the former ControlCenter "contestants" tab, unchanged markup.
+ * Remote "Contestants" page (Phase 5): a card per contestant with their photo and nickname.
  */
 import React, { useState } from 'react';
 import { UserPlus } from 'lucide-react';
@@ -7,6 +7,7 @@ import { useSession, useSessionActions } from '@/features/session/SessionProvide
 import { useContestants } from '@/storage/useRepository.ts';
 import { contestantsRepository } from '@/storage/repositories.ts';
 import { ContestantManagerModal } from '@/features/contestants/ContestantManagerModal.tsx';
+import { ContestantAvatar } from '@/features/contestants/ContestantAvatar.tsx';
 
 export const ContestantsPage: React.FC = () => {
   const selectedContestantId = useSession(s => s.selectedContestantId);
@@ -26,12 +27,17 @@ export const ContestantsPage: React.FC = () => {
         <div className="ctl-contestant-grid">
           {contestants.map(c => {
             const isOnStage = c.id === selectedContestantId;
+            const nickname = c.nickname?.trim();
             return (
               <div key={c.id} className={isOnStage ? 'ctl-contestant is-on-stage' : 'ctl-contestant'}>
-                <div className="ctl-contestant-number">{c.number}</div>
+                <div className="ctl-contestant-photo">
+                  <ContestantAvatar contestant={c} />
+                  <div className="ctl-contestant-number">{c.number}</div>
+                </div>
                 <div className="ctl-contestant-body">
+                  {nickname && <div className="ctl-contestant-nickname">{nickname}</div>}
                   <div className="ctl-contestant-name">{c.name}</div>
-                  <div className="ctl-contestant-faculty">{c.faculty}</div>
+                  {c.faculty && <div className="ctl-contestant-faculty">{c.faculty}</div>}
                 </div>
                 <button className="ctl-contestant-pick" aria-pressed={isOnStage} onClick={() => actions.setContestant(c.id)}>
                   {isOnStage ? 'กำลังขึ้นเวที' : 'เลือกขึ้นเวที'}
