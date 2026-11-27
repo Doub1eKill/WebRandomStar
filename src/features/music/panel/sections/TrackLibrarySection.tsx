@@ -5,13 +5,15 @@ import {
   Trash2,
   Upload,
   Link as LinkIcon,
+  Volume2,
 } from 'lucide-react';
 
+import { trackLevel } from '@/types/music.ts';
 import type { MusicPanelModel } from '../useMusicPanelModel.tsx';
 import { formatTime } from '../useMusicPanelModel.tsx';
 
 export const TrackLibrarySection: React.FC<{ m: MusicPanelModel }> = ({ m }) => {
-  const { musicState, tracks, onPlayTrack, onDeleteTrack, onResetPresets, setIsUrlModalOpen, isDragging, setIsDragging, fileInputRef, handleFiles } = m;
+  const { musicState, tracks, onPlayTrack, onDeleteTrack, onResetPresets, onSetTrackVolume, setIsUrlModalOpen, isDragging, setIsDragging, fileInputRef, handleFiles } = m;
   return (
     <>
       {/* 4. Track Library & File Management */}
@@ -137,6 +139,7 @@ export const TrackLibrarySection: React.FC<{ m: MusicPanelModel }> = ({ m }) => 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           {tracks.map((track) => {
             const isThisPlaying = musicState.currentTrackId === track.id && musicState.isPlaying;
+            const levelPercent = Math.round(trackLevel(track, musicState.trackVolumes) * 100);
             return (
               <div
                 key={track.id}
@@ -190,6 +193,27 @@ export const TrackLibrarySection: React.FC<{ m: MusicPanelModel }> = ({ m }) => 
 
                 {/* Actions */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  {/* Per-track loudness, applied on top of the master volume. */}
+                  <label
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.72rem', color: '#94a3b8' }}
+                    title="ระดับเสียงของเพลงนี้ (คูณกับระดับเสียงหลัก)"
+                  >
+                    <Volume2 size={14} />
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      step={1}
+                      value={levelPercent}
+                      onChange={e => onSetTrackVolume(track.id, Number(e.target.value) / 100)}
+                      aria-label={`ระดับเสียงของ ${track.title}`}
+                      style={{ width: '90px', accentColor: 'var(--ctl-accent)', cursor: 'pointer' }}
+                    />
+                    <span style={{ minWidth: '2.6em', textAlign: 'right', color: '#cbd5e1', fontVariantNumeric: 'tabular-nums' }}>
+                      {levelPercent}%
+                    </span>
+                  </label>
+
                   <button
                     onClick={() => onPlayTrack(track)}
                     style={{

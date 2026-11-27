@@ -21,7 +21,8 @@ describe('MusicPanel Backstage Component', () => {
         onAssignPhaseTrack: vi.fn(),
         onAddTrack: vi.fn(),
         onDeleteTrack: vi.fn(),
-        onResetPresets: vi.fn()
+        onResetPresets: vi.fn(),
+        onSetTrackVolume: vi.fn()
       })
     );
 

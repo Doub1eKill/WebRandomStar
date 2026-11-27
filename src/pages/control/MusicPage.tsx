@@ -30,6 +30,7 @@ export const MusicPage: React.FC = () => {
       onAddTrack={library.addTrack}
       onDeleteTrack={library.deleteTrack}
       onResetPresets={library.resetPresets}
+      onSetTrackVolume={(trackId, volume) => stageMusic.setTrackVolume(trackId, volume)}
     />
   );
 };

@@ -104,7 +104,8 @@ export function loadMusicStateFromStorage(): MusicState {
       phaseTrackMapping: {
         ...DEFAULT_MUSIC_STATE.phaseTrackMapping,
         ...(parsed.phaseTrackMapping || {})
-      }
+      },
+      trackVolumes: typeof parsed.trackVolumes === 'object' && parsed.trackVolumes !== null ? parsed.trackVolumes : {}
     };
   } catch {
     return DEFAULT_MUSIC_STATE;

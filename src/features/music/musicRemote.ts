@@ -22,6 +22,7 @@ export type MusicCommand =
   | { action: 'seek'; seconds: number }
   | { action: 'setAutoSync'; enabled: boolean }
   | { action: 'setMapping'; mapping: Partial<PhaseTrackMapping> }
+  | { action: 'setTrackVolume'; trackId: string; volume: number }
   | { action: 'tracksChanged' };
 
 type MusicMessage =
@@ -29,7 +30,7 @@ type MusicMessage =
   | { kind: 'MUSIC_STATE'; state: MusicState }
   | { kind: 'MUSIC_HELLO' };
 
-const ACTIONS = new Set(['play', 'pause', 'resume', 'stop', 'seek', 'setAutoSync', 'setMapping', 'tracksChanged']);
+const ACTIONS = new Set(['play', 'pause', 'resume', 'stop', 'seek', 'setAutoSync', 'setMapping', 'setTrackVolume', 'tracksChanged']);
 const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null;
 
 function parseMusicMessage(data: unknown): MusicMessage | null {
@@ -65,6 +66,7 @@ export function hydratePlayerFromStorage(player: MusicPlayerEngine): void {
   const saved = loadMusicStateFromStorage();
   player.setPhaseTrackMapping(saved.phaseTrackMapping);
   player.setAutoSyncWithStage(saved.autoSyncWithStage);
+  player.setTrackVolumes(saved.trackVolumes ?? {});
 }
 
 interface MusicHostOptions {
@@ -104,6 +106,7 @@ export function startMusicHost(player: MusicPlayerEngine, options: MusicHostOpti
       case 'seek': player.seek(c.seconds); break;
       case 'setAutoSync': player.setAutoSyncWithStage(c.enabled); break;
       case 'setMapping': player.setPhaseTrackMapping(c.mapping); break;
+      case 'setTrackVolume': if (typeof c.trackId === 'string' && typeof c.volume === 'number') player.setTrackVolume(c.trackId, c.volume); break;
       case 'tracksChanged': options.reloadTracks(); break;
     }
   });
@@ -131,6 +134,7 @@ export interface MusicRemote {
   seek: (seconds: number) => void;
   setAutoSyncWithStage: (enabled: boolean) => void;
   setPhaseTrackMapping: (mapping: Partial<PhaseTrackMapping>) => void;
+  setTrackVolume: (trackId: string, volume: number) => void;
   tracksChanged: () => void;
 }
 
@@ -168,6 +172,7 @@ export function useRemoteMusic({ withProgress = false } = {}): { musicState: Mus
       seek: seconds => send({ action: 'seek', seconds }),
       setAutoSyncWithStage: enabled => send({ action: 'setAutoSync', enabled }),
       setPhaseTrackMapping: mapping => send({ action: 'setMapping', mapping }),
+      setTrackVolume: (trackId, volume) => send({ action: 'setTrackVolume', trackId, volume }),
       tracksChanged: () => send({ action: 'tracksChanged' })
     }
   };

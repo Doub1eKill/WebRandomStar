@@ -27,6 +27,7 @@ export function localMusicControls(player: MusicPlayerEngine): MusicRemote {
     seek: seconds => player.seek(seconds),
     setAutoSyncWithStage: enabled => player.setAutoSyncWithStage(enabled),
     setPhaseTrackMapping: mapping => player.setPhaseTrackMapping(mapping),
+    setTrackVolume: (trackId, volume) => player.setTrackVolume(trackId, volume),
     tracksChanged: () => {}
   };
 }

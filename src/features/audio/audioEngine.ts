@@ -5,6 +5,12 @@
  */
 import * as recipes from './recipes.ts';
 import { getSharedAudioContext } from './audioContext.ts';
+import { DEFAULT_TIMER_SOUND_SETTINGS, type EffectVolumeField, type TimerSoundSettings } from '@/types/timer.ts';
+
+/** Effects whose fixed-level recipes go through their own gain bus (see bus()). */
+type BusField = 'finishVolume' | 'spinStartVolume' | 'wordLockVolume' | 'revealVolume';
+const EFFECT_FIELDS: EffectVolumeField[] = ['warningVolume', 'finishVolume', 'spinStartVolume', 'spinTickVolume', 'wordLockVolume', 'revealVolume'];
+
 class ProceduralAudioEngine {
   private ctx: AudioContext | null = null;
   private masterGain: GainNode | null = null;
@@ -15,6 +21,16 @@ class ProceduralAudioEngine {
   private finishSoundEnabled: boolean = true;
   private spinSoundEnabled: boolean = true;
   private tickVolume: number = 0.6;
+  /** Per-effect loudness (0-1), set from the timer sound settings. */
+  private effectVolumes: Record<EffectVolumeField, number> = {
+    warningVolume: DEFAULT_TIMER_SOUND_SETTINGS.warningVolume,
+    finishVolume: DEFAULT_TIMER_SOUND_SETTINGS.finishVolume,
+    spinStartVolume: DEFAULT_TIMER_SOUND_SETTINGS.spinStartVolume,
+    spinTickVolume: DEFAULT_TIMER_SOUND_SETTINGS.spinTickVolume,
+    wordLockVolume: DEFAULT_TIMER_SOUND_SETTINGS.wordLockVolume,
+    revealVolume: DEFAULT_TIMER_SOUND_SETTINGS.revealVolume
+  };
+  private buses = new Map<BusField, GainNode>();
 
   public init(): void {
     if (this.ctx) return;
@@ -107,8 +123,36 @@ class ProceduralAudioEngine {
     return this.tickVolume;
   }
 
+  /** Set any of the per-effect levels (other fields of the object are ignored). */
+  public setEffectVolumes(volumes: Partial<Pick<TimerSoundSettings, EffectVolumeField>>): void {
+    for (const field of EFFECT_FIELDS) {
+      const v = volumes[field];
+      if (typeof v !== 'number' || isNaN(v)) continue;
+      this.effectVolumes[field] = Math.max(0, Math.min(1, v));
+      const bus = this.buses.get(field as BusField);
+      if (bus) bus.gain.value = this.effectVolumes[field];
+    }
+  }
+
+  public getEffectVolume(field: EffectVolumeField): number {
+    return this.effectVolumes[field];
+  }
+
+  /** The gain node one fixed-level effect plays into: its own level, then the master gain. */
+  private bus(field: BusField, master: GainNode): GainNode {
+    let bus = this.buses.get(field);
+    if (!bus && this.ctx) {
+      bus = this.ctx.createGain();
+      bus.gain.value = this.effectVolumes[field];
+      bus.connect(master);
+      this.buses.set(field, bus);
+    }
+    return bus ?? master;
+  }
+
   private recipeSettings(): recipes.RecipeSettings {
-    return { tickVolume: this.tickVolume };
+    // Spin ticks scale their own gain; they have their own level now instead of tickVolume.
+    return { tickVolume: this.effectVolumes.spinTickVolume };
   }
 
   /**
@@ -117,7 +161,7 @@ class ProceduralAudioEngine {
   public playSpinStart(): void {
     if (this.muted || !this.spinSoundEnabled) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
-    recipes.playSpinStart(this.ctx, this.masterGain);
+    recipes.playSpinStart(this.ctx, this.bus('spinStartVolume', this.masterGain));
   }
 
   /**
@@ -135,7 +179,7 @@ class ProceduralAudioEngine {
   public playWordLock(): void {
     if (this.muted || !this.spinSoundEnabled) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
-    recipes.playWordLock(this.ctx, this.masterGain);
+    recipes.playWordLock(this.ctx, this.bus('wordLockVolume', this.masterGain));
   }
 
   /**
@@ -144,7 +188,7 @@ class ProceduralAudioEngine {
   public playQuestionReveal(): void {
     if (this.muted) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
-    recipes.playQuestionReveal(this.ctx, this.masterGain);
+    recipes.playQuestionReveal(this.ctx, this.bus('revealVolume', this.masterGain));
   }
 
   /**
@@ -153,7 +197,7 @@ class ProceduralAudioEngine {
   public playTimerFinish(): void {
     if (!this.finishSoundEnabled || this.muted) return;
     if (!this.ensureContext() || !this.ctx || !this.masterGain) return;
-    recipes.playTimerFinish(this.ctx, this.masterGain);
+    recipes.playTimerFinish(this.ctx, this.bus('finishVolume', this.masterGain));
   }
 
   /**
@@ -173,6 +217,8 @@ class ProceduralAudioEngine {
 
     const now = this.ctx.currentTime;
     const baseVol = this.tickVolume;
+    // Warning ticks and bells have their own level (they used to follow tickVolume).
+    const warnVol = this.effectVolumes.warningVolume;
 
     if (remainingSeconds <= 3) {
       // Last 3s: Melodic Royal Countdown Bells (3s = G5, 2s = A5, 1s = C6)
@@ -190,7 +236,7 @@ class ProceduralAudioEngine {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, now);
 
-        const peakGain = Math.min(1, baseVol * 0.28);
+        const peakGain = Math.min(1, warnVol * 0.28);
         gain.gain.setValueAtTime(peakGain, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
 
@@ -212,7 +258,7 @@ class ProceduralAudioEngine {
         osc.frequency.setValueAtTime(720, now);
         osc.frequency.exponentialRampToValueAtTime(480, now + 0.045);
 
-        const tickGain = Math.min(1, baseVol * 0.16);
+        const tickGain = Math.min(1, warnVol * 0.16);
         gain.gain.setValueAtTime(tickGain, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
 

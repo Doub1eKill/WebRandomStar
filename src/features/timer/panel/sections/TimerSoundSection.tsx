@@ -8,6 +8,39 @@ import {
 } from 'lucide-react';
 
 import type { TimerPanelModel } from '../useTimerPanelModel.tsx';
+import { DEFAULT_TIMER_SOUND_SETTINGS, type EffectVolumeField, type TimerSoundSettings } from '@/types/timer.ts';
+
+type VolumeField = 'tickVolume' | EffectVolumeField;
+
+/** One slider per sound: the timer sounds first, then the spin and reveal effects. */
+const EFFECT_ROWS: { field: VolumeField; label: string; color: string }[] = [
+  { field: 'tickVolume', label: 'ติ๊กนับถอยหลัง', color: '#38bdf8' },
+  { field: 'warningVolume', label: 'เตือนใกล้หมดเวลา', color: '#f59e0b' },
+  { field: 'finishVolume', label: 'หมดเวลา', color: '#ef4444' },
+  { field: 'spinStartVolume', label: 'เริ่มสุ่ม', color: '#a78bfa' },
+  { field: 'spinTickVolume', label: 'ติ๊กระหว่างสุ่ม', color: '#c084fc' },
+  { field: 'wordLockVolume', label: 'ล็อกคำ', color: '#f472b6' },
+  { field: 'revealVolume', label: 'เปิดคำถาม', color: '#facc15' }
+];
+
+/**
+ * Play one sound here on the control window at the levels shown. This window's engine is not
+ * the stage's, so give it the current levels first.
+ */
+function previewEffect(field: VolumeField, settings: TimerSoundSettings): void {
+  audioEngine.setMuted(false);
+  audioEngine.setTickVolume(settings.tickVolume);
+  audioEngine.setEffectVolumes(settings);
+  switch (field) {
+    case 'tickVolume': audioEngine.setTickSoundEnabled(true); audioEngine.playTickSound(15); break;
+    case 'warningVolume': audioEngine.setWarningSoundEnabled(true); audioEngine.playTickSound(3); break;
+    case 'finishVolume': audioEngine.setFinishSoundEnabled(true); audioEngine.playTimerFinish(); break;
+    case 'spinStartVolume': audioEngine.playSpinStart(); break;
+    case 'spinTickVolume': audioEngine.playSpinTick(0.8); break;
+    case 'wordLockVolume': audioEngine.playWordLock(); break;
+    case 'revealVolume': audioEngine.playQuestionReveal(); break;
+  }
+}
 
 export const TimerSoundSection: React.FC<{ m: TimerPanelModel }> = ({ m }) => {
   const { timerSoundSettings, onSetTimerSoundSettings } = m;
@@ -29,7 +62,7 @@ export const TimerSoundSection: React.FC<{ m: TimerPanelModel }> = ({ m }) => {
               ระบบเสียงตัวจับเวลา (Timer Audio Controls)
             </div>
             <div style={{ color: '#94a3b8', fontSize: '0.75rem' }}>
-              ตั้งค่าเปิด/ปิดเสียงติ๊ก, เสียงเตือนใกล้หมด และเสียงเมื่อหมดเวลา (Sync สู่เวทีแบบ Realtime)
+              ตั้งค่าเปิด/ปิดเสียงติ๊ก, เสียงเตือนใกล้หมด, เสียงเมื่อหมดเวลา และความดังของแต่ละเสียง (Sync สู่เวทีแบบ Realtime)
             </div>
           </div>
         </div>
@@ -124,84 +157,55 @@ export const TimerSoundSection: React.FC<{ m: TimerPanelModel }> = ({ m }) => {
           </div>
         </div>
 
-        {/* Volume Slider & Test Sound Previews */}
+        {/* Per-sound volume sliders, each with a preview button */}
         {onSetTimerSoundSettings && (
           <div style={{ marginTop: '0.9rem', paddingTop: '0.8rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.6rem' }}>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8', minWidth: '95px' }}>ระดับความดังเสียง:</span>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.05"
-                value={timerSoundSettings.tickVolume}
-                onChange={(e) => onSetTimerSoundSettings({ tickVolume: parseFloat(e.target.value) })}
-                style={{ flex: 1, accentColor: '#38bdf8' }}
-              />
-              <span style={{ fontSize: '0.8rem', color: '#cbd5e1', minWidth: '40px', textAlign: 'right', fontWeight: 600 }}>
-                {Math.round(timerSoundSettings.tickVolume * 100)}%
-              </span>
+            <div style={{ fontSize: '0.84rem', color: '#f8fafc', fontWeight: 600, marginBottom: '0.2rem' }}>
+              ระดับเสียงของแต่ละเสียง (Per-sound volume)
             </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '0.75rem', color: '#94a3b8', marginRight: 'auto' }}>ทดสอบเสียงตัวอย่าง:</span>
-              <button
-                type="button"
-                onClick={() => {
-                  audioEngine.setMuted(false);
-                  audioEngine.setTickSoundEnabled(true);
-                  audioEngine.playTickSound(15);
-                }}
-                style={{
-                  padding: '0.25rem 0.55rem',
-                  background: 'rgba(56, 189, 248, 0.12)',
-                  border: '1px solid rgba(56, 189, 248, 0.3)',
-                  borderRadius: '6px',
-                  color: '#7dd3fc',
-                  fontSize: '0.74rem',
-                  cursor: 'pointer'
-                }}
-              >
-                ติ๊กปกติ
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  audioEngine.setMuted(false);
-                  audioEngine.setWarningSoundEnabled(true);
-                  audioEngine.playTickSound(3);
-                }}
-                style={{
-                  padding: '0.25rem 0.55rem',
-                  background: 'rgba(245, 158, 11, 0.15)',
-                  border: '1px solid rgba(245, 158, 11, 0.35)',
-                  borderRadius: '6px',
-                  color: '#fde68a',
-                  fontSize: '0.74rem',
-                  cursor: 'pointer'
-                }}
-              >
-                เตือน 3 วินาที
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  audioEngine.setMuted(false);
-                  audioEngine.setFinishSoundEnabled(true);
-                  audioEngine.playTimerFinish();
-                }}
-                style={{
-                  padding: '0.25rem 0.55rem',
-                  background: 'rgba(239, 68, 68, 0.15)',
-                  border: '1px solid rgba(239, 68, 68, 0.35)',
-                  borderRadius: '6px',
-                  color: '#fca5a5',
-                  fontSize: '0.74rem',
-                  cursor: 'pointer'
-                }}
-              >
-                หมดเวลา
-              </button>
+            <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginBottom: '0.6rem' }}>
+              ตั้งความดังล่วงหน้าแยกแต่ละเสียง (คูณกับระดับเสียงหลัก) กด "ทดสอบ" เพื่อฟังที่ระดับนั้น
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+              {EFFECT_ROWS.map(row => {
+                const value = timerSoundSettings[row.field] ?? DEFAULT_TIMER_SOUND_SETTINGS[row.field];
+                return (
+                  <div key={row.field} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '0.78rem', color: '#cbd5e1', minWidth: '150px', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: row.color, flexShrink: 0 }} />
+                      {row.label}
+                    </span>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.05"
+                      value={value}
+                      onChange={(e) => onSetTimerSoundSettings({ [row.field]: parseFloat(e.target.value) })}
+                      aria-label={`ระดับเสียง${row.label}`}
+                      style={{ flex: 1, minWidth: '120px', accentColor: row.color }}
+                    />
+                    <span style={{ fontSize: '0.78rem', color: '#cbd5e1', minWidth: '40px', textAlign: 'right', fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>
+                      {Math.round(value * 100)}%
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => previewEffect(row.field, timerSoundSettings)}
+                      style={{
+                        padding: '0.25rem 0.55rem',
+                        background: 'rgba(255, 255, 255, 0.06)',
+                        border: `1px solid ${row.color}55`,
+                        borderRadius: '6px',
+                        color: '#e2e8f0',
+                        fontSize: '0.72rem',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      ทดสอบ
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

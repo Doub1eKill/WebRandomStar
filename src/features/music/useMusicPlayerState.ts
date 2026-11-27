@@ -12,7 +12,8 @@ export function differsOnlyInProgress(a: MusicState, b: MusicState): boolean {
     a.autoSyncWithStage === b.autoSyncWithStage &&
     a.phaseTrackMapping.ambient === b.phaseTrackMapping.ambient &&
     a.phaseTrackMapping.spin === b.phaseTrackMapping.spin &&
-    a.phaseTrackMapping.question === b.phaseTrackMapping.question
+    a.phaseTrackMapping.question === b.phaseTrackMapping.question &&
+    JSON.stringify(a.trackVolumes ?? {}) === JSON.stringify(b.trackVolumes ?? {})
   );
 }
 

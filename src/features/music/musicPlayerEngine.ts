@@ -1,4 +1,4 @@
-import { MusicTrack, MusicState, DEFAULT_MUSIC_STATE } from '@/types/music.ts';
+import { MusicTrack, MusicState, DEFAULT_MUSIC_STATE, trackLevel } from '@/types/music.ts';
 import { getSharedAudioContext } from '@/features/audio/audioContext.ts';
 import { startArpeggio, patternFor, ArpeggioHandle } from './presetArpeggio.ts';
 
@@ -27,6 +27,8 @@ export class MusicPlayerEngine {
   private duration: number = 0;
   private autoSyncWithStage: boolean = true;
   private phaseTrackMapping = { ...DEFAULT_MUSIC_STATE.phaseTrackMapping };
+  /** Per-track loudness from the track library (see trackLevel). */
+  private trackVolumes: Record<string, number> = {};
 
   private audioSlotA: HTMLAudioElement | null = null;
   private audioSlotB: HTMLAudioElement | null = null;
@@ -53,7 +55,8 @@ export class MusicPlayerEngine {
   /** B6: the single source of truth for how loud the current track should be. */
   private targetVolume(): number {
     if (this.isMuted) return 0;
-    return Math.min(1, Math.max(0, (this.currentTrack?.defaultVolume ?? 1) * this.volume));
+    const level = this.currentTrack ? trackLevel(this.currentTrack, this.trackVolumes) : 1;
+    return Math.min(1, Math.max(0, level * this.volume));
   }
 
   /**
@@ -161,8 +164,27 @@ export class MusicPlayerEngine {
       currentTime: this.currentTime,
       duration: this.duration,
       autoSyncWithStage: this.autoSyncWithStage,
-      phaseTrackMapping: { ...this.phaseTrackMapping }
+      phaseTrackMapping: { ...this.phaseTrackMapping },
+      trackVolumes: { ...this.trackVolumes }
     };
+  }
+
+  /** Set one track's loudness (0–1). Applies at once if that track is playing. */
+  public setTrackVolume(trackId: string, vol: number): void {
+    this.trackVolumes = { ...this.trackVolumes, [trackId]: Math.max(0, Math.min(1, vol)) };
+    if (this.currentTrack?.id === trackId) {
+      const active = this.activeAudio();
+      if (active && this.fades.get(active)?.kind !== 'in') active.volume = this.targetVolume();
+    }
+    this.notifyState();
+  }
+
+  /** Replace every per-track loudness (used when restoring saved settings). */
+  public setTrackVolumes(volumes: Record<string, number>): void {
+    this.trackVolumes = { ...volumes };
+    const active = this.activeAudio();
+    if (active && this.fades.get(active)?.kind !== 'in') active.volume = this.targetVolume();
+    this.notifyState();
   }
 
   public setMasterVolume(vol: number): void {
@@ -493,7 +515,7 @@ export class MusicPlayerEngine {
     // Presets have no audio file: play a soft looping arpeggio per phase. It replaces a single
     // oscillator that held one note for the whole phase and sounded like a stuck tone.
     try {
-      this.synth = startArpeggio(this.ctx, this.masterGain, patternFor(track.id), () => (this.isMuted ? 0 : this.volume));
+      this.synth = startArpeggio(this.ctx, this.masterGain, patternFor(track.id), () => (this.isMuted ? 0 : this.volume * trackLevel(track, this.trackVolumes)));
     } catch {
       // ignore
     }
