@@ -178,6 +178,7 @@ export function createStageHost(): SessionRuntime {
       audioEngine.setWarningSoundEnabled(s.timerSoundSettings.warningSoundEnabled);
       audioEngine.setFinishSoundEnabled(s.timerSoundSettings.finishSoundEnabled);
       audioEngine.setTickVolume(s.timerSoundSettings.tickVolume);
+      audioEngine.setEffectVolumes(s.timerSoundSettings);
     }
   };
 

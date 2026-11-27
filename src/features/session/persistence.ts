@@ -1,7 +1,7 @@
 import { SessionState } from '@/types/session.ts';
 import { STORAGE_KEYS, withoutCategory } from '@/storage/repositories.ts';
 import { loadAppearanceSettings } from '@/features/appearance/appearanceSettings.ts';
-import { loadTimerSoundSettings, loadStageDisplaySettings } from '@/features/timer/timerSettings.ts';
+import { loadTimerSoundSettings, loadStageDisplaySettings, normalizeTimerSoundSettings } from '@/features/timer/timerSettings.ts';
 import { createInitialTimerState, DEFAULT_TIMER_DURATION_MS } from '@/features/timer/timerEngine.ts';
 
 export function createInitialSession(): SessionState {
@@ -31,7 +31,7 @@ export function loadPersistedSession(): SessionState {
     const saved = localStorage.getItem(STORAGE_KEYS.SESSION);
     if (saved) {
       const parsed = JSON.parse(saved);
-      const soundSettings = parsed.timerSoundSettings || loadTimerSoundSettings();
+      const soundSettings = parsed.timerSoundSettings ? normalizeTimerSoundSettings(parsed.timerSoundSettings) : loadTimerSoundSettings();
       const displaySettings = parsed.stageDisplaySettings || loadStageDisplaySettings();
       const appearanceSettings = parsed.appearanceSettings || loadAppearanceSettings();
 

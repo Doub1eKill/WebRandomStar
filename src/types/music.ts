@@ -34,6 +34,11 @@ export interface MusicState {
   duration: number;
   autoSyncWithStage: boolean;
   phaseTrackMapping: PhaseTrackMapping;
+  /**
+   * Per-track loudness set in the track library (0–1), by track id. Optional: states saved
+   * before 2026-11-27 have none. A track without an entry uses trackLevel()'s default.
+   */
+  trackVolumes?: Record<string, number>;
 }
 
 export const PRESET_MUSIC_TRACKS: MusicTrack[] = [
@@ -90,5 +95,17 @@ export const DEFAULT_MUSIC_STATE: MusicState = {
     ambient: 'preset-ambient-luxury',
     spin: 'preset-spin-tension',
     question: 'preset-question-focus'
-  }
+  },
+  trackVolumes: {}
 };
+
+/**
+ * How loud a track plays relative to the master volume: its trackVolumes entry if set, otherwise
+ * its own defaultVolume. Presets used to ignore defaultVolume (their arpeggio sets its own level),
+ * so they default to 1 to sound exactly as before.
+ */
+export function trackLevel(track: MusicTrack, trackVolumes: Record<string, number> = {}): number {
+  const set = trackVolumes[track.id];
+  if (typeof set === 'number' && !isNaN(set)) return Math.max(0, Math.min(1, set));
+  return track.sourceType === 'preset' ? 1 : track.defaultVolume;
+}

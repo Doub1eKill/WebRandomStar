@@ -6,15 +6,37 @@ import { TimerSoundSettings, DEFAULT_TIMER_SOUND_SETTINGS, StageDisplaySettings,
 import { settingsRepository } from '@/storage/repositories.ts';
 import { SaveResult } from '@/shared/lib/createRepository.ts';
 
+const level = (v: unknown, fallback: number): number =>
+  typeof v === 'number' && !isNaN(v) ? Math.max(0, Math.min(1, v)) : fallback;
+
+/**
+ * Fill in and clamp timer sound settings read from storage (or a saved session). Settings saved
+ * before the per-effect sliders have no warning / spin tick level: those sounds used to follow
+ * tickVolume, so they start from it.
+ */
+export function normalizeTimerSoundSettings(parsed: Record<string, unknown> | null | undefined): TimerSoundSettings {
+  const d = DEFAULT_TIMER_SOUND_SETTINGS;
+  if (!parsed || typeof parsed !== 'object') return { ...d };
+  const bool = (v: unknown, fallback: boolean) => (typeof v === 'boolean' ? v : fallback);
+  const tickVolume = level(parsed.tickVolume, d.tickVolume);
+  return {
+    tickSoundEnabled: bool(parsed.tickSoundEnabled, d.tickSoundEnabled),
+    warningSoundEnabled: bool(parsed.warningSoundEnabled, d.warningSoundEnabled),
+    finishSoundEnabled: bool(parsed.finishSoundEnabled, d.finishSoundEnabled),
+    tickVolume,
+    warningVolume: level(parsed.warningVolume, tickVolume),
+    finishVolume: level(parsed.finishVolume, d.finishVolume),
+    spinStartVolume: level(parsed.spinStartVolume, d.spinStartVolume),
+    spinTickVolume: level(parsed.spinTickVolume, tickVolume),
+    wordLockVolume: level(parsed.wordLockVolume, d.wordLockVolume),
+    revealVolume: level(parsed.revealVolume, d.revealVolume)
+  };
+}
+
 export function loadTimerSoundSettings(): TimerSoundSettings {
   const parsed = settingsRepository.load();
-  if (Object.keys(parsed).length === 0) return DEFAULT_TIMER_SOUND_SETTINGS;
-  return {
-    tickSoundEnabled: typeof parsed.tickSoundEnabled === 'boolean' ? parsed.tickSoundEnabled : DEFAULT_TIMER_SOUND_SETTINGS.tickSoundEnabled,
-    warningSoundEnabled: typeof parsed.warningSoundEnabled === 'boolean' ? parsed.warningSoundEnabled : DEFAULT_TIMER_SOUND_SETTINGS.warningSoundEnabled,
-    finishSoundEnabled: typeof parsed.finishSoundEnabled === 'boolean' ? parsed.finishSoundEnabled : DEFAULT_TIMER_SOUND_SETTINGS.finishSoundEnabled,
-    tickVolume: typeof parsed.tickVolume === 'number' ? Math.max(0, Math.min(1, parsed.tickVolume)) : DEFAULT_TIMER_SOUND_SETTINGS.tickVolume
-  };
+  if (Object.keys(parsed).length === 0) return { ...DEFAULT_TIMER_SOUND_SETTINGS };
+  return normalizeTimerSoundSettings(parsed);
 }
 
 export function saveTimerSoundSettings(settings: Partial<TimerSoundSettings>): SaveResult {

@@ -40,7 +40,7 @@ describe('split panels render the same markup', () => {
 
   it.each([
     ['stopped', DEFAULT_MUSIC_STATE],
-    ['playing', { ...DEFAULT_MUSIC_STATE, isPlaying: true, currentTrackId: 'custom-1', currentTime: 42, duration: 125 }],
+    ['playing', { ...DEFAULT_MUSIC_STATE, isPlaying: true, currentTrackId: 'custom-1', currentTime: 42, duration: 125, trackVolumes: { 'custom-1': 0.35 } }],
     ['muted, manual', { ...DEFAULT_MUSIC_STATE, isMuted: true, autoSyncWithStage: false }]
   ])('MusicPanel (%s)', (_name, musicState) => {
     expect(renderToString(
@@ -49,7 +49,7 @@ describe('split panels render the same markup', () => {
         tracks={[...PRESET_MUSIC_TRACKS, uploaded]}
         onPlayTrack={noop} onPauseTrack={noop} onResumeTrack={noop} onStopMusic={noop} onSeekMusic={noop}
         onSetVolume={noop} onToggleMute={noop} onToggleAutoSync={noop} onAssignPhaseTrack={noop}
-        onAddTrack={noop} onDeleteTrack={noop} onResetPresets={noop}
+        onAddTrack={noop} onDeleteTrack={noop} onResetPresets={noop} onSetTrackVolume={noop}
       />
     )).toMatchSnapshot();
   });

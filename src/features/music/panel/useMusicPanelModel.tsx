@@ -17,6 +17,8 @@ export interface MusicPanelProps {
   onAddTrack: (track: MusicTrack, fileBlob?: Blob) => void;
   onDeleteTrack: (id: string) => void;
   onResetPresets: () => void;
+  /** Set one track's own loudness (0–1), kept with the music settings. */
+  onSetTrackVolume: (trackId: string, volume: number) => void;
 }
 
 export function formatTime(seconds: number): string {
@@ -41,7 +43,8 @@ export function useMusicPanelModel(props: MusicPanelProps) {
   onAssignPhaseTrack,
   onAddTrack,
   onDeleteTrack,
-  onResetPresets
+  onResetPresets,
+  onSetTrackVolume
   } = props;
   const [isUrlModalOpen, setIsUrlModalOpen] = useState(false);
   const [urlTitle, setUrlTitle] = useState('');
@@ -130,7 +133,7 @@ export function useMusicPanelModel(props: MusicPanelProps) {
     ? Math.min(100, (musicState.currentTime / musicState.duration) * 100)
     : 0;
 
-  return { musicState, tracks, onPlayTrack, onPauseTrack, onResumeTrack, onStopMusic, onSeekMusic, onSetVolume, onToggleMute, onToggleAutoSync, onAssignPhaseTrack, onAddTrack, onDeleteTrack, onResetPresets, isUrlModalOpen, setIsUrlModalOpen, urlTitle, setUrlTitle, urlArtist, setUrlArtist, urlAddress, setUrlAddress, urlPhase, setUrlPhase, isDragging, setIsDragging, fileInputRef, currentTrack, handleFiles, handleAddUrlTrack, progressPercent };
+  return { musicState, tracks, onPlayTrack, onPauseTrack, onResumeTrack, onStopMusic, onSeekMusic, onSetVolume, onToggleMute, onToggleAutoSync, onAssignPhaseTrack, onAddTrack, onDeleteTrack, onResetPresets, onSetTrackVolume, isUrlModalOpen, setIsUrlModalOpen, urlTitle, setUrlTitle, urlArtist, setUrlArtist, urlAddress, setUrlAddress, urlPhase, setUrlPhase, isDragging, setIsDragging, fileInputRef, currentTrack, handleFiles, handleAddUrlTrack, progressPercent };
 }
 
 export type MusicPanelModel = ReturnType<typeof useMusicPanelModel>;

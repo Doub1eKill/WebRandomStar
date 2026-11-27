@@ -9,7 +9,19 @@ export interface TimerSoundSettings {
   warningSoundEnabled: boolean;  // default: true (Warning, critical & last-3s alert sounds)
   finishSoundEnabled: boolean;   // default: true (Timeout / completion gong)
   tickVolume: number;            // default: 0.6 (0.0 - 1.0)
+  // Per-effect loudness (0.0 - 1.0), on top of the master volume. Defaults keep the levels the
+  // effects had before they got their own sliders (2026-11-27).
+  warningVolume: number;         // default: 0.6 (warning ticks and last-3s bells; used to follow tickVolume)
+  finishVolume: number;          // default: 1 (timeout gong)
+  spinStartVolume: number;       // default: 1 (spin start whoosh)
+  spinTickVolume: number;        // default: 0.6 (spin ticks; used to follow tickVolume)
+  wordLockVolume: number;        // default: 1 (word lock chime)
+  revealVolume: number;          // default: 1 (question reveal chord)
 }
+
+/** The per-effect loudness fields of TimerSoundSettings. */
+export type EffectVolumeField =
+  | 'warningVolume' | 'finishVolume' | 'spinStartVolume' | 'spinTickVolume' | 'wordLockVolume' | 'revealVolume';
 
 export interface StageDisplaySettings {
   timerDisplayMode: TimerDisplayMode;  // default: 'center'
@@ -46,7 +58,13 @@ export const DEFAULT_TIMER_SOUND_SETTINGS: TimerSoundSettings = {
   tickSoundEnabled: true,
   warningSoundEnabled: true,
   finishSoundEnabled: true,
-  tickVolume: 0.6
+  tickVolume: 0.6,
+  warningVolume: 0.6,
+  finishVolume: 1,
+  spinStartVolume: 1,
+  spinTickVolume: 0.6,
+  wordLockVolume: 1,
+  revealVolume: 1
 };
 
 export const DEFAULT_STAGE_DISPLAY_SETTINGS: StageDisplaySettings = {
