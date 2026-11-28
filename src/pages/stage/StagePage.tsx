@@ -16,6 +16,7 @@ import { localMusicControls, useMusicLibrary } from '@/features/music/useMusicLi
 import { StageBackground } from '@/features/stage/background/StageBackground.tsx';
 import { StageOverlay } from '@/features/stage/overlay/StageOverlay.tsx';
 import { KeyboardController } from '@/features/stage/KeyboardController.tsx';
+import { useObsMode } from '@/features/stage/obsMode.ts';
 import { OperatorToasts } from '@/shared/notices/OperatorToasts.tsx';
 import { useHasBeenTrue } from '@/shared/lib/useHasBeenTrue.ts';
 
@@ -37,6 +38,8 @@ const StageScreen: React.FC = () => {
   // The stage re-renders on every session change, as it did with the old useStageSync hook.
   const session = useSession(s => s);
   const isRemoteConnected = usePeerConnected();
+  // `#/?obs=1`: stage-only output for OBS capture (no operator UI can open on this page).
+  const obsMode = useObsMode();
   const {
     startJourney,
     stopWordSpin,
@@ -155,9 +158,13 @@ const StageScreen: React.FC = () => {
   };
 
   return (
-    <div className="stage-app-viewport" style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
+    <div
+      className={`stage-app-viewport${obsMode ? ' is-obs-mode' : ''}`}
+      data-obs-mode={obsMode || undefined}
+      style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}
+    >
       {/* 1. Dynamic Stage Background (Cosmic Canvas or AeroShards) */}
-      <StageBackground session={session} />
+      <StageBackground session={session} interactive={!obsMode} />
 
       {/* 2. React UI Stage Overlay */}
       <StageOverlay
@@ -167,7 +174,7 @@ const StageScreen: React.FC = () => {
       />
 
       {/* 3. Operator Slide-over Control Drawer (loaded on first open, then kept mounted) */}
-      {drawerLoaded && (
+      {!obsMode && drawerLoaded && (
         <Suspense fallback={null}>
           <ControlDrawer
             isOpen={isDrawerOpen}
@@ -205,20 +212,22 @@ const StageScreen: React.FC = () => {
       )}
 
       {/* Operator notices (replaces alert(), B10/B11). Hidden on the projector while a remote
-          controller window is connected; the operator sees them there instead. */}
-      <OperatorToasts hidden={isRemoteConnected} />
+          controller window is connected; the operator sees them there instead. Never shown in OBS mode. */}
+      <OperatorToasts hidden={obsMode || isRemoteConnected} />
 
-      {/* 4. Global Keyboard Navigation */}
-      <KeyboardController
-        onStartOrPause={handleStartOrPause}
-        onProceed={handleProceed}
-        onToggleDrawer={() => setIsDrawerOpen(prev => !prev)}
-        onToggleMute={toggleMute}
-        onToggleTimer={handleToggleTimer}
-      />
+      {/* 4. Global Keyboard Navigation (off in OBS mode: Esc would open the drawer in the capture) */}
+      {!obsMode && (
+        <KeyboardController
+          onStartOrPause={handleStartOrPause}
+          onProceed={handleProceed}
+          onToggleDrawer={() => setIsDrawerOpen(prev => !prev)}
+          onToggleMute={toggleMute}
+          onToggleTimer={handleToggleTimer}
+        />
+      )}
 
       {/* 5. Question Manager Modal (loaded on first open) */}
-      {questionModalLoaded && (
+      {!obsMode && questionModalLoaded && (
         <Suspense fallback={null}>
           <QuestionManagerModal
             isOpen={isQuestionModalOpen}
@@ -230,7 +239,7 @@ const StageScreen: React.FC = () => {
       )}
 
       {/* 6. Contestant Manager Modal (loaded on first open) */}
-      {contestantModalLoaded && (
+      {!obsMode && contestantModalLoaded && (
         <Suspense fallback={null}>
           <ContestantManagerModal
             isOpen={isContestantModalOpen}

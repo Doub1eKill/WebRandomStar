@@ -9,9 +9,11 @@ const AeroShards = lazy(() => import('@/features/stage/background/aero-shards/Ae
 
 interface StageBackgroundProps {
   session: SessionState;
+  /** false in OBS mode: the shards stop reacting to the mouse over the captured window. */
+  interactive?: boolean;
 }
 
-export const StageBackground: React.FC<StageBackgroundProps> = ({ session }) => {
+export const StageBackground: React.FC<StageBackgroundProps> = ({ session, interactive = true }) => {
   const [webGpuFailed, setWebGpuFailed] = useState(false);
   const backgroundMode = session.appearanceSettings?.backgroundMode || 'cosmic-canvas';
 
@@ -49,7 +51,7 @@ export const StageBackground: React.FC<StageBackgroundProps> = ({ session }) => 
             depth={1}
             speed={0.85}
             spin={1}
-            interaction="repel"
+            interaction={interactive ? 'repel' : 'none'}
             density={Math.min(1.5, Math.max(0.5, 1.2 * densitySetting))}
             shardSize={1.1}
             stretch={1}
