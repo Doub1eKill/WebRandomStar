@@ -939,3 +939,11 @@
   box-shadow: 0 6px 24px rgba(6, 9, 25, 0.6), 0 0 16px rgba(56, 189, 248, 0.35);
   transform: translateY(-1px);
 }
+
+/* OBS / stage-only mode (`#/?obs=1`, features/stage/obsMode.ts): the captured window is display
+   only. No clicks (the SPIN button cannot be pressed by accident) and no cursor in the capture. */
+.stage-app-viewport.is-obs-mode,
+.stage-app-viewport.is-obs-mode * {
+  cursor: none !important;
+  pointer-events: none !important;
+}

@@ -31,6 +31,16 @@
 - ให้หน้าจอเวทีแสดงอยู่ตลอด (ไม่ย่อหรือซ่อนแท็บ) เพราะเบราว์เซอร์จะหน่วง timer ของแท็บที่ถูกซ่อน
 - ลิงก์เก่า `?mode=controller` จะพาไปที่ `#/control/live` ให้อัตโนมัติ
 
+### ส่งภาพเข้า OBS (เห็นแค่เวที)
+
+เปิดหน้าเวทีด้วย `?obs=1` เช่น `http://localhost:4173/#/?obs=1` หน้านี้จะแสดงเฉพาะเวที: ไม่มีแผงควบคุม, คีย์ลัดไม่ทำงาน (กด `Esc` ก็ไม่เปิดแผง), ไม่มีข้อความแจ้งเตือน, คลิกไม่ได้ และไม่มีเคอร์เซอร์ ให้คุมทั้งหมดจาก `#/control/live` ในอีกหน้าต่าง
+
+```powershell
+Start-Process chrome -ArgumentList '--new-window','--app=http://localhost:4173/#/?obs=1','--window-size=1920,1080'
+```
+
+ใน OBS ใช้ **Window Capture** เลือกหน้าต่างเวที (Capture Method: Windows 10 (1903 and up), ปิด Capture Cursor, ติ๊ก Client area) และ **Application Audio Capture** ของ `chrome.exe` สำหรับเสียง อย่าใช้ Display Capture และอย่าใช้ Browser Source ของ OBS (เป็นเบราว์เซอร์แยก จึงเชื่อมกับหน้าควบคุมใน Chrome ไม่ได้)
+
 ---
 
 ## ⌨️ คีย์ลัดบนจอเวที
