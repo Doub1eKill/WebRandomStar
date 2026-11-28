@@ -1,4 +1,4 @@
-import { AppState } from '@/types/session.ts';
+import { AppState, StageScreen, WinnerEntry } from '@/types/session.ts';
 import { KeywordItem } from '@/types/word.ts';
 import { TimerSoundSettings, StageDisplaySettings } from '@/types/timer.ts';
 import { AppearanceSettings } from '@/types/appearance.ts';
@@ -26,7 +26,11 @@ export type SessionCommand =
   | { type: 'FINISH_TIMER' }
   | { type: 'ADJUST_TIMER'; deltaMs: number }
   | { type: 'SET_TIMER_SOUND_SETTINGS'; settings: Partial<TimerSoundSettings> }
-  | { type: 'SET_STAGE_DISPLAY_SETTINGS'; settings: Partial<StageDisplaySettings> };
+  | { type: 'SET_STAGE_DISPLAY_SETTINGS'; settings: Partial<StageDisplaySettings> }
+  | { type: 'SET_STAGE_SCREEN'; screen: StageScreen }
+  | { type: 'SET_WINNERS'; winners: WinnerEntry[]; headline?: string }
+  | { type: 'ANNOUNCE_WINNERS'; sound?: boolean }
+  | { type: 'CLEAR_ANNOUNCEMENT' };
 
 /** Commands only the host's own scheduler issues. They are never accepted from the channel. */
 export type InternalCommand =
@@ -39,5 +43,6 @@ export const REMOTE_COMMAND_TYPES: ReadonlySet<SessionCommand['type']> = new Set
   'START_JOURNEY', 'STOP_WORD_SPIN', 'TOGGLE_PAUSE', 'SKIP_TO_QUESTION', 'MARK_ANSWERED', 'RESET_STAGE', 'RESET_USED_QUESTIONS', 'RESET_USED_WORDS',
   'SET_CONTESTANT', 'SET_ROUND', 'SET_VOLUME', 'TOGGLE_MUTE', 'SET_APPEARANCE',
   'SET_TIMER_DURATION', 'START_TIMER', 'PAUSE_TIMER', 'RESUME_TIMER', 'RESET_TIMER', 'FINISH_TIMER', 'ADJUST_TIMER',
-  'SET_TIMER_SOUND_SETTINGS', 'SET_STAGE_DISPLAY_SETTINGS'
+  'SET_TIMER_SOUND_SETTINGS', 'SET_STAGE_DISPLAY_SETTINGS',
+  'SET_STAGE_SCREEN', 'SET_WINNERS', 'ANNOUNCE_WINNERS', 'CLEAR_ANNOUNCEMENT'
 ]);

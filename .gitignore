@@ -29,3 +29,9 @@ dist-ssr
 
 # TypeScript incremental build cache
 *.tsbuildinfo
+
+# Show-day images, kept out of this public repository and read at build time:
+# - Winner/: winner posters of real people, same file names as Photo/ (src/data/winnerPhotos.ts)
+# - MainBlackground/: the event's key visual for the standby screen (src/data/standbyImage.ts)
+/Winner/
+/MainBlackground/

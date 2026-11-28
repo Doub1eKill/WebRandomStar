@@ -163,6 +163,17 @@
   animation: ctl-live-pulse 2s ease-out infinite;
 }
 
+/* The projector is on the standby or winner screen, not the spin. */
+.ctl-pill--screen {
+  color: #fde7a6;
+  border-color: rgba(245, 217, 138, 0.45);
+  background: rgba(245, 217, 138, 0.1);
+}
+
+.ctl-pill--screen .ctl-pill-state {
+  color: #f5d98a;
+}
+
 .ctl-pill--bad {
   color: #fda4af;
   border-color: rgba(244, 63, 94, 0.45);

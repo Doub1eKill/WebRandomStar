@@ -1,14 +1,26 @@
-import { SessionState } from '@/types/session.ts';
+import { SessionState, isStageScreen, sanitizeWinners, sanitizeWinnerHeadline, sanitizeAnnouncement } from '@/types/session.ts';
 import { STORAGE_KEYS, withoutCategory } from '@/storage/repositories.ts';
 import { loadAppearanceSettings } from '@/features/appearance/appearanceSettings.ts';
 import { loadTimerSoundSettings, loadStageDisplaySettings, normalizeTimerSoundSettings } from '@/features/timer/timerSettings.ts';
 import { createInitialTimerState, DEFAULT_TIMER_DURATION_MS } from '@/features/timer/timerEngine.ts';
+
+/**
+ * The screen the stage opens on (2026-11-29, operator's request): the event's key visual.
+ * The operator switches to the spin (or presses SPIN in the control window) when it starts.
+ */
+export const STARTUP_SCREEN = 'standby' as const;
+
+/** The stage window always opens on STARTUP_SCREEN, whatever screen the saved session was on. */
+export function openOnStartupScreen(state: SessionState): SessionState {
+  return { ...state, stageScreen: STARTUP_SCREEN };
+}
 
 export function createInitialSession(): SessionState {
   return {
     sessionId: 'session-' + Date.now(),
     seed: 'seed-' + Math.floor(Math.random() * 100000),
     currentState: 'idle',
+    stageScreen: STARTUP_SCREEN,
     selectedRound: 'intro',
     usedQuestionIds: [],
     usedWordIds: [],
@@ -62,7 +74,12 @@ export function loadPersistedSession(): SessionState {
         timerState: safeTimerState,
         timerSoundSettings: soundSettings,
         stageDisplaySettings: displaySettings,
-        appearanceSettings
+        appearanceSettings,
+        // The screen and winners survive a reload of the stage (e.g. the standby screen stays up).
+        stageScreen: isStageScreen(rest.stageScreen) ? rest.stageScreen : undefined,
+        winners: sanitizeWinners(rest.winners),
+        winnerHeadline: sanitizeWinnerHeadline(rest.winnerHeadline),
+        winnerAnnouncement: sanitizeAnnouncement(rest.winnerAnnouncement)
       };
 
       // Reset animation state to idle if reloaded mid-transition

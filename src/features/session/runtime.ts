@@ -22,7 +22,7 @@ import { musicPlayer } from '@/features/music/musicPlayerEngine.ts';
 import { AnyCommand, SessionCommand } from './commands.ts';
 import { sessionReducer, SessionEffect, ReducerContext } from './sessionReducer.ts';
 import { createStore, Store } from './sessionStore.ts';
-import { loadPersistedSession, savePersistedSession } from './persistence.ts';
+import { loadPersistedSession, openOnStartupScreen, savePersistedSession } from './persistence.ts';
 import {
   openSessionChannel,
   ChannelEndpoint,
@@ -94,7 +94,8 @@ function autoAdvanceDelay(s: SessionState): number | null {
 
 export function createStageHost(): SessionRuntime {
   const id = newId('stage');
-  const store = createStore<SessionState>(loadPersistedSession());
+  // Opening the stage shows the key visual first; the rest of the saved session is kept.
+  const store = createStore<SessionState>(openOnStartupScreen(loadPersistedSession()));
   const peerConnected = createStore(false);
 
   let endpoint: ChannelEndpoint | null = null;

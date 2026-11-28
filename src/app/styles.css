@@ -18,6 +18,7 @@
 @import '../features/appearance/appearance.css';
 @import '../shared/notices/operatorNotices.css';
 @import '../shared/ui/ui.css';
+@import '../features/stage/screens/stageScreens.css';
 /* Loaded with their lazy chunks instead (still last in the cascade):
  *   pages/control/controlLayout.css       (ControlLayout.tsx)
  *   features/questions/questionImport.css (QuestionImportDialog.tsx) */

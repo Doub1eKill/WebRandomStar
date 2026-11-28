@@ -8,7 +8,7 @@ import React, { useEffect, useMemo } from 'react';
 // It holds the control window's theme, scoped under .control-app.
 import './controlLayout.css';
 import { NavLink, Outlet } from 'react-router';
-import { BookOpen, Clock, History, Key, Layers, Music, Palette, Sparkles, TriangleAlert, Users } from 'lucide-react';
+import { BookOpen, Clock, History, Key, Layers, Music, Palette, Sparkles, TriangleAlert, Trophy, Users } from 'lucide-react';
 import { SessionProvider, useSession, usePeerConnected } from '@/features/session/SessionProvider.tsx';
 import { useRemoteMusic } from '@/features/music/musicRemote.ts';
 import { useMusicLibrary } from '@/features/music/useMusicLibrary.ts';
@@ -16,6 +16,8 @@ import { useContestants, useHistory, useQuestions, useWords } from '@/storage/us
 import { applyTypography } from '@/features/appearance/typography.ts';
 import { OperatorToasts } from '@/shared/notices/OperatorToasts.tsx';
 import { ControlMusicContext } from './controlMusic.ts';
+import { stageScreenOf } from '@/types/session.ts';
+import { screenLabel } from '@/features/control/StageScreenSwitcher.tsx';
 
 export const ControlLayout: React.FC = () => (
   <SessionProvider role="controller">
@@ -27,6 +29,8 @@ const ControlShell: React.FC = () => {
   const currentState = useSession(s => s.currentState);
   const sessionId = useSession(s => s.sessionId);
   const appearanceSettings = useSession(s => s.appearanceSettings);
+  const screen = useSession(stageScreenOf);
+  const winnerCount = useSession(s => s.winners?.length ?? 0);
   const isStageConnected = usePeerConnected();
 
   const words = useWords();
@@ -47,6 +51,7 @@ const ControlShell: React.FC = () => {
   // A4: tab buttons come from one config instead of eight copy-pasted blocks.
   const tabs: { to: string; icon: React.ReactNode; label: string; count?: number }[] = [
     { to: 'live', icon: <Layers size={16} />, label: 'ควบคุมเวที (Stage)' },
+    { to: 'winners', icon: <Trophy size={16} />, label: 'หน้าจอ & ผู้ชนะ', count: winnerCount },
     { to: 'timer', icon: <Clock size={16} />, label: 'ตัวจับเวลา (Timer)' },
     { to: 'music', icon: <Music size={16} />, label: 'เพลงประกอบ', count: library.tracks.length },
     { to: 'words', icon: <Key size={16} />, label: 'คลังคำสำคัญ', count: words.length },
@@ -82,6 +87,9 @@ const ControlShell: React.FC = () => {
             <span className={`ctl-pill ${isStageConnected ? 'ctl-pill--ok' : 'ctl-pill--bad'}`}>
               <span className="ctl-dot" aria-hidden="true" />
               {isStageConnected ? 'เชื่อมต่อจอเวทีแล้ว' : 'ไม่พบจอเวที'}
+            </span>
+            <span className={`ctl-pill${screen !== 'quiz' ? ' ctl-pill--screen' : ''}`}>
+              หน้าจอ: <strong className="ctl-pill-state">{screenLabel(screen)}</strong>
             </span>
             <span className="ctl-pill">
               สถานะเวที: <strong className="ctl-pill-state">{currentState}</strong>
