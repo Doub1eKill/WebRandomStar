@@ -1,0 +1,497 @@
+/* Winners page (remote control). Loaded with the page's lazy chunk, after livePage.css. */
+
+.win-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.win-hint {
+  margin: 0.75rem 0 0;
+  font-size: 0.8rem;
+  color: var(--ctl-text-3, #94a3b8);
+}
+
+.win-grid {
+  display: grid;
+  grid-template-columns: minmax(340px, 1fr) minmax(360px, 1.25fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .win-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.win-input {
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.win-input:focus-visible {
+  outline: 2px solid var(--ctl-focus, #67e8f9);
+  outline-offset: 1px;
+}
+
+.win-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem 1rem;
+  border: 1px dashed rgba(167, 139, 250, 0.3);
+  border-radius: 10px;
+  color: var(--ctl-text-3, #94a3b8);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.win-empty svg {
+  color: #f5d98a;
+}
+
+/* Ordered winner list */
+.win-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.win-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem;
+  border-radius: 10px;
+  background: rgba(8, 11, 30, 0.7);
+  border: 1px solid rgba(245, 217, 138, 0.22);
+}
+
+.win-row-order {
+  flex-shrink: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #fff6d6, #e0b458);
+  color: #2a1a05;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.win-row-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.win-row-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #f5f3ff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.win-row-award {
+  padding: 0.45rem 0.6rem;
+  font-size: 0.85rem;
+}
+
+.win-row-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.3rem;
+}
+
+.win-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem;
+}
+
+.win-icon-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.win-icon-btn--danger:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(248, 113, 113, 0.5);
+}
+
+/* Thumbnails (poster 2:3) */
+.win-thumb {
+  position: relative;
+  display: block;
+  flex-shrink: 0;
+  overflow: hidden;
+  aspect-ratio: 2 / 3;
+  border-radius: 8px;
+  background: radial-gradient(circle at 50% 35%, #2b1a5e, #0b102b 75%);
+}
+
+.win-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.win-thumb.is-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+}
+
+.win-row-thumb {
+  width: 2.6rem;
+}
+
+.win-row-thumb.is-empty {
+  font-size: 0.9rem;
+}
+
+/* Contestant picker */
+.win-pick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 0.75rem;
+}
+
+.win-pick {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.4rem;
+  border-radius: 12px;
+  border: 1px solid rgba(167, 139, 250, 0.16);
+  background: rgba(8, 11, 30, 0.6);
+  color: #cbd5e1;
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.win-pick:hover:not(:disabled) {
+  border-color: rgba(196, 181, 253, 0.55);
+  transform: translateY(-2px);
+}
+
+.win-pick:focus-visible {
+  outline: 2px solid var(--ctl-focus, #67e8f9);
+  outline-offset: 2px;
+}
+
+.win-pick:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.win-pick.is-picked {
+  border-color: rgba(245, 217, 138, 0.9);
+  box-shadow: 0 0 0 1px rgba(245, 217, 138, 0.45), 0 0 18px -4px rgba(245, 217, 138, 0.7);
+  color: #fff;
+}
+
+.win-pick-thumb {
+  width: 100%;
+}
+
+.win-pick-thumb.is-empty {
+  font-size: 1.6rem;
+}
+
+.win-pick:not(.is-picked) .win-pick-thumb img {
+  filter: saturate(0.75) brightness(0.85);
+}
+
+.win-pick-badge {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fff6d6, #e0b458);
+  color: #2a1a05;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.win-pick-name {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.win-pick-number {
+  flex-shrink: 0;
+  padding: 0 0.3rem;
+  border-radius: 4px;
+  background: rgba(124, 58, 237, 0.3);
+  color: #c4b5fd;
+  font-size: 0.7rem;
+}
+
+/* On air */
+.win-onair {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.win-onair-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.win-onair-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  background: rgba(148, 163, 184, 0.15);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.win-onair-badge.is-live {
+  color: #fecaca;
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(248, 113, 113, 0.55);
+}
+
+.win-onair-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fde7a6;
+}
+
+.win-onair-people {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.win-onair-person {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.35rem;
+  border-radius: 10px;
+  background: rgba(8, 11, 30, 0.7);
+  border: 1px solid rgba(245, 217, 138, 0.3);
+}
+
+.win-onair-person > span:last-child {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.35;
+}
+
+.win-onair-thumb {
+  width: 1.9rem;
+}
+
+.win-onair-name {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: #f5f3ff;
+}
+
+.win-onair-award {
+  font-size: 0.72rem;
+  color: #fde7a6;
+}
+
+.win-hide-btn {
+  align-self: flex-start;
+}
+
+.win-empty--inline {
+  flex-direction: row;
+  justify-content: center;
+  padding: 0.9rem 1rem;
+}
+
+/* Preparation steps */
+.win-step {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(167, 139, 250, 0.14);
+}
+
+.win-step:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.win-step-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.win-step-no {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.35);
+  border: 1px solid rgba(196, 181, 253, 0.5);
+  color: #fff;
+  font-size: 0.75rem;
+}
+
+.win-step-note {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--ctl-text-3, #94a3b8);
+}
+
+.win-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.win-chip {
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  background: rgba(15, 18, 44, 0.65);
+  color: #cbd5e1;
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.win-chip:hover {
+  border-color: rgba(196, 181, 253, 0.6);
+  color: #fff;
+}
+
+.win-chip.is-on {
+  border-color: rgba(245, 217, 138, 0.9);
+  background: rgba(245, 217, 138, 0.16);
+  color: #fde7a6;
+}
+
+.win-chip:focus-visible,
+.win-toggle:focus-visible,
+.win-link-btn:focus-visible {
+  outline: 2px solid var(--ctl-focus, #67e8f9);
+  outline-offset: 2px;
+}
+
+/* Announce */
+.win-announce-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(245, 217, 138, 0.9);
+  background: linear-gradient(135deg, #e0b458 0%, #b8862f 30%, #7c3aed 100%);
+  color: #fff;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 10px 28px -12px rgba(245, 217, 138, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: filter 0.2s ease, transform 0.15s ease;
+}
+
+.win-announce-btn:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.win-announce-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.win-announce-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.win-announce-btn:focus-visible {
+  outline: 2px solid var(--ctl-focus, #67e8f9);
+  outline-offset: 3px;
+}
+
+.win-announce-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.win-toggle,
+.win-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  background: rgba(15, 18, 44, 0.65);
+  color: #cbd5e1;
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.win-toggle.is-on {
+  color: #a5f3fc;
+  border-color: rgba(103, 232, 249, 0.45);
+}
+
+.win-link-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.win-step--announce .win-hint {
+  margin: 0;
+}

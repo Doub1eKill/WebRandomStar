@@ -17,6 +17,14 @@ import { StageBackground } from '@/features/stage/background/StageBackground.tsx
 import { StageOverlay } from '@/features/stage/overlay/StageOverlay.tsx';
 import { KeyboardController } from '@/features/stage/KeyboardController.tsx';
 import { useObsMode } from '@/features/stage/obsMode.ts';
+import { StandbyScreen } from '@/features/stage/screens/StandbyScreen.tsx';
+import { WinnerScreen } from '@/features/stage/screens/WinnerScreen.tsx';
+import { usePreloadImages } from '@/features/stage/screens/usePreloadImages.ts';
+import { prepareDownscaledImage, screenImageWidth } from '@/features/stage/screens/downscaledImage.ts';
+import { STANDBY_FILL_WIDTH } from '@/features/stage/screens/StandbyScreen.tsx';
+import { STANDBY_IMAGE_URL } from '@/data/standbyImage.ts';
+import { winnerImage } from '@/data/winnerPhotos.ts';
+import { stageScreenOf } from '@/types/session.ts';
 import { OperatorToasts } from '@/shared/notices/OperatorToasts.tsx';
 import { useHasBeenTrue } from '@/shared/lib/useHasBeenTrue.ts';
 
@@ -58,7 +66,8 @@ const StageScreen: React.FC = () => {
     resumeTimer,
     adjustTimer,
     setTimerSoundSettings,
-    setStageDisplaySettings
+    setStageDisplaySettings,
+    setStageScreen
   } = useSessionActions();
 
   // B15: restore the saved phase mapping / auto-sync into the player once, before anything plays.
@@ -118,12 +127,32 @@ const StageScreen: React.FC = () => {
 
   const activeContestant = contestants.find(c => c.id === session.selectedContestantId);
 
+  // Standby / winner screens (2026-11-29). Their images are fetched and decoded up front, so a
+  // switch shows them at once instead of drawing a 24-megapixel picture in on cue.
+  const screen = stageScreenOf(session);
+  // Posters of the prepared and the announced winners are decoded ahead of the reveal.
+  const winners = [...(session.winners ?? []), ...(session.winnerAnnouncement?.winners ?? [])];
+  useEffect(() => {
+    if (!STANDBY_IMAGE_URL) return;
+    void prepareDownscaledImage(STANDBY_IMAGE_URL, screenImageWidth());
+    void prepareDownscaledImage(STANDBY_IMAGE_URL, STANDBY_FILL_WIDTH);
+  }, []);
+  usePreloadImages([
+    ...winners.map(w => {
+      const c = contestants.find(x => x.id === w.contestantId);
+      return c ? winnerImage(c)?.url : undefined;
+    })
+  ]);
+
   const handleStart = (forceWord?: KeywordItem) => {
     startJourney({ width: window.innerWidth, height: window.innerHeight }, forceWord);
   };
 
   // After Done (answered) Space/Enter spins the next one straight away, with no Reset in between.
   const handleStartOrPause = () => {
+    // Space/Enter on the projector only drive the spin screen; the standby and winner screens
+    // must not be cut short by a stray key press (the control window can still start a spin).
+    if (screen !== 'quiz') return;
     if (session.currentState === 'idle' || session.currentState === 'answered') {
       handleStart();
     } else if (session.currentState === 'word-spin') {
@@ -136,6 +165,7 @@ const StageScreen: React.FC = () => {
   };
 
   const handleProceed = () => {
+    if (screen !== 'quiz') return;
     if (session.currentState === 'idle' || session.currentState === 'answered') {
       handleStart();
     } else if (session.currentState === 'word-spin') {
@@ -171,6 +201,15 @@ const StageScreen: React.FC = () => {
         session={session}
         contestant={activeContestant}
         onStart={() => handleStart()}
+        hidden={screen !== 'quiz'}
+      />
+
+      {/* 2b. Standby (key visual) and winner screens, over the spin overlay */}
+      <StandbyScreen active={screen === 'standby'} />
+      <WinnerScreen
+        active={screen === 'winner'}
+        announcement={session.winnerAnnouncement}
+        contestants={contestants}
       />
 
       {/* 3. Operator Slide-over Control Drawer (loaded on first open, then kept mounted) */}
@@ -207,6 +246,7 @@ const StageScreen: React.FC = () => {
             onPlayTrack={(track) => stageMusicControls.playTrack(track)}
             onStopMusic={() => stageMusicControls.stop()}
             onAdjustTimer={adjustTimer}
+            onSetStageScreen={setStageScreen}
           />
         </Suspense>
       )}

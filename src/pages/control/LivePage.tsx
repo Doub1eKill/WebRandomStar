@@ -9,12 +9,14 @@ import { useSession, useSessionActions } from '@/features/session/SessionProvide
 import { stageControls, ROUND_OPTIONS } from '@/features/control/useStageControls.ts';
 import { ControlCard } from '@/features/control/ControlCard.tsx';
 import { QuizModeToggle } from '@/features/control/QuizModeToggle.tsx';
+import { StageScreenSwitcher } from '@/features/control/StageScreenSwitcher.tsx';
+import { stageScreenOf } from '@/types/session.ts';
 import { useContestants, useWords } from '@/storage/useRepository.ts';
 import { contestantsRepository } from '@/storage/repositories.ts';
 import { ContestantManagerModal } from '@/features/contestants/ContestantManagerModal.tsx';
 import { ContestantAvatar } from '@/features/contestants/ContestantAvatar.tsx';
 import { contestantOptionLabel } from '@/data/contestantPhotos.ts';
-import { CheckCircle, Crosshair, Crown, FastForward, Gamepad2, MonitorPlay, OctagonX, Pause, Pencil, Play, RotateCcw, Sparkle, Trophy, User, Users } from 'lucide-react';
+import { CheckCircle, Crosshair, Crown, FastForward, Gamepad2, MonitorPlay, MonitorUp, OctagonX, Pause, Pencil, Play, RotateCcw, Sparkle, Trophy, User, Users } from 'lucide-react';
 import './livePage.css';
 
 export const LivePage: React.FC = () => {
@@ -43,6 +45,15 @@ export const LivePage: React.FC = () => {
   return (
     <>
       <div className="live-grid">
+        <ControlCard variant="live" wide icon={<MonitorUp size={16} aria-hidden="true" />} title="หน้าจอบนเวที (Stage Screen)">
+          <StageScreenSwitcher
+            variant="live"
+            screen={stageScreenOf(session)}
+            onChange={actions.setStageScreen}
+            winnerCount={session.winnerAnnouncement?.winners.length ?? 0}
+          />
+        </ControlCard>
+
         <ControlCard variant="live" icon={<User size={16} aria-hidden="true" />} title="ข้อมูลผู้เข้าแข่งขันและการแข่งขัน">
           <div className="live-field">
             <label className="live-label ui-ico-label"><Trophy size={14} aria-hidden="true" />รูปแบบขั้นตอนการแข่งขัน (Competition Mode)</label>

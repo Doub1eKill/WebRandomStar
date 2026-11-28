@@ -3,7 +3,7 @@
  * here line for line. Side effects (storage writes, history, sounds, operator notices) are
  * returned as data and executed by the stage host, so this module never touches the outside world.
  */
-import { SessionState } from '@/types/session.ts';
+import { SessionState, AppState, StageScreen, isStageScreen, sanitizeWinners, sanitizeWinnerHeadline } from '@/types/session.ts';
 import { Question, Contestant } from '@/types/question.ts';
 import { KeywordItem } from '@/types/word.ts';
 import { TimerSoundSettings, StageDisplaySettings } from '@/types/timer.ts';
@@ -76,6 +76,18 @@ function backToIdle(s: SessionState): SessionState {
 }
 const next = (state: SessionState, effects: SessionEffect[] = []): ReducerResult => ({ state, effects });
 
+/** Phases that animate and advance on their own; they cannot carry on behind another screen. */
+const ANIMATING_STATES: readonly AppState[] = ['pre-spin', 'word-spin', 'word-decelerate', 'word-lock', 'question-reveal'];
+
+/**
+ * Show another screen. A spin cut off by it goes back to idle, so it does not finish (sounds and
+ * all) unseen; a question on screen is kept, to come back to.
+ */
+function withScreen(s: SessionState, screen: StageScreen): SessionState {
+  const base = screen !== 'quiz' && ANIMATING_STATES.includes(s.currentState) ? backToIdle(s) : s;
+  return { ...base, stageScreen: screen };
+}
+
 /** Timer state for a question that just became visible, honouring autoStartTimerOnReveal. */
 function timerOnReveal(s: SessionState, now: number): SessionState['timerState'] {
   if (!s.stageDisplaySettings?.autoStartTimerOnReveal) return s.timerState;
@@ -137,6 +149,8 @@ export function sessionReducer(s: SessionState, command: AnyCommand, ctx: Reduce
       const safeDuration = s.timerState.durationMs || DEFAULT_TIMER_DURATION_MS;
       return next({
         ...s,
+        // Spinning from the standby or winner screen brings the spin screen back first.
+        stageScreen: 'quiz',
         seed: newSeed,
         currentState: 'pre-spin',
         selectedWordId: targetWord?.id,
@@ -265,6 +279,43 @@ export function sessionReducer(s: SessionState, command: AnyCommand, ctx: Reduce
       const settings: StageDisplaySettings = { ...(s.stageDisplaySettings || ctx.loadStageDisplaySettings()), ...command.settings };
       return next({ ...s, stageDisplaySettings: settings }, [{ type: 'PERSIST_STAGE_DISPLAY', settings }]);
     }
+
+    // ── Stage screen & winners ───────────────────────────────────────────────
+    case 'SET_STAGE_SCREEN': {
+      if (!isStageScreen(command.screen)) return unchanged(s);
+      const current = s.stageScreen ?? 'quiz';
+      if (command.screen === current) return unchanged(s);
+      return next(withScreen(s, command.screen));
+    }
+
+    case 'SET_WINNERS':
+      return next({
+        ...s,
+        winners: sanitizeWinners(command.winners),
+        winnerHeadline: command.headline === undefined ? s.winnerHeadline : sanitizeWinnerHeadline(command.headline)
+      });
+
+    // The prepared winners go on screen (switching to it) and the reveal plays.
+    case 'ANNOUNCE_WINNERS': {
+      const known = new Set(ctx.loadContestants().map(c => c.id));
+      const winners = sanitizeWinners(s.winners).filter(w => known.has(w.contestantId));
+      if (winners.length === 0) {
+        return next(s, [{ type: 'NOTIFY', level: 'warning', message: 'ยังไม่ได้เลือกผู้ชนะ จึงยังประกาศไม่ได้' }]);
+      }
+      return next({
+        ...withScreen(s, 'winner'),
+        winnerAnnouncement: {
+          id: `ann-${now}`,
+          at: now,
+          headline: sanitizeWinnerHeadline(s.winnerHeadline),
+          winners,
+          sound: command.sound !== false
+        }
+      });
+    }
+
+    case 'CLEAR_ANNOUNCEMENT':
+      return s.winnerAnnouncement ? next({ ...s, winnerAnnouncement: undefined }) : unchanged(s);
 
     // ── Timer ────────────────────────────────────────────────────────────────
     case 'SET_TIMER_DURATION': {

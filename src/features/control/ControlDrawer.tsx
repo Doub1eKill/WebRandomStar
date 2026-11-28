@@ -10,6 +10,8 @@ import { ControlCard } from './ControlCard.tsx';
 import { QuizModeToggle } from './QuizModeToggle.tsx';
 import { MusicTrack, MusicState } from '@/types/music.ts';
 import { contestantOptionLabel } from '@/data/contestantPhotos.ts';
+import { StageScreen, stageScreenOf } from '@/types/session.ts';
+import { StageScreenSwitcher } from './StageScreenSwitcher.tsx';
 
 interface ControlDrawerProps {
   isOpen: boolean;
@@ -41,6 +43,8 @@ interface ControlDrawerProps {
   onPlayTrack?: (track: MusicTrack) => void;
   onStopMusic?: () => void;
   onAdjustTimer?: (deltaMs: number) => void;
+  /** Standby / winner / spin screen on the projector. */
+  onSetStageScreen?: (screen: StageScreen) => void;
 }
 
 export const ControlDrawer: React.FC<ControlDrawerProps> = ({
@@ -71,7 +75,8 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
   onDeleteTrack,
   onPlayTrack,
   onStopMusic,
-  onAdjustTimer
+  onAdjustTimer,
+  onSetStageScreen
 }) => {
   const spinFileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -142,6 +147,18 @@ export const ControlDrawer: React.FC<ControlDrawerProps> = ({
         </div>
 
         <div className="drawer-body">
+          {/* Section -1: what the projector shows (winners are chosen in the remote window) */}
+          {onSetStageScreen && (
+            <ControlCard variant="drawer" icon={<MonitorUp size={15} aria-hidden="true" />} title="หน้าจอบนเวที">
+              <StageScreenSwitcher
+                variant="drawer"
+                screen={stageScreenOf(session)}
+                onChange={onSetStageScreen}
+                winnerCount={session.winnerAnnouncement?.winners.length ?? 0}
+              />
+            </ControlCard>
+          )}
+
           {/* Section 0: Competition Flow Mode Quick Toggle */}
           {onSetAppearanceSettings && (
             <ControlCard variant="drawer" icon={<Trophy size={15} aria-hidden="true" />} title="รูปแบบการแข่งขัน (Competition Mode)">

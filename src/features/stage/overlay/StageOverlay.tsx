@@ -16,12 +16,15 @@ interface StageOverlayProps {
   session: SessionState;
   contestant?: Contestant;
   onStart: () => void;
+  /** Another screen (standby / winner) is up: fade the spin overlay out and keep it out of reach. */
+  hidden?: boolean;
 }
 
 export const StageOverlay: React.FC<StageOverlayProps> = ({
   session,
   contestant,
-  onStart
+  onStart,
+  hidden = false
 }) => {
   const isIdle = session.currentState === 'idle';
   const isSpinning = ['pre-spin', 'word-spin', 'word-decelerate'].includes(session.currentState);
@@ -53,7 +56,7 @@ export const StageOverlay: React.FC<StageOverlayProps> = ({
   }, [wordBank]);
 
   return (
-    <div className="stage-overlay">
+    <div className={hidden ? 'stage-overlay is-screen-hidden' : 'stage-overlay'} aria-hidden={hidden || undefined}>
       {/* Top Bar / Clean Centered Header */}
       <StageHeader
         round={session.selectedRound}

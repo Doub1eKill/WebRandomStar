@@ -1,6 +1,7 @@
 import { KeywordItem } from '@/types/word.ts';
 import { TimerSoundSettings, StageDisplaySettings } from '@/types/timer.ts';
 import { AppearanceSettings } from '@/types/appearance.ts';
+import { StageScreen, WinnerEntry } from '@/types/session.ts';
 import { SessionCommand } from './commands.ts';
 
 /** Named action functions over `dispatch` (same API the old useStageSync exposed). */
@@ -28,7 +29,14 @@ export function createSessionActions(d: (command: SessionCommand) => void) {
     finishTimer: () => d({ type: 'FINISH_TIMER' }),
     adjustTimer: (deltaMs: number) => d({ type: 'ADJUST_TIMER', deltaMs }),
     setTimerSoundSettings: (settings: Partial<TimerSoundSettings>) => d({ type: 'SET_TIMER_SOUND_SETTINGS', settings }),
-    setStageDisplaySettings: (settings: Partial<StageDisplaySettings>) => d({ type: 'SET_STAGE_DISPLAY_SETTINGS', settings })
+    setStageDisplaySettings: (settings: Partial<StageDisplaySettings>) => d({ type: 'SET_STAGE_DISPLAY_SETTINGS', settings }),
+    setStageScreen: (screen: StageScreen) => d({ type: 'SET_STAGE_SCREEN', screen }),
+    /** Replace the winner list; `headline` is left as it is when omitted. */
+    setWinners: (winners: WinnerEntry[], headline?: string) => d({ type: 'SET_WINNERS', winners, headline }),
+    /** Put the prepared heading and winners on the winner screen and play the reveal. */
+    announceWinners: (sound = true) => d({ type: 'ANNOUNCE_WINNERS', sound }),
+    /** Take the result off the winner screen (back to "and the winner is…"). */
+    clearAnnouncement: () => d({ type: 'CLEAR_ANNOUNCEMENT' })
   };
 }
 

@@ -1,0 +1,154 @@
+/* Stage screen switcher (StageScreenSwitcher.tsx): remote pages and the stage drawer. */
+
+.screen-switch {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.screen-switch-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  padding: 0.8rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid rgba(167, 139, 250, 0.18);
+  background: rgba(15, 18, 44, 0.65);
+  color: #cbd5e1;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.screen-switch-btn:hover {
+  border-color: rgba(167, 139, 250, 0.45);
+  background: rgba(28, 32, 70, 0.8);
+}
+
+.screen-switch-btn:active {
+  transform: translateY(1px);
+}
+
+.screen-switch-btn:focus-visible {
+  outline: 2px solid #67e8f9;
+  outline-offset: 2px;
+}
+
+.screen-switch-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 10px;
+  background: rgba(124, 58, 237, 0.18);
+  color: #c4b5fd;
+}
+
+.screen-switch-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.screen-switch-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #f5f3ff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.screen-switch-hint {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The screen on air */
+.screen-switch-btn.is-active {
+  border-color: rgba(196, 181, 253, 0.8);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.42), rgba(56, 189, 248, 0.16));
+  box-shadow: 0 0 0 1px rgba(196, 181, 253, 0.35), 0 8px 24px -10px rgba(124, 58, 237, 0.8);
+  color: #fff;
+}
+
+.screen-switch-btn.is-active .screen-switch-icon {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+.screen-switch-btn.is-active .screen-switch-hint {
+  color: #a5f3fc;
+}
+
+.screen-switch-btn--winner.is-active {
+  border-color: rgba(245, 217, 138, 0.85);
+  background: linear-gradient(135deg, rgba(180, 130, 40, 0.38), rgba(124, 58, 237, 0.3));
+  box-shadow: 0 0 0 1px rgba(245, 217, 138, 0.35), 0 8px 24px -10px rgba(245, 217, 138, 0.6);
+}
+
+.screen-switch-btn--winner.is-active .screen-switch-icon {
+  color: #f5d98a;
+}
+
+.screen-switch-btn--winner.is-active .screen-switch-hint {
+  color: #fde7a6;
+}
+
+/* "On air" dot */
+.screen-switch-live {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.6rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #f87171;
+  box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.7);
+  animation: screen-switch-pulse 1.8s ease-out infinite;
+}
+
+@keyframes screen-switch-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.7); }
+  70% { box-shadow: 0 0 0 0.5rem rgba(248, 113, 113, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); }
+}
+
+/* Drawer: narrow panel, so the buttons stack their text under the icon. */
+.screen-switch--drawer {
+  gap: 6px;
+}
+
+.screen-switch--drawer .screen-switch-btn {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.35rem;
+  padding: 0.6rem 0.4rem;
+}
+
+.screen-switch--drawer .screen-switch-text {
+  align-items: center;
+}
+
+.screen-switch--drawer .screen-switch-label {
+  font-size: 0.78rem;
+}
+
+.screen-switch--drawer .screen-switch-hint {
+  font-size: 0.66rem;
+}
+
+@media (max-width: 640px) {
+  .screen-switch--live {
+    grid-template-columns: 1fr;
+  }
+}
